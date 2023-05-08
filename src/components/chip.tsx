@@ -3,7 +3,7 @@ import { ChipRenderOptions, Position, Size } from "../models/renderOptions";
 import {
   computeChipTextPosition,
   computeInputPinsPosition,
-} from "../utils/dimension";
+} from "../utils/position";
 import Pin from "./pin";
 import p5Types from "p5";
 
@@ -55,25 +55,6 @@ class Chip {
     };
   }
 
-  getInputPin = (idx: number) => this.inputPins[idx];
-
-  getOutputPin = (idx: number) => this.outputPins[idx];
-
-  execute() {
-    // console.log(
-    //   `${this.name} inputPins`,
-    //   this.inputPins.map((pin) => pin.state)
-    // );
-    const outputStates = this.action(this.inputPins);
-    // console.log(`${this.name} outputStates`, outputStates);
-    for (let i = 0; i < this.outputPins.length; i++) {
-      // if (this.outputPins[i].state !== outputStates[i]) {
-      this.outputPins[i].state = outputStates[i];
-      this.outputPins[i].propagate();
-    }
-    // }
-  }
-
   private renderPins() {
     const inputPinsPositions = computeInputPinsPosition(
       this.options.position,
@@ -95,10 +76,12 @@ class Chip {
       this.outputPins.length
     );
     for (let i = 0; i < this.inputPins.length; i++) {
-      this.inputPins[i].render(inputPinsPositions[i]);
+      this.inputPins[i].setPosition(inputPinsPositions[i]);
+      this.inputPins[i].render();
     }
     for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].render(outputPinsPositions[i]);
+      this.outputPins[i].setPosition(outputPinsPositions[i]);
+      this.outputPins[i].render();
     }
   }
 
@@ -129,6 +112,25 @@ class Chip {
       5,
       5
     );
+  }
+
+  getInputPin = (idx: number) => this.inputPins[idx];
+
+  getOutputPin = (idx: number) => this.outputPins[idx];
+
+  execute() {
+    // console.log(
+    //   `${this.name} inputPins`,
+    //   this.inputPins.map((pin) => pin.state)
+    // );
+    const outputStates = this.action(this.inputPins);
+    // console.log(`${this.name} outputStates`, outputStates);
+    for (let i = 0; i < this.outputPins.length; i++) {
+      // if (this.outputPins[i].state !== outputStates[i]) {
+      this.outputPins[i].state = outputStates[i];
+      this.outputPins[i].propagate();
+    }
+    // }
   }
 
   render() {

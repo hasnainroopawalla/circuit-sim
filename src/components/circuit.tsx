@@ -1,23 +1,23 @@
 import { State } from "../enums/state";
 import { BasicGate } from "../models/basicGates";
 import Chip from "./chip";
-import InOutPin from "./inout";
+import IO from "./io";
 import Pin from "./pin";
 import Wire from "./wire";
 import p5Types from "p5";
 
 class Circuit {
   p5: p5Types;
-  inputPins: InOutPin[];
-  outputPins: InOutPin[];
+  inputs: IO[];
+  outputs: IO[];
   wires: Wire[];
   chips: Chip[];
   basicGates: { [chip: string]: BasicGate };
 
   constructor(p5: p5Types) {
     this.p5 = p5;
-    this.inputPins = [];
-    this.outputPins = [];
+    this.inputs = [];
+    this.outputs = [];
     this.wires = [];
     this.chips = [];
     this.basicGates = {
@@ -45,18 +45,18 @@ class Circuit {
     };
   }
 
-  getInputPin = (idx: number): InOutPin => this.inputPins[idx];
+  getInputPin = (idx: number): IO => this.inputs[idx];
 
-  getOutputPin = (idx: number): InOutPin => this.outputPins[idx];
+  getOutputPin = (idx: number): IO => this.outputs[idx];
 
   getChip = (idx: number): Chip => this.chips[idx];
 
   addInputPin(name: string) {
-    this.inputPins.push(new InOutPin(this.p5, name, true));
+    this.inputs.push(new IO(this.p5, name, true));
   }
 
   addOutputPin(name: string) {
-    this.outputPins.push(new InOutPin(this.p5, name, false));
+    this.outputs.push(new IO(this.p5, name, false));
   }
 
   addChip(chipName: string) {
@@ -80,12 +80,27 @@ class Circuit {
   }
 
   execute() {
-    for (let i = 0; i < this.inputPins.length; i++) {
-      this.inputPins[i].execute();
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.inputs[i].execute();
+    }
+  }
+
+  mouseClicked() {
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.inputs[i].mouseClicked();
+    }
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i].mouseClicked();
     }
   }
 
   render() {
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.inputs[i].render();
+    }
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i].render();
+    }
     for (let i = 0; i < this.chips.length; i++) {
       this.chips[i].render();
     }

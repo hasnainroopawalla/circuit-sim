@@ -14,6 +14,12 @@ function Board() {
     const buttonNOT = p5.createButton("NOT");
     buttonNOT.position(0, 20);
     buttonNOT.mousePressed(() => circuit.addChip("NOT"));
+    const buttonInput = p5.createButton("Input");
+    buttonInput.position(0, 40);
+    buttonInput.mousePressed(() => circuit.addInputPin("Output_0"));
+    const buttonOutput = p5.createButton("Output");
+    buttonOutput.position(0, 60);
+    buttonOutput.mousePressed(() => circuit.addOutputPin("Output_0"));
     //   circuit.addInputPin("Input_0");
     //   circuit.addInputPin("input_1");
 
@@ -48,10 +54,6 @@ function Board() {
     p5.background(255);
     circuit.execute();
     circuit.render();
-    if (circuit.getChip(0)) {
-      circuit.getChip(0).options.position.x =
-        circuit.getChip(0).options.position.x + 1;
-    }
     // console.log(circuit.chips);
     // console.log(
     //   circuit.inputPins.map((inOut) => inOut.pin.state),
@@ -59,7 +61,12 @@ function Board() {
     // );
   };
 
-  return <Sketch setup={setup} draw={draw} />;
+  // @ts-ignore
+  const mouseClicked = () => {
+    circuit.mouseClicked();
+  };
+
+  return <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />;
 }
 
 export default Board;

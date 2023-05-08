@@ -22,3 +22,8 @@ export interface PinRenderOptions {
   size: number;
   color: number;
 }
+
+export interface IORenderOptions {
+  position: Position;
+  size: number;
+}

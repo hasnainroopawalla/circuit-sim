@@ -14,7 +14,7 @@ export const computeInputPinsPosition = (
   lineStartPosition: Position,
   lineEndPosition: Position,
   numPins: number
-) => {
+): Position[] => {
   if (numPins === 1) {
     return [
       {
@@ -27,11 +27,22 @@ export const computeInputPinsPosition = (
   const dy = lineEndPosition.y - lineStartPosition.y;
   const length = Math.sqrt(dx * dx + dy * dy);
   const increment = length / (numPins - 1);
-  const points = [];
+  const points: Position[] = [];
   for (let i = 0; i < numPins; i++) {
     const x = lineStartPosition.x + (dx * (i * increment)) / length;
     const y = lineStartPosition.y + (dy * (i * increment)) / length;
     points.push({ x, y });
   }
   return points;
+};
+
+export const computeIOPinPosition = (
+  chipPosition: Position,
+  chipSize: number,
+  isInput: boolean
+): Position => {
+  const position = isInput
+    ? chipPosition.x + chipSize
+    : chipPosition.x - chipSize;
+  return { x: position, y: chipPosition.y };
 };
