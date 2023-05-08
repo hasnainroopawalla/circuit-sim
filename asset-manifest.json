@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/circuit-sim/static/css/main.073c9b0a.css",
+    "main.js": "/circuit-sim/static/js/main.9de867c9.js",
+    "index.html": "/circuit-sim/index.html",
+    "main.073c9b0a.css.map": "/circuit-sim/static/css/main.073c9b0a.css.map",
+    "main.9de867c9.js.map": "/circuit-sim/static/js/main.9de867c9.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.073c9b0a.css",
+    "static/js/main.9de867c9.js"
+  ]
+}
