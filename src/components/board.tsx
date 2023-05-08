@@ -1,8 +1,5 @@
 import Sketch from "react-p5";
 import p5Types from "p5";
-import Chip from "./chip";
-import { State } from "../enums/state";
-import Pin from "./pin";
 import Circuit from "./circuit";
 
 var circuit: Circuit;
