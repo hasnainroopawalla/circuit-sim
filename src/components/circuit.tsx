@@ -1,17 +1,18 @@
 import { State } from "../enums/state";
 import { BasicGate } from "../models/basicGates";
 import Chip from "./chip";
-import IO from "./io";
+import IOChip from "./io";
 import Pin from "./pin";
 import Wire from "./wire";
 import p5Types from "p5";
 
 class Circuit {
   p5: p5Types;
-  inputs: IO[];
-  outputs: IO[];
+  inputs: IOChip[];
+  outputs: IOChip[];
   wires: Wire[];
   chips: Chip[];
+  wiringMode: boolean;
   basicGates: { [chip: string]: BasicGate };
 
   constructor(p5: p5Types) {
@@ -20,6 +21,7 @@ class Circuit {
     this.outputs = [];
     this.wires = [];
     this.chips = [];
+    this.wiringMode = false;
     this.basicGates = {
       AND: {
         inputPins: 2,
@@ -45,18 +47,18 @@ class Circuit {
     };
   }
 
-  getInputPin = (idx: number): IO => this.inputs[idx];
+  getInputPin = (idx: number): IOChip => this.inputs[idx];
 
-  getOutputPin = (idx: number): IO => this.outputs[idx];
+  getOutputPin = (idx: number): IOChip => this.outputs[idx];
 
   getChip = (idx: number): Chip => this.chips[idx];
 
   addInputPin(name: string) {
-    this.inputs.push(new IO(this.p5, name, true));
+    this.inputs.push(new IOChip(this.p5, name, true));
   }
 
   addOutputPin(name: string) {
-    this.outputs.push(new IO(this.p5, name, false));
+    this.outputs.push(new IOChip(this.p5, name, false));
   }
 
   addChip(chipName: string) {
@@ -89,9 +91,23 @@ class Circuit {
     for (let i = 0; i < this.inputs.length; i++) {
       this.inputs[i].mouseClicked();
     }
-    for (let i = 0; i < this.outputs.length; i++) {
-      this.outputs[i].mouseClicked();
+    for (let i = 0; i < this.chips.length; i++) {
+      this.chips[i].mouseClicked();
     }
+  }
+
+  mousePressed() {
+    // for (let i = 0; i < this.chips.length; i++) {
+    //   this.chips[i].render();
+    // }
+    console.log("press");
+  }
+
+  mouseReleased() {
+    // for (let i = 0; i < this.chips.length; i++) {
+    //   this.chips[i].render();
+    // }
+    console.log("release");
   }
 
   render() {

@@ -133,6 +133,15 @@ class Chip {
     // }
   }
 
+  mouseClicked() {
+    for (let i = 0; i < this.inputPins.length; i++) {
+      this.inputPins[i].mouseClicked();
+    }
+    for (let i = 0; i < this.outputPins.length; i++) {
+      this.outputPins[i].mouseClicked();
+    }
+  }
+
   render() {
     this.renderChip();
     this.renderText();

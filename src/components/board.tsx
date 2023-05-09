@@ -61,12 +61,27 @@ function Board() {
     // );
   };
 
-  // @ts-ignore
   const mouseClicked = () => {
     circuit.mouseClicked();
   };
 
-  return <Sketch setup={setup} draw={draw} mouseClicked={mouseClicked} />;
+  // const mousePressed = () => {
+  //   circuit.mousePressed();
+  // };
+
+  // const mouseReleased = () => {
+  //   circuit.mouseReleased();
+  // };
+
+  return (
+    <Sketch
+      setup={setup}
+      draw={draw}
+      mouseClicked={mouseClicked}
+      // mousePressed={mousePressed}
+      // mouseReleased={mouseReleased}
+    />
+  );
 }
 
 export default Board;

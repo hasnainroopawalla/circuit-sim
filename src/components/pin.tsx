@@ -1,7 +1,7 @@
 import { State } from "../enums/state";
 import Chip from "./chip";
 import Wire from "./wire";
-import IO from "./io";
+import IOChip from "./io";
 import p5Types from "p5";
 import { PinRenderOptions, Position } from "../models/renderOptions";
 
@@ -10,10 +10,11 @@ class Pin {
   name: string;
   state: State;
   outgoingWires: Wire[];
-  chip: Chip | IO;
+  chip: Chip | IOChip;
   options: PinRenderOptions;
+  wiringMode: boolean;
 
-  constructor(p5: p5Types, name: string, state: State, chip: Chip | IO) {
+  constructor(p5: p5Types, name: string, state: State, chip: Chip | IOChip) {
     this.p5 = p5;
     this.name = name;
     this.state = state;
@@ -27,6 +28,7 @@ class Pin {
       size: 10,
       color: 50,
     };
+    this.wiringMode = false;
   }
 
   private isMouseOver() {
@@ -51,6 +53,12 @@ class Pin {
     this.options.position = position;
   }
 
+  mouseClicked() {
+    if (this.isMouseOver()) {
+      this.wiringMode = true;
+    }
+  }
+
   render() {
     this.p5.fill(this.state === State.Off ? "red" : "green");
     this.p5.circle(
@@ -58,6 +66,16 @@ class Pin {
       this.options.position.y,
       this.options.size
     );
+    if (this.wiringMode) {
+      this.p5.strokeWeight(3);
+      this.p5.line(
+        this.options.position.x,
+        this.options.position.y,
+        this.p5.mouseX,
+        this.p5.mouseY
+      );
+    }
+    this.p5.strokeWeight(1);
   }
 }
 

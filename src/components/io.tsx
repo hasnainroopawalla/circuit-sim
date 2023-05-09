@@ -5,7 +5,7 @@ import Pin from "./pin";
 import Wire from "./wire";
 import p5Types from "p5";
 
-class IO {
+class IOChip {
   p5: p5Types;
   name: string;
   isInput: boolean;
@@ -97,4 +97,4 @@ class IO {
   }
 }
 
-export default IO;
+export default IOChip;
