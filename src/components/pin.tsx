@@ -12,7 +12,6 @@ class Pin {
   outgoingWires: Wire[];
   chip: Chip | IOChip;
   options: PinRenderOptions;
-  wiringMode: boolean;
 
   constructor(p5: p5Types, name: string, state: State, chip: Chip | IOChip) {
     this.p5 = p5;
@@ -28,7 +27,6 @@ class Pin {
       size: 10,
       color: 50,
     };
-    this.wiringMode = false;
   }
 
   private isMouseOver() {
@@ -54,9 +52,7 @@ class Pin {
   }
 
   mouseClicked() {
-    if (this.isMouseOver()) {
-      this.wiringMode = true;
-    }
+    return this.isMouseOver();
   }
 
   render() {
@@ -66,15 +62,6 @@ class Pin {
       this.options.position.y,
       this.options.size
     );
-    if (this.wiringMode) {
-      this.p5.strokeWeight(3);
-      this.p5.line(
-        this.options.position.x,
-        this.options.position.y,
-        this.p5.mouseX,
-        this.p5.mouseY
-      );
-    }
     this.p5.strokeWeight(1);
   }
 }

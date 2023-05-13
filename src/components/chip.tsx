@@ -32,7 +32,7 @@ class Chip {
     }
     for (let i = 0; i < numOutputPins; i++) {
       this.outputPins.push(
-        new Pin(p5, `${name}_OUTPUT_${this.inputPins.length}`, State.Off, this)
+        new Pin(p5, `${name}_OUTPUT_${this.outputPins.length}`, State.Off, this)
       );
     }
 
@@ -119,26 +119,25 @@ class Chip {
   getOutputPin = (idx: number) => this.outputPins[idx];
 
   execute() {
-    // console.log(
-    //   `${this.name} inputPins`,
-    //   this.inputPins.map((pin) => pin.state)
-    // );
     const outputStates = this.action(this.inputPins);
-    // console.log(`${this.name} outputStates`, outputStates);
     for (let i = 0; i < this.outputPins.length; i++) {
-      // if (this.outputPins[i].state !== outputStates[i]) {
       this.outputPins[i].state = outputStates[i];
       this.outputPins[i].propagate();
     }
-    // }
   }
 
   mouseClicked() {
+    // Input pins
     for (let i = 0; i < this.inputPins.length; i++) {
-      this.inputPins[i].mouseClicked();
+      if (this.inputPins[i].mouseClicked()) {
+        return this.inputPins[i];
+      }
     }
+    // Output pins
     for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].mouseClicked();
+      if (this.outputPins[i].mouseClicked()) {
+        return this.outputPins[i];
+      }
     }
   }
 

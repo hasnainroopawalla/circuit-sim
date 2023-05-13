@@ -1,5 +1,6 @@
 import { State } from "../enums/state";
 import { BasicGate } from "../models/basicGates";
+import { ICircuitState } from "../models/circuitState";
 import Chip from "./chip";
 import IOChip from "./io";
 import Pin from "./pin";
@@ -12,7 +13,7 @@ class Circuit {
   outputs: IOChip[];
   wires: Wire[];
   chips: Chip[];
-  wiringMode: boolean;
+  state: ICircuitState;
   basicGates: { [chip: string]: BasicGate };
 
   constructor(p5: p5Types) {
@@ -21,7 +22,7 @@ class Circuit {
     this.outputs = [];
     this.wires = [];
     this.chips = [];
-    this.wiringMode = false;
+    this.state = { wiringMode: { enabled: false } };
     this.basicGates = {
       AND: {
         inputPins: 2,
@@ -45,6 +46,61 @@ class Circuit {
         ],
       },
     };
+  }
+
+  private toggleWiringMode(pin: Pin) {
+    if (this.state.wiringMode.enabled && this.state.wiringMode.startPin) {
+      this.addWire(this.state.wiringMode.startPin, pin);
+      this.state.wiringMode = {
+        enabled: false,
+        startPin: undefined,
+        endPin: undefined,
+      };
+    } else {
+      this.state.wiringMode = {
+        enabled: true,
+        startPin: pin,
+      };
+    }
+  }
+
+  private renderWiringModeWire() {
+    this.p5.strokeWeight(3);
+    this.p5.line(
+      this.state.wiringMode.startPin!.options.position.x,
+      this.state.wiringMode.startPin!.options.position.y,
+      this.p5.mouseX,
+      this.p5.mouseY
+    );
+    this.p5.strokeWeight(1);
+  }
+
+  private renderIOChips() {
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.inputs[i].render();
+    }
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i].render();
+    }
+  }
+
+  private renderChips() {
+    for (let i = 0; i < this.chips.length; i++) {
+      this.chips[i].render();
+    }
+  }
+
+  private renderWires() {
+    for (let i = 0; i < this.wires.length; i++) {
+      this.p5.strokeWeight(3);
+      this.p5.line(
+        this.wires[i].startPin.options.position.x,
+        this.wires[i].startPin.options.position.y,
+        this.wires[i].endPin.options.position.x,
+        this.wires[i].endPin.options.position.y
+      );
+    }
+    this.p5.strokeWeight(1);
   }
 
   getInputPin = (idx: number): IOChip => this.inputs[idx];
@@ -72,7 +128,6 @@ class Circuit {
         basicGate.action
       )
     );
-    // this.chipPosition.x = this.chipPosition.x + 70;
   }
 
   addWire(startPin: Pin, endPin: Pin) {
@@ -88,37 +143,43 @@ class Circuit {
   }
 
   mouseClicked() {
+    // Input IOChips
     for (let i = 0; i < this.inputs.length; i++) {
-      this.inputs[i].mouseClicked();
+      const entity = this.inputs[i].mouseClicked();
+      if (entity instanceof Pin) {
+        this.toggleWiringMode(entity);
+      }
     }
+    // Output IOChips
+    for (let i = 0; i < this.outputs.length; i++) {
+      const entity = this.outputs[i].mouseClicked();
+      if (entity instanceof Pin) {
+        this.toggleWiringMode(entity);
+      }
+    }
+    // Chips
     for (let i = 0; i < this.chips.length; i++) {
-      this.chips[i].mouseClicked();
+      const entity = this.chips[i].mouseClicked();
+      if (entity instanceof Pin) {
+        this.toggleWiringMode(entity);
+      }
     }
   }
 
   mousePressed() {
-    // for (let i = 0; i < this.chips.length; i++) {
-    //   this.chips[i].render();
-    // }
     console.log("press");
   }
 
   mouseReleased() {
-    // for (let i = 0; i < this.chips.length; i++) {
-    //   this.chips[i].render();
-    // }
     console.log("release");
   }
 
   render() {
-    for (let i = 0; i < this.inputs.length; i++) {
-      this.inputs[i].render();
-    }
-    for (let i = 0; i < this.outputs.length; i++) {
-      this.outputs[i].render();
-    }
-    for (let i = 0; i < this.chips.length; i++) {
-      this.chips[i].render();
+    this.renderChips();
+    this.renderIOChips();
+    this.renderWires();
+    if (this.state.wiringMode.enabled) {
+      this.renderWiringModeWire();
     }
   }
 }

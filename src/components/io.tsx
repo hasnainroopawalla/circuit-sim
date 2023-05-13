@@ -94,6 +94,9 @@ class IOChip {
     if (this.isMouseOver() && this.isClickable()) {
       this.toggle();
     }
+    if (this.pin.mouseClicked()) {
+      return this.pin;
+    }
   }
 }
 
