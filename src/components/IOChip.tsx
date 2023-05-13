@@ -1,8 +1,8 @@
-import { State } from "../enums/state";
-import { IORenderOptions, Position } from "../models/renderOptions";
-import { computeIOPinPosition } from "../utils/position";
-import Pin from "./pin";
-import Wire from "./wire";
+import { State } from "../enums/State";
+import { IORenderOptions, Position } from "../models/RenderOptions";
+import { computeIOPinPosition } from "../utils/Position";
+import Pin from "./Pin";
+import Wire from "./Wire";
 import p5Types from "p5";
 
 class IOChip {
@@ -61,17 +61,6 @@ class IOChip {
     this.pin.render();
   }
 
-  private isMouseOver() {
-    return (
-      this.p5.dist(
-        this.p5.mouseX,
-        this.p5.mouseY,
-        this.options.position.x,
-        this.options.position.y
-      ) <= this.options.size
-    );
-  }
-
   private isClickable() {
     return this.isInput;
   }
@@ -97,6 +86,24 @@ class IOChip {
     if (this.pin.mouseClicked()) {
       return this.pin;
     }
+  }
+
+  isMouseOver() {
+    return (
+      this.p5.dist(
+        this.p5.mouseX,
+        this.p5.mouseY,
+        this.options.position.x,
+        this.options.position.y
+      ) <= this.options.size
+    );
+  }
+
+  mouseDragged() {
+    this.options.position = {
+      x: this.p5.mouseX,
+      y: this.p5.mouseY,
+    };
   }
 }
 

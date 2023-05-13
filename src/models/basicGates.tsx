@@ -1,5 +1,5 @@
-import Pin from "../components/pin";
-import { State } from "../enums/state";
+import Pin from "../components/Pin";
+import { State } from "../enums/State";
 
 export interface BasicGate {
   inputPins: number;

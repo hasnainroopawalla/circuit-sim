@@ -1,6 +1,6 @@
 import Sketch from "react-p5";
 import p5Types from "p5";
-import Circuit from "./circuit";
+import Circuit from "./Circuit";
 
 var circuit: Circuit;
 
@@ -33,21 +33,21 @@ function Board() {
     circuit.mouseClicked();
   };
 
-  // const mousePressed = () => {
-  //   circuit.mousePressed();
-  // };
+  const mouseDragged = () => {
+    circuit.mouseDragged();
+  };
 
-  // const mouseReleased = () => {
-  //   circuit.mouseReleased();
-  // };
+  const mouseReleased = () => {
+    circuit.mouseReleased();
+  };
 
   return (
     <Sketch
       setup={setup}
       draw={draw}
       mouseClicked={mouseClicked}
-      // mousePressed={mousePressed}
-      // mouseReleased={mouseReleased}
+      mouseDragged={mouseDragged}
+      mouseReleased={mouseReleased}
     />
   );
 }

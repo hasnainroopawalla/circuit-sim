@@ -1,10 +1,10 @@
-import { State } from "../enums/state";
-import { BasicGate } from "../models/basicGates";
-import { ICircuitState } from "../models/circuitState";
-import Chip from "./chip";
-import IOChip from "./io";
-import Pin from "./pin";
-import Wire from "./wire";
+import { State } from "../enums/State";
+import { BasicGate } from "../models/BasicGates";
+import { CircuitState } from "../models/CircuitState";
+import Chip from "./Chip";
+import IOChip from "./IOChip";
+import Pin from "./Pin";
+import Wire from "./Wire";
 import p5Types from "p5";
 
 class Circuit {
@@ -13,7 +13,7 @@ class Circuit {
   outputs: IOChip[];
   wires: Wire[];
   chips: Chip[];
-  state: ICircuitState;
+  state: CircuitState;
   basicGates: { [chip: string]: BasicGate };
 
   constructor(p5: p5Types) {
@@ -22,7 +22,10 @@ class Circuit {
     this.outputs = [];
     this.wires = [];
     this.chips = [];
-    this.state = { wiringMode: { enabled: false } };
+    this.state = {
+      wiringMode: { enabled: false },
+      draggingMode: { enabled: false },
+    };
     this.basicGates = {
       AND: {
         inputPins: 2,
@@ -92,15 +95,8 @@ class Circuit {
 
   private renderWires() {
     for (let i = 0; i < this.wires.length; i++) {
-      this.p5.strokeWeight(3);
-      this.p5.line(
-        this.wires[i].startPin.options.position.x,
-        this.wires[i].startPin.options.position.y,
-        this.wires[i].endPin.options.position.x,
-        this.wires[i].endPin.options.position.y
-      );
+      this.wires[i].render();
     }
-    this.p5.strokeWeight(1);
   }
 
   getInputPin = (idx: number): IOChip => this.inputs[idx];
@@ -131,7 +127,7 @@ class Circuit {
   }
 
   addWire(startPin: Pin, endPin: Pin) {
-    const wire = new Wire(startPin, endPin);
+    const wire = new Wire(this.p5, startPin, endPin);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
   }
@@ -143,6 +139,10 @@ class Circuit {
   }
 
   mouseClicked() {
+    // TODO: Fix duplication in loops
+    if (this.state.draggingMode.enabled === true) {
+      return;
+    }
     // Input IOChips
     for (let i = 0; i < this.inputs.length; i++) {
       const entity = this.inputs[i].mouseClicked();
@@ -166,12 +166,57 @@ class Circuit {
     }
   }
 
-  mousePressed() {
-    console.log("press");
+  mouseDragged() {
+    // TODO: Fix duplication in loops
+    if (this.state.wiringMode.enabled === true) {
+      return;
+    }
+    // Input IOChips
+    for (let i = 0; i < this.inputs.length; i++) {
+      if (
+        this.inputs[i].isMouseOver() &&
+        this.state.draggingMode.enabled === false
+      ) {
+        this.state.draggingMode = {
+          enabled: true,
+          chip: this.inputs[i],
+        };
+      }
+    }
+    // Output IOChips
+    for (let i = 0; i < this.outputs.length; i++) {
+      if (
+        this.outputs[i].isMouseOver() &&
+        this.state.draggingMode.enabled === false
+      ) {
+        this.state.draggingMode = {
+          enabled: true,
+          chip: this.outputs[i],
+        };
+      }
+    }
+    // Chips
+    for (let i = 0; i < this.chips.length; i++) {
+      if (
+        this.chips[i].isMouseOver() &&
+        this.state.draggingMode.enabled === false
+      ) {
+        this.state.draggingMode = {
+          enabled: true,
+          chip: this.chips[i],
+        };
+      }
+    }
+    if (this.state.draggingMode.enabled && this.state.draggingMode.chip) {
+      this.state.draggingMode.chip.mouseDragged();
+    }
   }
 
   mouseReleased() {
-    console.log("release");
+    this.state.draggingMode = {
+      enabled: false,
+      chip: undefined,
+    };
   }
 
   render() {

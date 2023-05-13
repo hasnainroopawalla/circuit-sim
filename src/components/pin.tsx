@@ -1,9 +1,9 @@
-import { State } from "../enums/state";
-import Chip from "./chip";
-import Wire from "./wire";
-import IOChip from "./io";
+import { State } from "../enums/State";
+import Chip from "./Chip";
+import Wire from "./Wire";
+import IOChip from "./IOChip";
 import p5Types from "p5";
-import { PinRenderOptions, Position } from "../models/renderOptions";
+import { PinRenderOptions, Position } from "../models/RenderOptions";
 
 class Pin {
   p5: p5Types;

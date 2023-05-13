@@ -1,4 +1,4 @@
-import { Position, Size } from "../models/renderOptions";
+import { Position, Size } from "../models/RenderOptions";
 
 export const computeChipTextPosition = (
   chipPosition: Position,

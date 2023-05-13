@@ -1,10 +1,10 @@
-import { State } from "../enums/state";
-import { ChipRenderOptions, Position, Size } from "../models/renderOptions";
+import { State } from "../enums/State";
+import { ChipRenderOptions, Position, Size } from "../models/RenderOptions";
 import {
   computeChipTextPosition,
   computeInputPinsPosition,
-} from "../utils/position";
-import Pin from "./pin";
+} from "../utils/Position";
+import Pin from "./Pin";
 import p5Types from "p5";
 
 class Chip {
@@ -114,6 +114,15 @@ class Chip {
     );
   }
 
+  isMouseOver() {
+    return (
+      this.p5.mouseX >= this.options.position.x &&
+      this.p5.mouseX <= this.options.position.x + this.options.size.w &&
+      this.p5.mouseY >= this.options.position.y &&
+      this.p5.mouseY <= this.options.position.y + this.options.size.h
+    );
+  }
+
   getInputPin = (idx: number) => this.inputPins[idx];
 
   getOutputPin = (idx: number) => this.outputPins[idx];
@@ -139,6 +148,13 @@ class Chip {
         return this.outputPins[i];
       }
     }
+  }
+
+  mouseDragged() {
+    this.options.position = {
+      x: this.p5.mouseX - this.options.size.w / 2,
+      y: this.p5.mouseY - this.options.size.h / 2,
+    };
   }
 
   render() {
