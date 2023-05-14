@@ -27,12 +27,24 @@ class Chip {
     this.action = action;
     for (let i = 0; i < numInputPins; i++) {
       this.inputPins.push(
-        new Pin(p5, `${name}_INPUT_${this.inputPins.length}`, State.Off, this)
+        new Pin(
+          p5,
+          `${name}_INPUT_${this.inputPins.length}`,
+          State.Off,
+          true,
+          this
+        )
       );
     }
     for (let i = 0; i < numOutputPins; i++) {
       this.outputPins.push(
-        new Pin(p5, `${name}_OUTPUT_${this.outputPins.length}`, State.Off, this)
+        new Pin(
+          p5,
+          `${name}_OUTPUT_${this.outputPins.length}`,
+          State.Off,
+          false,
+          this
+        )
       );
     }
 
@@ -122,10 +134,6 @@ class Chip {
       this.p5.mouseY <= this.options.position.y + this.options.size.h
     );
   }
-
-  getInputPin = (idx: number) => this.inputPins[idx];
-
-  getOutputPin = (idx: number) => this.outputPins[idx];
 
   execute() {
     const outputStates = this.action(this.inputPins);

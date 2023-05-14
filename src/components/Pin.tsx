@@ -9,14 +9,22 @@ class Pin {
   p5: p5Types;
   name: string;
   state: State;
+  isInput: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
   options: PinRenderOptions;
 
-  constructor(p5: p5Types, name: string, state: State, chip: Chip | IOChip) {
+  constructor(
+    p5: p5Types,
+    name: string,
+    state: State,
+    isInput: boolean,
+    chip: Chip | IOChip
+  ) {
     this.p5 = p5;
     this.name = name;
     this.state = state;
+    this.isInput = isInput;
     this.outgoingWires = [];
     this.chip = chip;
     this.options = {
@@ -56,7 +64,7 @@ class Pin {
   }
 
   render() {
-    this.p5.fill(this.state === State.Off ? "red" : "green");
+    this.p5.fill(this.state === State.Off ? "grey" : "grey");
     this.p5.circle(
       this.options.position.x,
       this.options.position.y,

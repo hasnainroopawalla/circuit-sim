@@ -17,7 +17,7 @@ class IOChip {
     this.p5 = p5;
     this.name = name;
     this.isInput = isInput;
-    this.pin = new Pin(p5, name, State.Off, this);
+    this.pin = new Pin(p5, name, State.Off, !isInput, this);
     this.outgoingWires = [];
     const position: Position = {
       x: Math.random() * 250,
@@ -38,7 +38,7 @@ class IOChip {
     );
   }
 
-  private renderWire() {
+  private renderInnerWire() {
     this.p5.line(
       this.isInput
         ? this.options.position.x + this.options.size / 2
@@ -61,10 +61,6 @@ class IOChip {
     this.pin.render();
   }
 
-  private isClickable() {
-    return this.isInput;
-  }
-
   toggle() {
     this.pin.state = this.pin.state === State.Off ? State.On : State.Off;
   }
@@ -75,12 +71,12 @@ class IOChip {
 
   render() {
     this.renderChip();
-    this.renderWire();
+    this.renderInnerWire();
     this.renderPin();
   }
 
   mouseClicked() {
-    if (this.isMouseOver() && this.isClickable()) {
+    if (this.isMouseOver() && this.isInput) {
       this.toggle();
     }
     if (this.pin.mouseClicked()) {

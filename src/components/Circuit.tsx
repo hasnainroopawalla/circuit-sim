@@ -53,7 +53,10 @@ class Circuit {
 
   private toggleWiringMode(pin: Pin) {
     if (this.state.wiringMode.enabled && this.state.wiringMode.startPin) {
-      this.addWire(this.state.wiringMode.startPin, pin);
+      // A wire is not allowed to start and end on the same chip
+      if (this.state.wiringMode.startPin.chip !== pin.chip) {
+        this.addWire(this.state.wiringMode.startPin, pin);
+      }
       this.state.wiringMode = {
         enabled: false,
         startPin: undefined,
@@ -99,12 +102,6 @@ class Circuit {
     }
   }
 
-  getInputPin = (idx: number): IOChip => this.inputs[idx];
-
-  getOutputPin = (idx: number): IOChip => this.outputs[idx];
-
-  getChip = (idx: number): Chip => this.chips[idx];
-
   addInputPin(name: string) {
     this.inputs.push(new IOChip(this.p5, name, true));
   }
@@ -127,6 +124,10 @@ class Circuit {
   }
 
   addWire(startPin: Pin, endPin: Pin) {
+    // Enforce that the startPin of the wire is an output pin
+    if (startPin.isInput) {
+      [startPin, endPin] = [endPin, startPin];
+    }
     const wire = new Wire(this.p5, startPin, endPin);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
