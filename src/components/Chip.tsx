@@ -1,3 +1,4 @@
+import config from "../config";
 import { State } from "../enums/State";
 import { ChipRenderOptions, Position, Size } from "../models/RenderOptions";
 import {
@@ -53,17 +54,17 @@ class Chip {
       y: Math.random() * 250,
     };
     const size: Size = {
-      w: this.p5.textWidth(this.name) + 30,
-      h: Math.max(numInputPins, numOutputPins) * 30,
+      w: this.p5.textWidth(this.name) + config.component.chip.size.w,
+      h: Math.max(numInputPins, numOutputPins) * config.component.chip.size.h,
     };
 
     this.options = {
       position,
       size,
       textPosition: computeChipTextPosition(position, size),
-      textSize: 12,
-      color: 10,
-      textColor: 200,
+      textSize: config.component.chip.text.size,
+      color: config.component.chip.color.andChip,
+      textColor: config.component.chip.text.color,
     };
   }
 
@@ -119,10 +120,7 @@ class Chip {
       this.options.position.y,
       this.options.size.w,
       this.options.size.h,
-      5,
-      5,
-      5,
-      5
+      config.component.chip.size.cornerRadius
     );
   }
 

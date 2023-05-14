@@ -11,8 +11,8 @@ export interface Size {
 export interface ChipRenderOptions {
   position: Position;
   size: Size;
-  color: number;
-  textColor: number;
+  color: string;
+  textColor: string;
   textPosition: Position;
   textSize: number;
 }
@@ -20,7 +20,7 @@ export interface ChipRenderOptions {
 export interface PinRenderOptions {
   position: Position;
   size: number;
-  color: number;
+  color: string;
 }
 
 export interface IORenderOptions {

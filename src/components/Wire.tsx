@@ -1,3 +1,4 @@
+import config from "../config";
 import { State } from "../enums/State";
 import Pin from "./Pin";
 import p5Types from "p5";
@@ -22,16 +23,18 @@ class Wire {
   }
 
   render() {
-    this.p5.strokeWeight(3);
-    this.p5.stroke(this.state === State.Off ? "red" : "green");
+    this.p5.strokeWeight(config.component.wire.strokeWeight);
+    this.p5.stroke(
+      this.state === State.Off
+        ? config.component.wire.color.stateOff
+        : config.component.wire.color.stateOn
+    );
     this.p5.line(
       this.startPin.options.position.x,
       this.startPin.options.position.y,
       this.endPin.options.position.x,
       this.endPin.options.position.y
     );
-    this.p5.strokeWeight(1);
-    this.p5.stroke("black");
   }
 }
 

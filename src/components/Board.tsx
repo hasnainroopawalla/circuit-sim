@@ -1,6 +1,7 @@
 import Sketch from "react-p5";
 import p5Types from "p5";
 import Circuit from "./Circuit";
+import config from "../config";
 
 var circuit: Circuit;
 
@@ -24,7 +25,7 @@ function Board() {
   };
 
   const draw = (p5: p5Types) => {
-    p5.background(255);
+    p5.background(config.document.color.background);
     circuit.execute();
     circuit.render();
   };

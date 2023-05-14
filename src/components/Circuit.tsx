@@ -6,6 +6,7 @@ import IOChip from "./IOChip";
 import Pin from "./Pin";
 import Wire from "./Wire";
 import p5Types from "p5";
+import config from "../config";
 
 class Circuit {
   p5: p5Types;
@@ -26,6 +27,7 @@ class Circuit {
       wiringMode: { enabled: false },
       draggingMode: { enabled: false },
     };
+    // TODO: Improve definition of basic gates
     this.basicGates = {
       AND: {
         inputPins: 2,
@@ -71,14 +73,14 @@ class Circuit {
   }
 
   private renderWiringModeWire() {
-    this.p5.strokeWeight(3);
+    this.p5.strokeWeight(config.component.wire.strokeWeight);
+    this.p5.stroke(config.component.wire.color.stateOff);
     this.p5.line(
       this.state.wiringMode.startPin!.options.position.x,
       this.state.wiringMode.startPin!.options.position.y,
       this.p5.mouseX,
       this.p5.mouseY
     );
-    this.p5.strokeWeight(1);
   }
 
   private renderIOChips() {
@@ -221,6 +223,8 @@ class Circuit {
   }
 
   render() {
+    this.p5.stroke(config.document.color.background);
+    this.p5.strokeWeight(config.document.strokeWeight);
     this.renderChips();
     this.renderIOChips();
     this.renderWires();

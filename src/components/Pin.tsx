@@ -4,6 +4,7 @@ import Wire from "./Wire";
 import IOChip from "./IOChip";
 import p5Types from "p5";
 import { PinRenderOptions, Position } from "../models/RenderOptions";
+import config from "../config";
 
 class Pin {
   p5: p5Types;
@@ -29,11 +30,11 @@ class Pin {
     this.chip = chip;
     this.options = {
       position: {
-        x: 150,
-        y: 160,
+        x: 0,
+        y: 0,
       },
-      size: 10,
-      color: 50,
+      size: config.component.pin.size,
+      color: config.component.pin.color,
     };
   }
 
@@ -45,7 +46,7 @@ class Pin {
         this.options.position.x,
         this.options.position.y
       ) <=
-      this.options.size + 10
+      this.options.size + config.component.pin.mouse.hitRange
     );
   }
 
@@ -64,13 +65,12 @@ class Pin {
   }
 
   render() {
-    this.p5.fill(this.state === State.Off ? "grey" : "grey");
+    this.p5.fill(config.component.pin.color);
     this.p5.circle(
       this.options.position.x,
       this.options.position.y,
       this.options.size
     );
-    this.p5.strokeWeight(1);
   }
 }
 
