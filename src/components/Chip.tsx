@@ -55,14 +55,16 @@ class Chip {
     };
     const size: Size = {
       w: this.p5.textWidth(this.name) + config.component.chip.size.w,
-      h: Math.max(numInputPins, numOutputPins) * config.component.chip.size.h,
+      h:
+        Math.max(numInputPins, numOutputPins) * config.component.pin.size +
+        config.component.chip.size.pinSpacing,
     };
 
     this.options = {
       position,
       size,
       textPosition: computeChipTextPosition(position, size),
-      textSize: config.component.chip.text.size,
+      textSize: config.component.chip.size.w / 2,
       color: config.component.chip.color.andChip,
       textColor: config.component.chip.text.color,
     };

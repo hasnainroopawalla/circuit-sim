@@ -15,7 +15,7 @@ const config = {
       },
       size: {
         w: 30,
-        h: 30,
+        pinSpacing: 20,
         cornerRadius: 7,
       },
       text: {
@@ -27,9 +27,9 @@ const config = {
     iOChip: {},
     pin: {
       color: "#121212",
-      size: 10,
+      size: 15,
       mouse: {
-        hitRange: 10,
+        hitRange: 0,
       },
     },
     wire: {

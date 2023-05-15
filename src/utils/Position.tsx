@@ -25,12 +25,15 @@ export const computeInputPinsPosition = (
   }
   const dx = lineEndPosition.x - lineStartPosition.x;
   const dy = lineEndPosition.y - lineStartPosition.y;
-  const length = Math.sqrt(dx * dx + dy * dy);
-  const increment = length / (numPins - 1);
+  var distance = Math.sqrt(dx * dx + dy * dy);
+  const unitX = dx / distance;
+  const unitY = dy / distance;
+  const increment = distance / (numPins + 1);
   const points: Position[] = [];
-  for (let i = 0; i < numPins; i++) {
-    const x = lineStartPosition.x + (dx * (i * increment)) / length;
-    const y = lineStartPosition.y + (dy * (i * increment)) / length;
+
+  for (let i = 1; i <= numPins; i++) {
+    var x = lineStartPosition.x + unitX * i * increment;
+    var y = lineStartPosition.y + unitY * i * increment;
     points.push({ x, y });
   }
   return points;
