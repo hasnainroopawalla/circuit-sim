@@ -53,12 +53,16 @@ class Chip {
       x: Math.random() * 250,
       y: Math.random() * 250,
     };
+    // console.log(this.name, this.p5.textSize(25), config.component.chip.size.w);
     const size: Size = {
-      w: this.p5.textWidth(this.name) + config.component.chip.size.w,
+      w:
+        (this.name.length * config.component.chip.size.w) / 5 +
+        config.component.chip.size.w,
       h:
         Math.max(numInputPins, numOutputPins) * config.component.pin.size +
-        config.component.chip.size.pinSpacing,
+        config.component.chip.size.w / 2,
     };
+    console.log(size);
 
     this.options = {
       position,
@@ -101,6 +105,7 @@ class Chip {
   }
 
   private renderText() {
+    this.p5.textStyle(this.p5.BOLD);
     this.options.textPosition = computeChipTextPosition(
       this.options.position,
       this.options.size

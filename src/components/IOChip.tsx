@@ -1,3 +1,4 @@
+import config from "../config";
 import { State } from "../enums/State";
 import { IORenderOptions, Position } from "../models/RenderOptions";
 import { computeIOPinPosition } from "../utils/Position";
@@ -30,7 +31,11 @@ class IOChip {
   }
 
   private renderChip() {
-    this.p5.fill(this.pin.state === State.Off ? "red" : "green");
+    this.p5.fill(
+      this.pin.state === State.Off
+        ? config.component.iOChip.color.stateOff
+        : config.component.iOChip.color.stateOn
+    );
     this.p5.circle(
       this.options.position.x,
       this.options.position.y,
@@ -39,6 +44,8 @@ class IOChip {
   }
 
   private renderInnerWire() {
+    this.p5.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
+    this.p5.stroke(config.component.iOChip.innerWire.color);
     this.p5.line(
       this.isInput
         ? this.options.position.x + this.options.size / 2
@@ -49,6 +56,7 @@ class IOChip {
         : this.options.position.x - this.options.size,
       this.options.position.y
     );
+    this.p5.strokeWeight(config.document.strokeWeight);
   }
 
   private renderPin() {
@@ -71,8 +79,8 @@ class IOChip {
 
   render() {
     this.renderChip();
-    this.renderInnerWire();
     this.renderPin();
+    this.renderInnerWire();
   }
 
   mouseClicked() {

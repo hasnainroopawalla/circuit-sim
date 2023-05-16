@@ -14,17 +14,24 @@ const config = {
         chipName: "",
       },
       size: {
-        w: 30,
-        pinSpacing: 20,
-        cornerRadius: 7,
+        w: 50,
+        cornerRadius: 5,
       },
       text: {
-        size: 30,
         color: "#FFFFFF",
         font: "Helvetica",
       },
     },
-    iOChip: {},
+    iOChip: {
+      color: {
+        stateOff: "#152C40",
+        stateOn: "#3083DC",
+      },
+      innerWire: {
+        color: "#121212",
+        strokeWeight: 2,
+      },
+    },
     pin: {
       color: "#121212",
       size: 15,
