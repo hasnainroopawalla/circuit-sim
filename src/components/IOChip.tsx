@@ -14,19 +14,15 @@ class IOChip {
   outgoingWires: Wire[];
   options: IORenderOptions;
 
-  constructor(p5: p5Types, name: string, isInput: boolean) {
+  constructor(p5: p5Types, name: string, isInput: boolean, position: Position) {
     this.p5 = p5;
     this.name = name;
     this.isInput = isInput;
     this.pin = new Pin(p5, name, State.Off, !isInput, this);
     this.outgoingWires = [];
-    const position: Position = {
-      x: Math.random() * 250,
-      y: Math.random() * 250,
-    };
     this.options = {
       position,
-      size: 30,
+      size: config.component.iOChip.size,
     };
   }
 
@@ -44,7 +40,6 @@ class IOChip {
   }
 
   private renderInnerWire() {
-    this.p5.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
     this.p5.stroke(config.component.iOChip.innerWire.color);
     this.p5.line(
       this.isInput
@@ -56,7 +51,6 @@ class IOChip {
         : this.options.position.x - this.options.size,
       this.options.position.y
     );
-    this.p5.strokeWeight(config.document.strokeWeight);
   }
 
   private renderPin() {
@@ -78,9 +72,10 @@ class IOChip {
   }
 
   render() {
+    this.renderInnerWire();
+
     this.renderChip();
     this.renderPin();
-    this.renderInnerWire();
   }
 
   mouseClicked() {
@@ -99,7 +94,8 @@ class IOChip {
         this.p5.mouseY,
         this.options.position.x,
         this.options.position.y
-      ) <= this.options.size
+      ) <=
+      this.options.size / 2
     );
   }
 

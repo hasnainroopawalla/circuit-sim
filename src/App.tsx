@@ -1,11 +1,11 @@
 import "./App.css";
-import Board from "./components/Board";
+import Simulator from "./components/Simulator";
 
 function App() {
   return (
     <>
       <div className="App">
-        <Board />
+        <Simulator />
       </div>
     </>
   );

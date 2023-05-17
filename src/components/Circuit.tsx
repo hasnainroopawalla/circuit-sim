@@ -7,6 +7,7 @@ import Pin from "./Pin";
 import Wire from "./Wire";
 import p5Types from "p5";
 import config from "../config";
+import { CircuitRenderOptions, Position } from "../models/RenderOptions";
 
 class Circuit {
   p5: p5Types;
@@ -15,9 +16,10 @@ class Circuit {
   wires: Wire[];
   chips: Chip[];
   state: CircuitState;
+  options: CircuitRenderOptions;
   basicGates: { [chip: string]: BasicGate };
 
-  constructor(p5: p5Types) {
+  constructor(p5: p5Types, options: CircuitRenderOptions) {
     this.p5 = p5;
     this.inputs = [];
     this.outputs = [];
@@ -27,6 +29,7 @@ class Circuit {
       wiringMode: { enabled: false },
       draggingMode: { enabled: false },
     };
+    this.options = options;
     // TODO: Improve definition of basic gates
     this.basicGates = {
       AND: {
@@ -104,12 +107,55 @@ class Circuit {
     }
   }
 
-  addInputPin(name: string) {
-    this.inputs.push(new IOChip(this.p5, name, true));
+  private renderCircuit() {
+    this.p5.fill("#525151");
+    this.p5.rect(
+      this.options.position.x,
+      this.options.position.y,
+      this.options.size.w,
+      this.options.size.h
+    );
   }
 
-  addOutputPin(name: string) {
-    this.outputs.push(new IOChip(this.p5, name, false));
+  /*
+  Checks if the current mouse position is over any of the specified entities
+  */
+  private isMouseOverlapping(entities: IOChip[]) {
+    for (let i = 0; i < entities.length; i++) {
+      if (this.inputs[i].isMouseOver()) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkSpawnIOChip() {
+    // Input
+    if (
+      this.p5.mouseX >= this.options.position.x - 10 &&
+      this.p5.mouseX <= this.options.position.x + 10 &&
+      !this.isMouseOverlapping(this.inputs)
+    ) {
+      this.inputs.push(
+        new IOChip(this.p5, `Input_${this.inputs.length}`, true, {
+          x: this.options.position.x,
+          y: this.p5.mouseY,
+        })
+      );
+    }
+    // Output
+    if (
+      this.p5.mouseX >= this.options.position.x + this.options.size.w - 10 &&
+      this.p5.mouseX <= this.options.position.x + this.options.size.w + 10 &&
+      !this.isMouseOverlapping(this.outputs)
+    ) {
+      this.outputs.push(
+        new IOChip(this.p5, `Output_${this.inputs.length}`, false, {
+          x: this.options.position.x + this.options.size.w,
+          y: this.p5.mouseY,
+        })
+      );
+    }
   }
 
   addChip(chipName: string) {
@@ -167,6 +213,9 @@ class Circuit {
         this.toggleWiringMode(entity);
       }
     }
+
+    // UX
+    this.checkSpawnIOChip();
   }
 
   mouseDragged() {
@@ -222,9 +271,12 @@ class Circuit {
     };
   }
 
+  mouseMoved() {}
+
   render() {
-    this.p5.stroke(config.document.color.background);
+    this.p5.stroke("#525151");
     this.p5.strokeWeight(config.document.strokeWeight);
+    this.renderCircuit();
     this.renderChips();
     this.renderIOChips();
     this.renderWires();

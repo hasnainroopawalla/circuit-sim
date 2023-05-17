@@ -3,9 +3,14 @@ const config = {
     color: {
       background: "#3D3D3D",
     },
-    strokeWeight: 0,
+    strokeWeight: 2,
   },
   component: {
+    circuit: {
+      // TODO: Change name
+      widthScale: 50,
+      background: "grey",
+    },
     chip: {
       color: {
         andChip: "#FC60A8",
@@ -23,6 +28,7 @@ const config = {
       },
     },
     iOChip: {
+      size: 30,
       color: {
         stateOff: "#152C40",
         stateOn: "#3083DC",

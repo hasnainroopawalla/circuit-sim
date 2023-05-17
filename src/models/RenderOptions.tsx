@@ -27,3 +27,8 @@ export interface IORenderOptions {
   position: Position;
   size: number;
 }
+
+export interface CircuitRenderOptions {
+  position: Position;
+  size: Size;
+}
