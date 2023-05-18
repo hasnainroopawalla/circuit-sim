@@ -32,3 +32,9 @@ export interface CircuitRenderOptions {
   position: Position;
   size: Size;
 }
+
+export interface ButtonOptions {
+  position: Position;
+  size: Size;
+  color: string;
+}

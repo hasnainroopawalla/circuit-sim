@@ -3,8 +3,9 @@ import p5Types from "p5";
 import Circuit from "./Circuit";
 import config from "../config";
 import { Position, Size } from "../models/RenderOptions";
+import Board from "./Board";
 
-var circuit: Circuit;
+var board: Board;
 
 // TODO: Rename Board to Sketch or Simulator
 function Simulator() {
@@ -19,16 +20,19 @@ function Simulator() {
       w: p5.windowWidth - config.component.circuit.widthScale * 2,
       h: p5.windowHeight - config.component.circuit.widthScale * 2,
     };
-    circuit = new Circuit(p5, {
+
+    const circuit = new Circuit(p5, {
       position: boardStartPosition,
       size: boardSize,
     });
-    const buttonAnd = p5.createButton("AND");
-    buttonAnd.position(0, 0);
-    buttonAnd.mousePressed(() => circuit.addChip("AND"));
-    const buttonNOT = p5.createButton("NOT");
-    buttonNOT.position(0, 20);
-    buttonNOT.mousePressed(() => circuit.addChip("NOT"));
+    board = new Board(p5, circuit);
+
+    // const buttonAnd = p5.createButton("AND");
+    // buttonAnd.position(0, 0);
+    // buttonAnd.mousePressed(() => circuit.addChip("AND"));
+    // const buttonNOT = p5.createButton("NOT");
+    // buttonNOT.position(0, 20);
+    // buttonNOT.mousePressed(() => circuit.addChip("NOT"));
     // const buttonInput = p5.createButton("Input");
     // buttonInput.position(0, 40);
     // buttonInput.mousePressed(() => circuit.addInputPin("Output_0"));
@@ -39,25 +43,14 @@ function Simulator() {
 
   const draw = (p5: p5Types) => {
     p5.background(config.document.color.background);
-    // renderButtons(p5);
-    circuit.execute();
-    circuit.render();
+    board.render();
   };
 
-  const renderButtons = (p5: p5Types) => {
-    Object.keys(circuit.basicGates).map((basicGate) => {
-      p5.fill("blue");
-      p5.rect(10, p5.windowHeight - 40, 50, 30);
-    });
-  };
+  const mouseClicked = () => board.mouseClicked();
 
-  const mouseClicked = () => circuit.mouseClicked();
+  const mouseDragged = () => board.mouseDragged();
 
-  const mouseDragged = () => circuit.mouseDragged();
-
-  const mouseReleased = () => circuit.mouseReleased();
-
-  const mouseMoved = () => circuit.mouseMoved();
+  const mouseReleased = () => board.mouseReleased();
 
   return (
     <Sketch
@@ -66,7 +59,6 @@ function Simulator() {
       mouseClicked={mouseClicked}
       mouseDragged={mouseDragged}
       mouseReleased={mouseReleased}
-      mouseMoved={mouseMoved}
     />
   );
 }

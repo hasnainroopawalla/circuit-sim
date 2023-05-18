@@ -1,5 +1,3 @@
-import { State } from "../enums/State";
-import { BasicGate } from "../models/BasicGates";
 import { CircuitState } from "../models/CircuitState";
 import Chip from "./Chip";
 import IOChip from "./IOChip";
@@ -8,6 +6,7 @@ import Wire from "./Wire";
 import p5Types from "p5";
 import config from "../config";
 import { CircuitRenderOptions } from "../models/RenderOptions";
+import { basicGates } from "./BasicGates";
 
 class Circuit {
   p5: p5Types;
@@ -17,7 +16,6 @@ class Circuit {
   chips: Chip[];
   state: CircuitState;
   options: CircuitRenderOptions;
-  basicGates: { [chip: string]: BasicGate };
 
   constructor(p5: p5Types, options: CircuitRenderOptions) {
     this.p5 = p5;
@@ -31,29 +29,6 @@ class Circuit {
     };
     this.options = options;
     // TODO: Improve definition of basic gates
-    this.basicGates = {
-      AND: {
-        inputPins: 2,
-        outputPins: 1,
-        action: (inputPins: Pin[]) => [
-          inputPins[0].state && inputPins[1].state,
-        ],
-      },
-      OR: {
-        inputPins: 2,
-        outputPins: 1,
-        action: (inputPins: Pin[]) => [
-          inputPins[0].state || inputPins[1].state,
-        ],
-      },
-      NOT: {
-        inputPins: 1,
-        outputPins: 1,
-        action: (inputPins: Pin[]) => [
-          inputPins[0].state === State.On ? State.Off : State.On,
-        ],
-      },
-    };
   }
 
   private toggleWiringMode(pin: Pin) {
@@ -158,18 +133,18 @@ class Circuit {
     }
   }
 
-  addChip(chipName: string) {
-    const basicGate = this.basicGates[chipName];
-    this.chips.push(
-      new Chip(
-        this.p5,
-        chipName,
-        basicGate.inputPins,
-        basicGate.outputPins,
-        basicGate.action
-      )
-    );
-  }
+  // addChip(chipName: string) {
+  //   const basicGate = basicGates[chipName];
+  //   this.chips.push(
+  //     new Chip(
+  //       this.p5,
+  //       chipName,
+  //       basicGate.inputPins,
+  //       basicGate.outputPins,
+  //       basicGate.action
+  //     )
+  //   );
+  // }
 
   addWire(startPin: Pin, endPin: Pin) {
     // Enforce that the startPin of the wire is an output pin
