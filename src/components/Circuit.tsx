@@ -7,7 +7,7 @@ import Pin from "./Pin";
 import Wire from "./Wire";
 import p5Types from "p5";
 import config from "../config";
-import { CircuitRenderOptions, Position } from "../models/RenderOptions";
+import { CircuitRenderOptions } from "../models/RenderOptions";
 
 class Circuit {
   p5: p5Types;
@@ -108,7 +108,7 @@ class Circuit {
   }
 
   private renderCircuit() {
-    this.p5.fill("#525151");
+    this.p5.fill(config.component.circuit.background);
     this.p5.rect(
       this.options.position.x,
       this.options.position.y,
@@ -274,7 +274,7 @@ class Circuit {
   mouseMoved() {}
 
   render() {
-    this.p5.stroke("#525151");
+    this.p5.stroke(config.document.strokeColor);
     this.p5.strokeWeight(config.document.strokeWeight);
     this.renderCircuit();
     this.renderChips();

@@ -3,15 +3,17 @@ const config = {
     color: {
       background: "#3D3D3D",
     },
-    strokeWeight: 2,
+    strokeWeight: 1,
+    strokeColor: "#121212",
   },
   component: {
     circuit: {
       // TODO: Change name
       widthScale: 50,
-      background: "grey",
+      background: "#525151",
     },
     chip: {
+      strokeWeight: 0,
       color: {
         andChip: "#FC60A8",
         orChip: "",
@@ -28,6 +30,7 @@ const config = {
       },
     },
     iOChip: {
+      strokeWeight: 2,
       size: 30,
       color: {
         stateOff: "#152C40",
@@ -39,6 +42,7 @@ const config = {
       },
     },
     pin: {
+      strokeWeight: 2,
       color: "#121212",
       size: 15,
       mouse: {

@@ -65,6 +65,8 @@ class Pin {
   }
 
   render() {
+    this.p5.stroke(config.component.circuit.background);
+    this.p5.strokeWeight(config.component.pin.strokeWeight);
     this.p5.fill(config.component.pin.color);
     this.p5.circle(
       this.options.position.x,

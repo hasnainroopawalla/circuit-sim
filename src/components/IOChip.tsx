@@ -27,6 +27,7 @@ class IOChip {
   }
 
   private renderChip() {
+    this.p5.strokeWeight(config.component.iOChip.strokeWeight);
     this.p5.fill(
       this.pin.state === State.Off
         ? config.component.iOChip.color.stateOff
@@ -41,6 +42,7 @@ class IOChip {
 
   private renderInnerWire() {
     this.p5.stroke(config.component.iOChip.innerWire.color);
+    this.p5.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
     this.p5.line(
       this.isInput
         ? this.options.position.x + this.options.size / 2
@@ -73,7 +75,6 @@ class IOChip {
 
   render() {
     this.renderInnerWire();
-
     this.renderChip();
     this.renderPin();
   }

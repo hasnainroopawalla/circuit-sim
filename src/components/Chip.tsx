@@ -53,7 +53,6 @@ class Chip {
       x: Math.random() * 250,
       y: Math.random() * 250,
     };
-    // console.log(this.name, this.p5.textSize(25), config.component.chip.size.w);
     const size: Size = {
       w:
         (this.name.length * config.component.chip.size.w) / 5 +
@@ -62,8 +61,6 @@ class Chip {
         Math.max(numInputPins, numOutputPins) * config.component.pin.size +
         config.component.chip.size.w / 2,
     };
-    console.log(size);
-
     this.options = {
       position,
       size,
@@ -122,6 +119,7 @@ class Chip {
 
   private renderChip() {
     this.p5.fill(this.options.color);
+    this.p5.strokeWeight(config.component.chip.strokeWeight);
     this.p5.rect(
       this.options.position.x,
       this.options.position.y,
