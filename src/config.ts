@@ -7,6 +7,14 @@ const config = {
     strokeColor: "#121212",
   },
   component: {
+    board: {
+      spacingBetweenButtons: 5,
+    },
+    button: {
+      color: "#525151",
+      textSize: 20,
+      textColor: "#FFFFFF",
+    },
     circuit: {
       // TODO: Change name
       widthScale: 50,
@@ -21,10 +29,10 @@ const config = {
         chipName: "",
       },
       size: {
-        w: 50,
         cornerRadius: 5,
       },
       text: {
+        size: 25,
         color: "#FFFFFF",
         font: "Helvetica",
       },

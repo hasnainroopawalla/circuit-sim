@@ -1,10 +1,12 @@
 import config from "../config";
 import { State } from "../enums/State";
-import { ChipRenderOptions, Position, Size } from "../models/RenderOptions";
+import { ChipRenderOptions, Size } from "../models/RenderOptions";
 import {
-  computeChipTextPosition,
+  textPositionInRect,
   computeInputPinsPosition,
+  computeChipSize,
 } from "../utils/Position";
+import { initPosition } from "../utils/Utils";
 import Pin from "./Pin";
 import p5Types from "p5";
 
@@ -49,23 +51,15 @@ class Chip {
       );
     }
 
-    const position: Position = {
-      x: Math.random() * 250,
-      y: Math.random() * 250,
-    };
-    const size: Size = {
-      w:
-        (this.name.length * config.component.chip.size.w) / 5 +
-        config.component.chip.size.w,
-      h:
-        Math.max(numInputPins, numOutputPins) * config.component.pin.size +
-        config.component.chip.size.w / 2,
-    };
+    const size: Size = computeChipSize(
+      this.name,
+      config.component.chip.text.size
+    );
+
     this.options = {
-      position,
+      position: initPosition(),
       size,
-      textPosition: computeChipTextPosition(position, size),
-      textSize: config.component.chip.size.w / 2,
+      textPosition: initPosition(),
       color: config.component.chip.color.andChip,
       textColor: config.component.chip.text.color,
     };
@@ -103,13 +97,13 @@ class Chip {
 
   private renderText() {
     this.p5.textStyle(this.p5.BOLD);
-    this.options.textPosition = computeChipTextPosition(
+    this.options.textPosition = textPositionInRect(
       this.options.position,
       this.options.size
     );
     this.p5.fill(this.options.textColor);
     this.p5.textAlign(this.p5.CENTER, this.p5.CENTER);
-    this.p5.textSize(this.options.textSize);
+    this.p5.textSize(config.component.chip.text.size);
     this.p5.text(
       this.name,
       this.options.textPosition.x,

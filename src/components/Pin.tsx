@@ -5,6 +5,7 @@ import IOChip from "./IOChip";
 import p5Types from "p5";
 import { PinRenderOptions, Position } from "../models/RenderOptions";
 import config from "../config";
+import { initPosition } from "../utils/Utils";
 
 class Pin {
   p5: p5Types;
@@ -29,10 +30,7 @@ class Pin {
     this.outgoingWires = [];
     this.chip = chip;
     this.options = {
-      position: {
-        x: 0,
-        y: 0,
-      },
+      position: initPosition(),
       size: config.component.pin.size,
       color: config.component.pin.color,
     };

@@ -2,6 +2,7 @@ import p5Types from "p5";
 import { basicGates } from "./BasicGates";
 import Circuit from "./Circuit";
 import Button from "../factory/button";
+import config from "../config";
 
 class Board {
   p5: p5Types;
@@ -11,35 +12,32 @@ class Board {
   constructor(p5: p5Types, circuit: Circuit) {
     this.p5 = p5;
     this.circuit = circuit;
-    this.buttons = [
-      new Button(this.p5, "Create", () => console.log("click"), {
-        position: {
-          x: 10,
-          y: this.p5.windowHeight - 40,
-        },
-        size: { w: 50, h: 30 },
-        color: "#77DD77",
-      }),
-    ];
+    this.buttons = [new Button(this.p5, "SAVE", () => console.log("Create"))];
     for (let i = 0; i < basicGates.length; i++) {
       const basicGate = basicGates[i];
       this.buttons.push(
-        new Button(this.p5, "Create", () => console.log(basicGate.name), {
-          position: {
-            x: 70 + i * 70,
-            y: this.p5.windowHeight - 40,
-          },
-          size: { w: 50, h: 30 },
-          color: "#77DD77",
-        })
+        new Button(this.p5, basicGate.name, () =>
+          this.circuit.addChip(
+            basicGate.name,
+            basicGate.inputPins,
+            basicGate.outputPins,
+            basicGate.action
+          )
+        )
       );
     }
   }
 
   private renderButtons() {
-    this.buttons.forEach((button) => {
-      button.render();
-    });
+    let currButtonX = 10;
+    for (let i = 0; i < this.buttons.length; i++) {
+      this.buttons[i].options.position.x = currButtonX;
+      currButtonX +=
+        this.buttons[i].options.size.w +
+        config.component.board.spacingBetweenButtons;
+      this.buttons[i].options.position.y = this.p5.windowHeight - 40;
+      this.buttons[i].render();
+    }
   }
 
   public mouseClicked() {
@@ -58,6 +56,8 @@ class Board {
   }
 
   public render() {
+    this.p5.stroke(config.document.strokeColor);
+    this.p5.strokeWeight(config.document.strokeWeight);
     this.circuit.execute();
     this.circuit.render();
     this.renderButtons();

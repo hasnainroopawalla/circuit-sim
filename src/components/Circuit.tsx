@@ -6,7 +6,8 @@ import Wire from "./Wire";
 import p5Types from "p5";
 import config from "../config";
 import { CircuitRenderOptions } from "../models/RenderOptions";
-import { basicGates } from "./BasicGates";
+import { State } from "../enums/State";
+import { generateRandom } from "../utils/Utils";
 
 class Circuit {
   p5: p5Types;
@@ -28,7 +29,6 @@ class Circuit {
       draggingMode: { enabled: false },
     };
     this.options = options;
-    // TODO: Improve definition of basic gates
   }
 
   private toggleWiringMode(pin: Pin) {
@@ -109,6 +109,8 @@ class Circuit {
     if (
       this.p5.mouseX >= this.options.position.x - 10 &&
       this.p5.mouseX <= this.options.position.x + 10 &&
+      this.p5.mouseY >= this.options.position.y &&
+      this.p5.mouseY <= this.options.position.y + this.options.size.h &&
       !this.isMouseOverlapping(this.inputs)
     ) {
       this.inputs.push(
@@ -122,6 +124,8 @@ class Circuit {
     if (
       this.p5.mouseX >= this.options.position.x + this.options.size.w - 10 &&
       this.p5.mouseX <= this.options.position.x + this.options.size.w + 10 &&
+      this.p5.mouseY >= this.options.position.y &&
+      this.p5.mouseY <= this.options.position.y + this.options.size.h &&
       !this.isMouseOverlapping(this.outputs)
     ) {
       this.outputs.push(
@@ -133,18 +137,32 @@ class Circuit {
     }
   }
 
-  // addChip(chipName: string) {
-  //   const basicGate = basicGates[chipName];
-  //   this.chips.push(
-  //     new Chip(
-  //       this.p5,
-  //       chipName,
-  //       basicGate.inputPins,
-  //       basicGate.outputPins,
-  //       basicGate.action
-  //     )
-  //   );
-  // }
+  private disableDraggingMode() {
+    this.state.draggingMode = {
+      enabled: false,
+      chip: undefined,
+    };
+  }
+
+  addChip(
+    name: string,
+    inputPins: number,
+    outputPins: number,
+    action: (inputPins: Pin[]) => State[]
+  ) {
+    const chip = new Chip(this.p5, name, inputPins, outputPins, action);
+    chip.options.position = {
+      x: generateRandom(
+        this.options.position.x,
+        this.options.position.x + this.options.size.w - chip.options.size.w
+      ),
+      y: generateRandom(
+        this.options.position.y,
+        this.options.position.y + this.options.size.h - chip.options.size.h
+      ),
+    };
+    this.chips.push(chip);
+  }
 
   addWire(startPin: Pin, endPin: Pin) {
     // Enforce that the startPin of the wire is an output pin
@@ -235,22 +253,31 @@ class Circuit {
       }
     }
     if (this.state.draggingMode.enabled && this.state.draggingMode.chip) {
+      // Only allow dragging of the chip within the circuit bounds
+      if (!this.isMouseOver()) {
+        this.disableDraggingMode();
+        return;
+      }
       this.state.draggingMode.chip.mouseDragged();
     }
   }
 
   mouseReleased() {
-    this.state.draggingMode = {
-      enabled: false,
-      chip: undefined,
-    };
+    this.disableDraggingMode();
   }
 
   mouseMoved() {}
 
+  isMouseOver() {
+    return (
+      this.p5.mouseX >= this.options.position.x &&
+      this.p5.mouseX <= this.options.position.x + this.options.size.w &&
+      this.p5.mouseY >= this.options.position.y &&
+      this.p5.mouseY <= this.options.position.y + this.options.size.h
+    );
+  }
+
   render() {
-    this.p5.stroke(config.document.strokeColor);
-    this.p5.strokeWeight(config.document.strokeWeight);
     this.renderCircuit();
     this.renderChips();
     this.renderIOChips();

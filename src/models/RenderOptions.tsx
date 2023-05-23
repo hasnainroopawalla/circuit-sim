@@ -14,7 +14,6 @@ export interface ChipRenderOptions {
   color: string;
   textColor: string;
   textPosition: Position;
-  textSize: number;
 }
 
 export interface PinRenderOptions {

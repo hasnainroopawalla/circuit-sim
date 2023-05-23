@@ -1,12 +1,12 @@
 import { Position, Size } from "../models/RenderOptions";
 
-export const computeChipTextPosition = (
-  chipPosition: Position,
-  chipSize: Size
+export const textPositionInRect = (
+  rectPosition: Position,
+  rectSize: Size
 ): Position => {
   return {
-    x: chipPosition.x + chipSize.w / 2,
-    y: chipPosition.y + chipSize.h / 2,
+    x: rectPosition.x + rectSize.w / 2,
+    y: rectPosition.y + rectSize.h / 2,
   };
 };
 
@@ -48,4 +48,24 @@ export const computeIOPinPosition = (
     ? chipPosition.x + chipSize
     : chipPosition.x - chipSize;
   return { x: position, y: chipPosition.y };
+};
+
+export const computeChipSize = (
+  chipText: string,
+  chipTextSize: number
+): Size => {
+  return {
+    w: chipText.length * chipTextSize + 15,
+    h: chipTextSize + chipTextSize,
+  };
+};
+
+export const computeButtonSize = (
+  buttonText: string,
+  buttonTextSize: number
+): Size => {
+  return {
+    w: buttonText.length * buttonTextSize,
+    h: buttonTextSize + buttonTextSize / 1.5,
+  };
 };
