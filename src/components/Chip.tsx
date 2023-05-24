@@ -40,6 +40,7 @@ class Chip {
       this.outputPins = this.circuit.outputs.map((output) => output.pin);
       for (let i = 0; i < this.inputPins.length; i++) {
         this.inputPins[i].name = `${name}_INPUT_${i}`;
+        this.inputPins[i].isInput = true;
       }
       for (let i = 0; i < this.outputPins.length; i++) {
         this.outputPins[i].name = `${name}_OUTPUT_${i}`;
