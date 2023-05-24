@@ -32,7 +32,7 @@ const config = {
         cornerRadius: 5,
       },
       text: {
-        size: 25,
+        size: 20,
         color: "#FFFFFF",
         font: "Helvetica",
       },

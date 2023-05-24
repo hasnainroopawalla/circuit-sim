@@ -7,6 +7,7 @@ import {
   computeChipSize,
 } from "../utils/Position";
 import { initPosition } from "../utils/Utils";
+import Circuit from "./Circuit";
 import Pin from "./Pin";
 import p5Types from "p5";
 
@@ -17,43 +18,50 @@ class Chip {
   name: string;
   action: (a: Pin[]) => State[];
   options: ChipRenderOptions;
+  isCircuit: boolean;
+  circuit?: Circuit;
 
   constructor(
     p5: p5Types,
     name: string,
     numInputPins: number,
     numOutputPins: number,
-    action: (a: Pin[]) => State[]
+    action: (a: Pin[]) => State[],
+    isCircuit: boolean,
+    circuit?: Circuit
   ) {
     this.p5 = p5;
     this.name = name;
     this.action = action;
-    for (let i = 0; i < numInputPins; i++) {
-      this.inputPins.push(
-        new Pin(
-          p5,
-          `${name}_INPUT_${this.inputPins.length}`,
-          State.Off,
-          true,
-          this
-        )
-      );
-    }
-    for (let i = 0; i < numOutputPins; i++) {
-      this.outputPins.push(
-        new Pin(
-          p5,
-          `${name}_OUTPUT_${this.outputPins.length}`,
-          State.Off,
-          false,
-          this
-        )
-      );
+    this.isCircuit = isCircuit;
+    this.circuit = circuit;
+    if (isCircuit && this.circuit) {
+      this.inputPins = this.circuit.inputs.map((input) => input.pin);
+      this.outputPins = this.circuit.outputs.map((output) => output.pin);
+      for (let i = 0; i < this.inputPins.length; i++) {
+        this.inputPins[i].name = `${name}_INPUT_${i}`;
+      }
+      for (let i = 0; i < this.outputPins.length; i++) {
+        this.outputPins[i].name = `${name}_OUTPUT_${i}`;
+        this.outputPins[i].isInput = false;
+      }
+    } else {
+      for (let i = 0; i < numInputPins; i++) {
+        this.inputPins.push(
+          new Pin(p5, `${name}_INPUT_${i}`, State.Off, true, this)
+        );
+      }
+      for (let i = 0; i < numOutputPins; i++) {
+        this.outputPins.push(
+          new Pin(p5, `${name}_OUTPUT_${i}`, State.Off, false, this)
+        );
+      }
     }
 
     const size: Size = computeChipSize(
       this.name,
-      config.component.chip.text.size
+      config.component.chip.text.size,
+      Math.max(this.inputPins.length, this.outputPins.length)
     );
 
     this.options = {
@@ -133,10 +141,14 @@ class Chip {
   }
 
   execute() {
-    const outputStates = this.action(this.inputPins);
-    for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].state = outputStates[i];
-      this.outputPins[i].propagate();
+    if (this.isCircuit && this.circuit) {
+      this.circuit.execute();
+    } else {
+      const outputStates = this.action(this.inputPins);
+      for (let i = 0; i < this.outputPins.length; i++) {
+        this.outputPins[i].state = outputStates[i];
+        this.outputPins[i].propagate();
+      }
     }
   }
 

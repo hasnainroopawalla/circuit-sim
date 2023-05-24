@@ -97,7 +97,7 @@ class Circuit {
   */
   private isMouseOverlapping(entities: IOChip[]) {
     for (let i = 0; i < entities.length; i++) {
-      if (this.inputs[i].isMouseOver()) {
+      if (entities[i].isMouseOver()) {
         return true;
       }
     }
@@ -148,9 +148,19 @@ class Circuit {
     name: string,
     inputPins: number,
     outputPins: number,
-    action: (inputPins: Pin[]) => State[]
+    isCircuit: boolean,
+    action: (inputPins: Pin[]) => State[],
+    circuit?: Circuit
   ) {
-    const chip = new Chip(this.p5, name, inputPins, outputPins, action);
+    const chip = new Chip(
+      this.p5,
+      name,
+      inputPins,
+      outputPins,
+      action,
+      isCircuit,
+      circuit
+    );
     chip.options.position = {
       x: generateRandom(
         this.options.position.x,

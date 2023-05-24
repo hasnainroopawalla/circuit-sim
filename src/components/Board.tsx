@@ -12,7 +12,9 @@ class Board {
   constructor(p5: p5Types, circuit: Circuit) {
     this.p5 = p5;
     this.circuit = circuit;
-    this.buttons = [new Button(this.p5, "SAVE", () => console.log("Create"))];
+    this.buttons = [
+      new Button(this.p5, "SAVE", () => this.createChipFromCircuit()),
+    ];
     for (let i = 0; i < basicGates.length; i++) {
       const basicGate = basicGates[i];
       this.buttons.push(
@@ -21,6 +23,7 @@ class Board {
             basicGate.name,
             basicGate.inputPins,
             basicGate.outputPins,
+            false,
             basicGate.action
           )
         )
@@ -61,6 +64,26 @@ class Board {
     this.circuit.execute();
     this.circuit.render();
     this.renderButtons();
+  }
+
+  public createChipFromCircuit() {
+    // TODO: Better new circuit handling
+    let newCircuit = new Circuit(this.p5, this.circuit.options);
+    newCircuit.inputs = this.circuit.inputs;
+    newCircuit.outputs = this.circuit.outputs;
+    newCircuit.wires = this.circuit.wires;
+    newCircuit.chips = this.circuit.chips;
+
+    this.buttons.push(
+      new Button(this.p5, "NAND", () =>
+        this.circuit.addChip("NAND", 1, 1, true, () => [], newCircuit)
+      )
+    );
+
+    this.circuit.inputs = [];
+    this.circuit.outputs = [];
+    this.circuit.wires = [];
+    this.circuit.chips = [];
   }
 }
 

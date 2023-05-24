@@ -52,11 +52,12 @@ export const computeIOPinPosition = (
 
 export const computeChipSize = (
   chipText: string,
-  chipTextSize: number
+  chipTextSize: number,
+  numPins: number
 ): Size => {
   return {
     w: chipText.length * chipTextSize + 15,
-    h: chipTextSize + chipTextSize,
+    h: chipTextSize * numPins + 15,
   };
 };
 
