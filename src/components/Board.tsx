@@ -3,6 +3,7 @@ import { basicGates } from "./BasicGates";
 import Circuit from "./Circuit";
 import Button from "../factory/button";
 import config from "../config";
+import colorGenerator from "./ColorGenerator";
 
 class Board {
   p5: p5Types;
@@ -24,7 +25,8 @@ class Board {
             basicGate.inputPins,
             basicGate.outputPins,
             false,
-            basicGate.action
+            basicGate.action,
+            colorGenerator.generate()
           )
         )
       );
@@ -76,7 +78,7 @@ class Board {
 
     this.buttons.push(
       new Button(this.p5, "NAND", () =>
-        this.circuit.addChip("NAND", 1, 1, true, () => [], newCircuit)
+        this.circuit.addChip("NAND", 1, 1, true, () => [], "red", newCircuit)
       )
     );
 

@@ -52,7 +52,7 @@ class Circuit {
 
   private renderWiringModeWire() {
     this.p5.strokeWeight(config.component.wire.strokeWeight);
-    this.p5.stroke(config.component.wire.color.stateOff);
+    this.p5.stroke(config.document.strokeColor);
     this.p5.line(
       this.state.wiringMode.startPin!.options.position.x,
       this.state.wiringMode.startPin!.options.position.y,
@@ -150,6 +150,7 @@ class Circuit {
     outputPins: number,
     isCircuit: boolean,
     action: (inputPins: Pin[]) => State[],
+    color: string,
     circuit?: Circuit
   ) {
     const chip = new Chip(
@@ -158,6 +159,7 @@ class Circuit {
       inputPins,
       outputPins,
       action,
+      color,
       isCircuit,
       circuit
     );

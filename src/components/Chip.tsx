@@ -28,6 +28,7 @@ class Chip {
     numInputPins: number,
     numOutputPins: number,
     action: (a: Pin[]) => State[],
+    color: string,
     isCircuit: boolean,
     circuit?: Circuit
   ) {
@@ -71,7 +72,7 @@ class Chip {
       position: initPosition(),
       size,
       textPosition: initPosition(),
-      color: config.component.chip.color.andChip,
+      color: color,
       textColor: config.component.chip.text.color,
     };
   }

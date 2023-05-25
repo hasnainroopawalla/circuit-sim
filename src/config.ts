@@ -46,7 +46,7 @@ const config = {
       },
       innerWire: {
         color: "#121212",
-        strokeWeight: 2,
+        strokeWeight: 3,
       },
     },
     pin: {
@@ -62,7 +62,7 @@ const config = {
         stateOff: "#152C40",
         stateOn: "#3083DC",
       },
-      strokeWeight: 3,
+      strokeWeight: 4,
     },
   },
 };
