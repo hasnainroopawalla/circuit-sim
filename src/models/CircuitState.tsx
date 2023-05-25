@@ -1,11 +1,13 @@
 import Chip from "../components/Chip";
 import IOChip from "../components/IOChip";
 import Pin from "../components/Pin";
+import { Position } from "./RenderOptions";
 
 interface WiringMode {
   enabled: boolean;
   startPin?: Pin;
   endPin?: Pin;
+  waypoints: Position[];
 }
 
 interface DraggingMode {

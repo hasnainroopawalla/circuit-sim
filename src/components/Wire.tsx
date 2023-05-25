@@ -1,5 +1,6 @@
 import config from "../config";
 import { State } from "../enums/State";
+import { Position } from "../models/RenderOptions";
 import Pin from "./Pin";
 import p5Types from "p5";
 
@@ -8,21 +9,23 @@ class Wire {
   startPin: Pin;
   endPin: Pin;
   state: State;
+  waypoints: Position[];
 
-  constructor(p5: p5Types, startPin: Pin, endPin: Pin) {
+  constructor(p5: p5Types, startPin: Pin, endPin: Pin, waypoints: Position[]) {
     this.p5 = p5;
     this.startPin = startPin;
     this.endPin = endPin;
     this.state = State.Off;
+    this.waypoints = waypoints;
   }
 
-  propagate() {
+  public propagate() {
     this.state = this.startPin.state;
     this.endPin.state = this.startPin.state;
     this.endPin.chip.execute();
   }
 
-  render() {
+  public render() {
     this.p5.strokeWeight(config.component.wire.strokeWeight);
     this.p5.stroke(
       this.state === State.Off

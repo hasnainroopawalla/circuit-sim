@@ -5,9 +5,8 @@ import Pin from "./Pin";
 import Wire from "./Wire";
 import p5Types from "p5";
 import config from "../config";
-import { CircuitRenderOptions } from "../models/RenderOptions";
+import { CircuitRenderOptions, Position } from "../models/RenderOptions";
 import { State } from "../enums/State";
-import { generateRandom } from "../utils/Utils";
 
 class Circuit {
   p5: p5Types;
@@ -25,7 +24,7 @@ class Circuit {
     this.wires = [];
     this.chips = [];
     this.state = {
-      wiringMode: { enabled: false },
+      wiringMode: { enabled: false, waypoints: [] },
       draggingMode: { enabled: false },
       spawnChipMode: { enabled: false, chips: [] },
     };
@@ -36,17 +35,23 @@ class Circuit {
     if (this.state.wiringMode.enabled && this.state.wiringMode.startPin) {
       // A wire is not allowed to start and end on the same chip
       if (this.state.wiringMode.startPin.chip !== pin.chip) {
-        this.addWire(this.state.wiringMode.startPin, pin);
+        this.addWire(
+          this.state.wiringMode.startPin,
+          pin,
+          this.state.wiringMode.waypoints
+        );
       }
       this.state.wiringMode = {
         enabled: false,
         startPin: undefined,
         endPin: undefined,
+        waypoints: [],
       };
     } else {
       this.state.wiringMode = {
         enabled: true,
         startPin: pin,
+        waypoints: [],
       };
     }
   }
@@ -193,12 +198,12 @@ class Circuit {
     this.chips.push(chip);
   }
 
-  addWire(startPin: Pin, endPin: Pin) {
+  addWire(startPin: Pin, endPin: Pin, waypoints: Position[]) {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
     }
-    const wire = new Wire(this.p5, startPin, endPin);
+    const wire = new Wire(this.p5, startPin, endPin, waypoints);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
   }
@@ -213,6 +218,14 @@ class Circuit {
     // TODO: Fix duplication in loops
     if (this.state.draggingMode.enabled) {
       return;
+    }
+    if (this.state.wiringMode.enabled) {
+      if (this.isMouseOver()) {
+        this.state.wiringMode.waypoints.push({
+          x: this.p5.mouseX,
+          y: this.p5.mouseY,
+        });
+      }
     }
     if (this.state.spawnChipMode.enabled) {
       if (this.isMouseOver()) {
