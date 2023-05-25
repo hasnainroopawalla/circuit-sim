@@ -18,6 +18,7 @@ class Board {
     ];
     for (let i = 0; i < basicGates.length; i++) {
       const basicGate = basicGates[i];
+      const color = colorGenerator.generate();
       this.buttons.push(
         new Button(this.p5, basicGate.name, () =>
           this.circuit.addChip(
@@ -26,7 +27,7 @@ class Board {
             basicGate.outputPins,
             false,
             basicGate.action,
-            colorGenerator.generate()
+            color
           )
         )
       );

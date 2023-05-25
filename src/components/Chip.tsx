@@ -69,7 +69,10 @@ class Chip {
     );
 
     this.options = {
-      position: initPosition(),
+      position: {
+        x: this.p5.mouseX - size.w / 2,
+        y: this.p5.mouseY - size.h / 2,
+      },
       size,
       textPosition: initPosition(),
       color: color,

@@ -13,7 +13,13 @@ interface DraggingMode {
   chip?: Chip | IOChip;
 }
 
+interface SpawnChipMode {
+  enabled: boolean;
+  chips: Chip[];
+}
+
 export interface CircuitState {
   wiringMode: WiringMode;
   draggingMode: DraggingMode;
+  spawnChipMode: SpawnChipMode;
 }

@@ -27,6 +27,7 @@ class Circuit {
     this.state = {
       wiringMode: { enabled: false },
       draggingMode: { enabled: false },
+      spawnChipMode: { enabled: false, chips: [] },
     };
     this.options = options;
   }
@@ -59,6 +60,21 @@ class Circuit {
       this.p5.mouseX,
       this.p5.mouseY
     );
+  }
+
+  private renderSpawnChipMode() {
+    if (this.state.spawnChipMode.enabled) {
+      for (let i = 0; i < this.state.spawnChipMode.chips.length; i++) {
+        const chip = this.state.spawnChipMode.chips[i];
+        chip.options.position = {
+          x: this.p5.mouseX - chip.options.size.w / 2,
+          y:
+            this.p5.mouseY -
+            chip.options.size.h / 2 -
+            (i * chip.options.size.h) / 0.8, // Extra offset for spacing between chips
+        };
+      }
+    }
   }
 
   private renderIOChips() {
@@ -144,6 +160,13 @@ class Circuit {
     };
   }
 
+  private disableSpawnChipMode() {
+    this.state.spawnChipMode = {
+      enabled: false,
+      chips: [],
+    };
+  }
+
   addChip(
     name: string,
     inputPins: number,
@@ -163,15 +186,9 @@ class Circuit {
       isCircuit,
       circuit
     );
-    chip.options.position = {
-      x: generateRandom(
-        this.options.position.x,
-        this.options.position.x + this.options.size.w - chip.options.size.w
-      ),
-      y: generateRandom(
-        this.options.position.y,
-        this.options.position.y + this.options.size.h - chip.options.size.h
-      ),
+    this.state.spawnChipMode = {
+      enabled: true,
+      chips: [...this.state.spawnChipMode.chips, chip],
     };
     this.chips.push(chip);
   }
@@ -194,8 +211,14 @@ class Circuit {
 
   mouseClicked() {
     // TODO: Fix duplication in loops
-    if (this.state.draggingMode.enabled === true) {
+    if (this.state.draggingMode.enabled) {
       return;
+    }
+    if (this.state.spawnChipMode.enabled) {
+      if (this.isMouseOver()) {
+        // Place the chips in the circuit
+        this.disableSpawnChipMode();
+      }
     }
     // Input IOChips
     for (let i = 0; i < this.inputs.length; i++) {
@@ -296,6 +319,9 @@ class Circuit {
     this.renderWires();
     if (this.state.wiringMode.enabled) {
       this.renderWiringModeWire();
+    }
+    if (this.state.spawnChipMode.enabled) {
+      this.renderSpawnChipMode();
     }
   }
 }
