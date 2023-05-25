@@ -19,6 +19,7 @@ class Chip {
   action: (a: Pin[]) => State[];
   options: ChipRenderOptions;
   isCircuit: boolean;
+  gateDelay: number;
   circuit?: Circuit;
 
   constructor(
@@ -33,6 +34,7 @@ class Chip {
     this.p5 = p5;
     this.name = name;
     this.action = action;
+    this.gateDelay = 50;
     this.isCircuit = isCircuit;
     this.circuit = circuit;
     if (isCircuit && this.circuit) {
@@ -147,8 +149,10 @@ class Chip {
     } else {
       const outputStates = this.action(this.inputPins);
       for (let i = 0; i < this.outputPins.length; i++) {
-        this.outputPins[i].state = outputStates[i];
-        this.outputPins[i].propagate();
+        setTimeout(() => {
+          this.outputPins[i].state = outputStates[i];
+          this.outputPins[i].propagate();
+        }, this.gateDelay);
       }
     }
   }
