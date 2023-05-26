@@ -79,6 +79,19 @@ class Circuit {
             (i * chip.options.size.h) / 0.8, // Extra offset for spacing between chips
         };
       }
+      // TODO: Rectangle around spawn chips
+      // this.p5.fill(255, 255, 255, 50);
+      // this.p5.rect(
+      //   this.p5.mouseX -
+      //     this.state.spawnChipMode.chips[0].options.size.w / 2 -
+      //     15,
+      //   this.p5.mouseY -
+      //     this.state.spawnChipMode.chips[0].options.size.h *
+      //       this.state.spawnChipMode.chips.length,
+      //   this.state.spawnChipMode.chips[0].options.size.w + 15,
+      //   this.state.spawnChipMode.chips[0].options.size.h *
+      //     this.state.spawnChipMode.chips.length
+      // );
     }
   }
 
