@@ -1,23 +1,22 @@
-import { State } from "../enums/State";
-import Chip from "./Chip";
-import Wire from "./Wire";
-import IOChip from "./IOChip";
-import p5Types from "p5";
-import { PinRenderOptions, Position } from "../models/RenderOptions";
+import { State } from "../enums/state";
+import Chip from "./chip";
+import Wire from "./wire";
+import IOChip from "./io-chip";
+import { IPinRenderOptions, IPosition } from "./render-options.interface";
 import config from "../config";
 import { initPosition } from "../utils/Utils";
 
 class Pin {
-  p5: p5Types;
+  p5: p5;
   name: string;
   state: State;
   isInput: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
-  options: PinRenderOptions;
+  options: IPinRenderOptions;
 
   constructor(
-    p5: p5Types,
+    p5: p5,
     name: string,
     state: State,
     isInput: boolean,
@@ -54,7 +53,7 @@ class Pin {
     }
   }
 
-  setPosition(position: Position) {
+  setPosition(position: IPosition) {
     this.options.position = position;
   }
 

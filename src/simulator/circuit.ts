@@ -1,23 +1,26 @@
-import { CircuitState } from "../models/CircuitState";
-import Chip from "./Chip";
-import IOChip from "./IOChip";
-import Pin from "./Pin";
-import Wire from "./Wire";
-import p5Types from "p5";
+import type { ICircuitState } from "./circuit-state.interface";
+import type {
+  ICircuitRenderOptions,
+  IPosition,
+} from "./render-options.interface";
+
+import Chip from "./chip";
+import IOChip from "./io-chip";
+import Pin from "./pin";
+import Wire from "./wire";
 import config from "../config";
-import { CircuitRenderOptions, Position } from "../models/RenderOptions";
-import { State } from "../enums/State";
+import { State } from "../enums/state";
 
 class Circuit {
-  p5: p5Types;
+  p5: p5;
   inputs: IOChip[];
   outputs: IOChip[];
   wires: Wire[];
   chips: Chip[];
-  state: CircuitState;
-  options: CircuitRenderOptions;
+  state: ICircuitState;
+  options: ICircuitRenderOptions;
 
-  constructor(p5: p5Types, options: CircuitRenderOptions) {
+  constructor(p5: p5, options: ICircuitRenderOptions) {
     this.p5 = p5;
     this.inputs = [];
     this.outputs = [];
@@ -211,7 +214,7 @@ class Circuit {
     this.chips.push(chip);
   }
 
-  addWire(startPin: Pin, endPin: Pin, waypoints: Position[]) {
+  addWire(startPin: Pin, endPin: Pin, waypoints: IPosition[]) {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];

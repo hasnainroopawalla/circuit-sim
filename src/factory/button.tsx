@@ -1,5 +1,5 @@
 import p5Types from "p5";
-import { ButtonOptions } from "../models/RenderOptions";
+import { IButtonOptions } from "../simulator/render-options.interface";
 import config from "../config";
 import { computeButtonSize, textPositionInRect } from "../utils/Position";
 import { initPosition } from "../utils/Utils";
@@ -7,7 +7,7 @@ import { initPosition } from "../utils/Utils";
 class Button {
   p5: p5Types;
   text: string;
-  options: ButtonOptions;
+  options: IButtonOptions;
   onClickCb: () => void;
 
   constructor(p5: p5Types, text: string, onClickCb: () => void) {

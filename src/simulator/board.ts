@@ -1,16 +1,15 @@
-import p5Types from "p5";
-import { basicGates } from "./BasicGates";
-import Circuit from "./Circuit";
+import basicGates from "./basic-gates";
+import Circuit from "./circuit";
 import Button from "../factory/button";
 import config from "../config";
-import colorGenerator from "./ColorGenerator";
+import colorGenerator from "./color-generator";
 
 class Board {
-  p5: p5Types;
+  p5: p5;
   circuit: Circuit;
   buttons: Button[];
 
-  constructor(p5: p5Types, circuit: Circuit) {
+  constructor(p5: p5, circuit: Circuit) {
     this.p5 = p5;
     this.circuit = circuit;
     this.buttons = [
@@ -71,7 +70,7 @@ class Board {
 
   public createChipFromCircuit() {
     // TODO: Better new circuit handling
-    let newCircuit = new Circuit(this.p5, this.circuit.options);
+    const newCircuit = new Circuit(this.p5, this.circuit.options);
     newCircuit.inputs = this.circuit.inputs;
     newCircuit.outputs = this.circuit.outputs;
     newCircuit.wires = this.circuit.wires;

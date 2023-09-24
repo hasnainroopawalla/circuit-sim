@@ -1,17 +1,16 @@
 import config from "../config";
-import { State } from "../enums/State";
-import { Position } from "../models/RenderOptions";
-import Pin from "./Pin";
-import p5Types from "p5";
+import { State } from "../enums/state";
+import { IPosition } from "./render-options.interface";
+import Pin from "./pin";
 
 class Wire {
-  p5: p5Types;
+  p5: p5;
   startPin: Pin;
   endPin: Pin;
   state: State;
-  waypoints: Position[];
+  waypoints: IPosition[];
 
-  constructor(p5: p5Types, startPin: Pin, endPin: Pin, waypoints: Position[]) {
+  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: IPosition[]) {
     this.p5 = p5;
     this.startPin = startPin;
     this.endPin = endPin;

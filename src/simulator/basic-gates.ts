@@ -1,7 +1,14 @@
-import { State } from "../enums/State";
-import Pin from "./Pin";
+import { State } from "../enums/state";
+import Pin from "./pin";
 
-export const basicGates = [
+type IBasicGate = {
+  name: string;
+  inputPins: number;
+  outputPins: number;
+  action: (a: Pin[]) => State[];
+};
+
+const basicGates: IBasicGate[] = [
   {
     name: "AND",
     inputPins: 2,
@@ -23,3 +30,5 @@ export const basicGates = [
     ],
   },
 ];
+
+export default basicGates;

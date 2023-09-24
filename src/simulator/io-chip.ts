@@ -1,20 +1,19 @@
 import config from "../config";
-import { State } from "../enums/State";
-import { IORenderOptions, Position } from "../models/RenderOptions";
+import { State } from "../enums/state";
+import { IORenderOptions, IPosition } from "./render-options.interface";
 import { computeIOPinPosition } from "../utils/Position";
-import Pin from "./Pin";
-import Wire from "./Wire";
-import p5Types from "p5";
+import Pin from "./pin";
+import Wire from "./wire";
 
 class IOChip {
-  p5: p5Types;
+  p5: p5;
   name: string;
   isInput: boolean;
   pin: Pin;
   outgoingWires: Wire[];
   options: IORenderOptions;
 
-  constructor(p5: p5Types, name: string, isInput: boolean, position: Position) {
+  constructor(p5: p5, name: string, isInput: boolean, position: IPosition) {
     this.p5 = p5;
     this.name = name;
     this.isInput = isInput;

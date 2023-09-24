@@ -1,29 +1,29 @@
+import type { IChipRenderOptions, ISize } from "./render-options.interface";
+
 import config from "../config";
-import { State } from "../enums/State";
-import { ChipRenderOptions, Size } from "../models/RenderOptions";
+import { State } from "../enums/state";
 import {
   textPositionInRect,
   computeInputPinsPosition,
   computeChipSize,
 } from "../utils/Position";
 import { initPosition } from "../utils/Utils";
-import Circuit from "./Circuit";
-import Pin from "./Pin";
-import p5Types from "p5";
+import Circuit from "./circuit";
+import Pin from "./pin";
 
 class Chip {
-  p5: p5Types;
+  p5: p5;
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
   name: string;
   action: (a: Pin[]) => State[];
-  options: ChipRenderOptions;
+  options: IChipRenderOptions;
   isCircuit: boolean;
   gateDelay: number;
   circuit?: Circuit;
 
   constructor(
-    p5: p5Types,
+    p5: p5,
     name: string,
     numInputPins: number,
     numOutputPins: number,
@@ -62,7 +62,7 @@ class Chip {
       }
     }
 
-    const size: Size = computeChipSize(
+    const size: ISize = computeChipSize(
       this.name,
       config.component.chip.text.size,
       Math.max(this.inputPins.length, this.outputPins.length)

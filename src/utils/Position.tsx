@@ -1,9 +1,9 @@
-import { Position, Size } from "../models/RenderOptions";
+import { IPosition, ISize } from "../simulator/render-options.interface";
 
 export const textPositionInRect = (
-  rectPosition: Position,
-  rectSize: Size
-): Position => {
+  rectPosition: IPosition,
+  rectSize: ISize
+): IPosition => {
   return {
     x: rectPosition.x + rectSize.w / 2,
     y: rectPosition.y + rectSize.h / 2,
@@ -11,10 +11,10 @@ export const textPositionInRect = (
 };
 
 export const computeInputPinsPosition = (
-  lineStartPosition: Position,
-  lineEndPosition: Position,
+  lineStartPosition: IPosition,
+  lineEndPosition: IPosition,
   numPins: number
-): Position[] => {
+): IPosition[] => {
   if (numPins === 1) {
     return [
       {
@@ -25,25 +25,25 @@ export const computeInputPinsPosition = (
   }
   const dx = lineEndPosition.x - lineStartPosition.x;
   const dy = lineEndPosition.y - lineStartPosition.y;
-  var distance = Math.sqrt(dx * dx + dy * dy);
+  const distance = Math.sqrt(dx * dx + dy * dy);
   const unitX = dx / distance;
   const unitY = dy / distance;
   const increment = distance / (numPins + 1);
-  const points: Position[] = [];
+  const points: IPosition[] = [];
 
   for (let i = 1; i <= numPins; i++) {
-    var x = lineStartPosition.x + unitX * i * increment;
-    var y = lineStartPosition.y + unitY * i * increment;
+    const x = lineStartPosition.x + unitX * i * increment;
+    const y = lineStartPosition.y + unitY * i * increment;
     points.push({ x, y });
   }
   return points;
 };
 
 export const computeIOPinPosition = (
-  chipPosition: Position,
+  chipPosition: IPosition,
   chipSize: number,
   isInput: boolean
-): Position => {
+): IPosition => {
   const position = isInput
     ? chipPosition.x + chipSize
     : chipPosition.x - chipSize;
@@ -54,7 +54,7 @@ export const computeChipSize = (
   chipText: string,
   chipTextSize: number,
   numPins: number
-): Size => {
+): ISize => {
   return {
     w: chipText.length * chipTextSize + 15,
     h: chipTextSize * numPins + 15,
@@ -64,7 +64,7 @@ export const computeChipSize = (
 export const computeButtonSize = (
   buttonText: string,
   buttonTextSize: number
-): Size => {
+): ISize => {
   return {
     w: buttonText.length * buttonTextSize,
     h: buttonTextSize + buttonTextSize / 1.5,
