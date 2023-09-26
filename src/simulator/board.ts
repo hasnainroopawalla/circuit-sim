@@ -65,7 +65,7 @@ class Board {
     this.p5.strokeWeight(config.document.strokeWeight);
     this.circuit.execute();
     this.circuit.render();
-    this.renderButtons();
+    // this.renderButtons();
   }
 
   public createChipFromCircuit() {
