@@ -7,7 +7,7 @@ import config from "../config";
 import { initPosition } from "../utils/Utils";
 
 class Pin {
-  p5: p5;
+  p: p5;
   name: string;
   state: State;
   isInput: boolean;
@@ -22,7 +22,7 @@ class Pin {
     isInput: boolean,
     chip: Chip | IOChip
   ) {
-    this.p5 = p5;
+    this.p = p5;
     this.name = name;
     this.state = state;
     this.isInput = isInput;
@@ -35,11 +35,11 @@ class Pin {
     };
   }
 
-  private isMouseOver() {
+  public isMouseOver() {
     return (
-      this.p5.dist(
-        this.p5.mouseX,
-        this.p5.mouseY,
+      this.p.dist(
+        this.p.mouseX,
+        this.p.mouseY,
         this.options.position.x,
         this.options.position.y
       ) <=
@@ -62,14 +62,16 @@ class Pin {
   }
 
   render() {
-    this.p5.stroke(config.component.circuit.background);
-    this.p5.strokeWeight(config.component.pin.strokeWeight);
-    this.p5.fill(config.component.pin.color);
-    this.p5.circle(
+    this.p.push();
+    this.p.stroke(config.component.circuit.background);
+    this.p.strokeWeight(config.component.pin.strokeWeight);
+    this.p.fill(config.component.pin.color);
+    this.p.circle(
       this.options.position.x,
       this.options.position.y,
       this.options.size
     );
+    this.p.pop();
   }
 }
 

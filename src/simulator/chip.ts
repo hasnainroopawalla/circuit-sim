@@ -12,14 +12,13 @@ import Circuit from "./circuit";
 import Pin from "./pin";
 
 class Chip {
-  p5: p5;
+  p: p5;
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
   name: string;
   action: (a: Pin[]) => State[];
   options: IChipRenderOptions;
   isCircuit: boolean;
-  gateDelay: number;
   circuit?: Circuit;
 
   constructor(
@@ -32,10 +31,9 @@ class Chip {
     isCircuit: boolean,
     circuit?: Circuit
   ) {
-    this.p5 = p5;
+    this.p = p5;
     this.name = name;
     this.action = action;
-    this.gateDelay = 50;
     this.isCircuit = isCircuit;
     this.circuit = circuit;
     if (isCircuit && this.circuit) {
@@ -70,8 +68,8 @@ class Chip {
 
     this.options = {
       position: {
-        x: this.p5.mouseX - size.w / 2,
-        y: this.p5.mouseY - size.h / 2,
+        x: this.p.mouseX - size.w / 2,
+        y: this.p.mouseY - size.h / 2,
       },
       size,
       textPosition: initPosition(),
@@ -111,40 +109,62 @@ class Chip {
   }
 
   private renderText() {
-    this.p5.textStyle(this.p5.BOLD);
+    this.p.push();
+    this.p.textStyle(this.p.BOLD);
     this.options.textPosition = textPositionInRect(
       this.options.position,
       this.options.size
     );
-    this.p5.fill(this.options.textColor);
-    this.p5.textAlign(this.p5.CENTER, this.p5.CENTER);
-    this.p5.textSize(config.component.chip.text.size);
-    this.p5.text(
+    this.p.fill(this.options.textColor);
+    this.p.textAlign(this.p.CENTER, this.p.CENTER);
+    this.p.textSize(config.component.chip.text.size);
+    this.p.text(
       this.name,
       this.options.textPosition.x,
       this.options.textPosition.y
     );
+    this.p.pop();
   }
 
   private renderChip() {
-    this.p5.fill(this.options.color);
-    this.p5.strokeWeight(config.component.chip.strokeWeight);
-    this.p5.rect(
+    this.p.push();
+    this.p.fill(this.options.color);
+    this.p.strokeWeight(config.component.chip.strokeWeight);
+    this.p.rect(
       this.options.position.x,
       this.options.position.y,
       this.options.size.w,
       this.options.size.h,
       config.component.chip.size.cornerRadius
     );
+    this.p.pop();
   }
 
   isMouseOver() {
     return (
-      this.p5.mouseX >= this.options.position.x &&
-      this.p5.mouseX <= this.options.position.x + this.options.size.w &&
-      this.p5.mouseY >= this.options.position.y &&
-      this.p5.mouseY <= this.options.position.y + this.options.size.h
+      this.p.mouseX >= this.options.position.x &&
+      this.p.mouseX <= this.options.position.x + this.options.size.w &&
+      this.p.mouseY >= this.options.position.y &&
+      this.p.mouseY <= this.options.position.y + this.options.size.h
     );
+  }
+
+  public isMouseOverGetEntity(): Chip | Pin | undefined {
+    for (let i = 0; i < this.inputPins.length; i++) {
+      const pin = this.inputPins[i];
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+    for (let i = 0; i < this.outputPins.length; i++) {
+      const pin = this.outputPins[i];
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+    if (this.isMouseOver()) {
+      return this;
+    }
   }
 
   execute() {
@@ -153,10 +173,8 @@ class Chip {
     } else {
       const outputStates = this.action(this.inputPins);
       for (let i = 0; i < this.outputPins.length; i++) {
-        setTimeout(() => {
-          this.outputPins[i].state = outputStates[i];
-          this.outputPins[i].propagate();
-        }, this.gateDelay);
+        this.outputPins[i].state = outputStates[i];
+        this.outputPins[i].propagate();
       }
     }
   }
@@ -178,8 +196,8 @@ class Chip {
 
   mouseDragged() {
     this.options.position = {
-      x: this.p5.mouseX - this.options.size.w / 2,
-      y: this.p5.mouseY - this.options.size.h / 2,
+      x: this.p.mouseX - this.options.size.w / 2,
+      y: this.p.mouseY - this.options.size.h / 2,
     };
   }
 

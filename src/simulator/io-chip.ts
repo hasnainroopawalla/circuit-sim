@@ -6,7 +6,7 @@ import Pin from "./pin";
 import Wire from "./wire";
 
 class IOChip {
-  p5: p5;
+  p: p5;
   name: string;
   isInput: boolean;
   pin: Pin;
@@ -14,7 +14,7 @@ class IOChip {
   options: IORenderOptions;
 
   constructor(p5: p5, name: string, isInput: boolean, position: IPosition) {
-    this.p5 = p5;
+    this.p = p5;
     this.name = name;
     this.isInput = isInput;
     this.pin = new Pin(p5, name, State.Off, !isInput, this);
@@ -26,23 +26,26 @@ class IOChip {
   }
 
   private renderChip() {
-    this.p5.strokeWeight(config.component.iOChip.strokeWeight);
-    this.p5.fill(
+    this.p.push();
+    this.p.strokeWeight(config.component.iOChip.strokeWeight);
+    this.p.fill(
       this.pin.state === State.Off
         ? config.component.iOChip.color.stateOff
         : config.component.iOChip.color.stateOn
     );
-    this.p5.circle(
+    this.p.circle(
       this.options.position.x,
       this.options.position.y,
       this.options.size
     );
+    this.p.pop();
   }
 
   private renderInnerWire() {
-    this.p5.stroke(config.component.iOChip.innerWire.color);
-    this.p5.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
-    this.p5.line(
+    this.p.push();
+    this.p.stroke(config.component.iOChip.innerWire.color);
+    this.p.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
+    this.p.line(
       this.isInput
         ? this.options.position.x + this.options.size / 2
         : this.options.position.x - this.options.size / 2,
@@ -52,6 +55,7 @@ class IOChip {
         : this.options.position.x - this.options.size,
       this.options.position.y
     );
+    this.p.pop();
   }
 
   private renderPin() {
@@ -78,20 +82,22 @@ class IOChip {
     this.renderPin();
   }
 
-  mouseClicked() {
+  // TODO: Check
+  public mouseClicked(): Pin | IOChip | undefined {
     if (this.isMouseOver() && this.isInput) {
       this.toggle();
+      return this;
     }
     if (this.pin.mouseClicked()) {
       return this.pin;
     }
   }
 
-  isMouseOver() {
+  public isMouseOver(): boolean {
     return (
-      this.p5.dist(
-        this.p5.mouseX,
-        this.p5.mouseY,
+      this.p.dist(
+        this.p.mouseX,
+        this.p.mouseY,
         this.options.position.x,
         this.options.position.y
       ) <=
@@ -99,11 +105,21 @@ class IOChip {
     );
   }
 
-  mouseDragged() {
+  public mouseDragged(): void {
     this.options.position = {
-      x: this.p5.mouseX,
-      y: this.p5.mouseY,
+      x: this.p.mouseX,
+      y: this.p.mouseY,
     };
+  }
+
+  // TODO: Rename
+  public isMouseOverGetEntity(): IOChip | Pin | undefined {
+    if (this.pin.isMouseOver()) {
+      return this.pin;
+    }
+    if (this.isMouseOver()) {
+      return this;
+    }
   }
 }
 

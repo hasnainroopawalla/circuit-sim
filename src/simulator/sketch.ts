@@ -4,6 +4,7 @@ import { IPosition, ISize } from "./render-options.interface";
 import Board from "./board";
 
 let board: Board;
+export let circuit: Circuit;
 
 export const sketch = (p: p5) => {
   p.setup = () => {
@@ -18,7 +19,7 @@ export const sketch = (p: p5) => {
       h: p.windowHeight - config.component.circuit.widthScale * 2,
     };
 
-    const circuit = new Circuit(p, {
+    circuit = new Circuit(p, {
       position: boardStartPosition,
       size: boardSize,
     });

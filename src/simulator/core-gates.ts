@@ -1,34 +1,25 @@
 import { State } from "../enums/state";
 import Pin from "./pin";
 
-type IBasicGate = {
-  name: string;
-  inputPins: number;
-  outputPins: number;
-  action: (a: Pin[]) => State[];
-};
-
-const basicGates: IBasicGate[] = [
-  {
-    name: "AND",
+export const CORE_GATES = {
+  AND: {
     inputPins: 2,
     outputPins: 1,
     action: (inputPins: Pin[]) => [inputPins[0].state && inputPins[1].state],
+    color: "#2F85BD",
   },
-  {
-    name: "OR",
+  OR: {
     inputPins: 2,
     outputPins: 1,
     action: (inputPins: Pin[]) => [inputPins[0].state || inputPins[1].state],
+    color: "#A20F52",
   },
-  {
-    name: "NOT",
+  NOT: {
     inputPins: 1,
     outputPins: 1,
     action: (inputPins: Pin[]) => [
       inputPins[0].state === State.On ? State.Off : State.On,
     ],
+    color: "#7A7449",
   },
-];
-
-export default basicGates;
+};
