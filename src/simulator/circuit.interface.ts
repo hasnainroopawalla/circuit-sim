@@ -10,7 +10,6 @@ export type WiringMode = {
 };
 
 export type DraggingMode = {
-  enabled: boolean;
   chip?: Chip | IOChip;
 };
 

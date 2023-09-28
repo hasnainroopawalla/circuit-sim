@@ -44,7 +44,7 @@ class Circuit {
     this.chips = [];
     this.mode = Mode.Idle;
     this.wiringMode = { waypoints: [] };
-    this.draggingMode = { enabled: false };
+    this.draggingMode = {};
     this.spawnChipsMode = { chips: [] };
     this.options = options;
   }
@@ -53,7 +53,8 @@ class Circuit {
     return this.mode === Mode.Wiring;
   }
 
-  private setWiringMode(): void {
+  private setWiringMode(wiringMode: WiringMode): void {
+    this.wiringMode = wiringMode;
     this.mode = Mode.Wiring;
   }
 
@@ -61,7 +62,8 @@ class Circuit {
     return this.mode === Mode.Dragging;
   }
 
-  private setDraggingMode(): void {
+  private setDraggingMode(draggingMode: DraggingMode): void {
+    this.draggingMode = draggingMode;
     this.mode = Mode.Dragging;
   }
 
@@ -69,7 +71,8 @@ class Circuit {
     return this.mode === Mode.SpawnChips;
   }
 
-  private setSpawnChipsMode(): void {
+  private setSpawnChipsMode(chip: Chip): void {
+    this.spawnChipsMode.chips.push(chip);
     this.mode = Mode.SpawnChips;
   }
 
@@ -78,12 +81,10 @@ class Circuit {
   }
 
   private setIdleMode(): void {
-    console.log("IDLE");
     this.spawnChipsMode = {
       chips: [],
     };
     this.draggingMode = {
-      enabled: false,
       chip: undefined,
     };
     this.wiringMode = {
@@ -94,7 +95,7 @@ class Circuit {
     this.mode = Mode.Idle;
   }
 
-  private getClickedEntity(): IOChip | Pin | Chip | undefined {
+  private getMouseOverEntity(): IOChip | Pin | Chip | undefined {
     // Input IOChips
     for (let i = 0; i < this.inputs.length; i++) {
       const entity = this.inputs[i].isMouseOverGetEntity();
@@ -116,14 +117,6 @@ class Circuit {
         return entity;
       }
     }
-  }
-
-  private toggleWiringMode(pin: Pin) {
-    this.setWiringMode();
-    this.wiringMode = {
-      startPin: pin,
-      waypoints: [],
-    };
   }
 
   private renderWiringModeWire(): void {
@@ -230,20 +223,6 @@ class Circuit {
     }
   }
 
-  // private disableDraggingMode(): void {
-  //   this.state.draggingMode = {
-  //     enabled: false,
-  //     chip: undefined,
-  //   };
-  // }
-
-  // private disableSpawnChipMode(): void {
-  //   this.spawnChipsMode = {
-  //     enabled: false,
-  //     chips: [],
-  //   };
-  // }
-
   private addWireWaypoint(x: number, y: number): void {
     this.wiringMode.waypoints.push({
       x,
@@ -261,8 +240,7 @@ class Circuit {
       CORE_GATES[chipName].color,
       false
     );
-    this.setSpawnChipsMode();
-    this.spawnChipsMode.chips.push(chip);
+    this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
 
@@ -309,9 +287,8 @@ class Circuit {
   }
 
   private handleClickWiringMode(): void {
-    // console.log("handleClickWiringMode");
-    if (this.isWiringMode()) {
-      const entity = this.getClickedEntity();
+    if (this.isWiringMode() && this.wiringMode.startPin) {
+      const entity = this.getMouseOverEntity();
       if (entity instanceof Pin) {
         // A wire is not allowed to start and end on the same chip
         if (this.wiringMode.startPin.chip !== entity.chip) {
@@ -320,7 +297,10 @@ class Circuit {
             entity,
             this.wiringMode.waypoints
           );
+          this.setIdleMode();
         }
+      } else {
+        // Disable wiring mode if end pin not selected
         this.setIdleMode();
       }
     }
@@ -333,69 +313,46 @@ class Circuit {
   }
 
   private handleClickIdleMode(): void {
-    console.log("handleClickIdleMode");
-    const entity = this.getClickedEntity();
+    // console.log("handleClickIdleMode");
+    const entity = this.getMouseOverEntity();
     if (entity instanceof Pin) {
-      this.toggleWiringMode(entity);
+      this.setWiringMode({
+        startPin: entity,
+        waypoints: [],
+      });
+    } else if (entity instanceof IOChip) {
+      entity.mouseClicked();
     }
 
+    // TODO: Rename this method
     this.checkSpawnIOChip();
   }
 
   public mouseClicked() {
     console.log("click");
+    this.isIdleMode() && this.handleClickIdleMode();
     this.isWiringMode() && this.handleClickWiringMode();
     this.isSpawnChipsMode() && this.handleClickSpawnChipsMode();
-    this.isIdleMode() && this.handleClickIdleMode();
   }
 
   private handleDraggedWiringMode(): void {
-    // console.log("handleDraggedWiringMode");
     return;
   }
 
-  // private handleDraggedSpawnChipsMode(): void {
-  // }
-
   private handleDraggedDraggingMode(): void {
-    // console.log("handleDraggedDraggingMode");
-    if (!this.isMouseOver()) {
+    if (this.isMouseOver()) {
+      this.draggingMode.chip.mouseDragged();
+    } else {
       this.setIdleMode();
-      return;
     }
-    this.draggingMode.chip.mouseDragged();
   }
 
   private handleDraggedIdleMode(): void {
-    // console.log("handleDraggedIdleMode");
-    for (let i = 0; i < this.inputs.length; i++) {
-      if (this.inputs[i].isMouseOver() && this.draggingMode.enabled === false) {
-        this.draggingMode = {
-          enabled: true,
-          chip: this.inputs[i],
-        };
-      }
-    }
-    // Output IOChips
-    for (let i = 0; i < this.outputs.length; i++) {
-      if (
-        this.outputs[i].isMouseOver() &&
-        this.draggingMode.enabled === false
-      ) {
-        this.draggingMode = {
-          enabled: true,
-          chip: this.outputs[i],
-        };
-      }
-    }
-    // Chips
-    for (let i = 0; i < this.chips.length; i++) {
-      if (this.chips[i].isMouseOver() && this.draggingMode.enabled === false) {
-        this.draggingMode = {
-          enabled: true,
-          chip: this.chips[i],
-        };
-      }
+    const entity = this.getMouseOverEntity();
+    if (entity instanceof Chip) {
+      this.setDraggingMode({
+        chip: entity,
+      });
     }
   }
 
@@ -405,9 +362,9 @@ class Circuit {
     this.isDraggingMode() && this.handleDraggedDraggingMode();
   }
 
-  public mouseReleased() {}
-
-  public mouseMoved() {}
+  public mouseReleased() {
+    this.isDraggingMode() && this.setIdleMode();
+  }
 
   public isMouseOver() {
     return (
