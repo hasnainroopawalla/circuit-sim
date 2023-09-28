@@ -13,7 +13,6 @@ import IOChip from "./io-chip";
 import Pin from "./pin";
 import Wire from "./wire";
 import config from "../config";
-// import { State } from "../enums/state";
 import { CORE_GATES } from "./core-gates";
 
 enum Mode {
@@ -21,6 +20,11 @@ enum Mode {
   Dragging = "Dragging",
   Wiring = "Wiring",
   SpawnChips = "SpawnChips",
+}
+
+enum Interaction {
+  Click = "Click",
+  Drag = "Drag",
 }
 
 class Circuit {
@@ -96,13 +100,15 @@ class Circuit {
   }
 
   private getMouseOverEntity(): IOChip | Pin | Chip | undefined {
-    // Input IOChips
+    // Input Entities
     for (let i = 0; i < this.inputs.length; i++) {
       const entity = this.inputs[i].isMouseOverGetEntity();
       if (entity) {
         return entity;
       }
     }
+
+    // Output Entities
     for (let i = 0; i < this.outputs.length; i++) {
       const entity = this.outputs[i].isMouseOverGetEntity();
       if (entity) {
@@ -110,7 +116,7 @@ class Circuit {
       }
     }
 
-    // Chips
+    // Chip Entities
     for (let i = 0; i < this.chips.length; i++) {
       const entity = this.chips[i].isMouseOverGetEntity();
       if (entity) {
@@ -286,80 +292,118 @@ class Circuit {
     }
   }
 
-  private handleClickWiringMode(): void {
-    if (this.isWiringMode() && this.wiringMode.startPin) {
-      const entity = this.getMouseOverEntity();
-      if (entity instanceof Pin) {
-        // A wire is not allowed to start and end on the same chip
-        if (this.wiringMode.startPin.chip !== entity.chip) {
-          this.addWire(
-            this.wiringMode.startPin,
-            entity,
-            this.wiringMode.waypoints
-          );
+  private handleIdleMode(interaction: Interaction): void {
+    if (!this.isIdleMode()) {
+      return;
+    }
+
+    const entity = this.getMouseOverEntity();
+
+    switch (interaction) {
+      case Interaction.Click:
+        if (entity instanceof Pin) {
+          this.setWiringMode({
+            startPin: entity,
+            waypoints: [],
+          });
+        } else if (entity instanceof IOChip) {
+          entity.mouseClicked();
+        }
+
+        // TODO: Rename this method
+        this.checkSpawnIOChip();
+        break;
+
+      case Interaction.Drag:
+        if (entity instanceof Chip) {
+          this.setDraggingMode({
+            chip: entity,
+          });
+        }
+        break;
+    }
+  }
+
+  private handleWiringMode(interaction: Interaction): void {
+    if (!this.isWiringMode()) {
+      return;
+    }
+
+    const entity = this.getMouseOverEntity();
+
+    switch (interaction) {
+      case Interaction.Click:
+        if (this.isWiringMode() && this.wiringMode.startPin) {
+          if (entity instanceof Pin) {
+            // A wire is not allowed to start and end on the same chip
+            if (this.wiringMode.startPin.chip !== entity.chip) {
+              this.addWire(
+                this.wiringMode.startPin,
+                entity,
+                this.wiringMode.waypoints
+              );
+              this.setIdleMode();
+            }
+          } else {
+            // Disable wiring mode if end pin not selected
+            this.setIdleMode();
+          }
+        }
+        this.isMouseOver() &&
+          this.addWireWaypoint(this.p.mouseX, this.p.mouseY);
+        break;
+
+      case Interaction.Drag:
+        break;
+    }
+  }
+
+  private handleSpawnChipsMode(interaction: Interaction): void {
+    if (!this.isSpawnChipsMode()) {
+      return;
+    }
+
+    switch (interaction) {
+      case Interaction.Click:
+        this.isMouseOver() && this.setIdleMode();
+        break;
+
+      case Interaction.Drag:
+        break;
+    }
+  }
+
+  private handleDraggingMode(interaction: Interaction): void {
+    if (!this.isDraggingMode()) {
+      return;
+    }
+
+    switch (interaction) {
+      case Interaction.Click:
+        break;
+
+      case Interaction.Drag:
+        if (this.isMouseOver()) {
+          this.draggingMode.chip.mouseDragged();
+        } else {
           this.setIdleMode();
         }
-      } else {
-        // Disable wiring mode if end pin not selected
-        this.setIdleMode();
-      }
+        break;
     }
-    this.isMouseOver() && this.addWireWaypoint(this.p.mouseX, this.p.mouseY);
-  }
-
-  private handleClickSpawnChipsMode(): void {
-    // console.log("handleClickSpawnChipsMode", this.spawnChipsMode);
-    this.isMouseOver() && this.setIdleMode();
-  }
-
-  private handleClickIdleMode(): void {
-    // console.log("handleClickIdleMode");
-    const entity = this.getMouseOverEntity();
-    if (entity instanceof Pin) {
-      this.setWiringMode({
-        startPin: entity,
-        waypoints: [],
-      });
-    } else if (entity instanceof IOChip) {
-      entity.mouseClicked();
-    }
-
-    // TODO: Rename this method
-    this.checkSpawnIOChip();
   }
 
   public mouseClicked() {
-    console.log("click");
-    this.isIdleMode() && this.handleClickIdleMode();
-    this.isWiringMode() && this.handleClickWiringMode();
-    this.isSpawnChipsMode() && this.handleClickSpawnChipsMode();
-  }
-
-  private handleDraggedWiringMode(): void {
-    return;
-  }
-
-  private handleDraggedDraggingMode(): void {
-    if (this.isMouseOver()) {
-      this.draggingMode.chip.mouseDragged();
-    } else {
-      this.setIdleMode();
-    }
-  }
-
-  private handleDraggedIdleMode(): void {
-    const entity = this.getMouseOverEntity();
-    if (entity instanceof Chip) {
-      this.setDraggingMode({
-        chip: entity,
-      });
-    }
+    this.handleIdleMode(Interaction.Click);
+    this.handleWiringMode(Interaction.Click);
+    this.handleSpawnChipsMode(Interaction.Click);
+    this.handleDraggingMode(Interaction.Drag);
   }
 
   public mouseDragged() {
-    this.isIdleMode() && this.handleDraggedIdleMode();
-    this.isWiringMode() && this.handleDraggedWiringMode();
-    this.isDraggingMode() && this.handleDraggedDraggingMode();
+    this.handleIdleMode(Interaction.Drag);
+    this.handleWiringMode(Interaction.Drag);
+    this.handleSpawnChipsMode(Interaction.Drag);
+    this.handleDraggingMode(Interaction.Drag);
   }
 
   public mouseReleased() {
