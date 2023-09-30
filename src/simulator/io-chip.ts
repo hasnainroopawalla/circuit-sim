@@ -1,5 +1,6 @@
-import config from "../config";
 import { Position, State } from "./shared.interface";
+
+import config from "../config";
 import { iOPinPosition } from "./utils";
 import Pin from "./pin";
 import Wire from "./wire";

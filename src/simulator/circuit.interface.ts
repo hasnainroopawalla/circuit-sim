@@ -1,7 +1,8 @@
+import { Position, Size } from "./shared.interface";
+
 import Chip from "./chip";
 import IOChip from "./io-chip";
 import Pin from "./pin";
-import { Position, Size } from "./shared.interface";
 
 export type WiringMode = {
   waypoints: Position[];
