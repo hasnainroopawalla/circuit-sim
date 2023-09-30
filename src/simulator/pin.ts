@@ -1,10 +1,15 @@
-import { State } from "../enums/state";
+import { Position, State } from "./shared.interface";
+
 import Chip from "./chip";
 import Wire from "./wire";
 import IOChip from "./io-chip";
-import { IPinRenderOptions, IPosition } from "./render-options.interface";
 import config from "../config";
-import { initPosition } from "../utils/Utils";
+
+type PinRenderOptions = {
+  position: Position;
+  size: number;
+  color: string;
+};
 
 class Pin {
   p: p5;
@@ -13,7 +18,7 @@ class Pin {
   isInput: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
-  options: IPinRenderOptions;
+  options: PinRenderOptions;
 
   constructor(
     p5: p5,
@@ -29,13 +34,13 @@ class Pin {
     this.outgoingWires = [];
     this.chip = chip;
     this.options = {
-      position: initPosition(),
+      position: { x: 0, y: 0 },
       size: config.component.pin.size,
       color: config.component.pin.color,
     };
   }
 
-  public isMouseOver() {
+  public isMouseOver(): boolean {
     return (
       this.p.dist(
         this.p.mouseX,
@@ -47,21 +52,21 @@ class Pin {
     );
   }
 
-  propagate() {
+  public propagate(): void {
     for (let i = 0; i < this.outgoingWires.length; i++) {
       this.outgoingWires[i].propagate();
     }
   }
 
-  setPosition(position: IPosition) {
+  public setPosition(position: Position): void {
     this.options.position = position;
   }
 
-  mouseClicked() {
+  public mouseClicked(): boolean {
     return this.isMouseOver();
   }
 
-  render() {
+  public render(): void {
     this.p.push();
     this.p.stroke(config.component.circuit.background);
     this.p.strokeWeight(config.component.pin.strokeWeight);

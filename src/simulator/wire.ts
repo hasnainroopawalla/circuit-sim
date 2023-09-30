@@ -1,6 +1,6 @@
+import { State, Position } from "./shared.interface";
+
 import config from "../config";
-import { State } from "../enums/state";
-import { IPosition } from "./render-options.interface";
 import Pin from "./pin";
 
 class Wire {
@@ -8,9 +8,9 @@ class Wire {
   startPin: Pin;
   endPin: Pin;
   state: State;
-  waypoints: IPosition[];
+  waypoints: Position[];
 
-  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: IPosition[]) {
+  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[]) {
     this.p = p5;
     this.startPin = startPin;
     this.endPin = endPin;
@@ -18,13 +18,13 @@ class Wire {
     this.waypoints = waypoints;
   }
 
-  public propagate() {
+  public propagate(): void {
     this.state = this.startPin.state;
     this.endPin.state = this.startPin.state;
     this.endPin.chip.execute();
   }
 
-  public render() {
+  public render(): void {
     this.p.push();
     this.p.strokeWeight(config.component.wire.strokeWeight);
     this.p.stroke(

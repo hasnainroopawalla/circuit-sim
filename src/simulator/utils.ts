@@ -1,20 +1,20 @@
-import { IPosition, ISize } from "../simulator/render-options.interface";
+import { Position, Size } from "./shared.interface";
 
-export const textPositionInRect = (
-  rectPosition: IPosition,
-  rectSize: ISize
-): IPosition => {
+export function textPositionInRect(
+  rectPosition: Position,
+  rectSize: Size
+): Position {
   return {
     x: rectPosition.x + rectSize.w / 2,
     y: rectPosition.y + rectSize.h / 2,
   };
-};
+}
 
-export const computeInputPinsPosition = (
-  lineStartPosition: IPosition,
-  lineEndPosition: IPosition,
+export function inputPinsPosition(
+  lineStartPosition: Position,
+  lineEndPosition: Position,
   numPins: number
-): IPosition[] => {
+): Position[] {
   if (numPins === 1) {
     return [
       {
@@ -29,7 +29,7 @@ export const computeInputPinsPosition = (
   const unitX = dx / distance;
   const unitY = dy / distance;
   const increment = distance / (numPins + 1);
-  const points: IPosition[] = [];
+  const points: Position[] = [];
 
   for (let i = 1; i <= numPins; i++) {
     const x = lineStartPosition.x + unitX * i * increment;
@@ -37,36 +37,26 @@ export const computeInputPinsPosition = (
     points.push({ x, y });
   }
   return points;
-};
+}
 
-export const computeIOPinPosition = (
-  chipPosition: IPosition,
+export function iOPinPosition(
+  chipPosition: Position,
   chipSize: number,
   isInput: boolean
-): IPosition => {
+): Position {
   const position = isInput
     ? chipPosition.x + chipSize
     : chipPosition.x - chipSize;
   return { x: position, y: chipPosition.y };
-};
+}
 
-export const computeChipSize = (
+export function chipSize(
   chipText: string,
   chipTextSize: number,
   numPins: number
-): ISize => {
+): Size {
   return {
     w: chipText.length * chipTextSize + 15,
     h: chipTextSize * numPins + 15,
   };
-};
-
-export const computeButtonSize = (
-  buttonText: string,
-  buttonTextSize: number
-): ISize => {
-  return {
-    w: buttonText.length * buttonTextSize,
-    h: buttonTextSize + buttonTextSize / 1.5,
-  };
-};
+}

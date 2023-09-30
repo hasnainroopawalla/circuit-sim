@@ -1,4 +1,5 @@
-import { State } from "../enums/state";
+import { State } from "./shared.interface";
+
 import Pin from "./pin";
 
 export const CORE_GATES = {

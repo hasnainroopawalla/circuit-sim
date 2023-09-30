@@ -1,15 +1,17 @@
-import type { IChipRenderOptions, ISize } from "./render-options.interface";
+import { Position, Size, State } from "./shared.interface";
 
 import config from "../config";
-import { State } from "../enums/state";
-import {
-  textPositionInRect,
-  computeInputPinsPosition,
-  computeChipSize,
-} from "../utils/Position";
-import { initPosition } from "../utils/Utils";
+import { textPositionInRect, inputPinsPosition, chipSize } from "./utils";
 import Circuit from "./circuit";
 import Pin from "./pin";
+
+type ChipRenderOptions = {
+  position: Position;
+  size: Size;
+  color: string;
+  textColor: string;
+  textPosition: Position;
+};
 
 class Chip {
   p: p5;
@@ -17,7 +19,7 @@ class Chip {
   outputPins: Pin[] = [];
   name: string;
   action: (a: Pin[]) => State[];
-  options: IChipRenderOptions;
+  options: ChipRenderOptions;
   isCircuit: boolean;
   circuit?: Circuit;
 
@@ -60,7 +62,7 @@ class Chip {
       }
     }
 
-    const size: ISize = computeChipSize(
+    const size = chipSize(
       this.name,
       config.component.chip.text.size,
       Math.max(this.inputPins.length, this.outputPins.length)
@@ -72,14 +74,14 @@ class Chip {
         y: this.p.mouseY - size.h / 2,
       },
       size,
-      textPosition: initPosition(),
+      textPosition: { x: 0, y: 0 },
       color: color,
       textColor: config.component.chip.text.color,
     };
   }
 
-  private renderPins() {
-    const inputPinsPositions = computeInputPinsPosition(
+  private renderPins(): void {
+    const inputPinsPositions = inputPinsPosition(
       this.options.position,
       {
         x: this.options.position.x,
@@ -87,7 +89,7 @@ class Chip {
       },
       this.inputPins.length
     );
-    const outputPinsPositions = computeInputPinsPosition(
+    const outputPinsPositions = inputPinsPosition(
       {
         x: this.options.position.x + this.options.size.w,
         y: this.options.position.y,
@@ -108,7 +110,7 @@ class Chip {
     }
   }
 
-  private renderText() {
+  private renderText(): void {
     this.p.push();
     this.p.textStyle(this.p.BOLD);
     this.options.textPosition = textPositionInRect(
@@ -126,7 +128,7 @@ class Chip {
     this.p.pop();
   }
 
-  private renderChip() {
+  private renderChip(): void {
     this.p.push();
     this.p.fill(this.options.color);
     this.p.strokeWeight(config.component.chip.strokeWeight);
@@ -140,7 +142,7 @@ class Chip {
     this.p.pop();
   }
 
-  isMouseOver() {
+  private isMouseOver(): boolean {
     return (
       this.p.mouseX >= this.options.position.x &&
       this.p.mouseX <= this.options.position.x + this.options.size.w &&
@@ -167,7 +169,7 @@ class Chip {
     }
   }
 
-  execute() {
+  public execute(): void {
     if (this.isCircuit && this.circuit) {
       this.circuit.execute();
     } else {
@@ -179,29 +181,14 @@ class Chip {
     }
   }
 
-  mouseClicked() {
-    // Input pins
-    for (let i = 0; i < this.inputPins.length; i++) {
-      if (this.inputPins[i].mouseClicked()) {
-        return this.inputPins[i];
-      }
-    }
-    // Output pins
-    for (let i = 0; i < this.outputPins.length; i++) {
-      if (this.outputPins[i].mouseClicked()) {
-        return this.outputPins[i];
-      }
-    }
-  }
-
-  mouseDragged() {
+  public mouseDragged(): void {
     this.options.position = {
       x: this.p.mouseX - this.options.size.w / 2,
       y: this.p.mouseY - this.options.size.h / 2,
     };
   }
 
-  render() {
+  public render(): void {
     this.renderChip();
     this.renderText();
     this.renderPins();

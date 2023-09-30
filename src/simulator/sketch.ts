@@ -1,6 +1,6 @@
 import Circuit from "./circuit";
 import config from "../config";
-import { IPosition, ISize } from "./render-options.interface";
+import { Position, Size } from "./shared.interface";
 import Board from "./board";
 
 let board: Board;
@@ -10,11 +10,11 @@ export const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    const boardStartPosition: IPosition = {
+    const boardStartPosition: Position = {
       x: config.component.circuit.widthScale,
       y: config.component.circuit.widthScale,
     };
-    const boardSize: ISize = {
+    const boardSize: Size = {
       w: p.windowWidth - config.component.circuit.widthScale * 2,
       h: p.windowHeight - config.component.circuit.widthScale * 2,
     };

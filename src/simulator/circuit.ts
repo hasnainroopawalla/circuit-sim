@@ -1,12 +1,12 @@
-import type {
-  DraggingMode,
+import {
+  Interaction,
+  Mode,
+  RepositionMode,
   SpawnChipsMode,
   WiringMode,
+  CircuitRenderOptions,
 } from "./circuit.interface";
-import type {
-  ICircuitRenderOptions,
-  IPosition,
-} from "./render-options.interface";
+import type { Position } from "./shared.interface";
 
 import Chip from "./chip";
 import IOChip from "./io-chip";
@@ -14,18 +14,6 @@ import Pin from "./pin";
 import Wire from "./wire";
 import config from "../config";
 import { CORE_GATES } from "./core-gates";
-
-enum Mode {
-  Idle = "Idle",
-  Dragging = "Dragging",
-  Wiring = "Wiring",
-  SpawnChips = "SpawnChips",
-}
-
-enum Interaction {
-  Click = "Click",
-  Drag = "Drag",
-}
 
 class Circuit {
   p: p5;
@@ -35,12 +23,12 @@ class Circuit {
   chips: Chip[];
   mode: Mode;
   wiringMode: WiringMode;
-  // TODO: Change draggingMode name
-  draggingMode: DraggingMode;
+  repositionMode: RepositionMode;
   spawnChipsMode: SpawnChipsMode;
-  options: ICircuitRenderOptions;
+  options: CircuitRenderOptions;
+  mouseReleaseAfterDrag: boolean;
 
-  constructor(p5: p5, options: ICircuitRenderOptions) {
+  constructor(p5: p5, options: CircuitRenderOptions) {
     this.p = p5;
     this.inputs = [];
     this.outputs = [];
@@ -48,9 +36,10 @@ class Circuit {
     this.chips = [];
     this.mode = Mode.Idle;
     this.wiringMode = { waypoints: [] };
-    this.draggingMode = {};
+    this.repositionMode = {};
     this.spawnChipsMode = { chips: [] };
     this.options = options;
+    this.mouseReleaseAfterDrag = false;
   }
 
   private isWiringMode(): boolean {
@@ -62,13 +51,13 @@ class Circuit {
     this.mode = Mode.Wiring;
   }
 
-  private isDraggingMode(): boolean {
-    return this.mode === Mode.Dragging;
+  private isRepositionMode(): boolean {
+    return this.mode === Mode.Reposition;
   }
 
-  private setDraggingMode(draggingMode: DraggingMode): void {
-    this.draggingMode = draggingMode;
-    this.mode = Mode.Dragging;
+  private setRepositionMode(repositionMode: RepositionMode): void {
+    this.repositionMode = repositionMode;
+    this.mode = Mode.Reposition;
   }
 
   private isSpawnChipsMode(): boolean {
@@ -88,7 +77,7 @@ class Circuit {
     this.spawnChipsMode = {
       chips: [],
     };
-    this.draggingMode = {
+    this.repositionMode = {
       chip: undefined,
     };
     this.wiringMode = {
@@ -138,7 +127,7 @@ class Circuit {
     this.p.pop();
   }
 
-  private renderSpawnChipMode() {
+  private renderSpawnChipMode(): void {
     for (let i = 0; i < this.spawnChipsMode.chips.length; i++) {
       const chip = this.spawnChipsMode.chips[i];
       chip.options.position = {
@@ -151,7 +140,7 @@ class Circuit {
     }
   }
 
-  private renderIOChips() {
+  private renderIOChips(): void {
     for (let i = 0; i < this.inputs.length; i++) {
       this.inputs[i].render();
     }
@@ -160,19 +149,19 @@ class Circuit {
     }
   }
 
-  private renderChips() {
+  private renderChips(): void {
     for (let i = 0; i < this.chips.length; i++) {
       this.chips[i].render();
     }
   }
 
-  private renderWires() {
+  private renderWires(): void {
     for (let i = 0; i < this.wires.length; i++) {
       this.wires[i].render();
     }
   }
 
-  private renderCircuit() {
+  private renderCircuit(): void {
     this.p.push();
     this.p.fill(config.component.circuit.background);
     this.p.rect(
@@ -184,10 +173,7 @@ class Circuit {
     this.p.pop();
   }
 
-  /*
-  Checks if the current mouse position is over any of the specified entities
-  */
-  private isMouseOverlapping(entities: IOChip[]) {
+  private isMouseOverlapping(entities: IOChip[]): boolean {
     for (let i = 0; i < entities.length; i++) {
       if (entities[i].isMouseOver()) {
         return true;
@@ -196,37 +182,24 @@ class Circuit {
     return false;
   }
 
-  private checkSpawnIOChip() {
-    // Input
-    if (
+  private checkSpawnInputChip(): boolean {
+    return (
       this.p.mouseX >= this.options.position.x - 10 &&
       this.p.mouseX <= this.options.position.x + 10 &&
       this.p.mouseY >= this.options.position.y &&
       this.p.mouseY <= this.options.position.y + this.options.size.h &&
       !this.isMouseOverlapping(this.inputs)
-    ) {
-      this.inputs.push(
-        new IOChip(this.p, `Input_${this.inputs.length}`, true, {
-          x: this.options.position.x,
-          y: this.p.mouseY,
-        })
-      );
-    }
-    // Output
-    if (
+    );
+  }
+
+  private checkSpawnOutputChip(): boolean {
+    return (
       this.p.mouseX >= this.options.position.x + this.options.size.w - 10 &&
       this.p.mouseX <= this.options.position.x + this.options.size.w + 10 &&
       this.p.mouseY >= this.options.position.y &&
       this.p.mouseY <= this.options.position.y + this.options.size.h &&
       !this.isMouseOverlapping(this.outputs)
-    ) {
-      this.outputs.push(
-        new IOChip(this.p, `Output_${this.inputs.length}`, false, {
-          x: this.options.position.x + this.options.size.w,
-          y: this.p.mouseY,
-        })
-      );
-    }
+    );
   }
 
   private addWireWaypoint(x: number, y: number): void {
@@ -236,7 +209,7 @@ class Circuit {
     });
   }
 
-  public addCoreChip(chipName: "AND" | "NOT" | "OR") {
+  public addCoreChip(chipName: "AND" | "NOT" | "OR"): void {
     const chip = new Chip(
       this.p,
       chipName,
@@ -276,7 +249,25 @@ class Circuit {
   //   this.chips.push(chip);
   // }
 
-  public addWire(startPin: Pin, endPin: Pin, waypoints: IPosition[]) {
+  public addInputIOChip(): void {
+    this.inputs.push(
+      new IOChip(this.p, `Input_${this.inputs.length}`, true, {
+        x: this.options.position.x,
+        y: this.p.mouseY,
+      })
+    );
+  }
+
+  public addOutputIOChip(): void {
+    this.outputs.push(
+      new IOChip(this.p, `Output_${this.inputs.length}`, false, {
+        x: this.options.position.x + this.options.size.w,
+        y: this.p.mouseY,
+      })
+    );
+  }
+
+  public addWire(startPin: Pin, endPin: Pin, waypoints: Position[]): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
@@ -286,7 +277,7 @@ class Circuit {
     startPin.outgoingWires.push(wire);
   }
 
-  public execute() {
+  public execute(): void {
     for (let i = 0; i < this.inputs.length; i++) {
       this.inputs[i].execute();
     }
@@ -308,15 +299,20 @@ class Circuit {
           });
         } else if (entity instanceof IOChip) {
           entity.mouseClicked();
+        } else if (this.checkSpawnInputChip()) {
+          this.addInputIOChip();
+        } else if (this.checkSpawnOutputChip()) {
+          this.addOutputIOChip();
         }
-
-        // TODO: Rename this method
-        this.checkSpawnIOChip();
         break;
 
       case Interaction.Drag:
         if (entity instanceof Chip) {
-          this.setDraggingMode({
+          this.setRepositionMode({
+            chip: entity,
+          });
+        } else if (entity instanceof IOChip) {
+          this.setRepositionMode({
             chip: entity,
           });
         }
@@ -333,6 +329,7 @@ class Circuit {
 
     switch (interaction) {
       case Interaction.Click:
+        // TODO: Improve logic
         if (this.isWiringMode() && this.wiringMode.startPin) {
           if (entity instanceof Pin) {
             // A wire is not allowed to start and end on the same chip
@@ -346,11 +343,10 @@ class Circuit {
             }
           } else {
             // Disable wiring mode if end pin not selected
+            // TODO: Add waypoint handling
             this.setIdleMode();
           }
         }
-        this.isMouseOver() &&
-          this.addWireWaypoint(this.p.mouseX, this.p.mouseY);
         break;
 
       case Interaction.Drag:
@@ -373,8 +369,8 @@ class Circuit {
     }
   }
 
-  private handleDraggingMode(interaction: Interaction): void {
-    if (!this.isDraggingMode()) {
+  private handleRepositionMode(interaction: Interaction): void {
+    if (!this.isRepositionMode()) {
       return;
     }
 
@@ -384,7 +380,7 @@ class Circuit {
 
       case Interaction.Drag:
         if (this.isMouseOver()) {
-          this.draggingMode.chip.mouseDragged();
+          this.repositionMode.chip.mouseDragged();
         } else {
           this.setIdleMode();
         }
@@ -392,25 +388,33 @@ class Circuit {
     }
   }
 
-  public mouseClicked() {
+  public mouseClicked(): void {
+    if (this.mouseReleaseAfterDrag) {
+      this.mouseReleaseAfterDrag = false;
+      return;
+    }
     this.handleIdleMode(Interaction.Click);
     this.handleWiringMode(Interaction.Click);
     this.handleSpawnChipsMode(Interaction.Click);
-    this.handleDraggingMode(Interaction.Drag);
+    this.handleRepositionMode(Interaction.Drag);
   }
 
-  public mouseDragged() {
+  public mouseDragged(): void {
+    // console.log("drag", this.mode);
     this.handleIdleMode(Interaction.Drag);
     this.handleWiringMode(Interaction.Drag);
     this.handleSpawnChipsMode(Interaction.Drag);
-    this.handleDraggingMode(Interaction.Drag);
+    this.handleRepositionMode(Interaction.Drag);
   }
 
-  public mouseReleased() {
-    this.isDraggingMode() && this.setIdleMode();
+  public mouseReleased(): void {
+    if (this.isRepositionMode()) {
+      this.mouseReleaseAfterDrag = true;
+      this.setIdleMode();
+    }
   }
 
-  public isMouseOver() {
+  public isMouseOver(): boolean {
     return (
       this.p.mouseX >= this.options.position.x &&
       this.p.mouseX <= this.options.position.x + this.options.size.w &&
@@ -419,8 +423,8 @@ class Circuit {
     );
   }
 
-  public render() {
-    console.log(this.mode);
+  public render(): void {
+    // console.log(this.mode);
     this.renderCircuit();
     this.renderChips();
     this.renderIOChips();
