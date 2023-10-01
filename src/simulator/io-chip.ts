@@ -22,7 +22,7 @@ class IOChip {
     this.p = p5;
     this.name = name;
     this.isInput = isInput;
-    this.pin = new Pin(p5, name, State.Off, !isInput, this);
+    this.pin = new Pin(p5, `${name}_pin-0`, State.Off, !isInput, this);
     this.outgoingWires = [];
     this.options = {
       position,
@@ -75,6 +75,10 @@ class IOChip {
 
   private toggle(): void {
     this.pin.state = this.pin.state === State.Off ? State.On : State.Off;
+  }
+
+  public getPin(): Pin {
+    return this.pin;
   }
 
   public execute(): void {

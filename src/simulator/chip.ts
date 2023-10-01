@@ -18,6 +18,7 @@ class Chip {
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
   name: string;
+  id: string;
   action: (a: Pin[]) => State[];
   options: ChipRenderOptions;
   isCircuit: boolean;
@@ -26,6 +27,7 @@ class Chip {
   constructor(
     p5: p5,
     name: string,
+    id: string,
     numInputPins: number,
     numOutputPins: number,
     action: (a: Pin[]) => State[],
@@ -35,6 +37,7 @@ class Chip {
   ) {
     this.p = p5;
     this.name = name;
+    this.id = id;
     this.action = action;
     this.isCircuit = isCircuit;
     this.circuit = circuit;
@@ -42,22 +45,22 @@ class Chip {
       this.inputPins = this.circuit.inputs.map((input) => input.pin);
       this.outputPins = this.circuit.outputs.map((output) => output.pin);
       for (let i = 0; i < this.inputPins.length; i++) {
-        this.inputPins[i].name = `${name}_INPUT_${i}`;
+        this.inputPins[i].id = `${id}_input-pin-${i}`;
         this.inputPins[i].isInput = true;
       }
       for (let i = 0; i < this.outputPins.length; i++) {
-        this.outputPins[i].name = `${name}_OUTPUT_${i}`;
+        this.outputPins[i].id = `${id}_output-pin-${i}`;
         this.outputPins[i].isInput = false;
       }
     } else {
       for (let i = 0; i < numInputPins; i++) {
         this.inputPins.push(
-          new Pin(p5, `${name}_INPUT_${i}`, State.Off, true, this)
+          new Pin(p5, `${id}_input-pin-${i}`, State.Off, true, this)
         );
       }
       for (let i = 0; i < numOutputPins; i++) {
         this.outputPins.push(
-          new Pin(p5, `${name}_OUTPUT_${i}`, State.Off, false, this)
+          new Pin(p5, `${id}_output-pin-${i}`, State.Off, false, this)
         );
       }
     }
@@ -151,6 +154,12 @@ class Chip {
     );
   }
 
+  public getPinById(pinId: string): Pin | undefined {
+    return [...this.inputPins, ...this.outputPins].find(
+      ({ id }) => id === pinId
+    );
+  }
+
   public isMouseOverGetEntity(): Chip | Pin | undefined {
     for (let i = 0; i < this.inputPins.length; i++) {
       const pin = this.inputPins[i];
@@ -170,7 +179,9 @@ class Chip {
   }
 
   public execute(): void {
+    console.log("ADDWDAW");
     if (this.isCircuit && this.circuit) {
+      console.log("EXE");
       this.circuit.execute();
     } else {
       const outputStates = this.action(this.inputPins);

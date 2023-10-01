@@ -2,6 +2,8 @@ import { State } from "./shared.interface";
 
 import Pin from "./pin";
 
+export type CoreGate = "AND" | "OR" | "NOT";
+
 export const CORE_GATES = {
   AND: {
     inputPins: 2,

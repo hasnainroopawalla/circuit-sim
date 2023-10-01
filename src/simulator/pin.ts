@@ -13,22 +13,22 @@ type PinRenderOptions = {
 
 class Pin {
   p: p5;
-  name: string;
+  id: string;
   state: State;
-  isInput: boolean;
+  isInput: boolean; // TODO: change to type: "input" | "output"
   outgoingWires: Wire[];
   chip: Chip | IOChip;
   options: PinRenderOptions;
 
   constructor(
     p5: p5,
-    name: string,
+    id: string,
     state: State,
     isInput: boolean,
     chip: Chip | IOChip
   ) {
     this.p = p5;
-    this.name = name;
+    this.id = id;
     this.state = state;
     this.isInput = isInput;
     this.outgoingWires = [];

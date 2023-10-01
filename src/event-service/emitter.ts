@@ -6,7 +6,7 @@ class CustomEventEmitter<TEvents> {
 
   public emit<TEventName extends keyof TEvents & string>(
     eventName: TEventName,
-    eventArgs: TEvents[TEventName]
+    eventArgs?: TEvents[TEventName]
   ) {
     this.emitter.emit(eventName, eventArgs);
   }

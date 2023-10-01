@@ -11,6 +11,10 @@ const styles = {
     display: "flex",
     flexDirection: "row",
     gap: "10px",
+    MozUserSelect: "none" /* firefox */,
+    WebkitUserSelect: "none" /* Safari */,
+    msUserSelect: "none" /* IE*/,
+    userSelect: "none",
   },
 } as const;
 

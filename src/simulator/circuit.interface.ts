@@ -3,6 +3,7 @@ import { Position, Size } from "./shared.interface";
 import Chip from "./chip";
 import IOChip from "./io-chip";
 import Pin from "./pin";
+import { CoreGate } from "./core-gates";
 
 export type WiringMode = {
   waypoints: Position[];
@@ -34,3 +35,12 @@ export enum Interaction {
   Click = "Click",
   Drag = "Drag",
 }
+
+export type RawCircuit = {
+  inputs: [{ id: string; pin: string }];
+  outputs: [{ id: string; pin: string }];
+  chips: [
+    { id: string; type: CoreGate; inputPins: string[]; outputPins: string[] }
+  ];
+  wires: string[][];
+};

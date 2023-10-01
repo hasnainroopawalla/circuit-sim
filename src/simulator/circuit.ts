@@ -5,6 +5,7 @@ import {
   SpawnChipsMode,
   WiringMode,
   CircuitRenderOptions,
+  RawCircuit,
 } from "./circuit.interface";
 import type { Position } from "./shared.interface";
 
@@ -17,6 +18,8 @@ import { CORE_GATES } from "./core-gates";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 
 class Circuit {
+  // TODO: Add logger
+
   p: p5;
   inputs: IOChip[];
   outputs: IOChip[];
@@ -47,6 +50,10 @@ class Circuit {
   private bindEventListeners() {
     emitter.on(EmitterEvent.SpawnCoreChip, (coreChip) =>
       this.spawnCoreChip(coreChip)
+    );
+    emitter.on(EmitterEvent.SaveCircuit, () => this.saveCircuit());
+    emitter.on(EmitterEvent.SpawnCustomChip, (customChipString) =>
+      this.spawnCustomChip(customChipString)
     );
   }
 
@@ -85,9 +92,7 @@ class Circuit {
     this.spawnChipsMode = {
       chips: [],
     };
-    this.repositionMode = {
-      chip: undefined,
-    };
+    this.repositionMode = {};
     this.wiringMode = {
       startPin: undefined,
       endPin: undefined,
@@ -217,6 +222,29 @@ class Circuit {
     });
   }
 
+  private getPinById(pinId: string): Pin | undefined {
+    for (let i = 0; i < this.inputs.length; i++) {
+      const pin = this.inputs[i].getPin();
+      if (pin.id === pinId) {
+        return pin;
+      }
+    }
+
+    for (let i = 0; i < this.outputs.length; i++) {
+      const pin = this.outputs[i].getPin();
+      if (pin.id === pinId) {
+        return pin;
+      }
+    }
+
+    for (let i = 0; i < this.chips.length; i++) {
+      const pin = this.chips[i].getPinById(pinId);
+      if (pin) {
+        return pin;
+      }
+    }
+  }
+
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
@@ -224,11 +252,97 @@ class Circuit {
     const chip = new Chip(
       this.p,
       chipName,
+      `chip-${this.chips.length}`,
       CORE_GATES[chipName].inputPins,
       CORE_GATES[chipName].outputPins,
       CORE_GATES[chipName].action,
       CORE_GATES[chipName].color,
       false
+    );
+    this.setSpawnChipsMode(chip);
+    this.chips.push(chip);
+  }
+
+  public spawnCustomChip(
+    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
+  ): void {
+    const rawCircuit: RawCircuit = JSON.parse(eventData.customChipString);
+
+    // TODO: Improve creating a new circuit
+    const circuit = new Circuit(this.p, {
+      position: {
+        x: 0,
+        y: 0,
+      },
+      size: {
+        w: 0,
+        h: 0,
+      },
+    });
+
+    const inputs: IOChip[] = [];
+    for (let i = 0; i < rawCircuit.inputs.length; i++) {
+      const input = rawCircuit.inputs[i];
+      inputs.push(
+        new IOChip(this.p, input.id, true, {
+          x: this.options.position.x,
+          y: this.p.mouseY,
+        })
+      );
+    }
+    circuit.inputs = inputs;
+
+    const outputs: IOChip[] = [];
+    for (let i = 0; i < rawCircuit.outputs.length; i++) {
+      const output = rawCircuit.outputs[i];
+      outputs.push(
+        new IOChip(this.p, output.id, false, {
+          x: this.options.position.x + this.options.size.w,
+          y: this.p.mouseY,
+        })
+      );
+    }
+    circuit.outputs = outputs;
+
+    const chips: Chip[] = [];
+    for (let i = 0; i < rawCircuit.chips.length; i++) {
+      const chip = rawCircuit.chips[i];
+      chips.push(
+        new Chip(
+          this.p,
+          chip.type,
+          chip.id,
+          CORE_GATES[chip.type].inputPins,
+          CORE_GATES[chip.type].outputPins,
+          CORE_GATES[chip.type].action,
+          CORE_GATES[chip.type].color,
+          false
+        )
+      );
+    }
+    circuit.chips = chips;
+
+    const wires: Wire[] = [];
+    for (let i = 0; i < rawCircuit.wires.length; i++) {
+      const wire = rawCircuit.wires[i];
+      const startPin = circuit.getPinById(wire[0]);
+      const endPin = circuit.getPinById(wire[1]);
+      wires.push(new Wire(this.p, startPin, endPin, []));
+    }
+    circuit.wires = wires;
+
+    console.log("FINAL", circuit);
+
+    const chip = new Chip(
+      this.p,
+      "NAND",
+      `chip-${this.chips.length}`,
+      circuit.inputs.length,
+      circuit.outputs.length,
+      () => [],
+      "blue",
+      true,
+      circuit
     );
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
@@ -262,7 +376,7 @@ class Circuit {
 
   public spawnInputIOChip(): void {
     this.inputs.push(
-      new IOChip(this.p, `Input_${this.inputs.length}`, true, {
+      new IOChip(this.p, `input-${this.inputs.length}`, true, {
         x: this.options.position.x,
         y: this.p.mouseY,
       })
@@ -271,7 +385,7 @@ class Circuit {
 
   public spawnOutputIOChip(): void {
     this.outputs.push(
-      new IOChip(this.p, `Output_${this.inputs.length}`, false, {
+      new IOChip(this.p, `output-${this.outputs.length}`, false, {
         x: this.options.position.x + this.options.size.w,
         y: this.p.mouseY,
       })
@@ -286,6 +400,7 @@ class Circuit {
     const wire = new Wire(this.p, startPin, endPin, waypoints);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
+    console.log(this);
   }
 
   public execute(): void {
@@ -437,12 +552,57 @@ class Circuit {
     );
   }
 
-  public saveCurrentCircuit(): void {
-    console.log(JSON.stringify(this));
+  public saveCircuit(): void {
+    // console.log(this.inputs);
+    // console.log(this.chips);
+    // console.log(this.outputs);
+    // console.log(this.wires);
+
+    const circuit = {
+      inputs: [
+        {
+          id: "input-0",
+          pin: "input-0_pin-0",
+        },
+        {
+          id: "input-1",
+          pin: "input_1-pin_0",
+        },
+      ],
+
+      outputs: [
+        {
+          id: "output-0",
+          pin: "output-0_pin-0",
+        },
+      ],
+
+      chips: [
+        {
+          id: "chip-0",
+          type: "AND",
+          inputPins: ["chip-0_input-pin-0", "chip-0_input-pin-1"],
+          outputPins: ["chip-0_output-pin-0"],
+        },
+        {
+          id: "chip-1",
+          type: "NOT",
+          inputPins: ["chip-1_input-pin-0"],
+          outputPins: ["chip-1_output-pin-0"],
+        },
+      ],
+
+      wires: [
+        ["input-0_pin-0", "chip-0_input-pin-0"],
+        ["input_1-pin_0", "chip-0_input-pin-1"],
+        ["chip-0_output-pin-0", "chip-1_input-pin-0"],
+        ["chip-1_output-pin-0", "output-0_pin-0"],
+      ],
+    };
+    console.log(JSON.stringify(circuit));
   }
 
   public render(): void {
-    // console.log(this.mode);
     this.renderCircuit();
     this.renderChips();
     this.renderIOChips();
