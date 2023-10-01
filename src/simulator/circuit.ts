@@ -14,6 +14,7 @@ import Pin from "./pin";
 import Wire from "./wire";
 import config from "../config";
 import { CORE_GATES } from "./core-gates";
+import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 
 class Circuit {
   p: p5;
@@ -40,6 +41,13 @@ class Circuit {
     this.spawnChipsMode = { chips: [] };
     this.options = options;
     this.mouseReleaseAfterDrag = false;
+    this.bindEventListeners();
+  }
+
+  private bindEventListeners() {
+    emitter.on(EmitterEvent.SpawnCoreChip, (coreChip) =>
+      this.spawnCoreChip(coreChip)
+    );
   }
 
   private isWiringMode(): boolean {
@@ -209,7 +217,10 @@ class Circuit {
     });
   }
 
-  public addCoreChip(chipName: "AND" | "NOT" | "OR"): void {
+  public spawnCoreChip(
+    eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
+  ): void {
+    const chipName = eventData.coreChip;
     const chip = new Chip(
       this.p,
       chipName,
@@ -249,7 +260,7 @@ class Circuit {
   //   this.chips.push(chip);
   // }
 
-  public addInputIOChip(): void {
+  public spawnInputIOChip(): void {
     this.inputs.push(
       new IOChip(this.p, `Input_${this.inputs.length}`, true, {
         x: this.options.position.x,
@@ -258,7 +269,7 @@ class Circuit {
     );
   }
 
-  public addOutputIOChip(): void {
+  public spawnOutputIOChip(): void {
     this.outputs.push(
       new IOChip(this.p, `Output_${this.inputs.length}`, false, {
         x: this.options.position.x + this.options.size.w,
@@ -267,7 +278,7 @@ class Circuit {
     );
   }
 
-  public addWire(startPin: Pin, endPin: Pin, waypoints: Position[]): void {
+  public spawnWire(startPin: Pin, endPin: Pin, waypoints: Position[]): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
@@ -300,9 +311,12 @@ class Circuit {
         } else if (entity instanceof IOChip) {
           entity.mouseClicked();
         } else if (this.checkSpawnInputChip()) {
-          this.addInputIOChip();
+          this.spawnInputIOChip();
         } else if (this.checkSpawnOutputChip()) {
-          this.addOutputIOChip();
+          this.spawnOutputIOChip();
+          emitter.emit(EmitterEvent.Notification, {
+            message: "Output chip",
+          });
         }
         break;
 
@@ -334,7 +348,7 @@ class Circuit {
           if (entity instanceof Pin) {
             // A wire is not allowed to start and end on the same chip
             if (this.wiringMode.startPin.chip !== entity.chip) {
-              this.addWire(
+              this.spawnWire(
                 this.wiringMode.startPin,
                 entity,
                 this.wiringMode.waypoints
@@ -421,6 +435,10 @@ class Circuit {
       this.p.mouseY >= this.options.position.y &&
       this.p.mouseY <= this.options.position.y + this.options.size.h
     );
+  }
+
+  public saveCurrentCircuit(): void {
+    console.log(JSON.stringify(this));
   }
 
   public render(): void {

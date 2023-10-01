@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./button";
-import { circuit } from "../simulator/sketch";
-import { CORE_GATES } from "../simulator/core-gates";
+import { CORE_GATES } from "../simulator";
+import { EmitterEvent, emitter } from "../event-service";
 
 const styles = {
   toolbarContainer: {
@@ -20,21 +20,27 @@ const styles = {
 export const Toolbar = () => {
   return (
     <div className="toolbar-container" style={styles.toolbarContainer}>
-      <Button text="SAVE" color="#525151" onClick={() => alert("save")} />
+      <Button text="SAVE" color="#525151" onClick={() => {}} />
       <Button
         text="AND"
         color={CORE_GATES["AND"].color}
-        onClick={() => circuit.addCoreChip("AND")}
+        onClick={() =>
+          emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "AND" })
+        }
       />
       <Button
         text="OR"
         color={CORE_GATES["OR"].color}
-        onClick={() => circuit.addCoreChip("OR")}
+        onClick={() =>
+          emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "OR" })
+        }
       />
       <Button
         text="NOT"
         color={CORE_GATES["NOT"].color}
-        onClick={() => circuit.addCoreChip("NOT")}
+        onClick={() =>
+          emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "NOT" })
+        }
       />
     </div>
   );

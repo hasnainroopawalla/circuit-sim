@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { sketch } from "../simulator/sketch";
+import { sketch } from "../simulator";
 import p5 from "p5";
 
 export const Sketch = () => {
