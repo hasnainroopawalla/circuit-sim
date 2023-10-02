@@ -42,15 +42,18 @@ class Chip {
     this.isCircuit = isCircuit;
     this.circuit = circuit;
     if (isCircuit && this.circuit) {
+      // console.log("CHIP", this.circuit);
       this.inputPins = this.circuit.inputs.map((input) => input.pin);
       this.outputPins = this.circuit.outputs.map((output) => output.pin);
       for (let i = 0; i < this.inputPins.length; i++) {
         this.inputPins[i].id = `${id}_input-pin-${i}`;
         this.inputPins[i].isInput = true;
+        // this.inputPins[i].chip = this;
       }
       for (let i = 0; i < this.outputPins.length; i++) {
         this.outputPins[i].id = `${id}_output-pin-${i}`;
         this.outputPins[i].isInput = false;
+        // this.outputPins[i].chip = this;
       }
     } else {
       for (let i = 0; i < numInputPins; i++) {
@@ -81,6 +84,8 @@ class Chip {
       color: color,
       textColor: config.component.chip.text.color,
     };
+
+    // console.log("FINAL", this.name, this);
   }
 
   private renderPins(): void {
@@ -179,9 +184,7 @@ class Chip {
   }
 
   public execute(): void {
-    console.log("ADDWDAW");
     if (this.isCircuit && this.circuit) {
-      console.log("EXE");
       this.circuit.execute();
     } else {
       const outputStates = this.action(this.inputPins);
@@ -200,9 +203,16 @@ class Chip {
   }
 
   public render(): void {
+    // if (this.circuit) {
+    //   console.log(this.inputPins, this.outputPins);
+    // }
     this.renderChip();
     this.renderText();
     this.renderPins();
+    this.p.push();
+    this.p.fill(255);
+    this.p.text(this.id, this.options.position.x, this.options.position.y);
+    this.p.pop();
   }
 }
 

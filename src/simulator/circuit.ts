@@ -327,11 +327,9 @@ class Circuit {
       const wire = rawCircuit.wires[i];
       const startPin = circuit.getPinById(wire[0]);
       const endPin = circuit.getPinById(wire[1]);
-      wires.push(new Wire(this.p, startPin, endPin, []));
+      circuit.spawnWire(startPin, endPin, []);
     }
     circuit.wires = wires;
-
-    console.log("FINAL", circuit);
 
     const chip = new Chip(
       this.p,
@@ -400,7 +398,6 @@ class Circuit {
     const wire = new Wire(this.p, startPin, endPin, waypoints);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
-    console.log(this);
   }
 
   public execute(): void {
@@ -566,7 +563,7 @@ class Circuit {
         },
         {
           id: "input-1",
-          pin: "input_1-pin_0",
+          pin: "input-1_pin-0",
         },
       ],
 
@@ -594,7 +591,7 @@ class Circuit {
 
       wires: [
         ["input-0_pin-0", "chip-0_input-pin-0"],
-        ["input_1-pin_0", "chip-0_input-pin-1"],
+        ["input-1_pin-0", "chip-0_input-pin-1"],
         ["chip-0_output-pin-0", "chip-1_input-pin-0"],
         ["chip-1_output-pin-0", "output-0_pin-0"],
       ],

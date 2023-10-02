@@ -28,5 +28,6 @@ export const sketch = (p: p5) => {
   p.mouseClicked = () => circuit.mouseClicked();
   p.mouseDragged = () => circuit.mouseDragged();
   p.mouseReleased = () => circuit.mouseReleased();
+  p.keyPressed = () => (p.isLooping() ? p.noLoop() : p.loop());
   // TODO: p.doubleClicked = () => circuit.doubleClicked();
 };

@@ -77,6 +77,10 @@ class Pin {
       this.options.size
     );
     this.p.pop();
+    this.p.push();
+    this.p.fill("red");
+    this.p.text(this.id, this.options.position.x, this.options.position.y - 10);
+    this.p.pop();
   }
 }
 
