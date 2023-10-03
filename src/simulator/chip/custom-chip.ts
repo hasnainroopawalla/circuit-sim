@@ -5,15 +5,12 @@ export class CustomChip extends Chip {
   circuit: Circuit;
 
   constructor(p: p5, circuit: Circuit, id: string) {
-    console.log(circuit.options.color);
     super(
       p,
       circuit.name,
       id,
       circuit.inputs.length,
       circuit.outputs.length,
-      // TODO: is action needed?
-      () => [],
       circuit.options.color
     );
 

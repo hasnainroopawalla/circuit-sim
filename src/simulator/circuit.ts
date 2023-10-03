@@ -32,7 +32,12 @@ class Circuit {
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
 
-  constructor(p5: p5, name: string, options: CircuitRenderOptions) {
+  constructor(
+    p5: p5,
+    name: string,
+    options: CircuitRenderOptions,
+    isCustomChip?: boolean
+  ) {
     this.p = p5;
     this.name = name;
     this.inputs = [];
@@ -45,7 +50,7 @@ class Circuit {
     this.spawnChipsMode = { chips: [] };
     this.options = options;
     this.mouseReleaseAfterDrag = false;
-    this.bindEventListeners();
+    !isCustomChip && this.bindEventListeners();
   }
 
   private bindEventListeners() {
@@ -263,17 +268,22 @@ class Circuit {
     );
 
     // TODO: Improve creating a new circuit
-    const circuit = new Circuit(this.p, rawCircuit.name, {
-      position: {
-        x: 0,
-        y: 0,
+    const circuit = new Circuit(
+      this.p,
+      rawCircuit.name,
+      {
+        position: {
+          x: 0,
+          y: 0,
+        },
+        size: {
+          w: 0,
+          h: 0,
+        },
+        color: rawCircuit.color,
       },
-      size: {
-        w: 0,
-        h: 0,
-      },
-      color: rawCircuit.color,
-    });
+      true
+    );
 
     const inputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.inputs.length; i++) {

@@ -5,6 +5,8 @@ import { Chip } from "./chip";
 import { CORE_GATES, CoreGate } from "../core-gates";
 
 export class CoreChip extends Chip {
+  action: (a: Pin[]) => State[];
+
   constructor(p: p5, coreGate: CoreGate, id: string) {
     const numInputPins = CORE_GATES[coreGate].inputPins;
     const numOutputPins = CORE_GATES[coreGate].outputPins;
@@ -15,7 +17,6 @@ export class CoreChip extends Chip {
       id,
       numInputPins,
       numOutputPins,
-      CORE_GATES[coreGate].action,
       CORE_GATES[coreGate].color
     );
 
@@ -29,6 +30,7 @@ export class CoreChip extends Chip {
         new Pin(p, `${id}_output-pin-${i}`, State.Off, false, this)
       );
     }
+    this.action = CORE_GATES[coreGate].action;
   }
 
   public execute(): void {

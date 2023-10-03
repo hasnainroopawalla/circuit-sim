@@ -1,4 +1,4 @@
-import { Position, Size, State } from "../shared.interface";
+import { Position, Size } from "../shared.interface";
 
 import config from "../../config";
 import { textPositionInRect, inputPinsPosition, chipSize } from "../utils";
@@ -18,7 +18,6 @@ export abstract class Chip {
   outputPins: Pin[] = [];
   name: string;
   id: string;
-  action: (a: Pin[]) => State[];
   options: ChipRenderOptions;
 
   constructor(
@@ -27,13 +26,11 @@ export abstract class Chip {
     id: string,
     numInputPins: number,
     numOutputPins: number,
-    action: (a: Pin[]) => State[],
     color: string
   ) {
     this.p = p;
     this.name = name;
     this.id = id;
-    this.action = action;
 
     const size = chipSize(
       this.name,
