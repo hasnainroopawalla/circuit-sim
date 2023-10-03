@@ -1,16 +1,16 @@
-import { Position, State } from "./shared.interface";
+import { Position, State } from "../shared.interface";
 
-import config from "../config";
-import { iOPinPosition } from "./utils";
-import Pin from "./pin";
-import Wire from "./wire";
+import config from "../../config";
+import { iOPinPosition } from "../utils";
+import Pin from "../pin";
+import Wire from "../wire";
 
 type IORenderOptions = {
   position: Position;
   size: number;
 };
 
-class IOChip {
+export class IOChip {
   p: p5;
   name: string;
   isInput: boolean;
@@ -133,5 +133,3 @@ class IOChip {
     }
   }
 }
-
-export default IOChip;

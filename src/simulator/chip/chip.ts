@@ -1,9 +1,8 @@
-import { Position, Size, State } from "./shared.interface";
+import { Position, Size, State } from "../shared.interface";
 
-import config from "../config";
-import { textPositionInRect, inputPinsPosition, chipSize } from "./utils";
-import Circuit from "./circuit";
-import Pin from "./pin";
+import config from "../../config";
+import { textPositionInRect, inputPinsPosition, chipSize } from "../utils";
+import Pin from "../pin";
 
 type ChipRenderOptions = {
   position: Position;
@@ -13,7 +12,7 @@ type ChipRenderOptions = {
   textPosition: Position;
 };
 
-class Chip {
+export abstract class Chip {
   p: p5;
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
@@ -21,8 +20,6 @@ class Chip {
   id: string;
   action: (a: Pin[]) => State[];
   options: ChipRenderOptions;
-  isCircuit: boolean;
-  circuit?: Circuit;
 
   constructor(
     p5: p5,
@@ -31,47 +28,17 @@ class Chip {
     numInputPins: number,
     numOutputPins: number,
     action: (a: Pin[]) => State[],
-    color: string,
-    isCircuit: boolean,
-    circuit?: Circuit
+    color: string
   ) {
     this.p = p5;
     this.name = name;
     this.id = id;
     this.action = action;
-    this.isCircuit = isCircuit;
-    this.circuit = circuit;
-    if (isCircuit && this.circuit) {
-      // console.log("CHIP", this.circuit);
-      this.inputPins = this.circuit.inputs.map((input) => input.pin);
-      this.outputPins = this.circuit.outputs.map((output) => output.pin);
-      for (let i = 0; i < this.inputPins.length; i++) {
-        this.inputPins[i].id = `${id}_input-pin-${i}`;
-        this.inputPins[i].isInput = true;
-        // this.inputPins[i].chip = this;
-      }
-      for (let i = 0; i < this.outputPins.length; i++) {
-        this.outputPins[i].id = `${id}_output-pin-${i}`;
-        this.outputPins[i].isInput = false;
-        // this.outputPins[i].chip = this;
-      }
-    } else {
-      for (let i = 0; i < numInputPins; i++) {
-        this.inputPins.push(
-          new Pin(p5, `${id}_input-pin-${i}`, State.Off, true, this)
-        );
-      }
-      for (let i = 0; i < numOutputPins; i++) {
-        this.outputPins.push(
-          new Pin(p5, `${id}_output-pin-${i}`, State.Off, false, this)
-        );
-      }
-    }
 
     const size = chipSize(
       this.name,
       config.component.chip.text.size,
-      Math.max(this.inputPins.length, this.outputPins.length)
+      Math.max(numInputPins, numOutputPins)
     );
 
     this.options = {
@@ -84,8 +51,6 @@ class Chip {
       color: color,
       textColor: config.component.chip.text.color,
     };
-
-    // console.log("FINAL", this.name, this);
   }
 
   private renderPins(): void {
@@ -183,17 +148,7 @@ class Chip {
     }
   }
 
-  public execute(): void {
-    if (this.isCircuit && this.circuit) {
-      this.circuit.execute();
-    } else {
-      const outputStates = this.action(this.inputPins);
-      for (let i = 0; i < this.outputPins.length; i++) {
-        this.outputPins[i].state = outputStates[i];
-        this.outputPins[i].propagate();
-      }
-    }
-  }
+  public execute(): void {}
 
   public mouseDragged(): void {
     this.options.position = {
@@ -203,17 +158,12 @@ class Chip {
   }
 
   public render(): void {
-    // if (this.circuit) {
-    //   console.log(this.inputPins, this.outputPins);
-    // }
     this.renderChip();
     this.renderText();
     this.renderPins();
-    this.p.push();
-    this.p.fill(255);
-    this.p.text(this.id, this.options.position.x, this.options.position.y);
-    this.p.pop();
+    // this.p.push();
+    // this.p.fill(255);
+    // this.p.text(this.id, this.options.position.x, this.options.position.y);
+    // this.p.pop();
   }
 }
-
-export default Chip;

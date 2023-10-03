@@ -1,8 +1,7 @@
 import { Position, State } from "./shared.interface";
 
-import Chip from "./chip";
+import { Chip, IOChip } from "./chip";
 import Wire from "./wire";
-import IOChip from "./io-chip";
 import config from "../config";
 
 type PinRenderOptions = {
@@ -77,10 +76,10 @@ class Pin {
       this.options.size
     );
     this.p.pop();
-    this.p.push();
-    this.p.fill("red");
-    this.p.text(this.id, this.options.position.x, this.options.position.y - 10);
-    this.p.pop();
+    // this.p.push();
+    // this.p.fill("red");
+    // this.p.text(this.id, this.options.position.x, this.options.position.y - 10);
+    // this.p.pop();
   }
 }
 

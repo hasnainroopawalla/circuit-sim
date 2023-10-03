@@ -1,7 +1,6 @@
 import { Position, Size } from "./shared.interface";
 
-import Chip from "./chip";
-import IOChip from "./io-chip";
+import { IOChip, Chip } from "./chip";
 import Pin from "./pin";
 import { CoreGate } from "./core-gates";
 

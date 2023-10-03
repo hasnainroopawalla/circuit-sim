@@ -9,12 +9,11 @@ import {
 } from "./circuit.interface";
 import type { Position } from "./shared.interface";
 
-import Chip from "./chip";
-import IOChip from "./io-chip";
+import { Chip } from "./chip/chip";
+import { CoreChip, IOChip, CustomChip } from "./chip";
 import Pin from "./pin";
 import Wire from "./wire";
 import config from "../config";
-import { CORE_GATES } from "./core-gates";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 
 class Circuit {
@@ -249,16 +248,7 @@ class Circuit {
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
     const chipName = eventData.coreChip;
-    const chip = new Chip(
-      this.p,
-      chipName,
-      `chip-${this.chips.length}`,
-      CORE_GATES[chipName].inputPins,
-      CORE_GATES[chipName].outputPins,
-      CORE_GATES[chipName].action,
-      CORE_GATES[chipName].color,
-      false
-    );
+    const chip = new CoreChip(this.p, chipName, `chip-${this.chips.length}`);
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
@@ -307,18 +297,7 @@ class Circuit {
     const chips: Chip[] = [];
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      chips.push(
-        new Chip(
-          this.p,
-          chip.type,
-          chip.id,
-          CORE_GATES[chip.type].inputPins,
-          CORE_GATES[chip.type].outputPins,
-          CORE_GATES[chip.type].action,
-          CORE_GATES[chip.type].color,
-          false
-        )
-      );
+      chips.push(new CoreChip(this.p, chip.type, chip.id));
     }
     circuit.chips = chips;
 
@@ -331,17 +310,7 @@ class Circuit {
     }
     circuit.wires = wires;
 
-    const chip = new Chip(
-      this.p,
-      "NAND",
-      `chip-${this.chips.length}`,
-      circuit.inputs.length,
-      circuit.outputs.length,
-      () => [],
-      "blue",
-      true,
-      circuit
-    );
+    const chip = new CustomChip(this.p, circuit);
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
