@@ -5,26 +5,26 @@ import { Chip } from "./chip";
 import { CORE_GATES, CoreGate } from "../core-gates";
 
 export class CoreChip extends Chip {
-  constructor(p: p5, name: CoreGate, id: string) {
+  constructor(p: p5, coreGate: CoreGate, id: string) {
+    const numInputPins = CORE_GATES[coreGate].inputPins;
+    const numOutputPins = CORE_GATES[coreGate].outputPins;
+
     super(
       p,
-      name,
-      "core-chip-id",
-      CORE_GATES[name].inputPins,
-      CORE_GATES[name].outputPins,
-      CORE_GATES[name].action,
-      CORE_GATES[name].color
+      coreGate,
+      id,
+      numInputPins,
+      numOutputPins,
+      CORE_GATES[coreGate].action,
+      CORE_GATES[coreGate].color
     );
-    // this.name = name;
-    // this.id = id;
-    // this.action = action;
 
-    for (let i = 0; i < CORE_GATES[name].inputPins; i++) {
+    for (let i = 0; i < numInputPins; i++) {
       this.inputPins.push(
         new Pin(p, `${id}_input-pin-${i}`, State.Off, true, this)
       );
     }
-    for (let i = 0; i < CORE_GATES[name].outputPins; i++) {
+    for (let i = 0; i < numOutputPins; i++) {
       this.outputPins.push(
         new Pin(p, `${id}_output-pin-${i}`, State.Off, false, this)
       );

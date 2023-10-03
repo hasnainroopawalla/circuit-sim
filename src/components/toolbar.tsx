@@ -51,7 +51,7 @@ export const Toolbar = () => {
         color="blue"
         onClick={() =>
           emitter.emit(EmitterEvent.SpawnCustomChip, {
-            customChipString: `{"inputs":[{"id":"input-0","pin":"input-0_pin-0"},{"id":"input-1","pin":"input-1_pin-0"}],"outputs":[{"id":"output-0","pin":"output-0_pin-0"}],"chips":[{"id":"chip-0","type":"AND","inputPins":["chip-0_input-pin-0","chip-0_input-pin-1"],"outputPins":["chip-0_output-pin-0"]},{"id":"chip-1","type":"NOT","inputPins":["chip-1_input-pin-0"],"outputPins":["chip-1_output-pin-0"]}],"wires":[["input-0_pin-0","chip-0_input-pin-0"],["input-1_pin-0","chip-0_input-pin-1"],["chip-0_output-pin-0","chip-1_input-pin-0"],["chip-1_output-pin-0","output-0_pin-0"]]}`,
+            customChipBlueprint: `{"name":"NAND","color":"blue","inputs":[{"id":"input-0","pin":"input-0_pin-0"},{"id":"input-1","pin":"input-1_pin-0"}],"outputs":[{"id":"output-0","pin":"output-0_pin-0"}],"chips":[{"id":"chip-0","type":"AND","inputPins":["chip-0_input-pin-0","chip-0_input-pin-1"],"outputPins":["chip-0_output-pin-0"]},{"id":"chip-1","type":"NOT","inputPins":["chip-1_input-pin-0"],"outputPins":["chip-1_output-pin-0"]}],"wires":[["input-0_pin-0","chip-0_input-pin-0"],["input-1_pin-0","chip-0_input-pin-1"],["chip-0_output-pin-0","chip-1_input-pin-0"],["chip-1_output-pin-0","output-0_pin-0"]]}`,
           })
         }
       />

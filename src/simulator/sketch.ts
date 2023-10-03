@@ -7,7 +7,7 @@ export const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    circuit = new Circuit(p, {
+    circuit = new Circuit(p, "Initial", {
       position: {
         x: config.component.circuit.widthScale,
         y: config.component.circuit.widthScale,
@@ -16,6 +16,7 @@ export const sketch = (p: p5) => {
         w: p.windowWidth - config.component.circuit.widthScale * 2,
         h: p.windowHeight - config.component.circuit.widthScale * 2,
       },
+      color: "grey",
     });
   };
 
@@ -28,6 +29,5 @@ export const sketch = (p: p5) => {
   p.mouseClicked = () => circuit.mouseClicked();
   p.mouseDragged = () => circuit.mouseDragged();
   p.mouseReleased = () => circuit.mouseReleased();
-  p.keyPressed = () => (p.isLooping() ? p.noLoop() : p.loop());
   // TODO: p.doubleClicked = () => circuit.doubleClicked();
 };

@@ -21,6 +21,7 @@ export type SpawnChipsMode = {
 export type CircuitRenderOptions = {
   position: Position;
   size: Size;
+  color: string;
 };
 
 export enum Mode {
@@ -35,7 +36,9 @@ export enum Interaction {
   Drag = "Drag",
 }
 
-export type RawCircuit = {
+export type CustomChipBlueprint = {
+  name: string;
+  color: string;
   inputs: [{ id: string; pin: string }];
   outputs: [{ id: string; pin: string }];
   chips: [

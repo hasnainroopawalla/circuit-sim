@@ -22,7 +22,7 @@ export abstract class Chip {
   options: ChipRenderOptions;
 
   constructor(
-    p5: p5,
+    p: p5,
     name: string,
     id: string,
     numInputPins: number,
@@ -30,7 +30,7 @@ export abstract class Chip {
     action: (a: Pin[]) => State[],
     color: string
   ) {
-    this.p = p5;
+    this.p = p;
     this.name = name;
     this.id = id;
     this.action = action;
@@ -148,8 +148,6 @@ export abstract class Chip {
     }
   }
 
-  public execute(): void {}
-
   public mouseDragged(): void {
     this.options.position = {
       x: this.p.mouseX - this.options.size.w / 2,
@@ -161,9 +159,11 @@ export abstract class Chip {
     this.renderChip();
     this.renderText();
     this.renderPins();
-    // this.p.push();
-    // this.p.fill(255);
-    // this.p.text(this.id, this.options.position.x, this.options.position.y);
-    // this.p.pop();
+    this.p.push();
+    this.p.fill(255);
+    this.p.text(this.id, this.options.position.x, this.options.position.y);
+    this.p.pop();
   }
+
+  abstract execute(): void;
 }

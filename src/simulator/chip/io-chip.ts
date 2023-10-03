@@ -89,10 +89,10 @@ export class IOChip {
     this.renderInnerWire();
     this.renderChip();
     this.renderPin();
-    this.p.push();
-    this.p.fill(255);
-    this.p.text(this.name, this.options.position.x, this.options.position.y);
-    this.p.pop();
+    // this.p.push();
+    // this.p.fill(255);
+    // this.p.text(this.name, this.options.position.x, this.options.position.y);
+    // this.p.pop();
   }
 
   public mouseClicked(): Pin | IOChip | undefined {

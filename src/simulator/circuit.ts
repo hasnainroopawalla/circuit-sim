@@ -5,7 +5,7 @@ import {
   SpawnChipsMode,
   WiringMode,
   CircuitRenderOptions,
-  RawCircuit,
+  CustomChipBlueprint,
 } from "./circuit.interface";
 import type { Position } from "./shared.interface";
 
@@ -20,6 +20,7 @@ class Circuit {
   // TODO: Add logger
 
   p: p5;
+  name: string;
   inputs: IOChip[];
   outputs: IOChip[];
   wires: Wire[];
@@ -31,8 +32,9 @@ class Circuit {
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
 
-  constructor(p5: p5, options: CircuitRenderOptions) {
+  constructor(p5: p5, name: string, options: CircuitRenderOptions) {
     this.p = p5;
+    this.name = name;
     this.inputs = [];
     this.outputs = [];
     this.wires = [];
@@ -51,8 +53,8 @@ class Circuit {
       this.spawnCoreChip(coreChip)
     );
     emitter.on(EmitterEvent.SaveCircuit, () => this.saveCircuit());
-    emitter.on(EmitterEvent.SpawnCustomChip, (customChipString) =>
-      this.spawnCustomChip(customChipString)
+    emitter.on(EmitterEvent.SpawnCustomChip, (customChipBlueprint) =>
+      this.spawnCustomChip(customChipBlueprint)
     );
   }
 
@@ -256,10 +258,12 @@ class Circuit {
   public spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const rawCircuit: RawCircuit = JSON.parse(eventData.customChipString);
+    const rawCircuit: CustomChipBlueprint = JSON.parse(
+      eventData.customChipBlueprint
+    );
 
     // TODO: Improve creating a new circuit
-    const circuit = new Circuit(this.p, {
+    const circuit = new Circuit(this.p, rawCircuit.name, {
       position: {
         x: 0,
         y: 0,
@@ -268,6 +272,7 @@ class Circuit {
         w: 0,
         h: 0,
       },
+      color: rawCircuit.color,
     });
 
     const inputs: IOChip[] = [];
@@ -310,36 +315,10 @@ class Circuit {
     }
     circuit.wires = wires;
 
-    const chip = new CustomChip(this.p, circuit);
+    const chip = new CustomChip(this.p, circuit, `chip-${this.chips.length}`);
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
-
-  // public addChip(
-  //   name: string,
-  //   inputPins: number,
-  //   outputPins: number,
-  //   isCircuit: boolean,
-  //   action: (inputPins: Pin[]) => State[],
-  //   color: string,
-  //   circuit?: Circuit
-  // ) {
-  //   const chip = new Chip(
-  //     this.p,
-  //     name,
-  //     inputPins,
-  //     outputPins,
-  //     action,
-  //     color,
-  //     isCircuit,
-  //     circuit
-  //   );
-  //   this.state.spawnChipMode = {
-  //     enabled: true,
-  //     chips: [...this.state.spawnChipMode.chips, chip],
-  //   };
-  //   this.chips.push(chip);
-  // }
 
   public spawnInputIOChip(): void {
     this.inputs.push(
@@ -525,6 +504,8 @@ class Circuit {
     // console.log(this.wires);
 
     const circuit = {
+      name: "NAND",
+      color: "blue",
       inputs: [
         {
           id: "input-0",
