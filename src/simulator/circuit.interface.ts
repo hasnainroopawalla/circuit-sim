@@ -39,10 +39,13 @@ export enum Interaction {
 export type CustomChipBlueprint = {
   name: string;
   color: string;
-  inputs: [{ id: string; pin: string }];
-  outputs: [{ id: string; pin: string }];
-  chips: [
-    { id: string; type: CoreGate; inputPins: string[]; outputPins: string[] }
-  ];
+  inputs: { id: string; pin: string }[];
+  outputs: { id: string; pin: string }[];
+  chips: {
+    id: string;
+    coreGate: CoreGate;
+    inputPins: string[];
+    outputPins: string[];
+  }[];
   wires: string[][];
 };

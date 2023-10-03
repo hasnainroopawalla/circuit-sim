@@ -15,6 +15,7 @@ import Pin from "./pin";
 import Wire from "./wire";
 import config from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
+import { CoreGate } from "./core-gates";
 
 class Circuit {
   // TODO: Add logger
@@ -312,7 +313,7 @@ class Circuit {
     const chips: Chip[] = [];
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      chips.push(new CoreChip(this.p, chip.type, chip.id));
+      chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
     }
     circuit.chips = chips;
 
@@ -385,7 +386,7 @@ class Circuit {
         } else if (this.checkSpawnOutputChip()) {
           this.spawnOutputIOChip();
           emitter.emit(EmitterEvent.Notification, {
-            message: "Output chip",
+            message: `${Math.random()}`,
           });
         }
         break;
@@ -508,55 +509,81 @@ class Circuit {
   }
 
   public saveCircuit(): void {
-    // console.log(this.inputs);
-    // console.log(this.chips);
-    // console.log(this.outputs);
-    // console.log(this.wires);
+    const inputs = this.inputs.map((input) => ({
+      id: input.id,
+      pin: input.pin.id,
+    }));
+    const outputs = this.outputs.map((output) => ({
+      id: output.id,
+      pin: output.pin.id,
+    }));
+    const chips = this.chips.map((chip) => ({
+      id: chip.id,
+      coreGate: chip.name as CoreGate, // TODO: no type casting
+      inputPins: chip.inputPins.map((pin) => pin.id),
+      outputPins: chip.outputPins.map((pin) => pin.id),
+    }));
+    const wires = this.wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
+    console.log(inputs);
+    console.log(outputs);
+    console.log(chips);
+    console.log(wires);
 
-    const circuit = {
+    const customChip: CustomChipBlueprint = {
       name: "NAND",
-      color: "blue",
-      inputs: [
-        {
-          id: "input-0",
-          pin: "input-0_pin-0",
-        },
-        {
-          id: "input-1",
-          pin: "input-1_pin-0",
-        },
-      ],
-
-      outputs: [
-        {
-          id: "output-0",
-          pin: "output-0_pin-0",
-        },
-      ],
-
-      chips: [
-        {
-          id: "chip-0",
-          type: "AND",
-          inputPins: ["chip-0_input-pin-0", "chip-0_input-pin-1"],
-          outputPins: ["chip-0_output-pin-0"],
-        },
-        {
-          id: "chip-1",
-          type: "NOT",
-          inputPins: ["chip-1_input-pin-0"],
-          outputPins: ["chip-1_output-pin-0"],
-        },
-      ],
-
-      wires: [
-        ["input-0_pin-0", "chip-0_input-pin-0"],
-        ["input-1_pin-0", "chip-0_input-pin-1"],
-        ["chip-0_output-pin-0", "chip-1_input-pin-0"],
-        ["chip-1_output-pin-0", "output-0_pin-0"],
-      ],
+      color: "green",
+      inputs,
+      outputs,
+      chips,
+      wires,
     };
-    console.log(JSON.stringify(circuit));
+
+    // const circuit = {
+    //   name: "NAND",
+    //   color: "blue",
+    //   inputs: [
+    //     {
+    //       id: "input-0",
+    //       pin: "input-0_pin-0",
+    //     },
+    //     {
+    //       id: "input-1",
+    //       pin: "input-1_pin-0",
+    //     },
+    //   ],
+
+    //   outputs: [
+    //     {
+    //       id: "output-0",
+    //       pin: "output-0_pin-0",
+    //     },
+    //   ],
+
+    //   chips: [
+    //     {
+    //       id: "chip-0",
+    //       coreGate: "AND",
+    //       inputPins: ["chip-0_input-pin-0", "chip-0_input-pin-1"],
+    //       outputPins: ["chip-0_output-pin-0"],
+    //     },
+    //     {
+    //       id: "chip-1",
+    //       coreGate: "NOT",
+    //       inputPins: ["chip-1_input-pin-0"],
+    //       outputPins: ["chip-1_output-pin-0"],
+    //     },
+    //   ],
+
+    //   wires: [
+    //     ["input-0_pin-0", "chip-0_input-pin-0"],
+    //     ["input-1_pin-0", "chip-0_input-pin-1"],
+    //     ["chip-0_output-pin-0", "chip-1_input-pin-0"],
+    //     ["chip-1_output-pin-0", "output-0_pin-0"],
+    //   ],
+    // };
+    emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
+      customChipBlueprint: JSON.stringify(customChip),
+    });
   }
 
   public render(): void {

@@ -13,6 +13,7 @@ type IORenderOptions = {
 export class IOChip {
   p: p5;
   name: string;
+  id: string;
   isInput: boolean;
   pin: Pin;
   outgoingWires: Wire[];
@@ -21,6 +22,7 @@ export class IOChip {
   constructor(p5: p5, name: string, isInput: boolean, position: Position) {
     this.p = p5;
     this.name = name;
+    this.id = name;
     this.isInput = isInput;
     this.pin = new Pin(p5, `${name}_pin-0`, State.Off, !isInput, this);
     this.outgoingWires = [];

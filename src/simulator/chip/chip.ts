@@ -156,6 +156,7 @@ export abstract class Chip {
     this.renderChip();
     this.renderText();
     this.renderPins();
+    // TODO: Create a "debug mode" toggle
     this.p.push();
     this.p.fill(255);
     this.p.text(this.id, this.options.position.x, this.options.position.y);

@@ -1,5 +1,7 @@
 import React from "react";
-import { useNotification } from "./use-notification";
+// import { useNotification } from "./use-notification";
+import { useEventListener } from "./use-event-listener";
+import { EmitterEvent } from "../event-service";
 
 const styles = {
   toolbarContainer: {
@@ -19,11 +21,11 @@ const styles = {
 } as const;
 
 export const NotificationBanner = () => {
-  const error = useNotification(); // TODO: This should come as a prop
+  const notification = useEventListener(EmitterEvent.Notification); // TODO: This should be passed as a prop
 
   return (
     <div className="notification-banner" style={styles.toolbarContainer}>
-      <p>{error.message}</p>
+      <p>{notification && notification.message}</p>
     </div>
   );
 };
