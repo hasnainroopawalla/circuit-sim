@@ -1,0 +1,26 @@
+{
+  "root": true,
+  "parser": "@typescript-eslint/parser",
+  "plugins": ["@typescript-eslint"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "rules": {
+    "no-magic-numbers": "off",
+    "no-console": "warn",
+    "no-warning-comments": [
+      "warn",
+      {
+        "terms": ["TODO"],
+        "location": "start"
+      }
+    ],
+    "no-alert": "error",
+    "no-duplicate-imports": "error",
+    "no-unused-private-class-members": "error",
+    "camelcase": "error",
+    "eqeqeq": "error"
+  }
+}

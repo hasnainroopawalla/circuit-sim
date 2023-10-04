@@ -1,1 +1,1 @@
-# circuit-sim
+# Circuit Sim
