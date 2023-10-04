@@ -27,7 +27,7 @@ type ButtonProps = {
 
 export const Button: React.FC<ButtonProps> = (props) => {
   const { text, onClick, color } = props;
-
+  console.log("button", text);
   return (
     <button style={styles(color).button} onClick={onClick}>
       {text}
