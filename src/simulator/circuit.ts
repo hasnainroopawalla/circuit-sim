@@ -18,8 +18,6 @@ import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import { CoreGate } from "./core-gates";
 
 class Circuit {
-  // TODO: Add logger
-
   p: p5;
   name: string;
   inputs: IOChip[];
@@ -385,9 +383,6 @@ class Circuit {
           this.spawnInputIOChip();
         } else if (this.checkSpawnOutputChip()) {
           this.spawnOutputIOChip();
-          emitter.emit(EmitterEvent.Notification, {
-            message: `${Math.random()}`,
-          });
         }
         break;
 
@@ -428,7 +423,6 @@ class Circuit {
             }
           } else {
             // Disable wiring mode if end pin not selected
-            // TODO: Add waypoint handling
             this.setIdleMode();
           }
         }
@@ -524,10 +518,6 @@ class Circuit {
       outputPins: chip.outputPins.map((pin) => pin.id),
     }));
     const wires = this.wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
-    console.log(inputs);
-    console.log(outputs);
-    console.log(chips);
-    console.log(wires);
 
     const customChip: CustomChipBlueprint = {
       name: "NAND",
