@@ -1,16 +1,16 @@
 import React from "react";
 
-// TODO: use rem instead of px
-const styles = (color: string) => {
+const styles = (color: string, appearance: ButtonProps["appearance"]) => {
   return {
     button: {
-      backgroundColor: color, // #525151
-      border: "0.1rem solid #121212",
-      color: "#fff",
-      padding: "5px 10px",
+      backgroundColor: appearance === "primary" ? color : "#1e1e1e",
+      color: appearance === "primary" ? "#fff" : color,
+      border: `0.1rem solid ${appearance === "primary" ? "#121212" : color}`,
+      padding: "0.3rem 0.5rem",
       textAlign: "center",
-      fontSize: "20px",
+      fontSize: "1rem",
       cursor: "pointer",
+      borderRadius: "0.5rem",
       MozUserSelect: "none" /* firefox */,
       WebkitUserSelect: "none" /* Safari */,
       msUserSelect: "none" /* IE*/,
@@ -21,15 +21,16 @@ const styles = (color: string) => {
 
 type ButtonProps = {
   text: string;
-  color: string;
   onClick: () => void;
+  color: string;
+  appearance: "primary" | "secondary";
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { text, onClick, color } = props;
-  console.log("button", text);
+  const { text, onClick, color, appearance } = props;
+
   return (
-    <button style={styles(color).button} onClick={onClick}>
+    <button style={styles(color, appearance).button} onClick={onClick}>
       {text}
     </button>
   );

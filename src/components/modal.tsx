@@ -1,31 +1,5 @@
 import React from "react";
-
-// .modal {
-//     position: fixed;
-//     top: 0;
-//     left: 0;
-//     width:100%;
-//     height: 100%;
-//     background: rgba(0, 0, 0, 0.6);
-//   }
-
-//   .modal-main {
-//     position:fixed;
-//     background: white;
-//     width: 80%;
-//     height: auto;
-//     top:50%;
-//     left:50%;
-//     transform: translate(-50%,-50%);
-//   }
-
-//   .display-block {
-//     display: block;
-//   }
-
-//   .display-none {
-//     display: none;
-//   }
+import { Button } from "./button";
 
 const styles = {
   modal: {
@@ -38,12 +12,23 @@ const styles = {
   },
   modalMain: {
     position: "fixed",
-    background: "grey",
-    width: "30%",
-    height: "auto",
+    background: "#1e1e1e",
     top: "50%",
     left: "50%",
     transform: "translate(-50%,-50%)",
+    padding: "1rem",
+  },
+  chipNameInput: {
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
+    color: "#fff",
+    border: "0",
+    fontSize: "2rem",
+    padding: "0.6rem",
+  },
+  actionButtons: {
+    display: "flex",
+    justifyContent: "space-between",
+    marginTop: "1rem",
   },
 } as const;
 
@@ -58,13 +43,23 @@ export const Modal: React.FC<ModalProps> = (props) => {
   return (
     <div style={styles.modal}>
       <section style={styles.modalMain}>
-        <p>Modal!</p>
-        <button type="button" onClick={onConfirm}>
-          Confirm
-        </button>
-        <button type="button" onClick={onDismiss}>
-          Close
-        </button>
+        <div className="custom-chip-name-input">
+          <input style={styles.chipNameInput} type="text" id="customChipName" />
+        </div>
+        <div className="action-buttons" style={styles.actionButtons}>
+          <Button
+            text="CANCEL"
+            color="#2F85BD"
+            appearance="secondary"
+            onClick={onDismiss}
+          />
+          <Button
+            text="CONFIRM"
+            color="#2F85BD"
+            appearance="primary"
+            onClick={onConfirm}
+          />
+        </div>
       </section>
     </div>
   );

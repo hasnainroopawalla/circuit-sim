@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { Button } from "./button";
 import { CORE_GATES } from "../simulator";
 import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { Modal } from "./modal";
+import { Chip } from "./chip";
 
 const styles = {
   toolbarContainer: {
@@ -12,10 +12,10 @@ const styles = {
     bottom: "0",
     left: "0",
     right: "0",
-    margin: "5px 10px",
+    margin: "0.4rem 0.6rem",
     display: "flex",
     flexDirection: "row",
-    gap: "10px",
+    gap: "0.5rem",
   },
 } as const;
 
@@ -32,32 +32,36 @@ export const Toolbar = () => {
   return (
     <>
       <div className="toolbar-container" style={styles.toolbarContainer}>
-        <Button text="SAVE" color="#525151" onClick={onSaveButtonClick} />
-        <Button
+        <Chip
+          text="SAVE"
+          backgroundColor="#525151"
+          onClick={onSaveButtonClick}
+        />
+        <Chip
           text="AND"
-          color={CORE_GATES["AND"].color}
+          backgroundColor={CORE_GATES["AND"].color}
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "AND" })
           }
         />
-        <Button
+        <Chip
           text="OR"
-          color={CORE_GATES["OR"].color}
+          backgroundColor={CORE_GATES["OR"].color}
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "OR" })
           }
         />
-        <Button
+        <Chip
           text="NOT"
-          color={CORE_GATES["NOT"].color}
+          backgroundColor={CORE_GATES["NOT"].color}
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "NOT" })
           }
         />
         {data && (
-          <Button
+          <Chip
             text="NAND"
-            color="blue"
+            backgroundColor="blue"
             onClick={() =>
               emitter.emit(EmitterEvent.SpawnCustomChip, {
                 customChipBlueprint: data.customChipBlueprint,
