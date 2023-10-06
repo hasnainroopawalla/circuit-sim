@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { CORE_GATES } from "../simulator";
 import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
-import { Modal } from "./modal";
+import { SaveCircuitDialog } from "./save-circuit-dialog";
 import { Chip } from "./chip";
+import { Button } from "./button";
 
 const styles = {
   toolbarContainer: {
@@ -19,23 +20,20 @@ const styles = {
   },
 } as const;
 
-// TODO: fix unnecessary re-renders
 export const Toolbar = () => {
   const data = useEventListener(EmitterEvent.CustomChipBlueprintGenerated);
 
-  const [showModal, setShowModal] = useState(false);
-  const onSaveButtonClick = () => {
-    setShowModal(true);
-    // emitter.emit(EmitterEvent.SaveCircuit);
-  };
+  const [showSaveCircuitDialog, setSaveShowCircuitDialog] = useState(false);
 
   return (
     <>
       <div className="toolbar-container" style={styles.toolbarContainer}>
-        <Chip
+        <Button
           text="SAVE"
-          backgroundColor="#525151"
-          onClick={onSaveButtonClick}
+          color="#525151"
+          appearance="primary"
+          size="large"
+          onClick={() => setSaveShowCircuitDialog(true)}
         />
         <Chip
           text="AND"
@@ -71,11 +69,14 @@ export const Toolbar = () => {
           />
         )}
       </div>
-      {showModal && (
-        <Modal
-          onConfirm={() => {}}
+      {showSaveCircuitDialog && (
+        <SaveCircuitDialog
+          onConfirm={(circuitName: string) => {
+            emitter.emit(EmitterEvent.SaveCircuit, { name: circuitName });
+            setSaveShowCircuitDialog(false);
+          }}
           onDismiss={() => {
-            setShowModal(false);
+            setSaveShowCircuitDialog(false);
           }}
         />
       )}

@@ -18,11 +18,12 @@ const styles = {
     transform: "translate(-50%,-50%)",
     padding: "1rem",
   },
-  chipNameInput: {
+  circuitNameInput: {
     backgroundColor: "rgba(0, 0, 0, 0.3)",
     color: "#fff",
     border: "0",
     fontSize: "2rem",
+    letterSpacing: "0.1rem",
     padding: "0.6rem",
   },
   actionButtons: {
@@ -33,34 +34,44 @@ const styles = {
 } as const;
 
 type ModalProps = {
-  onConfirm: () => void;
+  onConfirm: (circuitName: string) => void;
   onDismiss: () => void;
 };
 
-export const Modal: React.FC<ModalProps> = (props) => {
+export const SaveCircuitDialog: React.FC<ModalProps> = (props) => {
   const { onDismiss, onConfirm } = props;
+  const circuitNameInput = React.useRef<HTMLInputElement>(null);
 
   return (
     <div style={styles.modal}>
-      <section style={styles.modalMain}>
-        <div className="custom-chip-name-input">
-          <input style={styles.chipNameInput} type="text" id="customChipName" />
+      <div style={styles.modalMain}>
+        <div className="circuit-name-input">
+          <input
+            style={styles.circuitNameInput}
+            type="text"
+            ref={circuitNameInput}
+            autoFocus={true}
+          />
         </div>
         <div className="action-buttons" style={styles.actionButtons}>
           <Button
             text="CANCEL"
             color="#2F85BD"
             appearance="secondary"
+            size="small"
             onClick={onDismiss}
           />
           <Button
             text="CONFIRM"
             color="#2F85BD"
             appearance="primary"
-            onClick={onConfirm}
+            size="small"
+            onClick={() =>
+              onConfirm(circuitNameInput.current.value.toUpperCase())
+            }
           />
         </div>
-      </section>
+      </div>
     </div>
   );
 };

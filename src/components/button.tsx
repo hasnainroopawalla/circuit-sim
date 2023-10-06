@@ -1,6 +1,10 @@
 import React from "react";
 
-const styles = (color: string, appearance: ButtonProps["appearance"]) => {
+const styles = (
+  color: string,
+  appearance: ButtonProps["appearance"],
+  size: ButtonProps["size"]
+) => {
   return {
     button: {
       backgroundColor: appearance === "primary" ? color : "#1e1e1e",
@@ -8,7 +12,7 @@ const styles = (color: string, appearance: ButtonProps["appearance"]) => {
       border: `0.1rem solid ${appearance === "primary" ? "#121212" : color}`,
       padding: "0.3rem 0.5rem",
       textAlign: "center",
-      fontSize: "1rem",
+      fontSize: size === "small" ? "1rem" : "1.25rem",
       cursor: "pointer",
       borderRadius: "0.5rem",
       MozUserSelect: "none" /* firefox */,
@@ -24,13 +28,14 @@ type ButtonProps = {
   onClick: () => void;
   color: string;
   appearance: "primary" | "secondary";
+  size: "small" | "large";
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { text, onClick, color, appearance } = props;
+  const { text, onClick, color, appearance, size } = props;
 
   return (
-    <button style={styles(color, appearance).button} onClick={onClick}>
+    <button style={styles(color, appearance, size).button} onClick={onClick}>
       {text}
     </button>
   );

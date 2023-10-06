@@ -53,12 +53,14 @@ class Circuit {
   }
 
   private bindEventListeners() {
-    emitter.on(EmitterEvent.SpawnCoreChip, (coreChip) =>
-      this.spawnCoreChip(coreChip)
+    emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
+      this.spawnCoreChip(eventData)
     );
-    emitter.on(EmitterEvent.SaveCircuit, () => this.saveCircuit());
-    emitter.on(EmitterEvent.SpawnCustomChip, (customChipBlueprint) =>
-      this.spawnCustomChip(customChipBlueprint)
+    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
+      this.saveCircuit(eventData)
+    );
+    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
+      this.spawnCustomChip(eventData)
     );
   }
 
@@ -502,7 +504,11 @@ class Circuit {
     );
   }
 
-  public saveCircuit(): void {
+  public saveCircuit(
+    eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
+  ): void {
+    const { name } = eventData;
+
     const inputs = this.inputs.map((input) => ({
       id: input.id,
       pin: input.pin.id,
@@ -520,7 +526,7 @@ class Circuit {
     const wires = this.wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
 
     const customChip: CustomChipBlueprint = {
-      name: "NAND",
+      name,
       color: "green",
       inputs,
       outputs,
@@ -574,6 +580,8 @@ class Circuit {
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
       customChipBlueprint: JSON.stringify(customChip),
     });
+
+    // TODO: Clear current circuit
   }
 
   public render(): void {
