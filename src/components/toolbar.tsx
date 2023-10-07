@@ -1,24 +1,10 @@
 import React, { useState } from "react";
-import { CORE_GATES } from "../simulator";
 import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { SaveCircuitDialog } from "./save-circuit-dialog";
 import { Chip } from "./chip";
 import { Button } from "./button";
-
-const styles = {
-  toolbarContainer: {
-    color: "#fff",
-    position: "absolute",
-    bottom: "0",
-    left: "0",
-    right: "0",
-    margin: "0.4rem 0.6rem",
-    display: "flex",
-    flexDirection: "row",
-    gap: "0.5rem",
-  },
-} as const;
+import styles from "./toolbar.module.css";
 
 export const Toolbar = () => {
   const data = useEventListener(EmitterEvent.CustomChipBlueprintGenerated);
@@ -27,31 +13,31 @@ export const Toolbar = () => {
 
   return (
     <>
-      <div className="toolbar-container" style={styles.toolbarContainer}>
+      <div className={styles.toolbar}>
         <Button
           text="SAVE"
-          color="#525151"
+          color="#2F85BD"
           appearance="primary"
           size="large"
           onClick={() => setSaveShowCircuitDialog(true)}
         />
         <Chip
           text="AND"
-          backgroundColor={CORE_GATES["AND"].color}
+          backgroundColor="#525151"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "AND" })
           }
         />
         <Chip
           text="OR"
-          backgroundColor={CORE_GATES["OR"].color}
+          backgroundColor="#525151"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "OR" })
           }
         />
         <Chip
           text="NOT"
-          backgroundColor={CORE_GATES["NOT"].color}
+          backgroundColor="#525151"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "NOT" })
           }

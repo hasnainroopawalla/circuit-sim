@@ -1,0 +1,10 @@
+.button {
+  padding: 0.3rem 0.5rem;
+  text-align: center;
+  height: 100%;
+  cursor: pointer;
+  border-radius: 0.3rem;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+}

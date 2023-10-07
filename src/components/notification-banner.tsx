@@ -3,6 +3,7 @@ import React from "react";
 import { useEventListener } from "./use-event-listener";
 import { EmitterEvent } from "../event-service";
 
+// TODO: Create CSS module
 const styles = {
   toolbarContainer: {
     color: "#fff",
