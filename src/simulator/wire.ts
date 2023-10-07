@@ -1,9 +1,9 @@
 import { State, Position } from "./shared.interface";
 
-import config from "../config";
-import Pin from "./pin";
+import { config } from "../config";
+import { Pin } from "./pin";
 
-class Wire {
+export class Wire {
   p: p5;
   startPin: Pin;
   endPin: Pin;
@@ -41,5 +41,3 @@ class Wire {
     this.p.pop();
   }
 }
-
-export default Wire;

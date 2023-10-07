@@ -1,7 +1,7 @@
 import { Position, Size } from "./shared.interface";
 
 import { IOChip, Chip } from "./chip";
-import Pin from "./pin";
+import { Pin } from "./pin";
 import { CoreGate } from "./core-gates";
 
 export type WiringMode = {

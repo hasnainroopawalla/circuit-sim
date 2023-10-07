@@ -1,8 +1,8 @@
 import { Position, State } from "./shared.interface";
 
 import { Chip, IOChip } from "./chip";
-import Wire from "./wire";
-import config from "../config";
+import { Wire } from "./wire";
+import { config } from "../config";
 
 type PinRenderOptions = {
   position: Position;
@@ -10,7 +10,7 @@ type PinRenderOptions = {
   color: string;
 };
 
-class Pin {
+export class Pin {
   p: p5;
   id: string;
   state: State;
@@ -82,5 +82,3 @@ class Pin {
     // this.p.pop();
   }
 }
-
-export default Pin;

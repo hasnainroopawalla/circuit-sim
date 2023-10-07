@@ -1,6 +1,6 @@
 import { State } from "../shared.interface";
 
-import Pin from "../pin";
+import { Pin } from "../pin";
 import { Chip } from "./chip";
 import { CORE_GATES, CoreGate } from "../core-gates";
 

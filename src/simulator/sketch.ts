@@ -1,5 +1,5 @@
-import Circuit from "./circuit";
-import config from "../config";
+import { Circuit } from "./circuit";
+import { config } from "../config";
 
 export let circuit: Circuit;
 

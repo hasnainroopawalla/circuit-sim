@@ -11,13 +11,13 @@ import type { Position } from "./shared.interface";
 
 import { Chip } from "./chip/chip";
 import { CoreChip, IOChip, CustomChip } from "./chip";
-import Pin from "./pin";
-import Wire from "./wire";
-import config from "../config";
+import { Pin } from "./pin";
+import { Wire } from "./wire";
+import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import { CoreGate } from "./core-gates";
 
-class Circuit {
+export class Circuit {
   p: p5;
   name: string;
   inputs: IOChip[];
@@ -62,6 +62,13 @@ class Circuit {
     emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
       this.spawnCustomChip(eventData)
     );
+  }
+
+  private clear(): void {
+    this.inputs = [];
+    this.outputs = [];
+    this.wires = [];
+    this.chips = [];
   }
 
   private isWiringMode(): boolean {
@@ -531,56 +538,13 @@ class Circuit {
       wires,
     };
 
-    // const circuit = {
-    //   name: "NAND",
-    //   color: "blue",
-    //   inputs: [
-    //     {
-    //       id: "input-0",
-    //       pin: "input-0_pin-0",
-    //     },
-    //     {
-    //       id: "input-1",
-    //       pin: "input-1_pin-0",
-    //     },
-    //   ],
-
-    //   outputs: [
-    //     {
-    //       id: "output-0",
-    //       pin: "output-0_pin-0",
-    //     },
-    //   ],
-
-    //   chips: [
-    //     {
-    //       id: "chip-0",
-    //       coreGate: "AND",
-    //       inputPins: ["chip-0_input-pin-0", "chip-0_input-pin-1"],
-    //       outputPins: ["chip-0_output-pin-0"],
-    //     },
-    //     {
-    //       id: "chip-1",
-    //       coreGate: "NOT",
-    //       inputPins: ["chip-1_input-pin-0"],
-    //       outputPins: ["chip-1_output-pin-0"],
-    //     },
-    //   ],
-
-    //   wires: [
-    //     ["input-0_pin-0", "chip-0_input-pin-0"],
-    //     ["input-1_pin-0", "chip-0_input-pin-1"],
-    //     ["chip-0_output-pin-0", "chip-1_input-pin-0"],
-    //     ["chip-1_output-pin-0", "output-0_pin-0"],
-    //   ],
-    // };
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
       name,
       color: "green",
       blueprint: JSON.stringify(customChip),
     });
 
-    // TODO: Clear current circuit
+    this.clear();
   }
 
   public render(): void {
@@ -593,5 +557,3 @@ class Circuit {
     this.isSpawnChipsMode() && this.renderSpawnChipMode();
   }
 }
-
-export default Circuit;

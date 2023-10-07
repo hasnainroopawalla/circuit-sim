@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   document: {
     color: {
       background: "#3D3D3D",
@@ -66,5 +66,3 @@ const config = {
     },
   },
 };
-
-export default config;

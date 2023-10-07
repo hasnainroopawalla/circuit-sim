@@ -1,6 +1,6 @@
 import { State } from "./shared.interface";
 
-import Pin from "./pin";
+import { Pin } from "./pin";
 
 export type CoreGate = "AND" | "OR" | "NOT";
 

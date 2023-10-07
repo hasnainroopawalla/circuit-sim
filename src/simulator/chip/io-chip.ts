@@ -1,9 +1,9 @@
 import { Position, State } from "../shared.interface";
 
-import config from "../../config";
+import { config } from "../../config";
 import { iOPinPosition } from "../utils";
-import Pin from "../pin";
-import Wire from "../wire";
+import { Pin } from "../pin";
+import { Wire } from "../wire";
 
 type IORenderOptions = {
   position: Position;

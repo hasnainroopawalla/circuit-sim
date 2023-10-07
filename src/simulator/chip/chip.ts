@@ -1,8 +1,8 @@
 import { Position, Size } from "../shared.interface";
 
-import config from "../../config";
+import { config } from "../../config";
 import { textPositionInRect, inputPinsPosition, chipSize } from "../utils";
-import Pin from "../pin";
+import { Pin } from "../pin";
 
 type ChipRenderOptions = {
   position: Position;
