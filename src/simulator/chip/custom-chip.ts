@@ -4,14 +4,14 @@ import { Chip } from "./chip";
 export class CustomChip extends Chip {
   circuit: Circuit;
 
-  constructor(p: p5, circuit: Circuit, id: string) {
+  constructor(p: p5, circuit: Circuit, id: string, color: string) {
     super(
       p,
       circuit.name,
       id,
       circuit.inputs.length,
       circuit.outputs.length,
-      circuit.options.color
+      color
     );
 
     this.circuit = circuit;

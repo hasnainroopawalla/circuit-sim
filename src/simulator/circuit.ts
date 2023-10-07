@@ -10,12 +10,11 @@ import {
 import type { Position } from "./shared.interface";
 
 import { Chip } from "./chip/chip";
-import { CoreChip, IOChip, CustomChip } from "./chip";
+import { CoreChip, IOChip, CustomChip, CoreGate } from "./chip";
 import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
-import { CoreGate } from "./core-gates";
 
 export class Circuit {
   p: p5;
@@ -262,8 +261,8 @@ export class Circuit {
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
-    const chipName = eventData.coreChip;
-    const chip = new CoreChip(this.p, chipName, `chip-${this.chips.length}`);
+    const { coreChip } = eventData;
+    const chip = new CoreChip(this.p, coreChip, `chip-${this.chips.length}`);
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
@@ -271,7 +270,8 @@ export class Circuit {
   public spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const rawCircuit: CustomChipBlueprint = JSON.parse(eventData.blueprint);
+    const { blueprint, color } = eventData;
+    const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
 
     // TODO: Improve creating a new circuit
     const circuit = new Circuit(
@@ -286,7 +286,7 @@ export class Circuit {
           w: 0,
           h: 0,
         },
-        color: "green", // TODO: fix
+        // color: "green", // TODO: fix
       },
       true
     );
@@ -331,7 +331,12 @@ export class Circuit {
     }
     circuit.wires = wires;
 
-    const chip = new CustomChip(this.p, circuit, `chip-${this.chips.length}`);
+    const chip = new CustomChip(
+      this.p,
+      circuit,
+      `chip-${this.chips.length}`,
+      color
+    );
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
@@ -511,6 +516,8 @@ export class Circuit {
   public saveCircuit(
     eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
   ): void {
+    // TODO: Clean up all unconnected chips/wires before saving the circuit
+
     const { name } = eventData;
 
     const inputs = this.inputs.map((input) => ({

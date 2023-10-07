@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { SaveCircuitDialog } from "./save-circuit-dialog";
 import { Chip } from "./chip";
 import { Button } from "./button";
 import styles from "./toolbar.module.css";
+import { colorGenerator } from "../color-generator";
 
 export const Toolbar = () => {
   const newCustomChipData = useEventListener(
@@ -17,6 +18,8 @@ export const Toolbar = () => {
     EmitterEventArgs[EmitterEvent.CustomChipBlueprintGenerated][]
   >([]);
 
+  const chipColors = useRef<{ [chipName: string]: string }>({});
+
   React.useEffect(() => {
     if (!newCustomChipData) {
       return;
@@ -25,6 +28,8 @@ export const Toolbar = () => {
       ...prevCustomChips,
       newCustomChipData,
     ]);
+
+    chipColors.current[newCustomChipData.name] = colorGenerator.generate();
   }, [newCustomChipData]);
 
   return (
@@ -39,19 +44,25 @@ export const Toolbar = () => {
         <Chip
           text="AND"
           onClick={() =>
-            emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "AND" })
+            emitter.emit(EmitterEvent.SpawnCoreChip, {
+              coreChip: "AND",
+            })
           }
         />
         <Chip
           text="OR"
           onClick={() =>
-            emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "OR" })
+            emitter.emit(EmitterEvent.SpawnCoreChip, {
+              coreChip: "OR",
+            })
           }
         />
         <Chip
           text="NOT"
           onClick={() =>
-            emitter.emit(EmitterEvent.SpawnCoreChip, { coreChip: "NOT" })
+            emitter.emit(EmitterEvent.SpawnCoreChip, {
+              coreChip: "NOT",
+            })
           }
         />
         {customChips.map((customChip) => (
@@ -60,6 +71,7 @@ export const Toolbar = () => {
             onClick={() =>
               emitter.emit(EmitterEvent.SpawnCustomChip, {
                 blueprint: customChip.blueprint,
+                color: chipColors.current[customChip.name],
               })
             }
           />

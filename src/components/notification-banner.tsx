@@ -1,5 +1,4 @@
 import React from "react";
-// import { useNotification } from "./use-notification";
 import { useEventListener } from "./use-event-listener";
 import { EmitterEvent } from "../event-service";
 
