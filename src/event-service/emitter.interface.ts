@@ -12,8 +12,8 @@ export type EmitterEventArgs = {
   [EmitterEvent.SaveCircuit]: { name: string; color?: string };
   [EmitterEvent.CustomChipBlueprintGenerated]: {
     name: string;
-    color: string;
     blueprint: string;
+    color?: string;
   };
   [EmitterEvent.Notification]: { message: string };
 };

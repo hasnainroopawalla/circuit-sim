@@ -286,7 +286,7 @@ export class Circuit {
           w: 0,
           h: 0,
         },
-        color: rawCircuit.color,
+        color: "green", // TODO: fix
       },
       true
     );
@@ -531,7 +531,6 @@ export class Circuit {
 
     const customChip: CustomChipBlueprint = {
       name,
-      color: "green",
       inputs,
       outputs,
       chips,
@@ -540,7 +539,6 @@ export class Circuit {
 
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
       name,
-      color: "green",
       blueprint: JSON.stringify(customChip),
     });
 
