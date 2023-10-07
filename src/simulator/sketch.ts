@@ -16,7 +16,6 @@ export const sketch = (p: p5) => {
         w: p.windowWidth - config.component.circuit.widthScale * 2,
         h: p.windowHeight - config.component.circuit.widthScale * 2,
       },
-      // color: "grey",
     });
   };
 

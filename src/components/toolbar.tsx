@@ -67,6 +67,7 @@ export const Toolbar = () => {
         />
         {customChips.map((customChip) => (
           <Chip
+            key={customChip.name}
             text={customChip.name}
             onClick={() =>
               emitter.emit(EmitterEvent.SpawnCustomChip, {

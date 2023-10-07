@@ -15,6 +15,7 @@ import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
+import Utils from "./utils";
 
 export class Circuit {
   p: p5;
@@ -286,7 +287,6 @@ export class Circuit {
           w: 0,
           h: 0,
         },
-        // color: "green", // TODO: fix
       },
       true
     );
@@ -294,31 +294,42 @@ export class Circuit {
     const inputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.inputs.length; i++) {
       const input = rawCircuit.inputs[i];
-      inputs.push(
-        new IOChip(this.p, input.id, true, {
-          x: this.options.position.x,
-          y: this.p.mouseY,
-        })
-      );
+      if (Utils.entityHasConnectedWires([input.pin], rawCircuit.wires)) {
+        inputs.push(
+          new IOChip(this.p, input.id, true, {
+            x: this.options.position.x,
+            y: this.p.mouseY,
+          })
+        );
+      }
     }
     circuit.inputs = inputs;
 
     const outputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.outputs.length; i++) {
       const output = rawCircuit.outputs[i];
-      outputs.push(
-        new IOChip(this.p, output.id, false, {
-          x: this.options.position.x + this.options.size.w,
-          y: this.p.mouseY,
-        })
-      );
+      if (Utils.entityHasConnectedWires([output.pin], rawCircuit.wires)) {
+        outputs.push(
+          new IOChip(this.p, output.id, false, {
+            x: this.options.position.x + this.options.size.w,
+            y: this.p.mouseY,
+          })
+        );
+      }
     }
     circuit.outputs = outputs;
 
     const chips: Chip[] = [];
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
+      if (
+        Utils.entityHasConnectedWires(
+          [...chip.inputPins, ...chip.outputPins],
+          rawCircuit.wires
+        )
+      ) {
+        chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
+      }
     }
     circuit.chips = chips;
 
@@ -327,7 +338,7 @@ export class Circuit {
       const wire = rawCircuit.wires[i];
       const startPin = circuit.getPinById(wire[0]);
       const endPin = circuit.getPinById(wire[1]);
-      circuit.spawnWire(startPin, endPin, []);
+      circuit.spawnWire(startPin, endPin);
     }
     circuit.wires = wires;
 
@@ -359,7 +370,11 @@ export class Circuit {
     );
   }
 
-  public spawnWire(startPin: Pin, endPin: Pin, waypoints: Position[]): void {
+  public spawnWire(
+    startPin: Pin,
+    endPin: Pin,
+    waypoints: Position[] = []
+  ): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
@@ -516,8 +531,6 @@ export class Circuit {
   public saveCircuit(
     eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
   ): void {
-    // TODO: Clean up all unconnected chips/wires before saving the circuit
-
     const { name } = eventData;
 
     const inputs = this.inputs.map((input) => ({

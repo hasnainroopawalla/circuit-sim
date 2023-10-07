@@ -1,7 +1,7 @@
 import { Position, State } from "../shared.interface";
 
 import { config } from "../../config";
-import { iOPinPosition } from "../utils";
+import Utils from "../utils";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
 
@@ -66,7 +66,7 @@ export class IOChip {
   }
 
   private renderPin(): void {
-    const pinPosition = iOPinPosition(
+    const pinPosition = Utils.iOPinPosition(
       this.options.position,
       this.options.size,
       this.isInput
