@@ -264,9 +264,7 @@ class Circuit {
   public spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const rawCircuit: CustomChipBlueprint = JSON.parse(
-      eventData.customChipBlueprint
-    );
+    const rawCircuit: CustomChipBlueprint = JSON.parse(eventData.blueprint);
 
     // TODO: Improve creating a new circuit
     const circuit = new Circuit(
@@ -481,7 +479,6 @@ class Circuit {
   }
 
   public mouseDragged(): void {
-    // console.log("drag", this.mode);
     this.handleIdleMode(Interaction.Drag);
     this.handleWiringMode(Interaction.Drag);
     this.handleSpawnChipsMode(Interaction.Drag);
@@ -578,7 +575,9 @@ class Circuit {
     //   ],
     // };
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
-      customChipBlueprint: JSON.stringify(customChip),
+      name,
+      color: "green",
+      blueprint: JSON.stringify(customChip),
     });
 
     // TODO: Clear current circuit

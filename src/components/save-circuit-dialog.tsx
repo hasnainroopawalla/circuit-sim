@@ -14,7 +14,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
   return (
     <div className={styles.modal}>
       <div className={styles.modalMain}>
-        <div className="circuit-name-input">
+        <div className="circuitNameInput">
           <input
             className={styles.circuitNameInput}
             type="text"
@@ -26,7 +26,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
           <div className={styles.actionButton}>
             <Button
               text="CANCEL"
-              color="#292828"
+              appearance="secondary"
               fullWidth
               size="small"
               onClick={onDismiss}
@@ -35,7 +35,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
           <div className={styles.actionButton}>
             <Button
               text="SAVE"
-              color="#292828"
+              appearance="secondary"
               fullWidth
               size="small"
               onClick={() =>

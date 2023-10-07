@@ -1,4 +1,5 @@
 .button {
+  border: 0.1rem solid #121212;
   padding: 0.3rem 0.5rem;
   text-align: center;
   height: 100%;
@@ -7,4 +8,33 @@
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
+}
+
+.small {
+  font-size: 1rem;
+}
+
+.large {
+  font-size: 1.25rem;
+}
+
+/* TODO: move all color definitions to config */
+.primary {
+  background-color: #2f85bd;
+  color: #fff;
+  &:hover {
+    background-color: #1f72aa;
+  }
+}
+
+.secondary {
+  background-color: #292828;
+  color: #fff;
+  &:hover {
+    background-color: #2f85bd;
+  }
+}
+
+.fullWidth {
+  width: 100%;
 }

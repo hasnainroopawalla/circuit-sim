@@ -7,9 +7,13 @@ export enum EmitterEvent {
 }
 
 export type EmitterEventArgs = {
-  [EmitterEvent.SpawnCoreChip]: { coreChip?: "AND" | "NOT" | "OR" };
-  [EmitterEvent.SpawnCustomChip]: { customChipBlueprint?: string };
+  [EmitterEvent.SpawnCoreChip]: { coreChip: "AND" | "NOT" | "OR" };
+  [EmitterEvent.SpawnCustomChip]: { blueprint: string };
   [EmitterEvent.SaveCircuit]: { name: string; color?: string };
-  [EmitterEvent.CustomChipBlueprintGenerated]: { customChipBlueprint?: string };
-  [EmitterEvent.Notification]: { message?: string };
+  [EmitterEvent.CustomChipBlueprintGenerated]: {
+    name: string;
+    color: string;
+    blueprint: string;
+  };
+  [EmitterEvent.Notification]: { message: string };
 };

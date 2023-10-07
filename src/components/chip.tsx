@@ -1,23 +1,23 @@
 import React from "react";
 import styles from "./chip.module.css";
 
-const computedStyles = (backgroundColor: string): React.CSSProperties => ({
-  backgroundColor,
+const computedStyles = (color: string): React.CSSProperties => ({
+  backgroundColor: color,
 });
 
 type ChipProps = {
   text: string;
   onClick: () => void;
-  backgroundColor: string;
+  color?: string;
 };
 
 export const Chip: React.FC<ChipProps> = (props) => {
-  const { text, onClick, backgroundColor } = props;
+  const { text, onClick, color = "#525151" } = props;
 
   return (
     <button
       className={styles.chip}
-      style={computedStyles(backgroundColor)}
+      style={computedStyles(color)}
       onClick={onClick}
     >
       {text}
