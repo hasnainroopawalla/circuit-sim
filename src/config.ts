@@ -10,11 +10,6 @@ export const config = {
     board: {
       spacingBetweenButtons: 5,
     },
-    button: {
-      color: "#525151",
-      textSize: 20,
-      textColor: "#FFFFFF",
-    },
     circuit: {
       // TODO: Change name
       widthScale: 50,
@@ -34,7 +29,6 @@ export const config = {
       text: {
         size: 20,
         color: "#FFFFFF",
-        font: "Helvetica",
       },
     },
     iOChip: {

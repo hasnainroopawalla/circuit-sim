@@ -1,5 +1,6 @@
 import { Position, Size } from "./shared.interface";
 
+// TODO: Test coverage
 export default class Utils {
   public static textPositionInRect(
     rectPosition: Position,

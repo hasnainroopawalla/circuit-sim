@@ -10,7 +10,7 @@ export class Wire {
   state: State;
   waypoints: Position[];
 
-  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[]) {
+  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[] = []) {
     this.p = p5;
     this.startPin = startPin;
     this.endPin = endPin;

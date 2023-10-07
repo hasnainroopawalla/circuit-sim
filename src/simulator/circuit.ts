@@ -274,7 +274,6 @@ export class Circuit {
     const { blueprint, color } = eventData;
     const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
 
-    // TODO: Improve creating a new circuit
     const circuit = new Circuit(
       this.p,
       rawCircuit.name,
@@ -291,11 +290,10 @@ export class Circuit {
       true
     );
 
-    const inputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.inputs.length; i++) {
       const input = rawCircuit.inputs[i];
       if (Utils.entityHasConnectedWires([input.pin], rawCircuit.wires)) {
-        inputs.push(
+        circuit.inputs.push(
           new IOChip(this.p, input.id, true, {
             x: this.options.position.x,
             y: this.p.mouseY,
@@ -303,13 +301,11 @@ export class Circuit {
         );
       }
     }
-    circuit.inputs = inputs;
 
-    const outputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.outputs.length; i++) {
       const output = rawCircuit.outputs[i];
       if (Utils.entityHasConnectedWires([output.pin], rawCircuit.wires)) {
-        outputs.push(
+        circuit.outputs.push(
           new IOChip(this.p, output.id, false, {
             x: this.options.position.x + this.options.size.w,
             y: this.p.mouseY,
@@ -317,9 +313,7 @@ export class Circuit {
         );
       }
     }
-    circuit.outputs = outputs;
 
-    const chips: Chip[] = [];
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
       if (
@@ -328,19 +322,16 @@ export class Circuit {
           rawCircuit.wires
         )
       ) {
-        chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
+        circuit.chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
       }
     }
-    circuit.chips = chips;
 
-    const wires: Wire[] = [];
     for (let i = 0; i < rawCircuit.wires.length; i++) {
       const wire = rawCircuit.wires[i];
       const startPin = circuit.getPinById(wire[0]);
       const endPin = circuit.getPinById(wire[1]);
       circuit.spawnWire(startPin, endPin);
     }
-    circuit.wires = wires;
 
     const chip = new CustomChip(
       this.p,
