@@ -1,5 +1,5 @@
 .button {
-  border: 0.1rem solid #121212;
+  border: 0.08rem solid #121212;
   padding: 0.3rem 0.5rem;
   text-align: center;
   height: 100%;
@@ -28,6 +28,14 @@
 }
 
 .secondary {
+  background-color: #525151;
+  color: #fff;
+  &:hover {
+    background-color: #403e3e;
+  }
+}
+
+.dark {
   background-color: #292828;
   color: #fff;
   &:hover {

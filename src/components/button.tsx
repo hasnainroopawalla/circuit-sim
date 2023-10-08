@@ -4,18 +4,16 @@ import styles from "./button.module.css";
 type ButtonProps = {
   text: string;
   onClick: () => void;
-  appearance?: "primary" | "secondary";
+  appearance?: "primary" | "secondary" | "dark";
   size: "small" | "large";
   fullWidth?: boolean;
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { text, onClick, appearance = "primary", size, fullWidth } = props;
+  const { text, onClick, appearance, size, fullWidth } = props;
 
-  const classes = `${styles.button} ${
-    appearance === "primary" ? styles.primary : styles.secondary
-  } ${fullWidth ? styles.fullWidth : ""} ${
-    size === "small" ? styles.small : styles.large
+  const classes = `${styles.button} ${styles[appearance]} ${styles[size]} ${
+    fullWidth ? styles.fullWidth : ""
   }`;
 
   return (

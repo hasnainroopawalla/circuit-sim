@@ -1,8 +1,7 @@
-import React, { useRef, useState } from "react";
-import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
+import React from "react";
+import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { SaveCircuitDialog } from "./save-circuit-dialog";
-import { Chip } from "./chip";
 import { Button } from "./button";
 import styles from "./toolbar.module.css";
 import { colorGenerator } from "../color-generator";
@@ -12,24 +11,28 @@ export const Toolbar = () => {
     EmitterEvent.CustomChipBlueprintGenerated
   );
 
-  const [showSaveCircuitDialog, setSaveShowCircuitDialog] = useState(false);
+  const [showSaveCircuitDialog, setSaveShowCircuitDialog] =
+    React.useState(false);
 
-  const [customChips, setCustomChips] = useState<
-    EmitterEventArgs[EmitterEvent.CustomChipBlueprintGenerated][]
+  const [customChips, setCustomChips] = React.useState<
+    { name: string; onClick: () => void }[]
   >([]);
-
-  const chipColors = useRef<{ [chipName: string]: string }>({});
 
   React.useEffect(() => {
     if (!newCustomChipData) {
       return;
     }
-    setCustomChips((prevCustomChips) => [
-      ...prevCustomChips,
-      newCustomChipData,
-    ]);
+    const color = colorGenerator.generate();
 
-    chipColors.current[newCustomChipData.name] = colorGenerator.generate();
+    const newChipData = {
+      name: newCustomChipData.name,
+      onClick: () =>
+        emitter.emit(EmitterEvent.SpawnCustomChip, {
+          blueprint: newCustomChipData.blueprint,
+          color,
+        }),
+    };
+    setCustomChips((prevCustomChips) => [...prevCustomChips, newChipData]);
   }, [newCustomChipData]);
 
   return (
@@ -41,24 +44,40 @@ export const Toolbar = () => {
           size="large"
           onClick={() => setSaveShowCircuitDialog(true)}
         />
-        <Chip
+        <Button
           text="AND"
+          appearance="secondary"
+          size="large"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, {
               coreChip: "AND",
             })
           }
         />
-        <Chip
+        <Button
+          text="AND"
+          appearance="secondary"
+          size="large"
+          onClick={() =>
+            emitter.emit(EmitterEvent.SpawnCoreChip, {
+              coreChip: "AND",
+            })
+          }
+        />
+        <Button
           text="OR"
+          appearance="secondary"
+          size="large"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, {
               coreChip: "OR",
             })
           }
         />
-        <Chip
+        <Button
           text="NOT"
+          appearance="secondary"
+          size="large"
           onClick={() =>
             emitter.emit(EmitterEvent.SpawnCoreChip, {
               coreChip: "NOT",
@@ -66,15 +85,12 @@ export const Toolbar = () => {
           }
         />
         {customChips.map((customChip) => (
-          <Chip
+          <Button
             key={customChip.name}
             text={customChip.name}
-            onClick={() =>
-              emitter.emit(EmitterEvent.SpawnCustomChip, {
-                blueprint: customChip.blueprint,
-                color: chipColors.current[customChip.name],
-              })
-            }
+            appearance="secondary"
+            size="large"
+            onClick={customChip.onClick}
           />
         ))}
       </div>

@@ -26,7 +26,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
           <div className={styles.actionButton}>
             <Button
               text="CANCEL"
-              appearance="secondary"
+              appearance="dark"
               fullWidth
               size="small"
               onClick={onDismiss}
@@ -35,7 +35,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
           <div className={styles.actionButton}>
             <Button
               text="SAVE"
-              appearance="secondary"
+              appearance="dark"
               fullWidth
               size="small"
               onClick={() =>
