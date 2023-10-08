@@ -1,7 +1,7 @@
 import { Position, Size } from "../shared.interface";
 
 import { config } from "../../config";
-import Utils from "../utils";
+import Utils from "../helpers/chipHelper";
 import { Pin } from "../pin";
 
 type ChipRenderOptions = {

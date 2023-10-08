@@ -10,12 +10,12 @@ import {
 import type { Position } from "./shared.interface";
 
 import { Chip } from "./chip/chip";
-import { CoreChip, IOChip, CustomChip, CoreGate } from "./chip";
+import { CoreChip, IOChip, CustomChip } from "./chip";
 import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
-import Utils from "./utils";
+import CircuitHelper from "./helpers/circuitHelper";
 
 export class Circuit {
   p: p5;
@@ -292,38 +292,27 @@ export class Circuit {
 
     for (let i = 0; i < rawCircuit.inputs.length; i++) {
       const input = rawCircuit.inputs[i];
-      if (Utils.entityHasConnectedWires([input.pin], rawCircuit.wires)) {
-        circuit.inputs.push(
-          new IOChip(this.p, input.id, true, {
-            x: this.options.position.x,
-            y: this.p.mouseY,
-          })
-        );
-      }
+      circuit.inputs.push(
+        new IOChip(this.p, input.id, true, {
+          x: this.options.position.x,
+          y: this.p.mouseY,
+        })
+      );
     }
 
     for (let i = 0; i < rawCircuit.outputs.length; i++) {
       const output = rawCircuit.outputs[i];
-      if (Utils.entityHasConnectedWires([output.pin], rawCircuit.wires)) {
-        circuit.outputs.push(
-          new IOChip(this.p, output.id, false, {
-            x: this.options.position.x + this.options.size.w,
-            y: this.p.mouseY,
-          })
-        );
-      }
+      circuit.outputs.push(
+        new IOChip(this.p, output.id, false, {
+          x: this.options.position.x + this.options.size.w,
+          y: this.p.mouseY,
+        })
+      );
     }
 
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      if (
-        Utils.entityHasConnectedWires(
-          [...chip.inputPins, ...chip.outputPins],
-          rawCircuit.wires
-        )
-      ) {
-        circuit.chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
-      }
+      circuit.chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
     }
 
     for (let i = 0; i < rawCircuit.wires.length; i++) {
@@ -524,29 +513,20 @@ export class Circuit {
   ): void {
     const { name } = eventData;
 
-    const inputs = this.inputs.map((input) => ({
-      id: input.id,
-      pin: input.pin.id,
-    }));
-    const outputs = this.outputs.map((output) => ({
-      id: output.id,
-      pin: output.pin.id,
-    }));
-    const chips = this.chips.map((chip) => ({
-      id: chip.id,
-      coreGate: chip.name as CoreGate, // TODO: no type casting
-      inputPins: chip.inputPins.map((pin) => pin.id),
-      outputPins: chip.outputPins.map((pin) => pin.id),
-    }));
-    const wires = this.wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
+    // create the custom chip only if inputs and outputs exist
+    if (this.inputs.length === 0 || this.outputs.length === 0) {
+      return emitter.emit(EmitterEvent.Notification, {
+        message: "Custom chip not created due to missing inputs/outputs",
+      });
+    }
 
-    const customChip: CustomChipBlueprint = {
+    const customChip = CircuitHelper.circuitToBlueprint(
       name,
-      inputs,
-      outputs,
-      chips,
-      wires,
-    };
+      this.wires,
+      this.inputs,
+      this.outputs,
+      this.chips
+    );
 
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
       name,

@@ -1,7 +1,7 @@
-import { Position, Size } from "./shared.interface";
+import { Position, Size } from "../shared.interface";
 
 // TODO: Test coverage
-export default class Utils {
+export default class ChipHelper {
   public static textPositionInRect(
     rectPosition: Position,
     rectSize: Size
@@ -61,16 +61,5 @@ export default class Utils {
       w: chipText.length * chipTextSize + 15,
       h: chipTextSize * numPins + 15,
     };
-  }
-
-  public static entityHasConnectedWires(
-    pins: string[],
-    wires: string[][]
-  ): boolean {
-    return pins.some((pin) => {
-      return wires.some((wire) => {
-        return wire.some((id) => id === pin);
-      });
-    });
   }
 }

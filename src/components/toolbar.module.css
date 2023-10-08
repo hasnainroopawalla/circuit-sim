@@ -1,11 +1,19 @@
 .toolbar {
   color: #fff;
   position: absolute;
-  bottom: 0;
   left: 0;
   right: 0;
-  margin: 0.4rem 0.6rem;
   display: flex;
   flex-direction: row;
   gap: 0.3rem;
+}
+
+.lowerToolbar {
+  bottom: 0;
+  margin: 0.4rem 0.6rem;
+}
+
+.upperToolbar {
+  top: 0;
+  margin: 0.6rem 0.6rem;
 }

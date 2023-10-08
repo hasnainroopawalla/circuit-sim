@@ -2,9 +2,9 @@ import React from "react";
 import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { SaveCircuitDialog } from "./save-circuit-dialog";
-import { Button } from "./button";
 import styles from "./toolbar.module.css";
 import { colorGenerator } from "../color-generator";
+import { Button, Dialog } from "./factory";
 
 export const Toolbar = () => {
   const newCustomChipData = useEventListener(
@@ -37,7 +37,7 @@ export const Toolbar = () => {
 
   return (
     <>
-      <div className={styles.toolbar}>
+      <div className={`${styles.toolbar} ${styles.upperToolbar}`}>
         <Button
           text="SAVE"
           appearance="primary"
@@ -45,15 +45,13 @@ export const Toolbar = () => {
           onClick={() => setSaveShowCircuitDialog(true)}
         />
         <Button
-          text="AND"
+          text="OPTIONS"
           appearance="secondary"
           size="large"
-          onClick={() =>
-            emitter.emit(EmitterEvent.SpawnCoreChip, {
-              coreChip: "AND",
-            })
-          }
+          onClick={() => {}}
         />
+      </div>
+      <div className={`${styles.toolbar} ${styles.lowerToolbar}`}>
         <Button
           text="AND"
           appearance="secondary"
@@ -93,16 +91,21 @@ export const Toolbar = () => {
             onClick={customChip.onClick}
           />
         ))}
+        <Button text="+" appearance="primary" size="large" onClick={() => {}} />
       </div>
       {showSaveCircuitDialog && (
-        <SaveCircuitDialog
-          onConfirm={(circuitName: string) => {
-            emitter.emit(EmitterEvent.SaveCircuit, { name: circuitName });
-            setSaveShowCircuitDialog(false);
-          }}
-          onDismiss={() => {
-            setSaveShowCircuitDialog(false);
-          }}
+        <Dialog
+          content={
+            <SaveCircuitDialog
+              onConfirm={(circuitName: string) => {
+                emitter.emit(EmitterEvent.SaveCircuit, { name: circuitName });
+                setSaveShowCircuitDialog(false);
+              }}
+              onDismiss={() => {
+                setSaveShowCircuitDialog(false);
+              }}
+            />
+          }
         />
       )}
     </>
