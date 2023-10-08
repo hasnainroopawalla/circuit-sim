@@ -1,16 +1,16 @@
 import { State, Position } from "./shared.interface";
 
-import config from "../config";
-import Pin from "./pin";
+import { config } from "../config";
+import { Pin } from "./pin";
 
-class Wire {
+export class Wire {
   p: p5;
   startPin: Pin;
   endPin: Pin;
   state: State;
   waypoints: Position[];
 
-  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[]) {
+  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[] = []) {
     this.p = p5;
     this.startPin = startPin;
     this.endPin = endPin;
@@ -41,5 +41,3 @@ class Wire {
     this.p.pop();
   }
 }
-
-export default Wire;

@@ -1,4 +1,4 @@
-import { colors } from "../colors";
+import { colors } from "./colors";
 
 class ColorGenerator {
   colors: string[];
@@ -7,7 +7,7 @@ class ColorGenerator {
     this.colors = colors;
   }
 
-  public generate() {
+  public generate(): string {
     if (this.colors.length === 0) {
       this.colors = [...colors];
     }
@@ -18,5 +18,4 @@ class ColorGenerator {
   }
 }
 
-const colorGenerator = new ColorGenerator();
-export default colorGenerator;
+export const colorGenerator = new ColorGenerator();

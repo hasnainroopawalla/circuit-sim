@@ -1,11 +1,35 @@
 import { State } from "../shared.interface";
 
-import Pin from "../pin";
+import { Pin } from "../pin";
 import { Chip } from "./chip";
-import { CORE_GATES, CoreGate } from "../core-gates";
+
+export type CoreGate = "AND" | "OR" | "NOT";
+
+const CORE_GATES = {
+  AND: {
+    inputPins: 2,
+    outputPins: 1,
+    action: (inputPins: Pin[]) => [inputPins[0].state && inputPins[1].state],
+    color: "#fa8072",
+  },
+  OR: {
+    inputPins: 2,
+    outputPins: 1,
+    action: (inputPins: Pin[]) => [inputPins[0].state || inputPins[1].state],
+    color: "#a20f52",
+  },
+  NOT: {
+    inputPins: 1,
+    outputPins: 1,
+    action: (inputPins: Pin[]) => [
+      inputPins[0].state === State.On ? State.Off : State.On,
+    ],
+    color: "#daa520",
+  },
+};
 
 export class CoreChip extends Chip {
-  action: (a: Pin[]) => State[];
+  action: (inputPins: Pin[]) => State[];
 
   constructor(p: p5, coreGate: CoreGate, id: string) {
     const numInputPins = CORE_GATES[coreGate].inputPins;

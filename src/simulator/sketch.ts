@@ -1,5 +1,5 @@
-import Circuit from "./circuit";
-import config from "../config";
+import { Circuit } from "./circuit";
+import { config } from "../config";
 
 export let circuit: Circuit;
 
@@ -16,7 +16,6 @@ export const sketch = (p: p5) => {
         w: p.windowWidth - config.component.circuit.widthScale * 2,
         h: p.windowHeight - config.component.circuit.widthScale * 2,
       },
-      color: "grey",
     });
   };
 

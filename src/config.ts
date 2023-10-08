@@ -1,4 +1,4 @@
-const config = {
+export const config = {
   document: {
     color: {
       background: "#3D3D3D",
@@ -9,11 +9,6 @@ const config = {
   component: {
     board: {
       spacingBetweenButtons: 5,
-    },
-    button: {
-      color: "#525151",
-      textSize: 20,
-      textColor: "#FFFFFF",
     },
     circuit: {
       // TODO: Change name
@@ -34,7 +29,6 @@ const config = {
       text: {
         size: 20,
         color: "#FFFFFF",
-        font: "Helvetica",
       },
     },
     iOChip: {
@@ -66,5 +60,3 @@ const config = {
     },
   },
 };
-
-export default config;

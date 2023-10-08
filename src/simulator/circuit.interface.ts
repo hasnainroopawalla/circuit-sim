@@ -1,8 +1,7 @@
 import { Position, Size } from "./shared.interface";
 
-import { IOChip, Chip } from "./chip";
-import Pin from "./pin";
-import { CoreGate } from "./core-gates";
+import { IOChip, Chip, CoreGate } from "./chip";
+import { Pin } from "./pin";
 
 export type WiringMode = {
   waypoints: Position[];
@@ -21,7 +20,7 @@ export type SpawnChipsMode = {
 export type CircuitRenderOptions = {
   position: Position;
   size: Size;
-  color: string;
+  // color: string;
 };
 
 export enum Mode {
@@ -38,7 +37,6 @@ export enum Interaction {
 
 export type CustomChipBlueprint = {
   name: string;
-  color: string;
   inputs: { id: string; pin: string }[];
   outputs: { id: string; pin: string }[];
   chips: {

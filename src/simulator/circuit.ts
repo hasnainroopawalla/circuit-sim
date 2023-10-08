@@ -11,13 +11,13 @@ import type { Position } from "./shared.interface";
 
 import { Chip } from "./chip/chip";
 import { CoreChip, IOChip, CustomChip } from "./chip";
-import Pin from "./pin";
-import Wire from "./wire";
-import config from "../config";
+import { Pin } from "./pin";
+import { Wire } from "./wire";
+import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
-import { CoreGate } from "./core-gates";
+import CircuitHelper from "./helpers/circuitHelper";
 
-class Circuit {
+export class Circuit {
   p: p5;
   name: string;
   inputs: IOChip[];
@@ -53,13 +53,22 @@ class Circuit {
   }
 
   private bindEventListeners() {
-    emitter.on(EmitterEvent.SpawnCoreChip, (coreChip) =>
-      this.spawnCoreChip(coreChip)
+    emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
+      this.spawnCoreChip(eventData)
     );
-    emitter.on(EmitterEvent.SaveCircuit, () => this.saveCircuit());
-    emitter.on(EmitterEvent.SpawnCustomChip, (customChipBlueprint) =>
-      this.spawnCustomChip(customChipBlueprint)
+    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
+      this.saveCircuit(eventData)
     );
+    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
+      this.spawnCustomChip(eventData)
+    );
+  }
+
+  private clear(): void {
+    this.inputs = [];
+    this.outputs = [];
+    this.wires = [];
+    this.chips = [];
   }
 
   private isWiringMode(): boolean {
@@ -253,8 +262,8 @@ class Circuit {
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
-    const chipName = eventData.coreChip;
-    const chip = new CoreChip(this.p, chipName, `chip-${this.chips.length}`);
+    const { coreChip } = eventData;
+    const chip = new CoreChip(this.p, coreChip, `chip-${this.chips.length}`);
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
@@ -262,11 +271,9 @@ class Circuit {
   public spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const rawCircuit: CustomChipBlueprint = JSON.parse(
-      eventData.customChipBlueprint
-    );
+    const { blueprint, color } = eventData;
+    const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
 
-    // TODO: Improve creating a new circuit
     const circuit = new Circuit(
       this.p,
       rawCircuit.name,
@@ -279,52 +286,48 @@ class Circuit {
           w: 0,
           h: 0,
         },
-        color: rawCircuit.color,
       },
       true
     );
 
-    const inputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.inputs.length; i++) {
       const input = rawCircuit.inputs[i];
-      inputs.push(
+      circuit.inputs.push(
         new IOChip(this.p, input.id, true, {
           x: this.options.position.x,
           y: this.p.mouseY,
         })
       );
     }
-    circuit.inputs = inputs;
 
-    const outputs: IOChip[] = [];
     for (let i = 0; i < rawCircuit.outputs.length; i++) {
       const output = rawCircuit.outputs[i];
-      outputs.push(
+      circuit.outputs.push(
         new IOChip(this.p, output.id, false, {
           x: this.options.position.x + this.options.size.w,
           y: this.p.mouseY,
         })
       );
     }
-    circuit.outputs = outputs;
 
-    const chips: Chip[] = [];
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
+      circuit.chips.push(new CoreChip(this.p, chip.coreGate, chip.id));
     }
-    circuit.chips = chips;
 
-    const wires: Wire[] = [];
     for (let i = 0; i < rawCircuit.wires.length; i++) {
       const wire = rawCircuit.wires[i];
       const startPin = circuit.getPinById(wire[0]);
       const endPin = circuit.getPinById(wire[1]);
-      circuit.spawnWire(startPin, endPin, []);
+      circuit.spawnWire(startPin, endPin);
     }
-    circuit.wires = wires;
 
-    const chip = new CustomChip(this.p, circuit, `chip-${this.chips.length}`);
+    const chip = new CustomChip(
+      this.p,
+      circuit,
+      `chip-${this.chips.length}`,
+      color
+    );
     this.setSpawnChipsMode(chip);
     this.chips.push(chip);
   }
@@ -347,7 +350,11 @@ class Circuit {
     );
   }
 
-  public spawnWire(startPin: Pin, endPin: Pin, waypoints: Position[]): void {
+  public spawnWire(
+    startPin: Pin,
+    endPin: Pin,
+    waypoints: Position[] = []
+  ): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
@@ -479,7 +486,6 @@ class Circuit {
   }
 
   public mouseDragged(): void {
-    // console.log("drag", this.mode);
     this.handleIdleMode(Interaction.Drag);
     this.handleWiringMode(Interaction.Drag);
     this.handleSpawnChipsMode(Interaction.Drag);
@@ -502,78 +508,32 @@ class Circuit {
     );
   }
 
-  public saveCircuit(): void {
-    const inputs = this.inputs.map((input) => ({
-      id: input.id,
-      pin: input.pin.id,
-    }));
-    const outputs = this.outputs.map((output) => ({
-      id: output.id,
-      pin: output.pin.id,
-    }));
-    const chips = this.chips.map((chip) => ({
-      id: chip.id,
-      coreGate: chip.name as CoreGate, // TODO: no type casting
-      inputPins: chip.inputPins.map((pin) => pin.id),
-      outputPins: chip.outputPins.map((pin) => pin.id),
-    }));
-    const wires = this.wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
+  public saveCircuit(
+    eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
+  ): void {
+    const { name } = eventData;
 
-    const customChip: CustomChipBlueprint = {
-      name: "NAND",
-      color: "green",
-      inputs,
-      outputs,
-      chips,
-      wires,
-    };
+    // create the custom chip only if inputs and outputs exist
+    if (this.inputs.length === 0 || this.outputs.length === 0) {
+      return emitter.emit(EmitterEvent.Notification, {
+        message: "Custom chip not created due to missing inputs/outputs",
+      });
+    }
 
-    // const circuit = {
-    //   name: "NAND",
-    //   color: "blue",
-    //   inputs: [
-    //     {
-    //       id: "input-0",
-    //       pin: "input-0_pin-0",
-    //     },
-    //     {
-    //       id: "input-1",
-    //       pin: "input-1_pin-0",
-    //     },
-    //   ],
+    const customChip = CircuitHelper.circuitToBlueprint(
+      name,
+      this.wires,
+      this.inputs,
+      this.outputs,
+      this.chips
+    );
 
-    //   outputs: [
-    //     {
-    //       id: "output-0",
-    //       pin: "output-0_pin-0",
-    //     },
-    //   ],
-
-    //   chips: [
-    //     {
-    //       id: "chip-0",
-    //       coreGate: "AND",
-    //       inputPins: ["chip-0_input-pin-0", "chip-0_input-pin-1"],
-    //       outputPins: ["chip-0_output-pin-0"],
-    //     },
-    //     {
-    //       id: "chip-1",
-    //       coreGate: "NOT",
-    //       inputPins: ["chip-1_input-pin-0"],
-    //       outputPins: ["chip-1_output-pin-0"],
-    //     },
-    //   ],
-
-    //   wires: [
-    //     ["input-0_pin-0", "chip-0_input-pin-0"],
-    //     ["input-1_pin-0", "chip-0_input-pin-1"],
-    //     ["chip-0_output-pin-0", "chip-1_input-pin-0"],
-    //     ["chip-1_output-pin-0", "output-0_pin-0"],
-    //   ],
-    // };
     emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
-      customChipBlueprint: JSON.stringify(customChip),
+      name,
+      blueprint: JSON.stringify(customChip),
     });
+
+    this.clear();
   }
 
   public render(): void {
@@ -586,5 +546,3 @@ class Circuit {
     this.isSpawnChipsMode() && this.renderSpawnChipMode();
   }
 }
-
-export default Circuit;

@@ -15,7 +15,7 @@
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
   "keywords": [],
-  "author": "",
+  "author": "Hasnain Roopawalla",
   "license": "MIT",
   "devDependencies": {
     "@testing-library/jest-dom": "^6.1.0",
