@@ -69,12 +69,11 @@ export default class CircuitHelper {
   public static computeReferencePoint(
     waypoint: Position,
     lastWaypoint: Position,
-    curveFactor: number = 0.9
+    curveFactor: number = 0.8
   ): Position {
-    const referencePoint = {
+    return {
       x: lastWaypoint.x + curveFactor * (waypoint.x - lastWaypoint.x),
       y: lastWaypoint.y + curveFactor * (waypoint.y - lastWaypoint.y),
     };
-    return referencePoint;
   }
 }
