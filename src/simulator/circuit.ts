@@ -2,7 +2,7 @@ import {
   Interaction,
   Mode,
   RepositionMode,
-  SpawnChipsMode,
+  SpawnChipMode,
   WiringMode,
   CircuitRenderOptions,
   CustomChipBlueprint,
@@ -26,7 +26,7 @@ export class Circuit {
   mode: Mode;
   wiringMode: WiringMode;
   repositionMode: RepositionMode;
-  spawnChipsMode: SpawnChipsMode;
+  spawnChipMode: SpawnChipMode;
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
 
@@ -45,7 +45,7 @@ export class Circuit {
     this.mode = Mode.Idle;
     this.wiringMode = { markers: [] };
     this.repositionMode = {};
-    this.spawnChipsMode = { chips: [] };
+    this.spawnChipMode = { chips: [] };
     this.options = options;
     this.mouseReleaseAfterDrag = false;
     !isCustomChip && this.bindEventListeners();
@@ -88,13 +88,13 @@ export class Circuit {
     this.mode = Mode.Reposition;
   }
 
-  private isSpawnChipsMode(): boolean {
-    return this.mode === Mode.SpawnChips;
+  private isSpawnChipMode(): boolean {
+    return this.mode === Mode.SpawnChip;
   }
 
-  private setSpawnChipsMode(chip: Chip): void {
-    this.spawnChipsMode.chips.push(chip);
-    this.mode = Mode.SpawnChips;
+  private setSpawnChipMode(chip: Chip): void {
+    this.spawnChipMode.chips.push(chip);
+    this.mode = Mode.SpawnChip;
   }
 
   private isIdleMode(): boolean {
@@ -102,7 +102,7 @@ export class Circuit {
   }
 
   private setIdleMode(): void {
-    this.spawnChipsMode = {
+    this.spawnChipMode = {
       chips: [],
     };
     this.repositionMode = {};
@@ -141,12 +141,13 @@ export class Circuit {
   }
 
   private renderWiringModeWire(): void {
+    // TODO: duplicate render logic from wire.ts
     if (!this.wiringMode.startPin) {
       throw new Error("Wiring mode start pin not defined");
     }
     this.p.push();
     this.p.strokeWeight(config.component.wire.strokeWeight);
-    this.p.stroke(config.document.strokeColor);
+    this.p.stroke(config.component.wire.color.stateOff);
     this.p.noFill();
 
     for (let i = 0; i < this.wiringMode.markers.length; i++) {
@@ -163,10 +164,7 @@ export class Circuit {
       const endPoint =
         i === this.wiringMode.markers.length - 1
           ? { x: this.p.mouseX, y: this.p.mouseY }
-          : {
-              x: this.wiringMode.markers[i + 1].referencePoint.x,
-              y: this.wiringMode.markers[i + 1].referencePoint.y,
-            };
+          : this.wiringMode.markers[i + 1].referencePoint;
 
       this.p.bezier(
         startPoint.x,
@@ -183,8 +181,8 @@ export class Circuit {
   }
 
   private renderSpawnChipMode(): void {
-    for (let i = 0; i < this.spawnChipsMode.chips.length; i++) {
-      const chip = this.spawnChipsMode.chips[i];
+    for (let i = 0; i < this.spawnChipMode.chips.length; i++) {
+      const chip = this.spawnChipMode.chips[i];
       chip.options.position = {
         x: this.p.mouseX - chip.options.size.w / 2,
         y:
@@ -299,7 +297,7 @@ export class Circuit {
   ): void {
     const { coreChip } = eventData;
     const chip = new CoreChip(this.p, coreChip, `chip-${this.chips.length}`);
-    this.setSpawnChipsMode(chip);
+    this.setSpawnChipMode(chip);
     this.chips.push(chip);
   }
 
@@ -367,7 +365,7 @@ export class Circuit {
       `chip-${this.chips.length}`,
       color
     );
-    this.setSpawnChipsMode(chip);
+    this.setSpawnChipMode(chip);
     this.chips.push(chip);
   }
 
@@ -394,10 +392,6 @@ export class Circuit {
     endPin: Pin,
     markers: WiringMode["markers"] = []
   ): void {
-    // Enforce that the startPin of the wire is an output pin
-    if (startPin.isInput) {
-      [startPin, endPin] = [endPin, startPin];
-    }
     const wire = new Wire(this.p, startPin, endPin, markers);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
@@ -410,15 +404,15 @@ export class Circuit {
   }
 
   private handleIdleMode(interaction: Interaction): void {
-    if (!this.isIdleMode()) {
-      return;
-    }
-
     const entity = this.getMouseOverEntity();
 
     switch (interaction) {
       case Interaction.Click:
         if (entity instanceof Pin) {
+          if (entity.isInput) {
+            console.log("Wires can only start from an output pin");
+            return;
+          }
           this.setWiringMode({
             startPin: entity,
             // initial marker for the wire should be the startPin
@@ -459,10 +453,6 @@ export class Circuit {
   }
 
   private handleWiringMode(interaction: Interaction): void {
-    if (!this.isWiringMode()) {
-      return;
-    }
-
     const entity = this.getMouseOverEntity();
 
     switch (interaction) {
@@ -482,6 +472,7 @@ export class Circuit {
           } else {
             this.addWireWaypoint();
             // Disable wiring mode if end pin not selected
+            // TODO: logic to cancel wiring mode
             // this.setIdleMode();
           }
         }
@@ -492,11 +483,7 @@ export class Circuit {
     }
   }
 
-  private handleSpawnChipsMode(interaction: Interaction): void {
-    if (!this.isSpawnChipsMode()) {
-      return;
-    }
-
+  private handleSpawnChipMode(interaction: Interaction): void {
     switch (interaction) {
       case Interaction.Click:
         this.isMouseOver() && this.setIdleMode();
@@ -508,10 +495,6 @@ export class Circuit {
   }
 
   private handleRepositionMode(interaction: Interaction): void {
-    if (!this.isRepositionMode()) {
-      return;
-    }
-
     switch (interaction) {
       case Interaction.Click:
         break;
@@ -531,17 +514,17 @@ export class Circuit {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    this.handleIdleMode(Interaction.Click);
-    this.handleWiringMode(Interaction.Click);
-    this.handleSpawnChipsMode(Interaction.Click);
-    this.handleRepositionMode(Interaction.Drag);
+    this.isIdleMode() && this.handleIdleMode(Interaction.Click);
+    this.isWiringMode() && this.handleWiringMode(Interaction.Click);
+    this.isSpawnChipMode() && this.handleSpawnChipMode(Interaction.Click);
+    this.isRepositionMode() && this.handleRepositionMode(Interaction.Click);
   }
 
   public mouseDragged(): void {
-    this.handleIdleMode(Interaction.Drag);
-    this.handleWiringMode(Interaction.Drag);
-    this.handleSpawnChipsMode(Interaction.Drag);
-    this.handleRepositionMode(Interaction.Drag);
+    this.isIdleMode() && this.handleIdleMode(Interaction.Drag);
+    this.isWiringMode() && this.handleWiringMode(Interaction.Drag);
+    this.isSpawnChipMode() && this.handleSpawnChipMode(Interaction.Drag);
+    this.isRepositionMode() && this.handleRepositionMode(Interaction.Drag);
   }
 
   public mouseReleased(): void {
@@ -595,6 +578,6 @@ export class Circuit {
     this.renderWires();
 
     this.isWiringMode() && this.renderWiringModeWire();
-    this.isSpawnChipsMode() && this.renderSpawnChipMode();
+    this.isSpawnChipMode() && this.renderSpawnChipMode();
   }
 }

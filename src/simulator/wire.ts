@@ -34,12 +34,35 @@ export class Wire {
         ? config.component.wire.color.stateOff
         : config.component.wire.color.stateOn
     );
-    this.p.line(
-      this.startPin.options.position.x,
-      this.startPin.options.position.y,
-      this.endPin.options.position.x,
-      this.endPin.options.position.y
-    );
+    this.p.noFill();
+
+    for (let i = 0; i < this.markers.length; i++) {
+      const startPoint =
+        i === 0
+          ? this.startPin.options.position
+          : this.markers[i].referencePoint;
+
+      const controlPoint = {
+        x: this.markers[i].waypoint.x,
+        y: this.markers[i].waypoint.y,
+      };
+
+      const endPoint =
+        i === this.markers.length - 1
+          ? this.endPin.options.position
+          : this.markers[i + 1].referencePoint;
+
+      this.p.bezier(
+        startPoint.x,
+        startPoint.y,
+        controlPoint.x,
+        controlPoint.y,
+        controlPoint.x,
+        controlPoint.y,
+        endPoint.x,
+        endPoint.y
+      );
+    }
     this.p.pop();
   }
 }

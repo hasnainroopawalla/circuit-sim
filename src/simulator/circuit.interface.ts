@@ -14,7 +14,7 @@ export type RepositionMode = {
   chip?: Chip | IOChip;
 };
 
-export type SpawnChipsMode = {
+export type SpawnChipMode = {
   chips: Chip[];
 };
 
@@ -27,7 +27,7 @@ export enum Mode {
   Idle = "Idle",
   Reposition = "Reposition",
   Wiring = "Wiring",
-  SpawnChips = "SpawnChips",
+  SpawnChip = "SpawnChip",
 }
 
 export enum Interaction {
