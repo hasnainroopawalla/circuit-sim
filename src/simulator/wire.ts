@@ -8,9 +8,14 @@ export class Wire {
   startPin: Pin;
   endPin: Pin;
   state: State;
-  waypoints: Position[];
+  waypoints: { controlPoint: Position; waypoint: Position }[]; // TODO: move type to shared interface
 
-  constructor(p5: p5, startPin: Pin, endPin: Pin, waypoints: Position[] = []) {
+  constructor(
+    p5: p5,
+    startPin: Pin,
+    endPin: Pin,
+    waypoints: { controlPoint: Position; waypoint: Position }[] = []
+  ) {
     this.p = p5;
     this.startPin = startPin;
     this.endPin = endPin;

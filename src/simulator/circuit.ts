@@ -7,7 +7,6 @@ import {
   CircuitRenderOptions,
   CustomChipBlueprint,
 } from "./circuit.interface";
-import type { Position } from "./shared.interface";
 
 import { Chip } from "./chip/chip";
 import { CoreChip, IOChip, CustomChip } from "./chip";
@@ -44,7 +43,7 @@ export class Circuit {
     this.wires = [];
     this.chips = [];
     this.mode = Mode.Idle;
-    this.wiringMode = { waypoints: [] };
+    this.wiringMode = { waypoints: [] }; // TODO: rename waypoints
     this.repositionMode = {};
     this.spawnChipsMode = { chips: [] };
     this.options = options;
@@ -142,15 +141,44 @@ export class Circuit {
   }
 
   private renderWiringModeWire(): void {
+    if (!this.wiringMode.startPin) {
+      throw new Error("Wiring mode start pin not defined");
+    }
     this.p.push();
     this.p.strokeWeight(config.component.wire.strokeWeight);
     this.p.stroke(config.document.strokeColor);
-    this.p.line(
-      this.wiringMode.startPin.options.position.x,
-      this.wiringMode.startPin.options.position.y,
-      this.p.mouseX,
-      this.p.mouseY
-    );
+    this.p.noFill();
+
+    for (let i = 0; i < this.wiringMode.waypoints.length; i++) {
+      const startPoint = {
+        x: this.wiringMode.waypoints[i].waypoint.x,
+        y: this.wiringMode.waypoints[i].waypoint.y,
+      };
+      const controlPoint = {
+        x: this.wiringMode.waypoints[i].controlPoint.x,
+        y: this.wiringMode.waypoints[i].controlPoint.y,
+      };
+
+      // The end point of the wire should be the current mouse position
+      const endPoint =
+        i === this.wiringMode.waypoints.length - 1
+          ? { x: this.p.mouseX, y: this.p.mouseY }
+          : {
+              x: this.wiringMode.waypoints[i + 1].waypoint.x,
+              y: this.wiringMode.waypoints[i + 1].waypoint.y,
+            };
+
+      this.p.bezier(
+        startPoint.x,
+        startPoint.y,
+        controlPoint.x,
+        controlPoint.y,
+        controlPoint.x,
+        controlPoint.y,
+        endPoint.x,
+        endPoint.y
+      );
+    }
     this.p.pop();
   }
 
@@ -198,6 +226,15 @@ export class Circuit {
       this.options.size.h
     );
     this.p.pop();
+
+    // this.wiringMode.waypoints.map((w) => {
+    //   this.p.push();
+    //   this.p.fill("green");
+    //   this.p.circle(w.waypoint.x, w.waypoint.y, 10);
+    //   this.p.fill("pink");
+    //   this.p.circle(w.controlPoint.x, w.controlPoint.y, 10);
+    //   this.p.pop();
+    // });
   }
 
   private isMouseOverlapping(entities: IOChip[]): boolean {
@@ -229,10 +266,18 @@ export class Circuit {
     );
   }
 
-  private addWireWaypoint(x: number, y: number): void {
+  private addWireWaypoint(): void {
+    const controlPoint = {
+      x: this.p.mouseX,
+      y: this.p.mouseY,
+    };
     this.wiringMode.waypoints.push({
-      x,
-      y,
+      controlPoint,
+      waypoint: CircuitHelper.computeWaypointFromControlPoint(
+        controlPoint,
+        this.wiringMode.waypoints[this.wiringMode.waypoints.length - 1]
+          .controlPoint
+      ),
     });
   }
 
@@ -317,9 +362,13 @@ export class Circuit {
 
     for (let i = 0; i < rawCircuit.wires.length; i++) {
       const wire = rawCircuit.wires[i];
-      const startPin = circuit.getPinById(wire[0]);
-      const endPin = circuit.getPinById(wire[1]);
-      circuit.spawnWire(startPin, endPin);
+      const [startPin, endPin] = [
+        circuit.getPinById(wire[0]),
+        circuit.getPinById(wire[1]),
+      ];
+      if (startPin && endPin) {
+        circuit.spawnWire(startPin, endPin);
+      }
     }
 
     const chip = new CustomChip(
@@ -353,7 +402,7 @@ export class Circuit {
   public spawnWire(
     startPin: Pin,
     endPin: Pin,
-    waypoints: Position[] = []
+    waypoints: WiringMode["waypoints"] = []
   ): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
@@ -382,7 +431,19 @@ export class Circuit {
         if (entity instanceof Pin) {
           this.setWiringMode({
             startPin: entity,
-            waypoints: [],
+            // inital marker for the wire should be the startPin
+            waypoints: [
+              {
+                controlPoint: {
+                  x: entity.options.position.x,
+                  y: entity.options.position.y,
+                },
+                waypoint: {
+                  x: entity.options.position.x,
+                  y: entity.options.position.y,
+                },
+              },
+            ],
           });
         } else if (entity instanceof IOChip) {
           entity.mouseClicked();
@@ -429,8 +490,9 @@ export class Circuit {
               this.setIdleMode();
             }
           } else {
+            this.addWireWaypoint();
             // Disable wiring mode if end pin not selected
-            this.setIdleMode();
+            // this.setIdleMode();
           }
         }
         break;
@@ -465,7 +527,7 @@ export class Circuit {
         break;
 
       case Interaction.Drag:
-        if (this.isMouseOver()) {
+        if (this.isMouseOver() && this.repositionMode.chip) {
           this.repositionMode.chip.mouseDragged();
         } else {
           this.setIdleMode();

@@ -4,7 +4,7 @@ import { IOChip, Chip, CoreGate } from "./chip";
 import { Pin } from "./pin";
 
 export type WiringMode = {
-  waypoints: Position[];
+  waypoints: { controlPoint: Position; waypoint: Position }[];
   startPin?: Pin;
   endPin?: Pin;
 };
@@ -20,7 +20,6 @@ export type SpawnChipsMode = {
 export type CircuitRenderOptions = {
   position: Position;
   size: Size;
-  // color: string;
 };
 
 export enum Mode {

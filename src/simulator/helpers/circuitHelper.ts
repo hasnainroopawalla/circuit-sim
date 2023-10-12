@@ -1,6 +1,7 @@
 import { CoreGate } from "../chip";
 import { Circuit } from "../circuit";
 import { CustomChipBlueprint } from "../circuit.interface";
+import { Position } from "../shared.interface";
 
 // TODO: Test coverage
 export default class CircuitHelper {
@@ -63,5 +64,21 @@ export default class CircuitHelper {
       chips: newChips,
       wires: newWires,
     };
+  }
+
+  public static computeWaypointFromControlPoint(
+    controlPoint: Position,
+    lastControlPoint: Position,
+    curveFactor: number = 0.9
+  ): Position {
+    const waypoint = {
+      x:
+        lastControlPoint.x +
+        curveFactor * (controlPoint.x - lastControlPoint.x),
+      y:
+        lastControlPoint.y +
+        curveFactor * (controlPoint.y - lastControlPoint.y),
+    };
+    return waypoint;
   }
 }
