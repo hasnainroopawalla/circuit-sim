@@ -66,19 +66,15 @@ export default class CircuitHelper {
     };
   }
 
-  public static computeWaypointFromControlPoint(
-    controlPoint: Position,
-    lastControlPoint: Position,
+  public static computeReferencePoint(
+    waypoint: Position,
+    lastWaypoint: Position,
     curveFactor: number = 0.9
   ): Position {
-    const waypoint = {
-      x:
-        lastControlPoint.x +
-        curveFactor * (controlPoint.x - lastControlPoint.x),
-      y:
-        lastControlPoint.y +
-        curveFactor * (controlPoint.y - lastControlPoint.y),
+    const referencePoint = {
+      x: lastWaypoint.x + curveFactor * (waypoint.x - lastWaypoint.x),
+      y: lastWaypoint.y + curveFactor * (waypoint.y - lastWaypoint.y),
     };
-    return waypoint;
+    return referencePoint;
   }
 }

@@ -43,7 +43,7 @@ export class Circuit {
     this.wires = [];
     this.chips = [];
     this.mode = Mode.Idle;
-    this.wiringMode = { waypoints: [] }; // TODO: rename waypoints
+    this.wiringMode = { markers: [] };
     this.repositionMode = {};
     this.spawnChipsMode = { chips: [] };
     this.options = options;
@@ -109,7 +109,7 @@ export class Circuit {
     this.wiringMode = {
       startPin: undefined,
       endPin: undefined,
-      waypoints: [],
+      markers: [],
     };
     this.mode = Mode.Idle;
   }
@@ -149,23 +149,23 @@ export class Circuit {
     this.p.stroke(config.document.strokeColor);
     this.p.noFill();
 
-    for (let i = 0; i < this.wiringMode.waypoints.length; i++) {
+    for (let i = 0; i < this.wiringMode.markers.length; i++) {
       const startPoint = {
-        x: this.wiringMode.waypoints[i].waypoint.x,
-        y: this.wiringMode.waypoints[i].waypoint.y,
+        x: this.wiringMode.markers[i].referencePoint.x,
+        y: this.wiringMode.markers[i].referencePoint.y,
       };
       const controlPoint = {
-        x: this.wiringMode.waypoints[i].controlPoint.x,
-        y: this.wiringMode.waypoints[i].controlPoint.y,
+        x: this.wiringMode.markers[i].waypoint.x,
+        y: this.wiringMode.markers[i].waypoint.y,
       };
 
       // The end point of the wire should be the current mouse position
       const endPoint =
-        i === this.wiringMode.waypoints.length - 1
+        i === this.wiringMode.markers.length - 1
           ? { x: this.p.mouseX, y: this.p.mouseY }
           : {
-              x: this.wiringMode.waypoints[i + 1].waypoint.x,
-              y: this.wiringMode.waypoints[i + 1].waypoint.y,
+              x: this.wiringMode.markers[i + 1].referencePoint.x,
+              y: this.wiringMode.markers[i + 1].referencePoint.y,
             };
 
       this.p.bezier(
@@ -226,15 +226,6 @@ export class Circuit {
       this.options.size.h
     );
     this.p.pop();
-
-    // this.wiringMode.waypoints.map((w) => {
-    //   this.p.push();
-    //   this.p.fill("green");
-    //   this.p.circle(w.waypoint.x, w.waypoint.y, 10);
-    //   this.p.fill("pink");
-    //   this.p.circle(w.controlPoint.x, w.controlPoint.y, 10);
-    //   this.p.pop();
-    // });
   }
 
   private isMouseOverlapping(entities: IOChip[]): boolean {
@@ -267,16 +258,15 @@ export class Circuit {
   }
 
   private addWireWaypoint(): void {
-    const controlPoint = {
+    const waypoint = {
       x: this.p.mouseX,
       y: this.p.mouseY,
     };
-    this.wiringMode.waypoints.push({
-      controlPoint,
-      waypoint: CircuitHelper.computeWaypointFromControlPoint(
-        controlPoint,
-        this.wiringMode.waypoints[this.wiringMode.waypoints.length - 1]
-          .controlPoint
+    this.wiringMode.markers.push({
+      waypoint,
+      referencePoint: CircuitHelper.computeReferencePoint(
+        waypoint,
+        this.wiringMode.markers[this.wiringMode.markers.length - 1].waypoint
       ),
     });
   }
@@ -402,13 +392,13 @@ export class Circuit {
   public spawnWire(
     startPin: Pin,
     endPin: Pin,
-    waypoints: WiringMode["waypoints"] = []
+    markers: WiringMode["markers"] = []
   ): void {
     // Enforce that the startPin of the wire is an output pin
     if (startPin.isInput) {
       [startPin, endPin] = [endPin, startPin];
     }
-    const wire = new Wire(this.p, startPin, endPin, waypoints);
+    const wire = new Wire(this.p, startPin, endPin, markers);
     this.wires.push(wire);
     startPin.outgoingWires.push(wire);
   }
@@ -431,14 +421,14 @@ export class Circuit {
         if (entity instanceof Pin) {
           this.setWiringMode({
             startPin: entity,
-            // inital marker for the wire should be the startPin
-            waypoints: [
+            // initial marker for the wire should be the startPin
+            markers: [
               {
-                controlPoint: {
+                waypoint: {
                   x: entity.options.position.x,
                   y: entity.options.position.y,
                 },
-                waypoint: {
+                referencePoint: {
                   x: entity.options.position.x,
                   y: entity.options.position.y,
                 },
@@ -485,7 +475,7 @@ export class Circuit {
               this.spawnWire(
                 this.wiringMode.startPin,
                 entity,
-                this.wiringMode.waypoints
+                this.wiringMode.markers
               );
               this.setIdleMode();
             }

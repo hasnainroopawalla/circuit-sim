@@ -2,9 +2,10 @@ import { Position, Size } from "./shared.interface";
 
 import { IOChip, Chip, CoreGate } from "./chip";
 import { Pin } from "./pin";
+import type { WireMarker } from "./wire";
 
 export type WiringMode = {
-  waypoints: { controlPoint: Position; waypoint: Position }[];
+  markers: WireMarker[];
   startPin?: Pin;
   endPin?: Pin;
 };

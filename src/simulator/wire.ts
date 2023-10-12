@@ -3,24 +3,21 @@ import { State, Position } from "./shared.interface";
 import { config } from "../config";
 import { Pin } from "./pin";
 
+export type WireMarker = { referencePoint: Position; waypoint: Position };
+
 export class Wire {
   p: p5;
   startPin: Pin;
   endPin: Pin;
   state: State;
-  waypoints: { controlPoint: Position; waypoint: Position }[]; // TODO: move type to shared interface
+  markers: WireMarker[];
 
-  constructor(
-    p5: p5,
-    startPin: Pin,
-    endPin: Pin,
-    waypoints: { controlPoint: Position; waypoint: Position }[] = []
-  ) {
+  constructor(p5: p5, startPin: Pin, endPin: Pin, markers: WireMarker[] = []) {
     this.p = p5;
     this.startPin = startPin;
     this.endPin = endPin;
     this.state = State.Off;
-    this.waypoints = waypoints;
+    this.markers = markers;
   }
 
   public propagate(): void {
