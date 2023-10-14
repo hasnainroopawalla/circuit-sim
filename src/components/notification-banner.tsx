@@ -1,5 +1,5 @@
 import React from "react";
-import { useEventListener } from "./use-event-listener";
+import { useEventListener } from "./hooks";
 import { EmitterEvent } from "../event-service";
 
 // TODO: Create CSS module

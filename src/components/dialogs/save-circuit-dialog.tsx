@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./factory";
+import { Button } from "../factory";
 import styles from "./save-circuit-dialog.module.css";
 
 type SaveCircuitDialogProps = {
@@ -13,12 +13,13 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
 
   return (
     <>
-      <div className="circuitNameInput">
+      <div className={styles.circuitNameInput}>
         <input
           className={styles.circuitNameInput}
           type="text"
           ref={circuitNameInput}
           autoFocus={true}
+          placeholder="e.g. NAND"
         />
       </div>
       <div className={styles.actionButtons}>

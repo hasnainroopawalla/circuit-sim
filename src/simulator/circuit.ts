@@ -61,6 +61,9 @@ export class Circuit {
     emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
       this.spawnCustomChip(eventData)
     );
+    emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
+      this.importCustomChip(eventData)
+    );
   }
 
   private clear(): void {
@@ -301,6 +304,101 @@ export class Circuit {
     }
   }
 
+  private handleIdleMode(interaction: Interaction): void {
+    const entity = this.getMouseOverEntity();
+
+    switch (interaction) {
+      case Interaction.Click:
+        if (entity instanceof Pin) {
+          if (entity.isInput) {
+            console.log("Wires can only start from an output pin");
+            return;
+          }
+          this.setWiringMode({
+            startPin: entity,
+            markers: [],
+          });
+        } else if (entity instanceof IOChip) {
+          entity.mouseClicked();
+        } else if (this.checkSpawnInputChip()) {
+          this.spawnInputIOChip();
+        } else if (this.checkSpawnOutputChip()) {
+          this.spawnOutputIOChip();
+        }
+        break;
+
+      case Interaction.Drag:
+        if (entity instanceof Chip) {
+          this.setRepositionMode({
+            chip: entity,
+          });
+        } else if (entity instanceof IOChip) {
+          this.setRepositionMode({
+            chip: entity,
+          });
+        }
+        break;
+    }
+  }
+
+  private handleWiringMode(interaction: Interaction): void {
+    const entity = this.getMouseOverEntity();
+
+    switch (interaction) {
+      case Interaction.Click:
+        // TODO: Improve logic
+        if (this.isWiringMode && this.wiringMode.startPin) {
+          if (entity instanceof Pin) {
+            // A wire is not allowed to start and end on the same chip
+            if (this.wiringMode.startPin.chip !== entity.chip) {
+              this.spawnWire(
+                this.wiringMode.startPin,
+                entity,
+                this.wiringMode.markers
+              );
+              this.setIdleMode();
+            }
+          } else {
+            this.addWireMarker();
+            // Disable wiring mode if end pin not selected
+            // TODO: logic to cancel wiring mode
+          }
+        }
+        break;
+
+      case Interaction.Drag:
+        break;
+    }
+  }
+
+  private handleSpawnChipMode(interaction: Interaction): void {
+    switch (interaction) {
+      case Interaction.Click:
+        this.isMouseOver() && this.setIdleMode();
+        break;
+
+      case Interaction.Drag:
+        break;
+    }
+  }
+
+  private handleRepositionMode(interaction: Interaction): void {
+    switch (interaction) {
+      case Interaction.Click:
+        break;
+
+      case Interaction.Drag:
+        if (this.repositionMode.chip instanceof Chip && this.isMouseOver()) {
+          this.repositionMode.chip.mouseDragged();
+        } else if (this.repositionMode.chip instanceof IOChip) {
+          this.repositionMode.chip.mouseDragged();
+        } else {
+          this.setIdleMode();
+        }
+        break;
+    }
+  }
+
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
@@ -412,101 +510,6 @@ export class Circuit {
     }
   }
 
-  private handleIdleMode(interaction: Interaction): void {
-    const entity = this.getMouseOverEntity();
-
-    switch (interaction) {
-      case Interaction.Click:
-        if (entity instanceof Pin) {
-          if (entity.isInput) {
-            console.log("Wires can only start from an output pin");
-            return;
-          }
-          this.setWiringMode({
-            startPin: entity,
-            markers: [],
-          });
-        } else if (entity instanceof IOChip) {
-          entity.mouseClicked();
-        } else if (this.checkSpawnInputChip()) {
-          this.spawnInputIOChip();
-        } else if (this.checkSpawnOutputChip()) {
-          this.spawnOutputIOChip();
-        }
-        break;
-
-      case Interaction.Drag:
-        if (entity instanceof Chip) {
-          this.setRepositionMode({
-            chip: entity,
-          });
-        } else if (entity instanceof IOChip) {
-          this.setRepositionMode({
-            chip: entity,
-          });
-        }
-        break;
-    }
-  }
-
-  private handleWiringMode(interaction: Interaction): void {
-    const entity = this.getMouseOverEntity();
-
-    switch (interaction) {
-      case Interaction.Click:
-        // TODO: Improve logic
-        if (this.isWiringMode && this.wiringMode.startPin) {
-          if (entity instanceof Pin) {
-            // A wire is not allowed to start and end on the same chip
-            if (this.wiringMode.startPin.chip !== entity.chip) {
-              this.spawnWire(
-                this.wiringMode.startPin,
-                entity,
-                this.wiringMode.markers
-              );
-              this.setIdleMode();
-            }
-          } else {
-            this.addWireMarker();
-            // Disable wiring mode if end pin not selected
-            // TODO: logic to cancel wiring mode
-          }
-        }
-        break;
-
-      case Interaction.Drag:
-        break;
-    }
-  }
-
-  private handleSpawnChipMode(interaction: Interaction): void {
-    switch (interaction) {
-      case Interaction.Click:
-        this.isMouseOver() && this.setIdleMode();
-        break;
-
-      case Interaction.Drag:
-        break;
-    }
-  }
-
-  private handleRepositionMode(interaction: Interaction): void {
-    switch (interaction) {
-      case Interaction.Click:
-        break;
-
-      case Interaction.Drag:
-        if (this.repositionMode.chip instanceof Chip && this.isMouseOver()) {
-          this.repositionMode.chip.mouseDragged();
-        } else if (this.repositionMode.chip instanceof IOChip) {
-          this.repositionMode.chip.mouseDragged();
-        } else {
-          this.setIdleMode();
-        }
-        break;
-    }
-  }
-
   public mouseClicked(): void {
     if (this.mouseReleaseAfterDrag) {
       this.mouseReleaseAfterDrag = false;
@@ -561,12 +564,23 @@ export class Circuit {
       this.chips
     );
 
-    emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
+    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,
       blueprint: JSON.stringify(customChip),
     });
 
     this.clear();
+  }
+
+  public importCustomChip(
+    eventData: EmitterEventArgs[EmitterEvent.ImportCustomChip]
+  ): void {
+    const { blueprint } = eventData;
+    const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
+    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
+      name: rawCircuit.name,
+      blueprint,
+    });
   }
 
   public render(): void {

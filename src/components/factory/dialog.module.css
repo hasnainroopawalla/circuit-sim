@@ -1,4 +1,4 @@
-.modal {
+.modalContainer {
   position: fixed;
   top: 0;
   left: 0;
@@ -6,11 +6,31 @@
   height: 100%;
   background: rgba(0, 0, 0, 0.5);
 }
-.modalMain {
+
+.modalDialog {
   position: fixed;
   background: #1e1e1e;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  padding: 1rem;
+}
+
+.modalHeader {
+  padding: 0.5rem;
+  color: #fff;
+  letter-spacing: 0.08rem;
+  font-size: 1rem;
+  background-color: #1c1b1b;
+  display: flex;
+  gap: 0.8rem;
+  justify-content: center;
+  align-items: center;
+}
+
+.modalContent {
+  padding: 0.5rem;
+  color: #fff;
+  letter-spacing: 0.08rem;
+  font-size: 1.2rem;
+  /* background-color: #292828; */
 }
