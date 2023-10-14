@@ -31,3 +31,5 @@ export const useCustomChips = () => {
 
   return customChips;
 };
+
+export type IUseCustomChips = typeof useCustomChips;
