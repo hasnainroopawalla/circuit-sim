@@ -36,21 +36,27 @@ export class Wire {
     );
     this.p.noFill();
 
-    for (let i = 0; i < this.markers.length; i++) {
-      const startPoint =
-        i === 0
-          ? this.startPin.options.position
-          : this.markers[i].referencePoint;
+    // TODO: fix https://github.com/hasnainroopawalla/circuit-sim/issues/15
+    const tempMarkers = [
+      {
+        referencePoint: this.startPin.options.position,
+        waypoint: this.startPin.options.position,
+      },
+      ...this.markers,
+    ];
+
+    for (let i = 0; i < tempMarkers.length; i++) {
+      const startPoint = tempMarkers[i].referencePoint;
 
       const controlPoint = {
-        x: this.markers[i].waypoint.x,
-        y: this.markers[i].waypoint.y,
+        x: tempMarkers[i].waypoint.x,
+        y: tempMarkers[i].waypoint.y,
       };
 
       const endPoint =
-        i === this.markers.length - 1
+        i === tempMarkers.length - 1
           ? this.endPin.options.position
-          : this.markers[i + 1].referencePoint;
+          : tempMarkers[i + 1].referencePoint;
 
       this.p.bezier(
         startPoint.x,
