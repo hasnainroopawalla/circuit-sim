@@ -4,6 +4,7 @@ export enum EmitterEvent {
   SaveCircuit = "SaveCircuit", // Save circuit button is pressed
   CustomChipBlueprintGenerated = "CustomChipBlueprintGenerated", // Custom chip blueprint string generated
   Notification = "Notification", // Notification message to be displayed to the user
+  ImportCustomChip = "ImportCustomChip", // New custom chip is imported from a blueprint
 }
 
 export type EmitterEventArgs = {
@@ -11,6 +12,7 @@ export type EmitterEventArgs = {
     coreChip: "AND" | "NOT" | "OR";
   };
   [EmitterEvent.SpawnCustomChip]: { blueprint: string; color: string };
+  [EmitterEvent.ImportCustomChip]: { blueprint: string };
   [EmitterEvent.SaveCircuit]: { name: string; color?: string };
   [EmitterEvent.CustomChipBlueprintGenerated]: {
     name: string;

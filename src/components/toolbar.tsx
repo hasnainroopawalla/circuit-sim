@@ -2,9 +2,13 @@ import React from "react";
 import { EmitterEvent, emitter } from "../event-service";
 import { useEventListener } from "./use-event-listener";
 import { SaveCircuitDialog } from "./save-circuit-dialog";
-import styles from "./toolbar.module.css";
 import { colorGenerator } from "../color-generator";
 import { Button, Dialog } from "./factory";
+import { ImportChipDialog } from "./import-chip-dialog";
+import { LuImport } from "react-icons/lu";
+import { FaSave } from "react-icons/fa";
+
+import styles from "./toolbar.module.css";
 
 export const Toolbar = () => {
   const newCustomChipData = useEventListener(
@@ -13,6 +17,8 @@ export const Toolbar = () => {
 
   const [showSaveCircuitDialog, setSaveShowCircuitDialog] =
     React.useState(false);
+
+  const [showImportChipDialog, setShowImportChipDialog] = React.useState(false);
 
   const [customChips, setCustomChips] = React.useState<
     { name: string; onClick: () => void }[]
@@ -91,10 +97,17 @@ export const Toolbar = () => {
             onClick={customChip.onClick}
           />
         ))}
-        <Button text="+" appearance="primary" size="large" onClick={() => {}} />
+        <Button
+          text="+"
+          appearance="primary"
+          size="large"
+          onClick={() => setShowImportChipDialog(true)}
+        />
       </div>
       {showSaveCircuitDialog && (
         <Dialog
+          title="SAVE CIRCUIT"
+          icon={FaSave}
           content={
             <SaveCircuitDialog
               onConfirm={(circuitName: string) => {
@@ -103,6 +116,25 @@ export const Toolbar = () => {
               }}
               onDismiss={() => {
                 setSaveShowCircuitDialog(false);
+              }}
+            />
+          }
+        />
+      )}
+      {showImportChipDialog && (
+        <Dialog
+          title="IMPORT CHIP"
+          icon={LuImport}
+          content={
+            <ImportChipDialog
+              onConfirm={(blueprint: string) => {
+                emitter.emit(EmitterEvent.ImportCustomChip, {
+                  blueprint: blueprint,
+                });
+                setShowImportChipDialog(false);
+              }}
+              onDismiss={() => {
+                setShowImportChipDialog(false);
               }}
             />
           }
