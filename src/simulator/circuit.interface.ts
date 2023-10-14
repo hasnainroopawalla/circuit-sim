@@ -2,9 +2,10 @@ import { Position, Size } from "./shared.interface";
 
 import { IOChip, Chip, CoreGate } from "./chip";
 import { Pin } from "./pin";
+import type { WireMarker } from "./wire";
 
 export type WiringMode = {
-  waypoints: Position[];
+  markers: WireMarker[];
   startPin?: Pin;
   endPin?: Pin;
 };
@@ -13,21 +14,20 @@ export type RepositionMode = {
   chip?: Chip | IOChip;
 };
 
-export type SpawnChipsMode = {
+export type SpawnChipMode = {
   chips: Chip[];
 };
 
 export type CircuitRenderOptions = {
   position: Position;
   size: Size;
-  // color: string;
 };
 
 export enum Mode {
   Idle = "Idle",
   Reposition = "Reposition",
   Wiring = "Wiring",
-  SpawnChips = "SpawnChips",
+  SpawnChip = "SpawnChip",
 }
 
 export enum Interaction {

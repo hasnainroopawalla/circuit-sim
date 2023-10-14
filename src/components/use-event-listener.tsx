@@ -3,7 +3,7 @@ import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 
 export function useEventListener<T extends EmitterEvent>(
   event: T
-): EmitterEventArgs[T] {
+): EmitterEventArgs[T] | undefined {
   const [eventData, setEventData] = useState<EmitterEventArgs[T]>();
 
   useEffect(() => {

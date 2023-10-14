@@ -1,6 +1,7 @@
 import { CoreGate } from "../chip";
 import { Circuit } from "../circuit";
 import { CustomChipBlueprint } from "../circuit.interface";
+import { Position } from "../shared.interface";
 
 // TODO: Test coverage
 export default class CircuitHelper {
@@ -62,6 +63,17 @@ export default class CircuitHelper {
       outputs: newOutputs,
       chips: newChips,
       wires: newWires,
+    };
+  }
+
+  public static computeReferencePoint(
+    waypoint: Position,
+    lastWaypoint: Position,
+    curveFactor: number = 0.8
+  ): Position {
+    return {
+      x: lastWaypoint.x + curveFactor * (waypoint.x - lastWaypoint.x),
+      y: lastWaypoint.y + curveFactor * (waypoint.y - lastWaypoint.y),
     };
   }
 }

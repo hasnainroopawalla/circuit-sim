@@ -37,10 +37,14 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
             appearance="dark"
             fullWidth
             size="small"
-            onClick={() =>
-              circuitNameInput.current.value.length > 0 &&
-              onConfirm(circuitNameInput.current.value.toUpperCase())
-            }
+            onClick={() => {
+              if (
+                circuitNameInput.current &&
+                circuitNameInput.current.value.length > 0
+              ) {
+                onConfirm(circuitNameInput.current.value.toUpperCase());
+              }
+            }}
           />
         </div>
       </div>

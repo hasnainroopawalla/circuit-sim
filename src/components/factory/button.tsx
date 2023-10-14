@@ -10,7 +10,7 @@ type ButtonProps = {
 };
 
 export const Button: React.FC<ButtonProps> = (props) => {
-  const { text, onClick, appearance, size, fullWidth } = props;
+  const { text, onClick, appearance = "primary", size, fullWidth } = props;
 
   const classes = `${styles.button} ${styles[appearance]} ${styles[size]} ${
     fullWidth ? styles.fullWidth : ""
