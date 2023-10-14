@@ -11,8 +11,15 @@ export type EmitterEventArgs = {
   [EmitterEvent.SpawnCoreChip]: {
     coreChip: "AND" | "NOT" | "OR";
   };
-  [EmitterEvent.SpawnCustomChip]: { blueprint: string; color: string };
-  [EmitterEvent.ImportCustomChip]: { blueprint: string };
+  [EmitterEvent.SpawnCustomChip]: {
+    name: string;
+    blueprint: string;
+    color: string;
+  };
+  [EmitterEvent.ImportCustomChip]: {
+    customChipName: string;
+    blueprint: string;
+  };
   [EmitterEvent.SaveCircuit]: { name: string; color?: string };
   [EmitterEvent.AddCustomChipToToolbar]: {
     name: string;

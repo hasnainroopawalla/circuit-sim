@@ -3,23 +3,31 @@ import { Button } from "../factory";
 import styles from "./import-chip-dialog.module.css";
 
 type ImportChipDialog = {
-  onConfirm: (circuitName: string) => void;
+  onConfirm: (customChipName: string, blueprint: string) => void;
   onDismiss: () => void;
 };
 
 export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
   const { onDismiss, onConfirm } = props;
+  const chipNameInput = React.useRef<HTMLInputElement>(null);
   const blueprintInput = React.useRef<HTMLInputElement>(null);
 
   return (
     <>
-      <div className={styles.circuitNameInput}>
+      <div className={styles.inputsContainer}>
         <input
-          className={styles.circuitNameInput}
+          className={styles.chipNameInput}
+          type="text"
+          ref={chipNameInput}
+          autoFocus={true}
+          placeholder={`CHIP NAME`}
+        />
+        <input
+          className={styles.blueprintInput}
           type="text"
           ref={blueprintInput}
           autoFocus={true}
-          placeholder={`e.g. {"name":"NAND"..`}
+          placeholder={`BLUEPRINT`}
           size={40}
         />
       </div>
@@ -41,10 +49,15 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
             size="small"
             onClick={() => {
               if (
+                chipNameInput.current &&
+                chipNameInput.current.value.length > 0 &&
                 blueprintInput.current &&
                 blueprintInput.current.value.length > 0
               ) {
-                onConfirm(blueprintInput.current.value);
+                onConfirm(
+                  chipNameInput.current.value,
+                  blueprintInput.current.value
+                );
               }
             }}
           />

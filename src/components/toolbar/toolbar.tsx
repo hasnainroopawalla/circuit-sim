@@ -52,9 +52,10 @@ export const Toolbar = () => {
           icon={LuImport}
           content={
             <ImportChipDialog
-              onConfirm={(blueprint: string) => {
+              onConfirm={(customChipName: string, blueprint: string) => {
                 emitter.emit(EmitterEvent.ImportCustomChip, {
-                  blueprint: blueprint,
+                  customChipName,
+                  blueprint,
                 });
                 setShowImportChipDialog(false);
               }}

@@ -411,12 +411,12 @@ export class Circuit {
   public spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const { blueprint, color } = eventData;
+    const { name, blueprint, color } = eventData;
     const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
 
     const circuit = new Circuit(
       this.p,
-      rawCircuit.name,
+      name,
       {
         position: {
           x: 0,
@@ -575,10 +575,9 @@ export class Circuit {
   public importCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.ImportCustomChip]
   ): void {
-    const { blueprint } = eventData;
-    const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
+    const { customChipName, blueprint } = eventData;
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-      name: rawCircuit.name,
+      name: customChipName,
       blueprint,
     });
   }

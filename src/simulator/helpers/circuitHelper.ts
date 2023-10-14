@@ -58,7 +58,6 @@ export default class CircuitHelper {
       );
 
     return {
-      name,
       inputs: newInputs,
       outputs: newOutputs,
       chips: newChips,

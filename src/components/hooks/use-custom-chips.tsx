@@ -22,6 +22,7 @@ export const useCustomChips = () => {
       name: newCustomChipData.name,
       onClick: () =>
         emitter.emit(EmitterEvent.SpawnCustomChip, {
+          name: newCustomChipData.name,
           blueprint: newCustomChipData.blueprint,
           color,
         }),

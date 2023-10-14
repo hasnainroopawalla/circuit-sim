@@ -36,7 +36,6 @@ export enum Interaction {
 }
 
 export type CustomChipBlueprint = {
-  name: string;
   inputs: { id: string; pin: string }[];
   outputs: { id: string; pin: string }[];
   chips: {

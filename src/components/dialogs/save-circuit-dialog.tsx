@@ -19,7 +19,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
           type="text"
           ref={circuitNameInput}
           autoFocus={true}
-          placeholder="e.g. NAND"
+          placeholder={`CHIP NAME`}
         />
       </div>
       <div className={styles.actionButtons}>

@@ -58,10 +58,12 @@ export class CoreChip extends Chip {
   }
 
   public execute(): void {
-    const outputStates = this.action(this.inputPins);
-    for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].state = outputStates[i];
-      this.outputPins[i].propagate();
-    }
+    setTimeout(() => {
+      const outputStates = this.action(this.inputPins);
+      for (let i = 0; i < this.outputPins.length; i++) {
+        this.outputPins[i].state = outputStates[i];
+        this.outputPins[i].propagate();
+      }
+    });
   }
 }

@@ -6,12 +6,14 @@
   letter-spacing: 0.1rem;
   padding: 0.4rem;
 }
+
 .actionButtons {
   display: flex;
   flex-direction: row;
   gap: 0.3rem;
   margin-top: 1rem;
 }
+
 .actionButton {
   flex: 1;
   height: 2.5rem;
