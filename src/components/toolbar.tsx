@@ -1,45 +1,20 @@
 import React from "react";
 import { EmitterEvent, emitter } from "../event-service";
-import { useEventListener } from "./use-event-listener";
-import { SaveCircuitDialog } from "./save-circuit-dialog";
-import { colorGenerator } from "../color-generator";
+import { useCustomChips } from "./hooks";
+import { ImportChipDialog, SaveCircuitDialog } from "./dialogs";
 import { Button, Dialog } from "./factory";
-import { ImportChipDialog } from "./import-chip-dialog";
 import { LuImport } from "react-icons/lu";
 import { FaSave } from "react-icons/fa";
 
 import styles from "./toolbar.module.css";
 
 export const Toolbar = () => {
-  const newCustomChipData = useEventListener(
-    EmitterEvent.CustomChipBlueprintGenerated
-  );
+  const customChips = useCustomChips();
 
   const [showSaveCircuitDialog, setSaveShowCircuitDialog] =
     React.useState(false);
 
   const [showImportChipDialog, setShowImportChipDialog] = React.useState(false);
-
-  const [customChips, setCustomChips] = React.useState<
-    { name: string; onClick: () => void }[]
-  >([]);
-
-  React.useEffect(() => {
-    if (!newCustomChipData) {
-      return;
-    }
-    const color = colorGenerator.generate();
-
-    const newChipData = {
-      name: newCustomChipData.name,
-      onClick: () =>
-        emitter.emit(EmitterEvent.SpawnCustomChip, {
-          blueprint: newCustomChipData.blueprint,
-          color,
-        }),
-    };
-    setCustomChips((prevCustomChips) => [...prevCustomChips, newChipData]);
-  }, [newCustomChipData]);
 
   return (
     <>

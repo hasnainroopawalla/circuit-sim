@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./factory";
+import { Button } from "../factory";
 import styles from "./save-circuit-dialog.module.css";
 
 type SaveCircuitDialogProps = {

@@ -564,7 +564,7 @@ export class Circuit {
       this.chips
     );
 
-    emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
+    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,
       blueprint: JSON.stringify(customChip),
     });
@@ -577,7 +577,7 @@ export class Circuit {
   ): void {
     const { blueprint } = eventData;
     const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
-    emitter.emit(EmitterEvent.CustomChipBlueprintGenerated, {
+    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name: rawCircuit.name,
       blueprint,
     });

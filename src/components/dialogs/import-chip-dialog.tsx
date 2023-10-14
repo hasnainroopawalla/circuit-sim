@@ -1,5 +1,5 @@
 import React from "react";
-import { Button } from "./factory";
+import { Button } from "../factory";
 import styles from "./import-chip-dialog.module.css";
 
 type ImportChipDialog = {
@@ -19,7 +19,7 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
           type="text"
           ref={blueprintInput}
           autoFocus={true}
-          placeholder="e.g. input" // TODO: fix
+          placeholder={`e.g. {"name":"NAND"..`}
           size={40}
         />
       </div>
