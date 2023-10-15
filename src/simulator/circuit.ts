@@ -508,20 +508,16 @@ export class Circuit {
       });
     }
 
-    const customChip = BlueprintHelper.circuitToBlueprint(
-      name,
-      this.wires,
-      this.inputs,
-      this.outputs,
-      this.chips
-    );
+    const customChip = BlueprintHelper.circuitToBlueprint(name, this);
+
+    // console.log(customChip);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,
       blueprint: JSON.stringify(customChip),
     });
 
-    this.clear();
+    // this.clear();
   }
 
   // TODO: does this method need to live here?

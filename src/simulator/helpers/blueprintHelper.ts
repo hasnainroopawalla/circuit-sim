@@ -9,48 +9,72 @@ import CircuitHelper from "./circuitHelper";
 // TODO: Test coverage
 export default class BlueprintHelper {
   public static circuitToBlueprint(
-    name: Circuit["name"],
-    wires: Circuit["wires"],
-    inputs: Circuit["inputs"],
-    outputs: Circuit["outputs"],
-    chips: Circuit["chips"]
+    name: string,
+    circuit: Circuit,
+    blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    const newWires = wires.map((wire) => [wire.startPin.id, wire.endPin.id]);
+    console.log("name:", name);
 
-    const newInputs = inputs
-      .map((input) => ({
-        id: input.id,
-        pin: input.pin.id,
-      }))
-      .filter((element) =>
-        CircuitHelper.entityHasConnectedWires([element.pin], newWires)
-      );
+    const newWires = circuit.wires.map((wire) => [
+      wire.startPin.id,
+      wire.endPin.id,
+    ]);
 
-    const newOutputs = outputs
-      .map((output) => ({
-        id: output.id,
-        pin: output.pin.id,
-      }))
-      .filter((entity) =>
-        CircuitHelper.entityHasConnectedWires([entity.pin], newWires)
-      );
+    const newInputs = circuit.inputs.map((input) => ({
+      id: input.id,
+      pin: input.pin.id,
+    }));
+    // .filter((element) =>
+    //   CircuitHelper.entityHasConnectedWires([element.pin], newWires)
+    // );
 
-    const newChips = chips
-      .map((chip) => ({
-        id: chip.id,
-        name: chip.name,
-        inputPins: chip.inputPins.map((pin) => pin.id),
-        outputPins: chip.outputPins.map((pin) => pin.id),
-      }))
-      .filter((entity) =>
-        CircuitHelper.entityHasConnectedWires(
-          [...entity.inputPins, ...entity.outputPins],
-          newWires
-        )
-      );
+    const newOutputs = circuit.outputs.map((output) => ({
+      id: output.id,
+      pin: output.pin.id,
+    }));
+    // .filter((entity) =>
+    //   CircuitHelper.entityHasConnectedWires([entity.pin], newWires)
+    // );
+
+    const newChips: CustomChipSchema["chips"] = [];
+    for (let i = 0; i < circuit.chips.length; i++) {
+      const chip = circuit.chips[i];
+      const createdChip =
+        chip instanceof CustomChip
+          ? this.circuitToBlueprint(chip.name, chip.circuit)[name]
+          : {
+              id: chip.id,
+              name: chip.name,
+              inputPins: chip.inputPins.map((pin) => pin.id),
+              outputPins: chip.outputPins.map((pin) => pin.id),
+            };
+
+      newChips.push(createdChip);
+    }
+
+    blueprint[name] = {
+      inputs: newInputs,
+      outputs: newOutputs,
+      chips: newChips,
+      wires: newWires,
+    };
+
+    // const newChips = circuit.chips
+    //   .map((chip) => ({
+    //     id: chip.id,
+    //     name: chip.name,
+    //     inputPins: chip.inputPins.map((pin) => pin.id),
+    //     outputPins: chip.outputPins.map((pin) => pin.id),
+    //   }))
+    //   .filter((entity) =>
+    //     CircuitHelper.entityHasConnectedWires(
+    //       [...entity.inputPins, ...entity.outputPins],
+    //       newWires
+    //     )
+    //   );
 
     return {
-      main: {
+      [name]: {
         inputs: newInputs,
         outputs: newOutputs,
         chips: newChips,
@@ -105,7 +129,6 @@ export default class BlueprintHelper {
 
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? new CoreChip(p, chip.name as CoreGate, chip.id)
         : this.blueprintToCustomChip(
