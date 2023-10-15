@@ -1,6 +1,9 @@
 import { CoreChip, CoreGate, CustomChip, IOChip } from "../chip";
 import { Circuit } from "../circuit";
-import { CustomChipBlueprint, CustomChipSchema } from "../circuit.interface";
+import type {
+  CustomChipBlueprint,
+  CustomChipSchema,
+} from "../circuit.interface";
 import CircuitHelper from "./circuitHelper";
 
 // TODO: Test coverage
@@ -47,7 +50,7 @@ export default class BlueprintHelper {
       );
 
     return {
-      current: {
+      main: {
         inputs: newInputs,
         outputs: newOutputs,
         chips: newChips,
@@ -56,7 +59,7 @@ export default class BlueprintHelper {
     };
   }
 
-  public static blueprintToCircuit(
+  public static blueprintToCustomChip(
     p: p5,
     id: string,
     name: string,
@@ -64,8 +67,6 @@ export default class BlueprintHelper {
     rawCircuit: CustomChipSchema,
     blueprint: CustomChipBlueprint
   ): CustomChip {
-    console.log("Chip name:", name, rawCircuit);
-
     const circuit = new Circuit(
       p,
       name,
@@ -104,25 +105,21 @@ export default class BlueprintHelper {
 
     for (let i = 0; i < rawCircuit.chips.length; i++) {
       const chip = rawCircuit.chips[i];
-      let createdChip: CustomChip | CoreChip;
-      if (["AND", "OR", "NOT"].includes(chip.name)) {
-        createdChip = new CoreChip(p, chip.name as CoreGate, chip.id);
-      } else {
-        createdChip = this.blueprintToCircuit(
-          p,
-          chip.id,
-          chip.name,
-          color,
-          blueprint[chip.name],
-          blueprint
-        );
-      }
 
-      console.log("pushing chip to circuit", chip.name, createdChip);
+      const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
+        ? new CoreChip(p, chip.name as CoreGate, chip.id)
+        : this.blueprintToCustomChip(
+            p,
+            chip.id,
+            chip.name,
+            color,
+            blueprint[chip.name],
+            blueprint
+          );
+
       circuit.chips.push(createdChip);
     }
 
-    // CircuitHelper.renderSummary(circuit);
     for (let i = 0; i < rawCircuit.wires.length; i++) {
       const wire = rawCircuit.wires[i];
       const [startPin, endPin] = [
@@ -134,29 +131,6 @@ export default class BlueprintHelper {
       }
     }
 
-    const customChip = new CustomChip(p, circuit, id, "green");
-
-    // console.log("RETURN CUSTOM CHIP", customChip.name);
-    CircuitHelper.renderSummary(customChip.circuit);
-    return customChip;
-  }
-
-  public static blueprintToCustomChip(
-    p: p5,
-    blueprint: CustomChipBlueprint,
-    name: string,
-    color: string
-  ): CustomChip {
-    const customChip = this.blueprintToCircuit(
-      p,
-      "ID",
-      name,
-      color,
-      blueprint["current"],
-      blueprint
-    );
-    console.log("FINAL", customChip);
-
-    return customChip;
+    return new CustomChip(p, circuit, id, color);
   }
 }

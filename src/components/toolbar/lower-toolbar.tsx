@@ -16,7 +16,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
   const customChips = useCustomChips();
 
   const blueprint = JSON.stringify({
-    current: {
+    main: {
       inputs: [
         {
           id: "input-0",

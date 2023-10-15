@@ -417,9 +417,11 @@ export class Circuit {
 
     const customChip = BlueprintHelper.blueprintToCustomChip(
       this.p,
-      rawCircuit,
+      `chip-${this.chips.length}`,
       name,
-      color
+      color,
+      rawCircuit["main"],
+      rawCircuit
     );
 
     this.setSpawnChipMode(customChip);
