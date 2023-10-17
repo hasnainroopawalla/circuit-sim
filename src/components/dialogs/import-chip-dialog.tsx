@@ -89,6 +89,41 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
       ],
     },
   });
+
+  const blueprintNAND = JSON.stringify({
+    main: {
+      inputs: [
+        {
+          id: "chip.input.0",
+        },
+        {
+          id: "chip.input.1",
+        },
+      ],
+      outputs: [
+        {
+          id: "chip.output.0",
+        },
+      ],
+      chips: [
+        {
+          id: "chip.AND.0",
+          name: "AND",
+        },
+        {
+          id: "chip.NOT.1",
+          name: "NOT",
+        },
+      ],
+      wires: [
+        ["chip.input.0-pin.0", "chip.AND.0-inputPin.0"],
+        ["chip.input.1-pin.0", "chip.AND.0-inputPin.1"],
+        ["chip.AND.0-outputPin.0", "chip.NOT.1-inputPin.0"],
+        ["chip.NOT.1-outputPin.0", "chip.output.0-pin.0"],
+      ],
+    },
+  });
+
   return (
     <>
       <div className={styles.inputsContainer}>
@@ -125,14 +160,14 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
             fullWidth
             size="small"
             onClick={() => {
-              // if (
-              //   chipNameInput.current &&
-              //   chipNameInput.current.value.length > 0 &&
-              //   blueprintInput.current &&
-              //   blueprintInput.current.value.length > 0
-              // ) {
-              onConfirm("main", blueprint);
-              // }
+              if (
+                chipNameInput.current &&
+                chipNameInput.current.value.length > 0 &&
+                blueprintInput.current &&
+                blueprintInput.current.value.length > 0
+              ) {
+                onConfirm(Date.now().toString(), blueprintNAND);
+              }
             }}
           />
         </div>

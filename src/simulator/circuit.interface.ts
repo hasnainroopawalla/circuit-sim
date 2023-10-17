@@ -36,13 +36,11 @@ export enum Interaction {
 }
 
 export type CustomChipSchema = {
-  inputs: { id: string; pin: string }[];
-  outputs: { id: string; pin: string }[];
+  inputs: { id: string }[];
+  outputs: { id: string }[];
   chips: {
     id: string;
     name: string;
-    inputPins: string[];
-    outputPins: string[];
   }[];
   wires: string[][];
 };

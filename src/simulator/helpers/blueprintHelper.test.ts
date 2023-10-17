@@ -7,12 +7,59 @@ const sketch = (p: p5) => {
   p.draw = () => {};
 };
 
-describe("Nodes & Edges tests", () => {
+describe("BlueprintHelper", () => {
   let p: p5;
 
   beforeEach(() => {
-    expect(sketch).not.toBeNull();
     p = new p5(sketch);
+  });
+
+  describe("circuitToBlueprint", () => {
+    const BLUEPRINT_NAND = {
+      main: {
+        inputs: [
+          {
+            id: "chip.input.0",
+          },
+          {
+            id: "chip.input.1",
+          },
+        ],
+        outputs: [
+          {
+            id: "chip.output.0",
+          },
+        ],
+        chips: [
+          {
+            id: "chip.AND.0",
+            name: "AND",
+          },
+          {
+            id: "chip.NOT.1",
+            name: "NOT",
+          },
+        ],
+        wires: [
+          ["chip.input.0-pin.0", "chip.AND.0-inputPin.0"],
+          ["chip.input.1-pin.0", "chip.AND.0-inputPin.1"],
+          ["chip.AND.0-outputPin.0", "chip.NOT.1-inputPin.0"],
+          ["chip.NOT.1-outputPin.0", "chip.output.0-pin.0"],
+        ],
+      },
+    };
+
+    const customChip = BlueprintHelper.blueprintToCustomChip(
+      p,
+      `CustomChipId`,
+      "NAND-NOT",
+      "color",
+      BLUEPRINT_NAND["main"],
+      BLUEPRINT_NAND
+    );
+    console.log("FINAL", customChip);
+    CircuitHelper.renderSummary(customChip.circuit);
+    expect(customChip.id).toBe("test-file");
   });
 
   test("hi", () => {

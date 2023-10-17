@@ -133,7 +133,6 @@ export class Circuit {
   }
 
   private setIdleMode(): void {
-    CircuitHelper.renderSummary(this);
     this.spawnChipMode = {
       chips: [],
     };
@@ -437,7 +436,7 @@ export class Circuit {
       rawCircuit["main"],
       rawCircuit
     );
-    CircuitHelper.renderSummary(customChip.circuit);
+    // CircuitHelper.renderSummary(customChip.circuit);
     this.setSpawnChipMode(customChip);
     this.chips.push(customChip);
     // CircuitHelper.renderSummary(this);
@@ -532,15 +531,15 @@ export class Circuit {
         message: "Custom chip not created due to missing inputs/outputs",
       });
     }
-
-    const customChip = BlueprintHelper.circuitToBlueprint(name, this);
+    const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
+    console.log("FINAL", blueprint);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,
-      blueprint: JSON.stringify(customChip),
+      blueprint: JSON.stringify(blueprint),
     });
 
-    // this.clear();
+    this.clear();
   }
 
   // TODO: does this method need to live here?

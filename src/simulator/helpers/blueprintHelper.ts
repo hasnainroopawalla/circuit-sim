@@ -6,31 +6,22 @@ import type {
 } from "../circuit.interface";
 import CircuitHelper from "./circuitHelper";
 
-// TODO: Test coverage
 export default class BlueprintHelper {
   public static circuitToBlueprint(
     name: string,
     circuit: Circuit,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    CircuitHelper.renderSummary(circuit);
-
-    const newWires = circuit.wires.map((wire) => [
-      wire.startPin.id,
-      wire.endPin.id,
-    ]);
-
     const newInputs = circuit.inputs.map((input) => ({
       id: input.id,
-      pin: input.pin.id,
     }));
+    // TODO: add the filters
     // .filter((element) =>
     //   CircuitHelper.entityHasConnectedWires([element.pin], newWires)
     // );
 
     const newOutputs = circuit.outputs.map((output) => ({
       id: output.id,
-      pin: output.pin.id,
     }));
     // .filter((entity) =>
     //   CircuitHelper.entityHasConnectedWires([entity.pin], newWires)
@@ -42,17 +33,17 @@ export default class BlueprintHelper {
       const createdChip = {
         id: chip.id,
         name: chip.name,
-        inputPins: chip.inputPins.map((pin) => pin.id),
-        outputPins: chip.outputPins.map((pin) => pin.id),
       };
-      console.log("CREATED CHIP", createdChip);
       newChips.push(createdChip);
       if (chip instanceof CustomChip) {
         this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
       }
     }
 
-    console.log("BEFORE", blueprint);
+    const newWires = circuit.wires.map((wire) => [
+      `${wire.startPin.chip.id}-${wire.startPin.id}`,
+      `${wire.endPin.chip.id}-${wire.endPin.id}`,
+    ]);
 
     blueprint[name] = {
       inputs: newInputs,
@@ -60,8 +51,6 @@ export default class BlueprintHelper {
       chips: newChips,
       wires: newWires,
     };
-
-    console.log("AFTER", blueprint);
 
     return blueprint;
   }
@@ -85,7 +74,10 @@ export default class BlueprintHelper {
     circuitSchema: CustomChipSchema,
     blueprint: CustomChipBlueprint
   ): CustomChip {
-    // console.log(name, circuitSchema.inputs);
+    console.log(name);
+
+    // an object to map the blueprint entity id to the actual entity created by the circuit
+    // this is required since the circuit is fully responsible for instantiating the entities
     const entities: { [id: string]: IOChip | CustomChip | CoreChip } = {};
 
     const circuit = new Circuit(
@@ -128,10 +120,12 @@ export default class BlueprintHelper {
           );
       entities[chip.id] = createdChip;
     }
-    // console.log(entities);
+
+    console.log(entities);
 
     for (let i = 0; i < circuitSchema.wires.length; i++) {
       const wire = circuitSchema.wires[i];
+      console.log("WIRE", wire);
       const { chipId: startChipId, pinId: startPinId } = this.parseWireString(
         wire[0]
       );
@@ -139,15 +133,18 @@ export default class BlueprintHelper {
         wire[1]
       );
 
+      console.log(endChipId, endPinId);
+
       const startPin = entities[startChipId].getPin(startPinId);
       const endPin = entities[endChipId].getPin(endPinId);
       if (startPin && endPin) {
         circuit.spawnWire(startPin, endPin);
       }
     }
+
     const customChip = new CustomChip(p, circuit, id, color);
 
-    // console.log("CustomChip", customChip);
+    CircuitHelper.renderSummary(customChip.circuit);
     return customChip;
   }
 }
