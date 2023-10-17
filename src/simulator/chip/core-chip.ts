@@ -45,13 +45,11 @@ export class CoreChip extends Chip {
     );
 
     for (let i = 0; i < numInputPins; i++) {
-      this.inputPins.push(
-        new Pin(p, `${id}_input-pin-${i}`, State.Off, true, this)
-      );
+      this.inputPins.push(new Pin(p, `inputPin.${i}`, State.Off, true, this));
     }
     for (let i = 0; i < numOutputPins; i++) {
       this.outputPins.push(
-        new Pin(p, `${id}_output-pin-${i}`, State.Off, false, this)
+        new Pin(p, `outputPin.${i}`, State.Off, false, this)
       );
     }
     this.action = CORE_GATES[coreGate].action;

@@ -54,7 +54,7 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
       inputs: [
         {
           id: "input-0",
-          pin: "input-0_pin-0",
+          pin: "input-00_pin-0",
         },
         {
           id: "input-1",

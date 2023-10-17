@@ -9,13 +9,40 @@ import {
 } from "./circuit.interface";
 
 import { Chip } from "./chip/chip";
-import { CoreChip, IOChip } from "./chip";
+import { CoreChip, CoreGate, IOChip } from "./chip";
 import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import CircuitHelper from "./helpers/circuitHelper";
 import BlueprintHelper from "./helpers/blueprintHelper";
+
+// TODO: move to separate file and rename
+class GenerateId {
+  current: number;
+  constructor() {
+    this.current = -1;
+  }
+
+  private generate(): number {
+    this.current += 1;
+    return this.current;
+  }
+
+  public generateInputChipId(): string {
+    return `chip.input.${generateId.generate()}`;
+  }
+
+  public generateOutputChipId(): string {
+    return `chip.output.${generateId.generate()}`;
+  }
+
+  public generateChipId(chipName: string): string {
+    return `chip.${chipName}.${generateId.generate()}`;
+  }
+}
+
+const generateId = new GenerateId();
 
 export class Circuit {
   p: p5;
@@ -106,6 +133,7 @@ export class Circuit {
   }
 
   private setIdleMode(): void {
+    CircuitHelper.renderSummary(this);
     this.spawnChipMode = {
       chips: [],
     };
@@ -282,29 +310,6 @@ export class Circuit {
     });
   }
 
-  public getPinById(pinId: string): Pin | undefined {
-    for (let i = 0; i < this.inputs.length; i++) {
-      const pin = this.inputs[i].getPin();
-      if (pin.id === pinId) {
-        return pin;
-      }
-    }
-
-    for (let i = 0; i < this.outputs.length; i++) {
-      const pin = this.outputs[i].getPin();
-      if (pin.id === pinId) {
-        return pin;
-      }
-    }
-
-    for (let i = 0; i < this.chips.length; i++) {
-      const pin = this.chips[i].getPinById(pinId);
-      if (pin) {
-        return pin;
-      }
-    }
-  }
-
   private handleIdleMode(interaction: Interaction): void {
     const entity = this.getMouseOverEntity();
 
@@ -400,13 +405,22 @@ export class Circuit {
     }
   }
 
+  public createCoreChip(coreChip: CoreGate): CoreChip {
+    const chip = new CoreChip(
+      this.p,
+      coreChip,
+      generateId.generateChipId(coreChip)
+    );
+    this.chips.push(chip);
+    return chip;
+  }
+
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
     const { coreChip } = eventData;
-    const chip = new CoreChip(this.p, coreChip, `chip-${this.chips.length}`);
+    const chip = this.createCoreChip(coreChip);
     this.setSpawnChipMode(chip);
-    this.chips.push(chip);
   }
 
   public spawnCustomChip(
@@ -414,36 +428,47 @@ export class Circuit {
   ): void {
     const { name, blueprint, color } = eventData;
     const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
-    console.log(rawCircuit);
+    // console.log(rawCircuit);
     const customChip = BlueprintHelper.blueprintToCustomChip(
       this.p,
-      `chip-${this.chips.length}`,
+      generateId.generateChipId(name),
       name,
       color,
       rawCircuit["main"],
       rawCircuit
     );
-    // CircuitHelper.renderSummary(customChip.circuit);
+    CircuitHelper.renderSummary(customChip.circuit);
     this.setSpawnChipMode(customChip);
     this.chips.push(customChip);
+    // CircuitHelper.renderSummary(this);
   }
 
-  public spawnInputIOChip(): void {
-    this.inputs.push(
-      new IOChip(this.p, `input-${this.inputs.length}`, true, {
+  public spawnInputIOChip(): IOChip {
+    const inputIOChip = new IOChip(
+      this.p,
+      generateId.generateInputChipId(),
+      true,
+      {
         x: this.options.position.x,
         y: this.p.mouseY,
-      })
+      }
     );
+    this.inputs.push(inputIOChip);
+    return inputIOChip;
   }
 
-  public spawnOutputIOChip(): void {
-    this.outputs.push(
-      new IOChip(this.p, `output-${this.outputs.length}`, false, {
+  public spawnOutputIOChip(): IOChip {
+    const outputIOChip = new IOChip(
+      this.p,
+      generateId.generateOutputChipId(),
+      false,
+      {
         x: this.options.position.x + this.options.size.w,
         y: this.p.mouseY,
-      })
+      }
     );
+    this.outputs.push(outputIOChip);
+    return outputIOChip;
   }
 
   public spawnWire(
@@ -509,8 +534,6 @@ export class Circuit {
     }
 
     const customChip = BlueprintHelper.circuitToBlueprint(name, this);
-
-    // console.log(customChip);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,

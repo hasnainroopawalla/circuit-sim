@@ -15,16 +15,14 @@ export class CustomChip extends Chip {
     );
 
     this.circuit = circuit;
-    this.inputPins = this.circuit.inputs.map((input) => input.pin);
-    this.outputPins = this.circuit.outputs.map((output) => output.pin);
-    for (let i = 0; i < this.inputPins.length; i++) {
-      this.inputPins[i].id = `${id}_input-pin-${i}`;
-      this.inputPins[i].isInput = true;
-    }
-    for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].id = `${id}_output-pin-${i}`;
-      this.outputPins[i].isInput = false;
-    }
+    this.inputPins = this.circuit.inputs.map((input) => {
+      input.pin.isInput = true;
+      return input.pin;
+    });
+    this.outputPins = this.circuit.outputs.map((output) => {
+      output.pin.isInput = false;
+      return output.pin;
+    });
   }
 
   public execute(): void {

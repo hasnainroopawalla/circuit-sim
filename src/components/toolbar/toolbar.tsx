@@ -13,7 +13,7 @@ export const Toolbar = () => {
   const [showSaveCircuitDialog, setSaveShowCircuitDialog] =
     React.useState(false);
 
-  const [showImportChipDialog, setShowImportChipDialog] = React.useState(true);
+  const [showImportChipDialog, setShowImportChipDialog] = React.useState(false);
 
   return (
     <>

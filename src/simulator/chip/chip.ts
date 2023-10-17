@@ -121,7 +121,7 @@ export abstract class Chip {
     );
   }
 
-  public getPinById(pinId: string): Pin | undefined {
+  public getPin(pinId: string): Pin | undefined {
     return [...this.inputPins, ...this.outputPins].find(
       ({ id }) => id === pinId
     );
