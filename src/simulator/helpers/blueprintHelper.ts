@@ -13,7 +13,7 @@ export default class BlueprintHelper {
     circuit: Circuit,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    console.log("name:", name);
+    CircuitHelper.renderSummary(circuit);
 
     const newWires = circuit.wires.map((wire) => [
       wire.startPin.id,
@@ -39,18 +39,20 @@ export default class BlueprintHelper {
     const newChips: CustomChipSchema["chips"] = [];
     for (let i = 0; i < circuit.chips.length; i++) {
       const chip = circuit.chips[i];
-      const createdChip =
-        chip instanceof CustomChip
-          ? this.circuitToBlueprint(chip.name, chip.circuit)[name]
-          : {
-              id: chip.id,
-              name: chip.name,
-              inputPins: chip.inputPins.map((pin) => pin.id),
-              outputPins: chip.outputPins.map((pin) => pin.id),
-            };
-
+      const createdChip = {
+        id: chip.id,
+        name: chip.name,
+        inputPins: chip.inputPins.map((pin) => pin.id),
+        outputPins: chip.outputPins.map((pin) => pin.id),
+      };
+      console.log("CREATED CHIP", createdChip);
       newChips.push(createdChip);
+      if (chip instanceof CustomChip) {
+        this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
+      }
     }
+
+    console.log("BEFORE", blueprint);
 
     blueprint[name] = {
       inputs: newInputs,
@@ -59,6 +61,7 @@ export default class BlueprintHelper {
       wires: newWires,
     };
 
+    console.log("AFTER", blueprint);
     // const newChips = circuit.chips
     //   .map((chip) => ({
     //     id: chip.id,
@@ -73,14 +76,7 @@ export default class BlueprintHelper {
     //     )
     //   );
 
-    return {
-      [name]: {
-        inputs: newInputs,
-        outputs: newOutputs,
-        chips: newChips,
-        wires: newWires,
-      },
-    };
+    return blueprint;
   }
 
   public static blueprintToCustomChip(
@@ -88,9 +84,10 @@ export default class BlueprintHelper {
     id: string,
     name: string,
     color: string,
-    rawCircuit: CustomChipSchema,
+    circuitSchema: CustomChipSchema,
     blueprint: CustomChipBlueprint
   ): CustomChip {
+    // console.log(name, circuitSchema);
     const circuit = new Circuit(
       p,
       name,
@@ -107,18 +104,19 @@ export default class BlueprintHelper {
       true
     );
 
-    for (let i = 0; i < rawCircuit.inputs.length; i++) {
-      const input = rawCircuit.inputs[i];
-      circuit.inputs.push(
-        new IOChip(p, input.id, true, {
-          x: 0,
-          y: 0,
-        })
-      );
+    for (let i = 0; i < circuitSchema.inputs.length; i++) {
+      const input = circuitSchema.inputs[i];
+      const createdInput = new IOChip(p, input.id, true, {
+        x: 0,
+        y: 0,
+      });
+      // circuit.spawnInputIOChip();
+      circuit.inputs.push(createdInput);
     }
+    // console.log(circuit.inputs.length, circuit.inputs[0]);
 
-    for (let i = 0; i < rawCircuit.outputs.length; i++) {
-      const output = rawCircuit.outputs[i];
+    for (let i = 0; i < circuitSchema.outputs.length; i++) {
+      const output = circuitSchema.outputs[i];
       circuit.outputs.push(
         new IOChip(p, output.id, false, {
           x: 0,
@@ -127,8 +125,8 @@ export default class BlueprintHelper {
       );
     }
 
-    for (let i = 0; i < rawCircuit.chips.length; i++) {
-      const chip = rawCircuit.chips[i];
+    for (let i = 0; i < circuitSchema.chips.length; i++) {
+      const chip = circuitSchema.chips[i];
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? new CoreChip(p, chip.name as CoreGate, chip.id)
         : this.blueprintToCustomChip(
@@ -143,8 +141,8 @@ export default class BlueprintHelper {
       circuit.chips.push(createdChip);
     }
 
-    for (let i = 0; i < rawCircuit.wires.length; i++) {
-      const wire = rawCircuit.wires[i];
+    for (let i = 0; i < circuitSchema.wires.length; i++) {
+      const wire = circuitSchema.wires[i];
       const [startPin, endPin] = [
         circuit.getPinById(wire[0]),
         circuit.getPinById(wire[1]),
@@ -153,7 +151,8 @@ export default class BlueprintHelper {
         circuit.spawnWire(startPin, endPin);
       }
     }
-
-    return new CustomChip(p, circuit, id, color);
+    const cc = new CustomChip(p, circuit, id, color);
+    // console.log(cc);
+    return cc;
   }
 }

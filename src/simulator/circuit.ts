@@ -414,7 +414,7 @@ export class Circuit {
   ): void {
     const { name, blueprint, color } = eventData;
     const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
-
+    console.log(rawCircuit);
     const customChip = BlueprintHelper.blueprintToCustomChip(
       this.p,
       `chip-${this.chips.length}`,
@@ -423,7 +423,7 @@ export class Circuit {
       rawCircuit["main"],
       rawCircuit
     );
-
+    // CircuitHelper.renderSummary(customChip.circuit);
     this.setSpawnChipMode(customChip);
     this.chips.push(customChip);
   }
@@ -525,6 +525,7 @@ export class Circuit {
     eventData: EmitterEventArgs[EmitterEvent.ImportCustomChip]
   ): void {
     const { customChipName, blueprint } = eventData;
+
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name: customChipName,
       blueprint,

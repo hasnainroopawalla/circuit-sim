@@ -47,11 +47,10 @@ export default class CircuitHelper {
         const outputPin = chip.outputPins[i];
         console.log(`output pin: ${outputPin.id}`);
       }
-      console.log("---");
     }
     for (let i = 0; i < circuit.wires.length; i++) {
       const wire = circuit.wires[i];
-      console.log(`wire: ${wire.startPin.id} - ${wire.endPin.id}`);
+      console.log(`wire: ${wire.startPin.id} -> ${wire.endPin.id}`);
     }
   }
 }
