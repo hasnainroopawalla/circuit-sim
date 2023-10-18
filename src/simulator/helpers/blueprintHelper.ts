@@ -8,19 +8,9 @@ import type {
 export default class BlueprintHelper {
   public static circuitToBlueprint(
     name: string,
-    circuit: Circuit,
+    circuit: Pick<Circuit, "chips" | "wires" | "inputs" | "outputs">,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    const newWires = circuit.wires.map((wire) => {
-      const wireStart = `${wire.startPin.chip.id}/${
-        wire.startPin.isInput ? "input" : "output"
-      }.${wire.startPin.id}`;
-      const wireEnd = `${wire.endPin.chip.id}/${
-        wire.endPin.isInput ? "input" : "output"
-      }.${wire.endPin.id}`;
-      return [wireStart, wireEnd];
-    });
-
     const newInputs = circuit.inputs.map((input) => ({
       id: input.id,
     }));
@@ -47,6 +37,16 @@ export default class BlueprintHelper {
         name: chip.name,
       });
     }
+
+    const newWires = circuit.wires.map((wire) => {
+      const wireStart = `${wire.startPin.chip.id}/${
+        wire.startPin.isInput ? "input" : "output"
+      }.${wire.startPin.id}`;
+      const wireEnd = `${wire.endPin.chip.id}/${
+        wire.endPin.isInput ? "input" : "output"
+      }.${wire.endPin.id}`;
+      return [wireStart, wireEnd];
+    });
 
     blueprint[name] = {
       inputs: newInputs,

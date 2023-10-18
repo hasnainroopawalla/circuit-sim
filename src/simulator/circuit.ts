@@ -16,33 +16,7 @@ import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import CircuitHelper from "./helpers/circuitHelper";
 import BlueprintHelper from "./helpers/blueprintHelper";
-
-// TODO: move to separate file and rename
-class GenerateId {
-  current: number;
-  constructor() {
-    this.current = -1;
-  }
-
-  private generate(): number {
-    this.current += 1;
-    return this.current;
-  }
-
-  public generateInputChipId(): string {
-    return `chip.input.${generateId.generate()}`;
-  }
-
-  public generateOutputChipId(): string {
-    return `chip.output.${generateId.generate()}`;
-  }
-
-  public generateChipId(chipName: string): string {
-    return `chip.${chipName}.${generateId.generate()}`;
-  }
-}
-
-const generateId = new GenerateId();
+import { idGenerator } from "./helpers/idGenerator";
 
 export class Circuit {
   p: p5;
@@ -405,11 +379,7 @@ export class Circuit {
   }
 
   public createCoreChip(coreChip: CoreGate): CoreChip {
-    const chip = new CoreChip(
-      this.p,
-      coreChip,
-      generateId.generateChipId(coreChip)
-    );
+    const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
     this.chips.push(chip);
     return chip;
   }
@@ -418,7 +388,7 @@ export class Circuit {
     const chip = new CustomChip(
       this.p,
       circuit,
-      generateId.generateChipId(circuit.name),
+      idGenerator.chipId(circuit.name),
       "green"
     );
     this.chips.push(chip);
@@ -451,29 +421,19 @@ export class Circuit {
   }
 
   public spawnInputIOChip(): IOChip {
-    const inputIOChip = new IOChip(
-      this.p,
-      generateId.generateInputChipId(),
-      true,
-      {
-        x: this.options.position.x,
-        y: this.p.mouseY,
-      }
-    );
+    const inputIOChip = new IOChip(this.p, idGenerator.inputChipId(), true, {
+      x: this.options.position.x,
+      y: this.p.mouseY,
+    });
     this.inputs.push(inputIOChip);
     return inputIOChip;
   }
 
   public spawnOutputIOChip(): IOChip {
-    const outputIOChip = new IOChip(
-      this.p,
-      generateId.generateOutputChipId(),
-      false,
-      {
-        x: this.options.position.x + this.options.size.w,
-        y: this.p.mouseY,
-      }
-    );
+    const outputIOChip = new IOChip(this.p, idGenerator.outputChipId(), false, {
+      x: this.options.position.x + this.options.size.w,
+      y: this.p.mouseY,
+    });
     this.outputs.push(outputIOChip);
     return outputIOChip;
   }
