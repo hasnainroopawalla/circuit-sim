@@ -139,10 +139,10 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
     main: {
       inputs: [
         {
-          id: "chip.input.0",
+          id: "chip.input.2",
         },
         {
-          id: "chip.input.1",
+          id: "chip.input.3",
         },
       ],
       outputs: [
@@ -152,24 +152,24 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
       ],
       chips: [
         {
-          id: "chip.AND.2",
+          id: "chip.AND.0",
           name: "AND",
         },
         {
-          id: "chip.NOT.3",
+          id: "chip.NOT.1",
           name: "NOT",
         },
       ],
       wires: [
-        ["chip.input.0/output.0", "chip.AND.2/input.0"],
-        ["chip.input.1/output.0", "chip.AND.2/input.1"],
-        ["chip.AND.2/output.0", "chip.NOT.3/input.0"],
-        ["chip.NOT.3/output.0", "chip.output.4/input.0"],
+        ["chip.input.2/output.0", "chip.AND.0/input.0"],
+        ["chip.input.3/output.0", "chip.AND.0/input.1"],
+        ["chip.AND.0/output.0", "chip.NOT.1/input.0"],
+        ["chip.NOT.1/output.0", "chip.output.4/input.0"],
       ],
     },
   });
 
-  const blueprintNANDNOT = JSON.stringify({
+  const blueprintNANDNOR = JSON.stringify({
     NAND: {
       inputs: [
         {
@@ -201,18 +201,49 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         ["chip.NOT.5/output.0", "chip.NAND.0.output.0/output.0"],
       ],
     },
-    main: {
+    NOR: {
       inputs: [
         {
-          id: "chip.input.6",
+          id: "chip.NOR.6.input.0",
         },
         {
-          id: "chip.input.7",
+          id: "chip.NOR.6.input.1",
         },
       ],
       outputs: [
         {
-          id: "chip.output.8",
+          id: "chip.NOR.6.output.0",
+        },
+      ],
+      chips: [
+        {
+          id: "chip.OR.10",
+          name: "OR",
+        },
+        {
+          id: "chip.NOT.11",
+          name: "NOT",
+        },
+      ],
+      wires: [
+        ["chip.OR.10/output.0", "chip.NOT.11/input.0"],
+        ["chip.NOR.6.input.0/input.0", "chip.OR.10/input.0"],
+        ["chip.NOR.6.input.1/input.0", "chip.OR.10/input.1"],
+        ["chip.NOT.11/output.0", "chip.NOR.6.output.0/output.0"],
+      ],
+    },
+    main: {
+      inputs: [
+        {
+          id: "chip.input.12",
+        },
+        {
+          id: "chip.input.13",
+        },
+      ],
+      outputs: [
+        {
+          id: "chip.output.14",
         },
       ],
       chips: [
@@ -221,15 +252,50 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
           name: "NAND",
         },
         {
-          id: "chip.NOT.9",
+          id: "chip.NOR.6",
+          name: "NOR",
+        },
+      ],
+      wires: [
+        ["chip.NAND.0.output.0/output.0", "chip.NOR.6.input.0/input.0"],
+        ["chip.NAND.0.output.0/output.0", "chip.NOR.6.input.1/input.0"],
+        ["chip.input.12/output.0", "chip.NAND.0.input.0/input.0"],
+        ["chip.input.13/output.0", "chip.NAND.0.input.1/input.0"],
+        ["chip.NOR.6.output.0/output.0", "chip.output.14/input.0"],
+      ],
+    },
+  });
+
+  const blueprintNOR = JSON.stringify({
+    main: {
+      inputs: [
+        {
+          id: "chip.input.2",
+        },
+        {
+          id: "chip.input.3",
+        },
+      ],
+      outputs: [
+        {
+          id: "chip.output.4",
+        },
+      ],
+      chips: [
+        {
+          id: "chip.OR.0",
+          name: "OR",
+        },
+        {
+          id: "chip.NOT.1",
           name: "NOT",
         },
       ],
       wires: [
-        ["chip.input.6/output.0", "chip.NAND.0.input.0/input.0"],
-        ["chip.input.7/output.0", "chip.NAND.0.input.1/input.0"],
-        ["chip.NAND.0.output.0/output.0", "chip.NOT.9/input.0"],
-        ["chip.NOT.9/output.0", "chip.output.8/input.0"],
+        ["chip.OR.0/output.0", "chip.NOT.1/input.0"],
+        ["chip.input.2/output.0", "chip.OR.0/input.0"],
+        ["chip.input.3/output.0", "chip.OR.0/input.1"],
+        ["chip.NOT.1/output.0", "chip.output.4/input.0"],
       ],
     },
   });
@@ -279,13 +345,25 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         }
       />
       <Button
-        text="NANDNOT"
+        text="NOR"
         appearance="secondary"
         size="large"
         onClick={() =>
           emitter.emit(EmitterEvent.SpawnCustomChip, {
-            name: "NANDNOT",
-            blueprint: blueprintNANDNOT,
+            name: "NOR",
+            blueprint: blueprintNOR,
+            color: "blue",
+          })
+        }
+      />{" "}
+      <Button
+        text="NAND-NOR"
+        appearance="secondary"
+        size="large"
+        onClick={() =>
+          emitter.emit(EmitterEvent.SpawnCustomChip, {
+            name: "NAND-NOR",
+            blueprint: blueprintNANDNOR,
             color: "blue",
           })
         }

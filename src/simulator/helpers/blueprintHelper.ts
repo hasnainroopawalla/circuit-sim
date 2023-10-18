@@ -12,7 +12,8 @@ export default class BlueprintHelper {
     circuit: Circuit,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    // TODO: convert pin id to index based on input/output index of parent chip
+    console.log("entry", circuit);
+
     const newWires = circuit.wires.map((wire) => {
       wire.startPin.isInput;
       const wireStart = `${wire.startPin.chip.id}/${
@@ -44,15 +45,17 @@ export default class BlueprintHelper {
     const newChips: CustomChipSchema["chips"] = [];
     for (let i = 0; i < circuit.chips.length; i++) {
       const chip = circuit.chips[i];
-      if (chip instanceof CustomChip) {
-        this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
-      }
+
       // console.log("chip - ", chip);
       const createdChip = {
         id: chip.id,
         name: chip.name,
       };
       newChips.push(createdChip);
+      if (chip instanceof CustomChip) {
+        console.log(chip.name, chip.circuit);
+        this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
+      }
     }
     // console.log("chips", newChips);
 
@@ -91,14 +94,13 @@ export default class BlueprintHelper {
     };
   }
 
-  public static blueprintToCustomChip(
+  public static blueprintToCircuit(
     p: p5,
-    id: string,
     name: string,
     color: string,
     circuitSchema: CustomChipSchema,
     blueprint: CustomChipBlueprint
-  ): CustomChip {
+  ): Circuit {
     // an object to map the blueprint entity id to the actual entity created by the circuit
     // this is required since the circuit is fully responsible for instantiating the entities
     const entities: { [id: string]: IOChip | CustomChip | CoreChip } = {};
@@ -134,14 +136,16 @@ export default class BlueprintHelper {
 
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? circuit.createCoreChip(chip.name as CoreGate)
-        : this.blueprintToCustomChip(
-            p,
-            chip.id,
-            chip.name,
-            color,
-            blueprint[chip.name],
-            blueprint
+        : circuit.createCustomChip(
+            this.blueprintToCircuit(
+              p,
+              chip.name,
+              color,
+              blueprint[chip.name],
+              blueprint
+            )
           );
+
       entities[chip.id] = createdChip;
     }
 
@@ -166,8 +170,6 @@ export default class BlueprintHelper {
       }
     }
 
-    const customChip = new CustomChip(p, circuit, id, color);
-
-    return customChip;
+    return circuit;
   }
 }

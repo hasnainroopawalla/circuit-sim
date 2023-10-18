@@ -9,7 +9,7 @@ import {
 } from "./circuit.interface";
 
 import { Chip } from "./chip/chip";
-import { CoreChip, CoreGate, IOChip } from "./chip";
+import { CoreChip, CoreGate, CustomChip, IOChip } from "./chip";
 import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
@@ -414,6 +414,17 @@ export class Circuit {
     return chip;
   }
 
+  public createCustomChip(circuit: Circuit): CustomChip {
+    const chip = new CustomChip(
+      this.p,
+      circuit,
+      generateId.generateChipId(circuit.name),
+      "green"
+    );
+    this.chips.push(chip);
+    return chip;
+  }
+
   public spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
@@ -426,20 +437,17 @@ export class Circuit {
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
     const { name, blueprint, color } = eventData;
-    const rawCircuit: CustomChipBlueprint = JSON.parse(blueprint);
-    // console.log(rawCircuit);
-    const customChip = BlueprintHelper.blueprintToCustomChip(
+    const blueprintSchema: CustomChipBlueprint = JSON.parse(blueprint);
+    const circuit = BlueprintHelper.blueprintToCircuit(
       this.p,
-      generateId.generateChipId(name),
       name,
       color,
-      rawCircuit["main"],
-      rawCircuit
+      blueprintSchema["main"],
+      blueprintSchema
     );
-    // CircuitHelper.renderSummary(customChip.circuit);
+
+    const customChip = this.createCustomChip(circuit);
     this.setSpawnChipMode(customChip);
-    this.chips.push(customChip);
-    // CircuitHelper.renderSummary(this);
   }
 
   public spawnInputIOChip(): IOChip {
@@ -531,6 +539,7 @@ export class Circuit {
         message: "Custom chip not created due to missing inputs/outputs",
       });
     }
+
     const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
     console.log("FINAL", blueprint);
 

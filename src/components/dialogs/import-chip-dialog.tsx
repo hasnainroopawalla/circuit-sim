@@ -166,7 +166,10 @@ export const ImportChipDialog: React.FC<ImportChipDialog> = (props) => {
                 blueprintInput.current &&
                 blueprintInput.current.value.length > 0
               ) {
-                onConfirm(Date.now().toString(), blueprintNAND);
+                onConfirm(
+                  chipNameInput.current.value,
+                  blueprintInput.current.value
+                );
               }
             }}
           />
