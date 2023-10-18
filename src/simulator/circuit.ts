@@ -541,7 +541,7 @@ export class Circuit {
     }
 
     const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
-    console.log("FINAL", blueprint);
+    console.log("blueprint", blueprint);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,

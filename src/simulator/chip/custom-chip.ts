@@ -18,8 +18,9 @@ export class CustomChip extends Chip {
 
     for (let i = 0; i < this.circuit.inputs.length; i++) {
       const input = this.circuit.inputs[i];
-      input.id = `${id}.input.${i}`;
-      input.name = `${id}.input.${i}`;
+      const newId = `${id}.input.${i}`;
+      input.id = newId;
+      input.name = newId;
       input.isInput = true;
       input.pin.isInput = true;
       input.pin.id = 0;
@@ -28,26 +29,14 @@ export class CustomChip extends Chip {
 
     for (let i = 0; i < this.circuit.outputs.length; i++) {
       const output = this.circuit.outputs[i];
-      output.id = `${id}.output.${i}`;
-      output.name = `${id}.output.${i}`;
+      const newId = `${id}.output.${i}`;
+      output.id = newId;
+      output.name = newId;
       output.isInput = false;
       output.pin.isInput = false;
       output.pin.id = 0;
       this.outputPins[i] = output.pin;
     }
-
-    // this.inputPins = this.circuit.inputs.map((input) => {
-    //   input.id = id;
-    //   input.pin.id = ``
-    //   input.pin.isInput = true;
-    //   return input.pin;
-    // });
-    // this.outputPins = this.circuit.outputs.map((output) => {
-    //   output.pin.isInput = false;
-    //   return output.pin;
-    // });
-    // console.log("INPUT", this.inputPins);
-    // console.log("OUTPUT", this.outputPins);
   }
 
   public execute(): void {

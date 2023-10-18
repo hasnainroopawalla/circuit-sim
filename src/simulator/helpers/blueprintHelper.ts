@@ -4,7 +4,6 @@ import type {
   CustomChipBlueprint,
   CustomChipSchema,
 } from "../circuit.interface";
-import CircuitHelper from "./circuitHelper";
 
 export default class BlueprintHelper {
   public static circuitToBlueprint(
@@ -12,10 +11,7 @@ export default class BlueprintHelper {
     circuit: Circuit,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    console.log("entry", circuit);
-
     const newWires = circuit.wires.map((wire) => {
-      wire.startPin.isInput;
       const wireStart = `${wire.startPin.chip.id}/${
         wire.startPin.isInput ? "input" : "output"
       }.${wire.startPin.id}`;
@@ -33,31 +29,24 @@ export default class BlueprintHelper {
     //   CircuitHelper.entityHasConnectedWires([element.pin], newWires)
     // );
 
-    // console.log("inputs", newInputs);
     const newOutputs = circuit.outputs.map((output) => ({
       id: output.id,
     }));
     // .filter((entity) =>
     //   CircuitHelper.entityHasConnectedWires([entity.pin], newWires)
     // );
-    // console.log("outputs", newOutputs);
 
     const newChips: CustomChipSchema["chips"] = [];
     for (let i = 0; i < circuit.chips.length; i++) {
       const chip = circuit.chips[i];
-
-      // console.log("chip - ", chip);
-      const createdChip = {
-        id: chip.id,
-        name: chip.name,
-      };
-      newChips.push(createdChip);
       if (chip instanceof CustomChip) {
-        console.log(chip.name, chip.circuit);
         this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
       }
+      newChips.push({
+        id: chip.id,
+        name: chip.name,
+      });
     }
-    // console.log("chips", newChips);
 
     blueprint[name] = {
       inputs: newInputs,
@@ -69,7 +58,7 @@ export default class BlueprintHelper {
     return blueprint;
   }
 
-  // TODO: check
+  // TODO: tests
   private static parseWireString(
     wireString: string,
     entities: { [id: string]: IOChip | CustomChip | CoreChip }
