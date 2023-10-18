@@ -147,24 +147,24 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
       ],
       outputs: [
         {
-          id: "chip.output.0",
+          id: "chip.output.4",
         },
       ],
       chips: [
         {
-          id: "chip.AND.0",
+          id: "chip.AND.2",
           name: "AND",
         },
         {
-          id: "chip.NOT.1",
+          id: "chip.NOT.3",
           name: "NOT",
         },
       ],
       wires: [
-        ["chip.input.0-pin.0", "chip.AND.0-inputPin.0"],
-        ["chip.input.1-pin.0", "chip.AND.0-inputPin.1"],
-        ["chip.AND.0-outputPin.0", "chip.NOT.1-inputPin.0"],
-        ["chip.NOT.1-outputPin.0", "chip.output.0-pin.0"],
+        ["chip.input.0/output.0", "chip.AND.2/input.0"],
+        ["chip.input.1/output.0", "chip.AND.2/input.1"],
+        ["chip.AND.2/output.0", "chip.NOT.3/input.0"],
+        ["chip.NOT.3/output.0", "chip.output.4/input.0"],
       ],
     },
   });
@@ -173,15 +173,15 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
     NAND: {
       inputs: [
         {
-          id: "chip.NAND.0",
+          id: "chip.NAND.0.input.0",
         },
         {
-          id: "chip.NAND.0",
+          id: "chip.NAND.0.input.1",
         },
       ],
       outputs: [
         {
-          id: "chip.NAND.0",
+          id: "chip.NAND.0.output.0",
         },
       ],
       chips: [
@@ -195,10 +195,10 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         },
       ],
       wires: [
-        ["chip.NAND.0-inputPin.0", "chip.AND.4-inputPin.0"],
-        ["chip.NAND.0-inputPin.1", "chip.AND.4-inputPin.1"],
-        ["chip.AND.4-outputPin.0", "chip.NOT.5-inputPin.0"],
-        ["chip.NOT.5-outputPin.0", "chip.NAND.0-outputPin.0"],
+        ["chip.NAND.0.input.0/input.0", "chip.AND.4/input.0"],
+        ["chip.NAND.0.input.1/input.0", "chip.AND.4/input.1"],
+        ["chip.AND.4/output.0", "chip.NOT.5/input.0"],
+        ["chip.NOT.5/output.0", "chip.NAND.0.output.0/output.0"],
       ],
     },
     main: {
@@ -220,11 +220,16 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
           id: "chip.NAND.0",
           name: "NAND",
         },
+        {
+          id: "chip.NOT.9",
+          name: "NOT",
+        },
       ],
       wires: [
-        ["chip.input.7-pin.0", "chip.NAND.0-inputPin.1"],
-        ["chip.input.6-pin.0", "chip.NAND.0-inputPin.0"],
-        ["chip.NAND.0-outputPin.0", "chip.output.8-pin.0"],
+        ["chip.input.6/output.0", "chip.NAND.0.input.0/input.0"],
+        ["chip.input.7/output.0", "chip.NAND.0.input.1/input.0"],
+        ["chip.NAND.0.output.0/output.0", "chip.NOT.9/input.0"],
+        ["chip.NOT.9/output.0", "chip.output.8/input.0"],
       ],
     },
   });

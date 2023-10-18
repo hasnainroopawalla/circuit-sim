@@ -24,7 +24,7 @@ export class IOChip {
     this.name = name;
     this.id = name;
     this.isInput = isInput;
-    this.pin = new Pin(p5, "pin.0", State.Off, !isInput, this);
+    this.pin = new Pin(p5, 0, State.Off, !isInput, this);
     this.outgoingWires = [];
     this.options = {
       position,

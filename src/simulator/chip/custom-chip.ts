@@ -18,21 +18,22 @@ export class CustomChip extends Chip {
 
     for (let i = 0; i < this.circuit.inputs.length; i++) {
       const input = this.circuit.inputs[i];
-      input.id = `chip.${circuit.name}.input.${i}`;
-      input.name = `chip.${circuit.name}.input.${i}`;
+      console.log("CUS", circuit.name, id);
+      input.id = `${id}.input.${i}`;
+      input.name = `${id}.input.${i}`;
       input.isInput = true;
       input.pin.isInput = true;
-      input.pin.id = `pin.${i}`;
+      input.pin.id = 0;
       this.inputPins[i] = input.pin;
     }
 
     for (let i = 0; i < this.circuit.outputs.length; i++) {
       const output = this.circuit.outputs[i];
-      output.id = `chip.${circuit.name}.output.${i}`;
-      output.name = `chip.${circuit.name}.output.${i}`;
+      output.id = `${id}.output.${i}`;
+      output.name = `${id}.output.${i}`;
       output.isInput = false;
       output.pin.isInput = false;
-      output.pin.id = `pin.${i}`;
+      output.pin.id = 0;
       this.outputPins[i] = output.pin;
     }
 

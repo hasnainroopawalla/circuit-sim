@@ -121,10 +121,9 @@ export abstract class Chip {
     );
   }
 
-  public getPin(pinId: string): Pin | undefined {
-    return [...this.inputPins, ...this.outputPins].find(
-      ({ id }) => id === pinId
-    );
+  public getPin(type: string, pinId: number): Pin | undefined {
+    // TODO: convert type to "input" | "output"
+    return type === "input" ? this.inputPins[pinId] : this.outputPins[pinId];
   }
 
   public isMouseOverGetEntity(): Chip | Pin | undefined {
