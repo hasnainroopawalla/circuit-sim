@@ -5,7 +5,6 @@ import {
   SpawnChipMode,
   WiringMode,
   CircuitRenderOptions,
-  CustomChipBlueprint,
 } from "./circuit.interface";
 
 import { Chip } from "./chip/chip";
@@ -407,13 +406,12 @@ export class Circuit {
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
     const { name, blueprint, color } = eventData;
-    const blueprintSchema: CustomChipBlueprint = JSON.parse(blueprint);
     const circuit = BlueprintHelper.blueprintToCircuit(
       this.p,
       name,
       color,
-      blueprintSchema["main"],
-      blueprintSchema
+      blueprint,
+      "main"
     );
 
     const customChip = this.createCustomChip(circuit);
@@ -501,7 +499,6 @@ export class Circuit {
     }
 
     const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
-    console.log("blueprint", blueprint);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
       name,

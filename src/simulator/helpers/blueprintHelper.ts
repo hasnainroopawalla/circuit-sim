@@ -87,9 +87,14 @@ export default class BlueprintHelper {
     p: p5,
     name: string,
     color: string,
-    circuitSchema: CustomChipSchema,
-    blueprint: CustomChipBlueprint
+    blueprintString: string,
+    defaultCircuitName?: string // "main"
   ): Circuit {
+    const blueprint: CustomChipBlueprint = JSON.parse(blueprintString);
+    const circuitSchema = defaultCircuitName
+      ? blueprint[defaultCircuitName]
+      : blueprint[name];
+
     // an object to map the blueprint entity id to the actual entity created by the circuit
     // this is required since the circuit is fully responsible for instantiating the entities
     const entities: { [id: string]: IOChip | CustomChip | CoreChip } = {};
@@ -126,13 +131,7 @@ export default class BlueprintHelper {
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? circuit.createCoreChip(chip.name as CoreGate)
         : circuit.createCustomChip(
-            this.blueprintToCircuit(
-              p,
-              chip.name,
-              color,
-              blueprint[chip.name],
-              blueprint
-            )
+            this.blueprintToCircuit(p, chip.name, color, blueprintString)
           );
 
       entities[chip.id] = createdChip;

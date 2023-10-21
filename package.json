@@ -9,8 +9,8 @@
     "build": "webpack",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch",
+    "test": "jest --watch",
+    "test:unit": "jest --coverage",
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
