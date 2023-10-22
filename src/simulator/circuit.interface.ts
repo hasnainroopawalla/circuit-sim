@@ -1,6 +1,6 @@
 import { Position, Size } from "./shared.interface";
 
-import { IOChip, Chip, CoreGate } from "./chip";
+import { IOChip, Chip } from "./chip";
 import { Pin } from "./pin";
 import type { WireMarker } from "./wire";
 
@@ -35,14 +35,16 @@ export enum Interaction {
   Drag = "Drag",
 }
 
-export type CustomChipBlueprint = {
-  inputs: { id: string; pin: string }[];
-  outputs: { id: string; pin: string }[];
+export type CustomChipSchema = {
+  inputs: { id: string }[];
+  outputs: { id: string }[];
   chips: {
     id: string;
-    coreGate: CoreGate;
-    inputPins: string[];
-    outputPins: string[];
+    name: string;
   }[];
   wires: string[][];
+};
+
+export type CustomChipBlueprint = {
+  [chipName: string]: CustomChipSchema;
 };

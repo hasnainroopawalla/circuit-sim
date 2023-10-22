@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../../event-service";
 
 export function useEventListener<T extends EmitterEvent>(

@@ -7,7 +7,7 @@ export const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    circuit = new Circuit(p, "Initial", {
+    circuit = new Circuit(p, "main", {
       position: {
         x: config.component.circuit.widthScale,
         y: config.component.circuit.widthScale,

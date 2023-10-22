@@ -22,7 +22,7 @@ jobs:
       - name: Build package
         run: npm run build
       - name: Run tests
-        run: npm test
+        run: npm run test:unit
       - name: Automated version bump
         uses: "phips28/gh-action-bump-version@master"
         env:

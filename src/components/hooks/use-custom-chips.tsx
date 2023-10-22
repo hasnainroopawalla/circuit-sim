@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { EmitterEvent, emitter } from "../../event-service";
 import { useEventListener } from "./use-event-listener";
 import { colorGenerator } from "../../color-generator";

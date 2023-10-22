@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { EmitterEvent, emitter } from "../../event-service";
 import { useCustomChips } from "../hooks";
 import { ImportChipDialog, SaveCircuitDialog } from "../dialogs";

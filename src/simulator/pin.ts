@@ -12,7 +12,7 @@ type PinRenderOptions = {
 
 export class Pin {
   p: p5;
-  id: string;
+  id: number;
   state: State;
   isInput: boolean; // TODO: change to type: "input" | "output"
   outgoingWires: Wire[];
@@ -21,7 +21,7 @@ export class Pin {
 
   constructor(
     p5: p5,
-    id: string,
+    id: number,
     state: State,
     isInput: boolean,
     chip: Chip | IOChip
