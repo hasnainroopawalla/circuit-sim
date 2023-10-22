@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Button } from "../factory";
 import styles from "./import-chip-dialog.module.css";
 
@@ -17,6 +17,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
       <div className={styles.inputsContainer}>
         <input
           className={styles.chipNameInput}
+          data-testid="importChipNameInput"
           type="text"
           ref={chipNameInput}
           autoFocus={true}
@@ -25,6 +26,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
         <input
           className={styles.blueprintInput}
           type="text"
+          data-testid="importChipBlueprintInput"
           ref={blueprintInput}
           autoFocus={true}
           placeholder={`BLUEPRINT`}
@@ -34,6 +36,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
       <div className={styles.actionButtons}>
         <div className={styles.actionButton}>
           <Button
+            dataTestId="importChipCancelButton"
             text="CANCEL"
             appearance="dark"
             fullWidth
@@ -43,6 +46,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
         </div>
         <div className={styles.actionButton}>
           <Button
+            dataTestId="importChipConfirmButton"
             text="IMPORT"
             appearance="dark"
             fullWidth

@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Button } from "../factory";
 import styles from "./save-circuit-dialog.module.css";
 
@@ -15,6 +15,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
     <>
       <div className={styles.circuitNameInput}>
         <input
+          data-testid="saveCircuitChipNameInput"
           className={styles.circuitNameInput}
           type="text"
           ref={circuitNameInput}
@@ -25,6 +26,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
       <div className={styles.actionButtons}>
         <div className={styles.actionButton}>
           <Button
+            dataTestId="saveCircuitCancelButton"
             text="CANCEL"
             appearance="dark"
             fullWidth
@@ -34,6 +36,7 @@ export const SaveCircuitDialog: React.FC<SaveCircuitDialogProps> = (props) => {
         </div>
         <div className={styles.actionButton}>
           <Button
+            dataTestId="saveCircuitConfirmButton"
             text="SAVE"
             appearance="dark"
             fullWidth

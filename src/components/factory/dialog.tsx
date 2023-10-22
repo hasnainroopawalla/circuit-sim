@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import styles from "./dialog.module.css";
 import type { IconType } from "react-icons";
 

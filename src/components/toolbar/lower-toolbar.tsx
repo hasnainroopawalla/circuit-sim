@@ -1,4 +1,4 @@
-import React from "react";
+import * as React from "react";
 import { Button } from "../factory";
 import { EmitterEvent, emitter } from "../../event-service";
 import type { IUseCustomChips } from "../hooks";
