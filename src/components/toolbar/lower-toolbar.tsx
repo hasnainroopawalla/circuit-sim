@@ -57,6 +57,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         />
       ))}
       <Button
+        dataTestId="importChipButton"
         text="+"
         appearance="primary"
         size="large"
