@@ -303,7 +303,6 @@ describe("BlueprintHelper", () => {
       const andCircuit = BlueprintHelper.blueprintToCircuit(
         p,
         "AND",
-        "blue",
         andBlueprint,
         "main"
       );
@@ -343,7 +342,6 @@ describe("BlueprintHelper", () => {
       const nandCircuit = BlueprintHelper.blueprintToCircuit(
         p,
         "NAND",
-        "blue",
         nandBlueprint,
         "main"
       );
@@ -385,7 +383,6 @@ describe("BlueprintHelper", () => {
       const dataLatchCircuit = BlueprintHelper.blueprintToCircuit(
         p,
         "D-Latch",
-        "blue",
         dataLatchBlueprint,
         "main"
       );

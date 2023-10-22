@@ -383,12 +383,15 @@ export class Circuit {
     return chip;
   }
 
-  public createCustomChip(circuit: Circuit): CustomChip {
+  public createCustomChip(
+    circuit: Circuit,
+    color: string = "green"
+  ): CustomChip {
     const chip = new CustomChip(
       this.p,
       circuit,
       idGenerator.chipId(circuit.name),
-      "green"
+      color
     );
     this.chips.push(chip);
     return chip;
@@ -409,12 +412,11 @@ export class Circuit {
     const circuit = BlueprintHelper.blueprintToCircuit(
       this.p,
       name,
-      color,
       blueprint,
       "main"
     );
 
-    const customChip = this.createCustomChip(circuit);
+    const customChip = this.createCustomChip(circuit, color);
     this.setSpawnChipMode(customChip);
   }
 

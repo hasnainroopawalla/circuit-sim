@@ -14,17 +14,10 @@ export default class BlueprintHelper {
     const newInputs = circuit.inputs.map((input) => ({
       id: input.id,
     }));
-    // TODO: add the filters
-    // .filter((element) =>
-    //   CircuitHelper.entityHasConnectedWires([element.pin], newWires)
-    // );
 
     const newOutputs = circuit.outputs.map((output) => ({
       id: output.id,
     }));
-    // .filter((entity) =>
-    //   CircuitHelper.entityHasConnectedWires([entity.pin], newWires)
-    // );
 
     const newChips: CustomChipSchema["chips"] = [];
     for (let i = 0; i < circuit.chips.length; i++) {
@@ -86,7 +79,6 @@ export default class BlueprintHelper {
   public static blueprintToCircuit(
     p: p5,
     name: string,
-    color: string,
     blueprintString: string,
     defaultCircuitName?: string // "main"
   ): Circuit {
@@ -131,7 +123,8 @@ export default class BlueprintHelper {
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? circuit.createCoreChip(chip.name as CoreGate)
         : circuit.createCustomChip(
-            this.blueprintToCircuit(p, chip.name, color, blueprintString)
+            this.blueprintToCircuit(p, chip.name, blueprintString),
+            "green" // fixed color of all internal chips
           );
 
       entities[chip.id] = createdChip;
