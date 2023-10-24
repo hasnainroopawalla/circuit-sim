@@ -1,7 +1,7 @@
 import { Position, Size } from "../shared.interface";
 
 import { config } from "../../config";
-import Utils from "../helpers/chipHelper";
+import ChipHelper from "../helpers/chipHelper";
 import { Pin } from "../pin";
 
 type ChipRenderOptions = {
@@ -32,7 +32,7 @@ export abstract class Chip {
     this.name = name;
     this.id = id;
 
-    const size = Utils.chipSize(
+    const size = ChipHelper.chipSize(
       this.name,
       config.component.chip.text.size,
       Math.max(numInputPins, numOutputPins)
@@ -51,7 +51,7 @@ export abstract class Chip {
   }
 
   private renderPins(): void {
-    const inputPinsPositions = Utils.inputPinsPosition(
+    const inputPinsPositions = ChipHelper.inputPinsPosition(
       this.options.position,
       {
         x: this.options.position.x,
@@ -59,7 +59,7 @@ export abstract class Chip {
       },
       this.inputPins.length
     );
-    const outputPinsPositions = Utils.inputPinsPosition(
+    const outputPinsPositions = ChipHelper.inputPinsPosition(
       {
         x: this.options.position.x + this.options.size.w,
         y: this.options.position.y,
@@ -83,7 +83,7 @@ export abstract class Chip {
   private renderText(): void {
     this.p.push();
     this.p.textStyle(this.p.BOLD);
-    this.options.textPosition = Utils.textPositionInRect(
+    this.options.textPosition = ChipHelper.textPositionInRect(
       this.options.position,
       this.options.size
     );
@@ -155,10 +155,6 @@ export abstract class Chip {
     this.renderChip();
     this.renderText();
     this.renderPins();
-    // this.p.push();
-    // this.p.fill(255);
-    // this.p.text(this.id, this.options.position.x, this.options.position.y);
-    // this.p.pop();
   }
 
   abstract execute(): void;

@@ -338,10 +338,12 @@ export class Circuit {
             }
           } else {
             this.addWireMarker();
-            // Disable wiring mode if end pin not selected
-            // TODO: logic to cancel wiring mode
           }
         }
+        break;
+
+      case Interaction.DoubleClick:
+        this.setIdleMode();
         break;
 
       case Interaction.Drag:
@@ -465,6 +467,13 @@ export class Circuit {
     this.isRepositionMode && this.handleRepositionMode(Interaction.Click);
   }
 
+  public mouseDoubleClicked(): void {
+    this.isIdleMode && this.handleIdleMode(Interaction.DoubleClick);
+    this.isWiringMode && this.handleWiringMode(Interaction.DoubleClick);
+    this.isSpawnChipMode && this.handleSpawnChipMode(Interaction.DoubleClick);
+    this.isRepositionMode && this.handleRepositionMode(Interaction.DoubleClick);
+  }
+
   public mouseDragged(): void {
     this.isIdleMode && this.handleIdleMode(Interaction.Drag);
     this.isWiringMode && this.handleWiringMode(Interaction.Drag);
@@ -524,11 +533,12 @@ export class Circuit {
 
   public render(): void {
     this.renderCircuit();
-    this.renderChips();
-    this.renderIOChips();
-    this.renderWires();
 
     this.isWiringMode && this.renderWiringModeWire();
     this.isSpawnChipMode && this.renderSpawnChipMode();
+
+    this.renderWires();
+    this.renderChips();
+    this.renderIOChips();
   }
 }

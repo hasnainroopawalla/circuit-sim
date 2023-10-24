@@ -7,7 +7,6 @@ import { config } from "../config";
 type PinRenderOptions = {
   position: Position;
   size: number;
-  color: string;
 };
 
 export class Pin {
@@ -35,7 +34,6 @@ export class Pin {
     this.options = {
       position: { x: 0, y: 0 },
       size: config.component.pin.size,
-      color: config.component.pin.color,
     };
   }
 
@@ -47,7 +45,7 @@ export class Pin {
         this.options.position.x,
         this.options.position.y
       ) <=
-      this.options.size + config.component.pin.mouse.hitRange
+      this.options.size / 2
     );
   }
 
@@ -69,16 +67,33 @@ export class Pin {
     this.p.push();
     this.p.stroke(config.component.circuit.background);
     this.p.strokeWeight(config.component.pin.strokeWeight);
-    this.p.fill(config.component.pin.color);
+
+    if (this.isMouseOver()) {
+      this.p.textSize(12);
+      const textWidth = this.p.textWidth("In A") + 5;
+
+      const rect = {
+        x: this.isInput
+          ? this.options.position.x - this.options.size - textWidth
+          : this.options.position.x + this.options.size / 2 + 4,
+        y: this.options.position.y - this.options.size + 6,
+        w: textWidth + 5,
+        h: 18,
+      };
+      this.p.fill(config.component.pin.color);
+      this.p.rect(rect.x, rect.y, rect.w, rect.h);
+      this.p.noStroke();
+      this.p.fill("white");
+      this.p.textAlign(this.p.CENTER);
+      this.p.text("In A", rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
+    } else {
+      this.p.fill(config.component.pin.color);
+    }
     this.p.circle(
       this.options.position.x,
       this.options.position.y,
       this.options.size
     );
     this.p.pop();
-    // this.p.push();
-    // this.p.fill("red");
-    // this.p.text(this.id, this.options.position.x, this.options.position.y - 10);
-    // this.p.pop();
   }
 }

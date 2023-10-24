@@ -32,6 +32,7 @@ export enum Mode {
 
 export enum Interaction {
   Click = "Click",
+  DoubleClick = "DoubleClick",
   Drag = "Drag",
 }
 

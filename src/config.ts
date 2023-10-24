@@ -7,22 +7,12 @@ export const config = {
     strokeColor: "#121212",
   },
   component: {
-    board: {
-      spacingBetweenButtons: 5,
-    },
     circuit: {
-      // TODO: Change name
       widthScale: 50,
       background: "#525151",
     },
     chip: {
       strokeWeight: 0,
-      color: {
-        andChip: "#FC60A8",
-        orChip: "",
-        notChip: "",
-        chipName: "",
-      },
       size: {
         cornerRadius: 5,
       },
@@ -33,7 +23,7 @@ export const config = {
     },
     iOChip: {
       strokeWeight: 2,
-      size: 30,
+      size: 35,
       color: {
         stateOff: "#152C40",
         stateOn: "#3083DC",
@@ -47,9 +37,6 @@ export const config = {
       strokeWeight: 2,
       color: "#121212",
       size: 15,
-      mouse: {
-        hitRange: 0,
-      },
     },
     wire: {
       color: {
