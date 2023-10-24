@@ -11,6 +11,7 @@ type PinRenderOptions = {
 
 export class Pin {
   p: p5;
+  name: string;
   id: number;
   state: State;
   isInput: boolean; // TODO: change to type: "input" | "output"
@@ -35,6 +36,7 @@ export class Pin {
       position: { x: 0, y: 0 },
       size: config.component.pin.size,
     };
+    this.name = `${isInput ? "In" : "Out"} ${id}`;
   }
 
   public isMouseOver(): boolean {
@@ -70,7 +72,7 @@ export class Pin {
 
     if (this.isMouseOver()) {
       this.p.textSize(12);
-      const textWidth = this.p.textWidth("In A") + 5;
+      const textWidth = this.p.textWidth(this.name) + 5;
 
       const rect = {
         x: this.isInput
@@ -85,7 +87,7 @@ export class Pin {
       this.p.noStroke();
       this.p.fill("white");
       this.p.textAlign(this.p.CENTER);
-      this.p.text("In A", rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
+      this.p.text(this.name, rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
     } else {
       this.p.fill(config.component.pin.color);
     }
