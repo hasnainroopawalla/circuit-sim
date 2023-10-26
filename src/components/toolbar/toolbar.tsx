@@ -17,12 +17,12 @@ export const Toolbar = () => {
 
   return (
     <>
-      <UpperToolbar
+      {/* <UpperToolbar
         saveButtonOnClick={() =>
           setSaveShowCircuitDialog(!showSaveCircuitDialog)
         }
         optionsButtonOnClick={() => {}}
-      />
+      /> */}
       <LowerToolbar
         useCustomChips={useCustomChips}
         importChipButtonOnClick={() =>

@@ -18,6 +18,18 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
   return (
     <div className={`${styles.toolbar} ${styles.lowerToolbar}`}>
       <Button
+        text="SAVE"
+        appearance="primary"
+        size="large"
+        onClick={() => {}}
+      />
+      {/* <Button
+        text="OPTIONS"
+        appearance="secondary"
+        size="large"
+        onClick={() => {}}
+      /> */}
+      <Button
         text="AND"
         appearance="secondary"
         size="large"

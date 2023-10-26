@@ -1,15 +1,16 @@
 export const config = {
   document: {
     color: {
-      background: "#3D3D3D",
+      background: "#454545",
     },
     strokeWeight: 1,
     strokeColor: "#121212",
   },
   component: {
     circuit: {
-      widthScale: 50,
-      background: "#525151",
+      widthScale: 40,
+      heightScale: 50,
+      background: "#3D3D3D",
     },
     chip: {
       strokeWeight: 0,

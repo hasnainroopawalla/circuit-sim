@@ -10,11 +10,11 @@ export const sketch = (p: p5) => {
     circuit = new Circuit(p, "main", {
       position: {
         x: config.component.circuit.widthScale,
-        y: config.component.circuit.widthScale,
+        y: 10,
       },
       size: {
         w: p.windowWidth - config.component.circuit.widthScale * 2,
-        h: p.windowHeight - config.component.circuit.widthScale * 2,
+        h: p.windowHeight - 65,
       },
     });
   };
@@ -29,4 +29,5 @@ export const sketch = (p: p5) => {
   p.mouseDragged = () => circuit.mouseDragged();
   p.mouseReleased = () => circuit.mouseReleased();
   p.doubleClicked = () => circuit.mouseDoubleClicked();
+  p.mouseMoved = () => circuit.mouseMoved();
 };

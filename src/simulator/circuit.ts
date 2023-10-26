@@ -226,11 +226,29 @@ export class Circuit {
 
   private renderCircuit(): void {
     this.p.push();
+    this.p.stroke("#808080"); // TODO: move all colors to config
+    this.p.strokeWeight(2);
     this.p.fill(config.component.circuit.background);
     this.p.rect(
       this.options.position.x,
       this.options.position.y,
       this.options.size.w,
+      this.options.size.h
+    );
+    this.p.strokeWeight(0);
+    this.p.fill("#333333");
+    this.p.rect(
+      0,
+      this.options.position.y,
+      config.component.circuit.widthScale / 2,
+      this.options.size.h
+    );
+    this.p.rect(
+      this.options.position.x +
+        this.options.size.w +
+        config.component.circuit.widthScale / 2,
+      this.options.position.y,
+      config.component.circuit.widthScale / 2,
       this.options.size.h
     );
     this.p.pop();
@@ -243,6 +261,16 @@ export class Circuit {
       }
     }
     return false;
+  }
+
+  private isMouseOverInputChipPanel(): boolean {
+    return (
+      this.p.mouseX >= 0 &&
+      this.p.mouseX <= config.component.circuit.widthScale / 2 &&
+      this.p.mouseY >= this.options.position.y &&
+      this.p.mouseY <= this.options.position.y + this.options.size.h
+      // !this.isMouseOverlapping(this.inputs)
+    );
   }
 
   private checkSpawnInputChip(): boolean {
@@ -316,6 +344,15 @@ export class Circuit {
           });
         }
         break;
+
+      case Interaction.Move:
+        if (this.isMouseOverInputChipPanel()) {
+          console.log("ADWADW");
+          this.p.push();
+          this.p.fill("red");
+          this.p.rect(this.p.mouseX, this.p.mouseY, 50, 10);
+          this.p.pop();
+        }
     }
   }
 
@@ -486,6 +523,10 @@ export class Circuit {
       this.mouseReleaseAfterDrag = true;
       this.setIdleMode();
     }
+  }
+
+  public mouseMoved(): void {
+    this.isIdleMode && this.handleIdleMode(Interaction.Move);
   }
 
   public isMouseOver(): boolean {
