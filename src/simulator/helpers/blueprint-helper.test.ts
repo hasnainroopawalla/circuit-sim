@@ -1,7 +1,7 @@
 import p5 from "p5";
-import BlueprintHelper from "./blueprintHelper";
+import BlueprintHelper from "./blueprint-helper";
 import { Circuit } from "../circuit";
-import { idGenerator } from "./idGenerator";
+import { idGenerator } from "./id-generator";
 
 const sketch = (p: p5) => {
   p.setup = () => {};

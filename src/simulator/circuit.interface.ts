@@ -18,6 +18,10 @@ export type SpawnChipMode = {
   chips: Chip[];
 };
 
+export type SpawnIOChipHoverMode = {
+  type?: "input" | "output";
+};
+
 export type CircuitRenderOptions = {
   position: Position;
   size: Size;
@@ -28,6 +32,7 @@ export enum Mode {
   Reposition = "Reposition",
   Wiring = "Wiring",
   SpawnChip = "SpawnChip",
+  SpawnIOChipHover = "SpawnIOChipHover",
 }
 
 export enum Interaction {

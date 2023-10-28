@@ -1,7 +1,7 @@
 import { Position, State } from "../shared.interface";
 
 import { config } from "../../config";
-import Utils from "../helpers/chipHelper";
+import Utils from "../helpers/chip-helper";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
 

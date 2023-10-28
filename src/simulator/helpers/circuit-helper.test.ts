@@ -1,4 +1,4 @@
-import CircuitHelper from "./circuitHelper";
+import CircuitHelper from "./circuit-helper";
 
 describe("computeReferencePoint", () => {
   test("returns correct value", () => {

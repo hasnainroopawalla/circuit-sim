@@ -1,4 +1,4 @@
-import { idGenerator } from "./idGenerator";
+import { idGenerator } from "./id-generator";
 
 describe("IdGenerator", () => {
   beforeEach(() => {
