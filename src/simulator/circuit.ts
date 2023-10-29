@@ -11,13 +11,17 @@ import {
 import { Chip } from "./chip/chip";
 import { CoreChip, CoreGate, CustomChip, IOChip } from "./chip";
 import { Pin } from "./pin";
-import { Wire } from "./wire";
-import { config } from "../config";
+import { Wire, config as wireConfig } from "./wire";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
 import { CircuitHelper } from "./helpers/circuit-helper";
 import { BlueprintHelper } from "./helpers/blueprint-helper";
 import { idGenerator } from "./helpers/id-generator";
-import { RenderEngine } from "./render-engine";
+
+export const config = {
+  widthScale: 40,
+  heightScale: 50,
+  background: "#3D3D3D",
+};
 
 export class Circuit {
   p: p5;
@@ -33,7 +37,6 @@ export class Circuit {
   spawnIOChipHoverMode: SpawnIOChipHoverMode;
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
-  renderEngine: RenderEngine;
 
   constructor(
     p5: p5,
@@ -54,7 +57,6 @@ export class Circuit {
     this.spawnIOChipHoverMode = {};
     this.options = options;
     this.mouseReleaseAfterDrag = false;
-    this.renderEngine = new RenderEngine(this.p);
     !isCustomChip && this.bindEventListeners();
   }
 
@@ -181,14 +183,14 @@ export class Circuit {
       throw new Error("Wiring mode start pin not defined");
     }
     this.p.push();
-    this.p.strokeWeight(config.component.wire.strokeWeight);
-    this.p.stroke(config.component.wire.color.stateOff);
+    this.p.strokeWeight(wireConfig.strokeWeight);
+    this.p.stroke(wireConfig.color.stateOff);
     this.p.noFill();
 
     // render initial line from startPin to either mouse position or first waypoint
     this.p.line(
-      this.wiringMode.startPin.options.position.x,
-      this.wiringMode.startPin.options.position.y,
+      this.wiringMode.startPin.position.x,
+      this.wiringMode.startPin.position.y,
       this.wiringMode.markers.length === 0
         ? this.p.mouseX
         : this.wiringMode.markers[0].referencePoint.x,
@@ -238,32 +240,8 @@ export class Circuit {
     if (!this.spawnIOChipHoverMode.chip) {
       return;
     }
-
-    const xPadding = 4; // move to config
-
-    this.p.push();
-    this.p.strokeWeight(0);
-
     this.spawnIOChipHoverMode.chip.mouseDragged();
     this.spawnIOChipHoverMode.chip.render();
-
-    this.spawnIOChipHoverMode.type === "input"
-      ? this.p.rect(
-          xPadding,
-          this.p.mouseY - config.component.iOChip.size / 2,
-          config.component.circuit.widthScale / 2 - xPadding * 2,
-          config.component.iOChip.size
-        )
-      : this.p.rect(
-          this.options.position.x +
-            this.options.size.w +
-            config.component.circuit.widthScale / 2 +
-            xPadding,
-          this.p.mouseY - config.component.iOChip.size / 2,
-          config.component.circuit.widthScale / 2 - xPadding * 2,
-          config.component.iOChip.size
-        );
-    this.p.pop();
   }
 
   private renderIOChips(): void {
@@ -291,7 +269,7 @@ export class Circuit {
     this.p.push();
     this.p.stroke("#808080"); // TODO: move all colors to config
     this.p.strokeWeight(2);
-    this.p.fill(config.component.circuit.background);
+    this.p.fill(config.background);
     this.p.rect(
       this.options.position.x,
       this.options.position.y,
@@ -303,15 +281,13 @@ export class Circuit {
     this.p.rect(
       0,
       this.options.position.y,
-      config.component.circuit.widthScale / 2,
+      config.widthScale / 2,
       this.options.size.h
     );
     this.p.rect(
-      this.options.position.x +
-        this.options.size.w +
-        config.component.circuit.widthScale / 2,
+      this.options.position.x + this.options.size.w + config.widthScale / 2,
       this.options.position.y,
-      config.component.circuit.widthScale / 2,
+      config.widthScale / 2,
       this.options.size.h
     );
     this.p.pop();
@@ -329,7 +305,7 @@ export class Circuit {
   private isMouseOverInputChipPanel(): boolean {
     return (
       this.p.mouseX >= 0 &&
-      this.p.mouseX <= config.component.circuit.widthScale / 2 &&
+      this.p.mouseX <= config.widthScale / 2 &&
       this.p.mouseY >= this.options.position.y &&
       this.p.mouseY <= this.options.position.y + this.options.size.h
       // !this.isMouseOverlapping(this.inputs)
@@ -339,9 +315,7 @@ export class Circuit {
   private isMouseOverOutputChipPanel(): boolean {
     return (
       this.p.mouseX >=
-        this.options.position.x +
-          this.options.size.w +
-          config.component.circuit.widthScale / 2 &&
+        this.options.position.x + this.options.size.w + config.widthScale / 2 &&
       this.p.mouseY >= this.options.position.y &&
       this.p.mouseY <= this.options.position.y + this.options.size.h
       // !this.isMouseOverlapping(this.inputs)
@@ -359,7 +333,7 @@ export class Circuit {
         waypoint,
         // handle the initial scenario when there are no wire markers
         this.wiringMode.markers.length === 0 && this.wiringMode.startPin
-          ? this.wiringMode.startPin.options.position
+          ? this.wiringMode.startPin.position
           : this.wiringMode.markers[this.wiringMode.markers.length - 1].waypoint
       ),
     });

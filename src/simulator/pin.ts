@@ -2,12 +2,13 @@ import { Position, State } from "./shared.interface";
 
 import { Chip, IOChip } from "./chip";
 import { Wire } from "./wire";
-import { config } from "../config";
-import { RenderEngine } from "./render-engine";
+import { config as sharedConfig } from "../config";
 
-type PinRenderOptions = {
-  position: Position;
-  size: number;
+const config = {
+  color: "#121212",
+  size: 15,
+  strokeColor: "#3D3D3D",
+  strokeWeight: 2,
 };
 
 export class Pin {
@@ -19,8 +20,8 @@ export class Pin {
   isGhost: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
-  options: PinRenderOptions;
-  renderEngine: RenderEngine;
+  position: Position;
+  size: number;
 
   constructor(
     p5: p5,
@@ -36,13 +37,10 @@ export class Pin {
     this.isInput = isInput;
     this.outgoingWires = [];
     this.chip = chip;
-    this.options = {
-      position: { x: 0, y: 0 },
-      size: config.component.pin.size,
-    };
     this.name = `${isInput ? "In" : "Out"} ${id}`;
     this.isGhost = isGhost;
-    this.renderEngine = new RenderEngine(this.p);
+    this.position = { x: 0, y: 0 };
+    this.size = config.size;
   }
 
   public isMouseOver(): boolean {
@@ -50,10 +48,10 @@ export class Pin {
       this.p.dist(
         this.p.mouseX,
         this.p.mouseY,
-        this.options.position.x,
-        this.options.position.y
+        this.position.x,
+        this.position.y
       ) <=
-      this.options.size / 2
+      this.size / 2
     );
   }
 
@@ -64,7 +62,7 @@ export class Pin {
   }
 
   public setPosition(position: Position): void {
-    this.options.position = position;
+    this.position = position;
   }
 
   public mouseClicked(): boolean {
@@ -72,13 +70,34 @@ export class Pin {
   }
 
   public render(): void {
-    this.renderEngine.renderPin(
-      this.name,
-      this.options.position,
-      this.options.size,
-      this.isMouseOver(),
-      this.isInput,
+    this.p.push();
+    this.p.stroke(config.strokeColor);
+    this.p.strokeWeight(config.strokeWeight);
+
+    if (this.isMouseOver()) {
+      this.p.textSize(12);
+      const textWidth = this.p.textWidth(this.name) + 5;
+
+      const rect = {
+        x: this.isInput
+          ? this.position.x - this.size - textWidth
+          : this.position.x + this.size / 2 + 4,
+        y: this.position.y - this.size + 6,
+        w: textWidth + 5,
+        h: 18,
+      };
+      this.p.noStroke();
+      this.p.fill(config.color);
+      this.p.rect(rect.x, rect.y, rect.w, rect.h);
+      this.p.fill("white");
+      this.p.textAlign(this.p.CENTER);
+      this.p.text(this.name, rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
+    } else {
       this.isGhost
-    );
+        ? this.p.fill(sharedConfig.ghostEntityColor)
+        : this.p.fill(config.color);
+    }
+    this.p.circle(this.position.x, this.position.y, this.size);
+    this.p.pop();
   }
 }

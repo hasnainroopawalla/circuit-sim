@@ -1,7 +1,14 @@
 import { State, Position } from "./shared.interface";
 
-import { config } from "../config";
 import { Pin } from "./pin";
+
+export const config = {
+  color: {
+    stateOff: "#152C40",
+    stateOn: "#3083DC",
+  },
+  strokeWeight: 4,
+};
 
 export type WireMarker = { referencePoint: Position; waypoint: Position };
 
@@ -28,19 +35,17 @@ export class Wire {
 
   public render(): void {
     this.p.push();
-    this.p.strokeWeight(config.component.wire.strokeWeight);
+    this.p.strokeWeight(config.strokeWeight);
     this.p.stroke(
-      this.state === State.Off
-        ? config.component.wire.color.stateOff
-        : config.component.wire.color.stateOn
+      this.state === State.Off ? config.color.stateOff : config.color.stateOn
     );
     this.p.noFill();
 
     // TODO: fix https://github.com/hasnainroopawalla/circuit-sim/issues/15
     const tempMarkers = [
       {
-        referencePoint: this.startPin.options.position,
-        waypoint: this.startPin.options.position,
+        referencePoint: this.startPin.position,
+        waypoint: this.startPin.position,
       },
       ...this.markers,
     ];
@@ -55,7 +60,7 @@ export class Wire {
 
       const endPoint =
         i === tempMarkers.length - 1
-          ? this.endPin.options.position
+          ? this.endPin.position
           : tempMarkers[i + 1].referencePoint;
 
       this.p.bezier(

@@ -51,4 +51,15 @@ export class ChipHelper {
       h: chipTextSize * numPins + 15,
     };
   }
+
+  public static iOPinPosition(
+    chipPosition: Position,
+    chipSize: number,
+    isInput: boolean
+  ): Position {
+    const position = isInput
+      ? chipPosition.x + chipSize
+      : chipPosition.x - chipSize;
+    return { x: position, y: chipPosition.y };
+  }
 }
