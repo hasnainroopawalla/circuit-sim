@@ -3,6 +3,7 @@ import { Position, State } from "./shared.interface";
 import { Chip, IOChip } from "./chip";
 import { Wire } from "./wire";
 import { config } from "../config";
+import { RenderEngine } from "./render-engine";
 
 type PinRenderOptions = {
   position: Position;
@@ -15,16 +16,19 @@ export class Pin {
   id: number;
   state: State;
   isInput: boolean; // TODO: change to type: "input" | "output"
+  isGhost: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
   options: PinRenderOptions;
+  renderEngine: RenderEngine;
 
   constructor(
     p5: p5,
     id: number,
     state: State,
     isInput: boolean,
-    chip: Chip | IOChip
+    chip: Chip | IOChip,
+    isGhost = false
   ) {
     this.p = p5;
     this.id = id;
@@ -37,6 +41,8 @@ export class Pin {
       size: config.component.pin.size,
     };
     this.name = `${isInput ? "In" : "Out"} ${id}`;
+    this.isGhost = isGhost;
+    this.renderEngine = new RenderEngine(this.p);
   }
 
   public isMouseOver(): boolean {
@@ -66,36 +72,13 @@ export class Pin {
   }
 
   public render(): void {
-    this.p.push();
-    this.p.stroke(config.component.circuit.background);
-    this.p.strokeWeight(config.component.pin.strokeWeight);
-
-    if (this.isMouseOver()) {
-      this.p.textSize(12);
-      const textWidth = this.p.textWidth(this.name) + 5;
-
-      const rect = {
-        x: this.isInput
-          ? this.options.position.x - this.options.size - textWidth
-          : this.options.position.x + this.options.size / 2 + 4,
-        y: this.options.position.y - this.options.size + 6,
-        w: textWidth + 5,
-        h: 18,
-      };
-      this.p.fill(config.component.pin.color);
-      this.p.rect(rect.x, rect.y, rect.w, rect.h);
-      this.p.noStroke();
-      this.p.fill("white");
-      this.p.textAlign(this.p.CENTER);
-      this.p.text(this.name, rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
-    } else {
-      this.p.fill(config.component.pin.color);
-    }
-    this.p.circle(
-      this.options.position.x,
-      this.options.position.y,
-      this.options.size
+    this.renderEngine.renderPin(
+      this.name,
+      this.options.position,
+      this.options.size,
+      this.isMouseOver(),
+      this.isInput,
+      this.isGhost
     );
-    this.p.pop();
   }
 }

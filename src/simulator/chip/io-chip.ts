@@ -1,9 +1,9 @@
 import { Position, State } from "../shared.interface";
 
 import { config } from "../../config";
-import Utils from "../helpers/chip-helper";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
+import { RenderEngine } from "../render-engine";
 
 type IORenderOptions = {
   position: Position;
@@ -15,64 +15,31 @@ export class IOChip {
   name: string;
   id: string;
   isInput: boolean;
+  isGhost: boolean;
   pin: Pin;
   outgoingWires: Wire[];
   options: IORenderOptions;
+  renderEngine: RenderEngine;
 
-  constructor(p5: p5, name: string, isInput: boolean, position: Position) {
+  constructor(
+    p5: p5,
+    name: string,
+    isInput: boolean,
+    position: Position,
+    isGhost = false
+  ) {
     this.p = p5;
     this.name = name;
     this.id = name;
     this.isInput = isInput;
-    this.pin = new Pin(p5, 0, State.Off, !isInput, this);
+    this.isGhost = isGhost;
+    this.pin = new Pin(p5, 0, State.Off, !isInput, this, this.isGhost);
     this.outgoingWires = [];
     this.options = {
       position,
       size: config.component.iOChip.size,
     };
-  }
-
-  private renderChip(): void {
-    this.p.push();
-    this.p.strokeWeight(config.component.iOChip.strokeWeight);
-    this.p.fill(
-      this.pin.state === State.Off
-        ? config.component.iOChip.color.stateOff
-        : config.component.iOChip.color.stateOn
-    );
-    this.p.circle(
-      this.options.position.x,
-      this.options.position.y,
-      this.options.size
-    );
-    this.p.pop();
-  }
-
-  private renderInnerWire(): void {
-    this.p.push();
-    this.p.stroke(config.component.iOChip.innerWire.color);
-    this.p.strokeWeight(config.component.iOChip.innerWire.strokeWeight);
-    this.p.line(
-      this.isInput
-        ? this.options.position.x + this.options.size / 2
-        : this.options.position.x - this.options.size / 2,
-      this.options.position.y,
-      this.isInput
-        ? this.options.position.x + this.options.size
-        : this.options.position.x - this.options.size,
-      this.options.position.y
-    );
-    this.p.pop();
-  }
-
-  private renderPin(): void {
-    const pinPosition = Utils.iOPinPosition(
-      this.options.position,
-      this.options.size,
-      this.isInput
-    );
-    this.pin.setPosition(pinPosition);
-    this.pin.render();
+    this.renderEngine = new RenderEngine(this.p);
   }
 
   private toggle(): void {
@@ -88,13 +55,13 @@ export class IOChip {
   }
 
   public render(): void {
-    this.renderInnerWire();
-    this.renderChip();
-    this.renderPin();
-    // this.p.push();
-    // this.p.fill(255);
-    // this.p.text(this.name, this.options.position.x, this.options.position.y);
-    // this.p.pop();
+    this.renderEngine.renderIOChip(
+      this.pin,
+      this.options.position,
+      this.options.size,
+      this.isInput,
+      this.isGhost
+    );
   }
 
   public mouseClicked(): Pin | IOChip | undefined {

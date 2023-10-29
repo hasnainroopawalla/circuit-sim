@@ -19,6 +19,7 @@ export type SpawnChipMode = {
 };
 
 export type SpawnIOChipHoverMode = {
+  chip?: IOChip;
   type?: "input" | "output";
 };
 

@@ -1,7 +1,7 @@
 import { Position, Size } from "../shared.interface";
 
 // TODO: Test coverage
-export default class ChipHelper {
+export class ChipHelper {
   public static textPositionInRect(
     rectPosition: Position,
     rectSize: Size
@@ -39,17 +39,6 @@ export default class ChipHelper {
       points.push({ x, y });
     }
     return points;
-  }
-
-  public static iOPinPosition(
-    chipPosition: Position,
-    chipSize: number,
-    isInput: boolean
-  ): Position {
-    const position = isInput
-      ? chipPosition.x + chipSize
-      : chipPosition.x - chipSize;
-    return { x: position, y: chipPosition.y };
   }
 
   public static chipSize(

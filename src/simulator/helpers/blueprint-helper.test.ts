@@ -1,5 +1,5 @@
 import p5 from "p5";
-import BlueprintHelper from "./blueprint-helper";
+import { BlueprintHelper } from "./blueprint-helper";
 import { Circuit } from "../circuit";
 import { idGenerator } from "./id-generator";
 

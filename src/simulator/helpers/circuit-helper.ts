@@ -2,7 +2,7 @@ import { Circuit } from "../circuit";
 import { Position } from "../shared.interface";
 
 // TODO: Test coverage
-export default class CircuitHelper {
+export class CircuitHelper {
   public static entityHasConnectedWires(
     pins: string[],
     wires: string[][]

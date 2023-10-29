@@ -14,9 +14,10 @@ import { Pin } from "./pin";
 import { Wire } from "./wire";
 import { config } from "../config";
 import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
-import CircuitHelper from "./helpers/circuit-helper";
-import BlueprintHelper from "./helpers/blueprint-helper";
+import { CircuitHelper } from "./helpers/circuit-helper";
+import { BlueprintHelper } from "./helpers/blueprint-helper";
 import { idGenerator } from "./helpers/id-generator";
+import { RenderEngine } from "./render-engine";
 
 export class Circuit {
   p: p5;
@@ -32,6 +33,7 @@ export class Circuit {
   spawnIOChipHoverMode: SpawnIOChipHoverMode;
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
+  renderEngine: RenderEngine;
 
   constructor(
     p5: p5,
@@ -52,6 +54,7 @@ export class Circuit {
     this.spawnIOChipHoverMode = {};
     this.options = options;
     this.mouseReleaseAfterDrag = false;
+    this.renderEngine = new RenderEngine(this.p);
     !isCustomChip && this.bindEventListeners();
   }
 
@@ -110,6 +113,19 @@ export class Circuit {
 
   private setSpawnIOChipHoverMode(type: SpawnIOChipHoverMode["type"]): void {
     this.spawnIOChipHoverMode = {
+      chip: new IOChip(
+        this.p,
+        "ghost",
+        type === "input" ? true : false,
+        {
+          x:
+            type === "input"
+              ? this.options.position.x
+              : this.options.position.x + this.options.size.w,
+          y: this.p.mouseY,
+        },
+        true
+      ),
       type,
     };
     this.mode = Mode.SpawnIOChipHover;
@@ -129,6 +145,7 @@ export class Circuit {
       endPin: undefined,
       markers: [],
     };
+    this.spawnIOChipHoverMode = {};
     this.mode = Mode.Idle;
   }
 
@@ -218,11 +235,18 @@ export class Circuit {
   }
 
   private renderGhostIOChip(): void {
+    if (!this.spawnIOChipHoverMode.chip) {
+      return;
+    }
+
     const xPadding = 4; // move to config
 
     this.p.push();
     this.p.strokeWeight(0);
-    // this.p.fill("white");
+
+    this.spawnIOChipHoverMode.chip.mouseDragged();
+    this.spawnIOChipHoverMode.chip.render();
+
     this.spawnIOChipHoverMode.type === "input"
       ? this.p.rect(
           xPadding,
