@@ -5,7 +5,7 @@ import type {
   CustomChipSchema,
 } from "../circuit.interface";
 
-export default class BlueprintHelper {
+export class BlueprintHelper {
   public static circuitToBlueprint(
     name: string,
     circuit: Pick<Circuit, "chips" | "wires" | "inputs" | "outputs">,

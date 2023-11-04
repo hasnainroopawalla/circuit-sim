@@ -1,5 +1,6 @@
-import { Circuit } from "./circuit";
-import { config } from "../config";
+import { Circuit, config as circuitConfig } from "./circuit";
+
+const config = { background: "#454545" };
 
 export let circuit: Circuit;
 
@@ -9,18 +10,18 @@ export const sketch = (p: p5) => {
 
     circuit = new Circuit(p, "main", {
       position: {
-        x: config.component.circuit.widthScale,
-        y: config.component.circuit.widthScale,
+        x: circuitConfig.widthScale,
+        y: circuitConfig.heightScale,
       },
       size: {
-        w: p.windowWidth - config.component.circuit.widthScale * 2,
-        h: p.windowHeight - config.component.circuit.widthScale * 2,
+        w: p.windowWidth - circuitConfig.widthScale * 2,
+        h: p.windowHeight - 65,
       },
     });
   };
 
   p.draw = () => {
-    p.background(config.document.color.background);
+    p.background(config.background);
     circuit.execute();
     circuit.render();
   };
@@ -28,5 +29,6 @@ export const sketch = (p: p5) => {
   p.mouseClicked = () => circuit.mouseClicked();
   p.mouseDragged = () => circuit.mouseDragged();
   p.mouseReleased = () => circuit.mouseReleased();
-  // TODO: p.doubleClicked = () => circuit.doubleClicked();
+  p.doubleClicked = () => circuit.mouseDoubleClicked();
+  p.mouseMoved = () => circuit.mouseMoved();
 };

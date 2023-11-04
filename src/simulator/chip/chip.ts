@@ -1,8 +1,19 @@
 import { Position, Size } from "../shared.interface";
 
-import { config } from "../../config";
-import Utils from "../helpers/chipHelper";
+// import { config } from "../../config";
+import { ChipHelper } from "../helpers/chip-helper";
 import { Pin } from "../pin";
+
+const config = {
+  strokeWeight: 0,
+  size: {
+    cornerRadius: 5,
+  },
+  text: {
+    size: 20,
+    color: "#FFFFFF",
+  },
+};
 
 type ChipRenderOptions = {
   position: Position;
@@ -32,9 +43,9 @@ export abstract class Chip {
     this.name = name;
     this.id = id;
 
-    const size = Utils.chipSize(
+    const size = ChipHelper.chipSize(
       this.name,
-      config.component.chip.text.size,
+      config.text.size,
       Math.max(numInputPins, numOutputPins)
     );
 
@@ -46,12 +57,12 @@ export abstract class Chip {
       size,
       textPosition: { x: 0, y: 0 },
       color: color,
-      textColor: config.component.chip.text.color,
+      textColor: config.text.color,
     };
   }
 
   private renderPins(): void {
-    const inputPinsPositions = Utils.inputPinsPosition(
+    const inputPinsPositions = ChipHelper.pinsPositions(
       this.options.position,
       {
         x: this.options.position.x,
@@ -59,7 +70,7 @@ export abstract class Chip {
       },
       this.inputPins.length
     );
-    const outputPinsPositions = Utils.inputPinsPosition(
+    const outputPinsPositions = ChipHelper.pinsPositions(
       {
         x: this.options.position.x + this.options.size.w,
         y: this.options.position.y,
@@ -83,13 +94,13 @@ export abstract class Chip {
   private renderText(): void {
     this.p.push();
     this.p.textStyle(this.p.BOLD);
-    this.options.textPosition = Utils.textPositionInRect(
+    this.options.textPosition = ChipHelper.textPositionInRect(
       this.options.position,
       this.options.size
     );
     this.p.fill(this.options.textColor);
     this.p.textAlign(this.p.CENTER, this.p.CENTER);
-    this.p.textSize(config.component.chip.text.size);
+    this.p.textSize(config.text.size);
     this.p.text(
       this.name,
       this.options.textPosition.x,
@@ -101,13 +112,13 @@ export abstract class Chip {
   private renderChip(): void {
     this.p.push();
     this.p.fill(this.options.color);
-    this.p.strokeWeight(config.component.chip.strokeWeight);
+    this.p.strokeWeight(config.strokeWeight);
     this.p.rect(
       this.options.position.x,
       this.options.position.y,
       this.options.size.w,
       this.options.size.h,
-      config.component.chip.size.cornerRadius
+      config.size.cornerRadius
     );
     this.p.pop();
   }
@@ -155,10 +166,6 @@ export abstract class Chip {
     this.renderChip();
     this.renderText();
     this.renderPins();
-    // this.p.push();
-    // this.p.fill(255);
-    // this.p.text(this.id, this.options.position.x, this.options.position.y);
-    // this.p.pop();
   }
 
   abstract execute(): void;

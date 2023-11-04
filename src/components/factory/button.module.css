@@ -4,7 +4,7 @@
   text-align: center;
   height: 100%;
   cursor: pointer;
-  border-radius: 0.3rem;
+  border-radius: 0.2rem;
   -webkit-user-select: none; /* Safari */
   -ms-user-select: none; /* IE 10 and IE 11 */
   user-select: none; /* Standard syntax */
@@ -31,10 +31,11 @@
 }
 
 .secondary {
-  background-color: #525151;
+  background-color: #3d3d3d;
   color: #fff;
   &:hover {
-    background-color: #403e3e;
+    background-color: #fff;
+    color: #3d3d3d;
   }
 }
 

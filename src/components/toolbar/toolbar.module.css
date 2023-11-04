@@ -5,14 +5,11 @@
   right: 0;
   display: flex;
   flex-direction: row;
-  gap: 0.3rem;
-  margin: 0.4rem 0.6rem;
+  gap: 0.2rem;
 }
 
 .lowerToolbar {
+  padding: 0.3rem 0.2rem;
   bottom: 0;
-}
-
-.upperToolbar {
-  top: 0;
+  background-color: #1c1b1b;
 }

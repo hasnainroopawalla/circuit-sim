@@ -6,7 +6,6 @@ import { Dialog } from "../factory";
 import { LuImport } from "react-icons/lu";
 import { FaSave } from "react-icons/fa";
 
-import { UpperToolbar } from "./upper-toolbar";
 import { LowerToolbar } from "./lower-toolbar";
 
 export const Toolbar = () => {
@@ -17,14 +16,11 @@ export const Toolbar = () => {
 
   return (
     <>
-      <UpperToolbar
+      <LowerToolbar
+        useCustomChips={useCustomChips}
         saveButtonOnClick={() =>
           setSaveShowCircuitDialog(!showSaveCircuitDialog)
         }
-        optionsButtonOnClick={() => {}}
-      />
-      <LowerToolbar
-        useCustomChips={useCustomChips}
         importChipButtonOnClick={() =>
           setShowImportChipDialog(!showImportChipDialog)
         }

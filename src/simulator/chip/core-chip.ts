@@ -10,13 +10,13 @@ const CORE_GATES = {
     inputPins: 2,
     outputPins: 1,
     action: (inputPins: Pin[]) => [inputPins[0].state && inputPins[1].state],
-    color: "#fa8072",
+    color: "#ff7f50",
   },
   OR: {
     inputPins: 2,
     outputPins: 1,
     action: (inputPins: Pin[]) => [inputPins[0].state || inputPins[1].state],
-    color: "#a20f52",
+    color: "#008000",
   },
   NOT: {
     inputPins: 1,
@@ -24,7 +24,7 @@ const CORE_GATES = {
     action: (inputPins: Pin[]) => [
       inputPins[0].state === State.On ? State.Off : State.On,
     ],
-    color: "#daa520",
+    color: "#a20f52",
   },
 };
 

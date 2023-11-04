@@ -20,14 +20,14 @@ describe("UpperToolbar", () => {
     jest.resetAllMocks();
   });
 
-  test.only("save button visible", async () => {
+  test("save button visible", async () => {
     const saveButton = screen.getByText("SAVE");
     expect(saveButton).toBeInTheDocument();
     fireEvent.click(saveButton);
     expect(saveButtonOnClick).toBeCalled();
   });
 
-  test.only("options button visible", async () => {
+  test("options button visible", async () => {
     const optionsButton = screen.getByText("OPTIONS");
     expect(optionsButton).toBeInTheDocument();
     fireEvent.click(optionsButton);

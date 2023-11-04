@@ -22,7 +22,7 @@ describe("Button", () => {
     jest.resetAllMocks();
   });
 
-  test.only("button with text is visible", async () => {
+  test("button with text is visible", async () => {
     const button = screen.getByTestId(BUTTON_TID);
     expect(button.textContent).toBe("buttonText");
     expect(button).toBeVisible();

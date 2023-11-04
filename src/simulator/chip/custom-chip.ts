@@ -20,10 +20,10 @@ export class CustomChip extends Chip {
       const input = this.circuit.inputs[i];
       const newId = `${id}.input.${i}`;
       input.id = newId;
-      input.name = newId;
       input.isInput = true;
       input.pin.isInput = true;
       input.pin.id = 0;
+      input.pin.name = `In ${i}`;
       this.inputPins[i] = input.pin;
     }
 
@@ -31,10 +31,10 @@ export class CustomChip extends Chip {
       const output = this.circuit.outputs[i];
       const newId = `${id}.output.${i}`;
       output.id = newId;
-      output.name = newId;
       output.isInput = false;
       output.pin.isInput = false;
       output.pin.id = 0;
+      output.pin.name = `Out ${i}`;
       this.outputPins[i] = output.pin;
     }
   }
