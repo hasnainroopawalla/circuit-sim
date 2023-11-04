@@ -7,11 +7,12 @@ import styles from "./toolbar.module.css";
 
 type LowerToolbarProps = {
   useCustomChips: IUseCustomChips;
+  saveButtonOnClick: () => void;
   importChipButtonOnClick: () => void;
 };
 
 export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
-  const { useCustomChips, importChipButtonOnClick } = props;
+  const { useCustomChips, saveButtonOnClick, importChipButtonOnClick } = props;
 
   const customChips = useCustomChips();
 
@@ -21,7 +22,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         text="SAVE"
         appearance="primary"
         size="large"
-        onClick={() => {}}
+        onClick={saveButtonOnClick}
       />
       {/* <Button
         text="OPTIONS"

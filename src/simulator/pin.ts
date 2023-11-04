@@ -37,7 +37,8 @@ export class Pin {
     this.isInput = isInput;
     this.outgoingWires = [];
     this.chip = chip;
-    this.name = `${isInput ? "In" : "Out"} ${id}`;
+    this.name =
+      this.chip instanceof IOChip ? "pin" : `${isInput ? "In" : "Out"} ${id}`;
     this.isGhost = isGhost;
     this.position = { x: 0, y: 0 };
     this.size = config.size;

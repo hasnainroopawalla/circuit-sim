@@ -62,7 +62,7 @@ export abstract class Chip {
   }
 
   private renderPins(): void {
-    const inputPinsPositions = ChipHelper.inputPinsPosition(
+    const inputPinsPositions = ChipHelper.pinsPositions(
       this.options.position,
       {
         x: this.options.position.x,
@@ -70,7 +70,7 @@ export abstract class Chip {
       },
       this.inputPins.length
     );
-    const outputPinsPositions = ChipHelper.inputPinsPosition(
+    const outputPinsPositions = ChipHelper.pinsPositions(
       {
         x: this.options.position.x + this.options.size.w,
         y: this.options.position.y,

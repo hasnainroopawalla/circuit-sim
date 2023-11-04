@@ -25,5 +25,5 @@ export type EmitterEventArgs = {
     name: string;
     blueprint: string;
   };
-  [EmitterEvent.Notification]: { message: string }; // TODO: Add error type, reason, etc.
+  [EmitterEvent.Notification]: { text: string }; // TODO: Add error type, reason, etc.
 };

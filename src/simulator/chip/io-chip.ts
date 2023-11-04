@@ -3,11 +3,10 @@ import { Position, State } from "../shared.interface";
 import { config as sharedConfig } from "../../config";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
-import { ChipHelper } from "../helpers/chip-helper";
+import { IOChipHelper } from "../helpers/io-chip-helper";
+import { IOSlider, sliderConfig } from "./io-chip-slider";
 
-const config = {
-  sliderColor: "#4A4A4A",
-  sliderPadding: 4,
+export const iOChipConfig = {
   strokeWeight: 2,
   size: 35, // diameter
   color: {
@@ -27,6 +26,7 @@ export class IOChip {
   isInput: boolean;
   isGhost: boolean;
   pin: Pin;
+  slider: IOSlider;
   outgoingWires: Wire[];
   position: Position;
 
@@ -45,6 +45,7 @@ export class IOChip {
     this.pin = new Pin(p5, 0, State.Off, !isInput, this, this.isGhost);
     this.outgoingWires = [];
     this.position = position;
+    this.slider = new IOSlider(this.p, this);
   }
 
   private toggle(): void {
@@ -64,63 +65,51 @@ export class IOChip {
       this.p.strokeWeight(0);
       this.p.fill(sharedConfig.ghostEntityColor);
     } else {
-      this.p.strokeWeight(config.strokeWeight);
+      this.p.strokeWeight(iOChipConfig.strokeWeight);
       this.p.fill(
         this.pin.state === State.Off
-          ? config.color.stateOff
-          : config.color.stateOn
+          ? iOChipConfig.color.stateOff
+          : iOChipConfig.color.stateOn
       );
     }
-    this.p.circle(this.position.x, this.position.y, config.size);
+    this.p.circle(this.position.x, this.position.y, iOChipConfig.size);
   }
 
   private renderInnerWire(): void {
     this.isGhost
       ? this.p.stroke(sharedConfig.ghostEntityColor)
-      : this.p.stroke(config.innerWire.color);
-    this.p.strokeWeight(config.innerWire.strokeWeight);
+      : this.p.stroke(iOChipConfig.innerWire.color);
+    this.p.strokeWeight(iOChipConfig.innerWire.strokeWeight);
     this.p.line(
       this.isInput
-        ? this.position.x + config.size / 2
-        : this.position.x - config.size / 2,
+        ? this.position.x + iOChipConfig.size / 2
+        : this.position.x - iOChipConfig.size / 2,
       this.position.y,
       this.isInput
-        ? this.position.x + config.size
-        : this.position.x - config.size,
+        ? this.position.x + iOChipConfig.size
+        : this.position.x - iOChipConfig.size,
       this.position.y
     );
   }
 
   private renderPin(): void {
-    const pinPosition = ChipHelper.iOPinPosition(
-      this.position,
-      config.size,
-      this.isInput
+    this.pin.setPosition(
+      IOChipHelper.pinPosition(this.position, iOChipConfig.size, this.isInput)
     );
-    this.pin.setPosition(pinPosition);
     this.pin.render();
   }
 
   private renderSlider(): void {
-    this.p.push();
-    this.p.strokeWeight(0);
-    this.isGhost
-      ? this.p.fill(sharedConfig.ghostEntityColor)
-      : this.p.fill(config.sliderColor);
-    this.isInput
-      ? this.p.rect(
-          config.sliderPadding,
-          this.position.y - config.size / 2,
-          config.size / 3,
-          config.size
-        )
-      : this.p.rect(
-          this.p.windowWidth - config.size / 3 - config.sliderPadding,
-          this.position.y - config.size / 2,
-          config.size / 3,
-          config.size
-        );
-    this.p.pop();
+    this.slider.setPosition(
+      IOChipHelper.sliderPosition(
+        sliderConfig.padding,
+        this.position,
+        iOChipConfig.size,
+        this.p.windowWidth,
+        this.isInput
+      ).position
+    );
+    this.slider.render();
   }
 
   public render(): void {
@@ -133,7 +122,7 @@ export class IOChip {
   }
 
   public mouseClicked(): Pin | IOChip | undefined {
-    if (this.isMouseOver() && this.isInput) {
+    if (this.isMouseOverChip() && this.isInput) {
       this.toggle();
       return this;
     }
@@ -142,7 +131,7 @@ export class IOChip {
     }
   }
 
-  public isMouseOver(): boolean {
+  public isMouseOverChip(): boolean {
     return (
       this.p.dist(
         this.p.mouseX,
@@ -150,7 +139,7 @@ export class IOChip {
         this.position.x,
         this.position.y
       ) <=
-      config.size / 2
+      iOChipConfig.size / 2
     );
   }
 
@@ -161,12 +150,13 @@ export class IOChip {
     };
   }
 
-  public isMouseOverGetEntity(): IOChip | Pin | undefined {
-    if (this.pin.isMouseOver()) {
-      return this.pin;
-    }
-    if (this.isMouseOver()) {
-      return this;
-    }
+  public isMouseOverGetEntity(): IOChip | IOSlider | Pin | undefined {
+    return this.isMouseOverChip()
+      ? this
+      : this.pin.isMouseOver()
+      ? this.pin
+      : this.slider.isMouseOver()
+      ? this.slider
+      : undefined;
   }
 }

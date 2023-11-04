@@ -11,7 +11,7 @@ export const sketch = (p: p5) => {
     circuit = new Circuit(p, "main", {
       position: {
         x: circuitConfig.widthScale,
-        y: 10,
+        y: circuitConfig.heightScale,
       },
       size: {
         w: p.windowWidth - circuitConfig.widthScale * 2,

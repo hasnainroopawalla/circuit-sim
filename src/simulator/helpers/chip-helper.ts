@@ -12,7 +12,7 @@ export class ChipHelper {
     };
   }
 
-  public static inputPinsPosition(
+  public static pinsPositions(
     lineStartPosition: Position,
     lineEndPosition: Position,
     numPins: number
@@ -48,18 +48,7 @@ export class ChipHelper {
   ): Size {
     return {
       w: chipText.length * chipTextSize + 15,
-      h: chipTextSize * numPins + 15,
+      h: chipTextSize * numPins + 10,
     };
-  }
-
-  public static iOPinPosition(
-    chipPosition: Position,
-    chipSize: number,
-    isInput: boolean
-  ): Position {
-    const position = isInput
-      ? chipPosition.x + chipSize
-      : chipPosition.x - chipSize;
-    return { x: position, y: chipPosition.y };
   }
 }

@@ -9,18 +9,25 @@ import {
 } from "./circuit.interface";
 
 import { Chip } from "./chip/chip";
-import { CoreChip, CoreGate, CustomChip, IOChip } from "./chip";
+import { CoreChip, CoreGate, CustomChip, IOChip, IOSlider } from "./chip";
 import { Pin } from "./pin";
 import { Wire, config as wireConfig } from "./wire";
-import { EmitterEvent, EmitterEventArgs, emitter } from "../event-service";
+import {
+  EmitterEvent,
+  EmitterEventArgs,
+  EmitterHelper,
+  emitter,
+} from "../event-service";
 import { CircuitHelper } from "./helpers/circuit-helper";
 import { BlueprintHelper } from "./helpers/blueprint-helper";
 import { idGenerator } from "./helpers/id-generator";
 
 export const config = {
   widthScale: 40,
-  heightScale: 50,
+  heightScale: 10,
   background: "#3D3D3D",
+  strokeColor: "#808080",
+  sliderSectionColor: "#333333",
 };
 
 export class Circuit {
@@ -151,7 +158,7 @@ export class Circuit {
     this.mode = Mode.Idle;
   }
 
-  private getMouseOverEntity(): IOChip | Pin | Chip | undefined {
+  private getMouseOverEntity(): IOChip | IOSlider | Pin | Chip | undefined {
     // Input Entities
     for (let i = 0; i < this.inputs.length; i++) {
       const entity = this.inputs[i].isMouseOverGetEntity();
@@ -267,7 +274,7 @@ export class Circuit {
 
   private renderCircuit(): void {
     this.p.push();
-    this.p.stroke("#808080"); // TODO: move all colors to config
+    this.p.stroke(config.strokeColor);
     this.p.strokeWeight(2);
     this.p.fill(config.background);
     this.p.rect(
@@ -276,8 +283,9 @@ export class Circuit {
       this.options.size.w,
       this.options.size.h
     );
+    // slider section
     this.p.strokeWeight(0);
-    this.p.fill("#333333");
+    this.p.fill(config.sliderSectionColor);
     this.p.rect(
       0,
       this.options.position.y,
@@ -291,15 +299,6 @@ export class Circuit {
       this.options.size.h
     );
     this.p.pop();
-  }
-
-  private isMouseOverlapping(entities: IOChip[]): boolean {
-    for (let i = 0; i < entities.length; i++) {
-      if (entities[i].isMouseOver()) {
-        return true;
-      }
-    }
-    return false;
   }
 
   private isMouseOverInputChipPanel(): boolean {
@@ -346,8 +345,9 @@ export class Circuit {
       case Interaction.Click:
         if (entity instanceof Pin) {
           if (entity.isInput) {
-            console.log("Wires can only start from an output pin");
-            return;
+            return EmitterHelper.notification(
+              "Wires can only start from an output pin"
+            );
           }
           this.setWiringMode({
             startPin: entity,
@@ -355,6 +355,8 @@ export class Circuit {
           });
         } else if (entity instanceof IOChip) {
           entity.mouseClicked();
+        } else if (entity instanceof IOSlider) {
+          // TODO: Show update pin name dialog
         }
         break;
 
@@ -363,9 +365,9 @@ export class Circuit {
           this.setRepositionMode({
             chip: entity,
           });
-        } else if (entity instanceof IOChip) {
+        } else if (entity instanceof IOSlider) {
           this.setRepositionMode({
-            chip: entity,
+            chip: entity.chip,
           });
         }
         break;
@@ -436,7 +438,7 @@ export class Circuit {
   }
 
   private handleSpawnIOChipHoverMode(interaction: Interaction): void {
-    // const entity = this.getMouseOverEntity();
+    const entity = this.getMouseOverEntity();
 
     switch (interaction) {
       case Interaction.Click:
@@ -445,8 +447,9 @@ export class Circuit {
 
       case Interaction.Move:
         if (
-          !this.isMouseOverInputChipPanel() &&
-          !this.isMouseOverOutputChipPanel()
+          entity instanceof IOSlider ||
+          (!this.isMouseOverInputChipPanel() &&
+            !this.isMouseOverOutputChipPanel())
         ) {
           this.setIdleMode();
         }
@@ -593,9 +596,9 @@ export class Circuit {
 
     // create the custom chip only if inputs and outputs exist
     if (this.inputs.length === 0 || this.outputs.length === 0) {
-      return emitter.emit(EmitterEvent.Notification, {
-        message: "Custom chip not created due to missing inputs/outputs",
-      });
+      return EmitterHelper.notification(
+        "Custom chip not created due to missing inputs/outputs"
+      );
     }
 
     const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
