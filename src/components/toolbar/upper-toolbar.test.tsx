@@ -24,13 +24,13 @@ describe("UpperToolbar", () => {
     const saveButton = screen.getByText("SAVE");
     expect(saveButton).toBeInTheDocument();
     fireEvent.click(saveButton);
-    expect(saveButtonOnClick).toBeCalled();
+    expect(saveButtonOnClick).toHaveBeenCalled();
   });
 
   test("options button visible", async () => {
     const optionsButton = screen.getByText("OPTIONS");
     expect(optionsButton).toBeInTheDocument();
     fireEvent.click(optionsButton);
-    expect(optionsButtonOnClick).toBeCalled();
+    expect(optionsButtonOnClick).toHaveBeenCalled();
   });
 });
