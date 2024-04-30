@@ -25,7 +25,7 @@ describe("ImportChipDialog", () => {
 
   test("does not call onConfirm if chip name is empty", async () => {
     fireEvent.click(screen.getByTestId(CONFIRM_INPUT));
-    expect(onConfirm).not.toBeCalled();
+    expect(onConfirm).not.toHaveBeenCalled();
   });
 
   test("calls onConfirm only if chip name is not empty", async () => {
@@ -33,11 +33,11 @@ describe("ImportChipDialog", () => {
       target: { value: "NOR" },
     });
     fireEvent.click(screen.getByTestId(CONFIRM_INPUT));
-    expect(onConfirm).toBeCalled();
+    expect(onConfirm).toHaveBeenCalled();
   });
 
   test("calls onDismiss when cancel button is clicked", async () => {
     fireEvent.click(screen.getByTestId(CANCEL_BUTTON));
-    expect(onDismiss).toBeCalled();
+    expect(onDismiss).toHaveBeenCalled();
   });
 });

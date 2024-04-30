@@ -33,14 +33,14 @@ describe("LowerToolbar", () => {
     const saveButton = screen.getByText("SAVE");
     expect(saveButton).toBeInTheDocument();
     fireEvent.click(saveButton);
-    expect(saveButtonOnClick).toBeCalled();
+    expect(saveButtonOnClick).toHaveBeenCalled();
   });
 
   test.skip("options button visible", async () => {
     const optionsButton = screen.getByText("OPTIONS");
     expect(optionsButton).toBeInTheDocument();
     fireEvent.click(optionsButton);
-    expect(optionsButtonOnClick).toBeCalled();
+    expect(optionsButtonOnClick).toHaveBeenCalled();
   });
 
   test("core chip buttons visible (AND, OR, NOT)", async () => {
@@ -57,6 +57,6 @@ describe("LowerToolbar", () => {
     const importButton = screen.getByTestId("importChipButton");
     expect(importButton).toBeVisible();
     fireEvent.click(importButton);
-    expect(importChipButtonOnClick).toBeCalled();
+    expect(importChipButtonOnClick).toHaveBeenCalled();
   });
 });
