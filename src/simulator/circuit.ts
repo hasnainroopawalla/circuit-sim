@@ -21,6 +21,7 @@ import {
 import { CircuitHelper } from "./helpers/circuit-helper";
 import { BlueprintHelper } from "./helpers/blueprint-helper";
 import { idGenerator } from "./helpers/id-generator";
+import { MouseApi } from "./api";
 
 export const config = {
   widthScale: 40,
@@ -45,6 +46,8 @@ export class Circuit {
   options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
 
+  mouseApi: MouseApi;
+
   constructor(
     p5: p5,
     name: string,
@@ -64,7 +67,33 @@ export class Circuit {
     this.spawnIOChipHoverMode = {};
     this.options = options;
     this.mouseReleaseAfterDrag = false;
+
+    this.mouseApi = new MouseApi(p5);
+
+    this.attachInteractors();
+
     !isCustomChip && this.bindEventListeners();
+  }
+
+  private attachInteractors() {
+    this.mouseApi.attachClicked(
+      () => this.isIdleMode && this.handleIdleMode(Interaction.Click)
+    );
+    this.mouseApi.attachClicked(
+      () => this.isWiringMode && this.handleWiringMode(Interaction.Click)
+    );
+    this.mouseApi.attachClicked(
+      () => this.isSpawnChipMode && this.handleSpawnChipMode(Interaction.Click)
+    );
+    this.mouseApi.attachClicked(
+      () =>
+        this.isRepositionMode && this.handleRepositionMode(Interaction.Click)
+    );
+    this.mouseApi.attachClicked(
+      () =>
+        this.isSpawnIOChipHoverMode &&
+        this.handleSpawnIOChipHoverMode(Interaction.Click)
+    );
   }
 
   private bindEventListeners() {
@@ -131,7 +160,7 @@ export class Circuit {
             type === "input"
               ? this.options.position.x
               : this.options.position.x + this.options.size.w,
-          y: this.p.mouseY,
+          y: this.mouseApi.mouseY,
         },
         true
       ),
@@ -199,10 +228,10 @@ export class Circuit {
       this.wiringMode.startPin.position.x,
       this.wiringMode.startPin.position.y,
       this.wiringMode.markers.length === 0
-        ? this.p.mouseX
+        ? this.mouseApi.mouseX
         : this.wiringMode.markers[0].referencePoint.x,
       this.wiringMode.markers.length === 0
-        ? this.p.mouseY
+        ? this.mouseApi.mouseY
         : this.wiringMode.markers[0].referencePoint.y
     );
 
@@ -213,7 +242,7 @@ export class Circuit {
       // The end point of the wire should be the current mouse position
       const endPoint =
         i === this.wiringMode.markers.length - 1
-          ? { x: this.p.mouseX, y: this.p.mouseY }
+          ? { x: this.mouseApi.mouseX, y: this.mouseApi.mouseY }
           : this.wiringMode.markers[i + 1].referencePoint;
 
       this.p.bezier(
@@ -234,9 +263,9 @@ export class Circuit {
     for (let i = 0; i < this.spawnChipMode.chips.length; i++) {
       const chip = this.spawnChipMode.chips[i];
       chip.options.position = {
-        x: this.p.mouseX - chip.options.size.w / 2,
+        x: this.mouseApi.mouseX - chip.options.size.w / 2,
         y:
-          this.p.mouseY -
+          this.mouseApi.mouseY -
           chip.options.size.h / 2 -
           (i * chip.options.size.h) / 0.8, // Extra offset for spacing between chips
       };
@@ -303,28 +332,28 @@ export class Circuit {
 
   private isMouseOverInputChipPanel(): boolean {
     return (
-      this.p.mouseX >= 0 &&
-      this.p.mouseX <= config.widthScale / 2 &&
-      this.p.mouseY >= this.options.position.y &&
-      this.p.mouseY <= this.options.position.y + this.options.size.h
+      this.mouseApi.mouseX >= 0 &&
+      this.mouseApi.mouseX <= config.widthScale / 2 &&
+      this.mouseApi.mouseY >= this.options.position.y &&
+      this.mouseApi.mouseY <= this.options.position.y + this.options.size.h
       // !this.isMouseOverlapping(this.inputs)
     );
   }
 
   private isMouseOverOutputChipPanel(): boolean {
     return (
-      this.p.mouseX >=
+      this.mouseApi.mouseX >=
         this.options.position.x + this.options.size.w + config.widthScale / 2 &&
-      this.p.mouseY >= this.options.position.y &&
-      this.p.mouseY <= this.options.position.y + this.options.size.h
+      this.mouseApi.mouseY >= this.options.position.y &&
+      this.mouseApi.mouseY <= this.options.position.y + this.options.size.h
       // !this.isMouseOverlapping(this.inputs)
     );
   }
 
   private addWireMarker(): void {
     const waypoint = {
-      x: this.p.mouseX,
-      y: this.p.mouseY,
+      x: this.mouseApi.mouseX,
+      y: this.mouseApi.mouseY,
     };
     this.wiringMode.markers.push({
       waypoint,
@@ -509,7 +538,7 @@ export class Circuit {
   public spawnInputIOChip(): IOChip {
     const inputIOChip = new IOChip(this.p, idGenerator.inputChipId(), true, {
       x: this.options.position.x,
-      y: this.p.mouseY,
+      y: this.mouseApi.mouseY,
     });
     this.inputs.push(inputIOChip);
     return inputIOChip;
@@ -518,7 +547,7 @@ export class Circuit {
   public spawnOutputIOChip(): IOChip {
     const outputIOChip = new IOChip(this.p, idGenerator.outputChipId(), false, {
       x: this.options.position.x + this.options.size.w,
-      y: this.p.mouseY,
+      y: this.mouseApi.mouseY,
     });
     this.outputs.push(outputIOChip);
     return outputIOChip;
@@ -541,16 +570,7 @@ export class Circuit {
   }
 
   public mouseClicked(): void {
-    if (this.mouseReleaseAfterDrag) {
-      this.mouseReleaseAfterDrag = false;
-      return;
-    }
-    this.isIdleMode && this.handleIdleMode(Interaction.Click);
-    this.isWiringMode && this.handleWiringMode(Interaction.Click);
-    this.isSpawnChipMode && this.handleSpawnChipMode(Interaction.Click);
-    this.isRepositionMode && this.handleRepositionMode(Interaction.Click);
-    this.isSpawnIOChipHoverMode &&
-      this.handleSpawnIOChipHoverMode(Interaction.Click);
+    this.mouseApi.triggerClickEvents();
   }
 
   public mouseDoubleClicked(): void {
@@ -582,10 +602,10 @@ export class Circuit {
 
   public isMouseOver(): boolean {
     return (
-      this.p.mouseX >= this.options.position.x &&
-      this.p.mouseX <= this.options.position.x + this.options.size.w &&
-      this.p.mouseY >= this.options.position.y &&
-      this.p.mouseY <= this.options.position.y + this.options.size.h
+      this.mouseApi.mouseX >= this.options.position.x &&
+      this.mouseApi.mouseX <= this.options.position.x + this.options.size.w &&
+      this.mouseApi.mouseY >= this.options.position.y &&
+      this.mouseApi.mouseY <= this.options.position.y + this.options.size.h
     );
   }
 

@@ -21,6 +21,20 @@
     "no-duplicate-imports": "error",
     "no-unused-private-class-members": "error",
     "camelcase": "error",
-    "eqeqeq": "error"
+    "eqeqeq": "error",
+    "@typescript-eslint/member-ordering": "error",
+    "arrow-body-style": ["error", "as-needed"],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "args": "all",
+        "argsIgnorePattern": "^_",
+        "caughtErrors": "all",
+        "caughtErrorsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "ignoreRestSiblings": true
+      }
+    ]
   }
 }

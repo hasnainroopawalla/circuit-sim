@@ -1,3 +1,4 @@
+import { MouseApi } from "./api";
 import { Circuit, config as circuitConfig } from "./circuit";
 
 const config = { background: "#454545" };
