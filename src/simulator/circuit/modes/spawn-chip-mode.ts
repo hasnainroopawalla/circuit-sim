@@ -6,12 +6,16 @@ import { Interaction } from "../circuit.interface";
 export class ChipSpawner {
   p: p5;
   private ghostChips: Chip[];
-  private circuit: Circuit
+  private circuit: Circuit;
 
   constructor(p: p5, circuit: Circuit) {
     this.p = p;
-    this.circuit = circuit
+    this.circuit = circuit;
     this.ghostChips = [];
+  }
+
+  private spawnGhostChips(): void {
+    this.ghostChips.forEach((ghostChip) => this.circuit.spawnChip(ghostChip));
   }
 
   public clear() {
@@ -26,8 +30,8 @@ export class ChipSpawner {
     switch (interaction) {
       case Interaction.Click:
         if (this.circuit.isMouseOver()) {
-          this.circuit.spawnChips(this.ghostChips);
-          this.circuit.setIdleMode()
+          this.spawnGhostChips();
+          this.circuit.setIdleMode();
         }
         break;
     }

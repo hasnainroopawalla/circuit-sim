@@ -391,9 +391,9 @@ export class Circuit {
     }
   }
 
-  public createCoreChip(coreChip: CoreGate, addToCircuit = true): CoreChip {
+  public createCoreChip(coreChip: CoreGate, shouldSpawn = true): CoreChip {
     const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
-    addToCircuit && this.chips.push(chip);
+    shouldSpawn && this.spawnChip(chip);
     return chip;
   }
 
@@ -407,7 +407,7 @@ export class Circuit {
       idGenerator.chipId(circuit.name),
       color
     );
-    this.chips.push(chip);
+    this.spawnChip(chip);
     return chip;
   }
 
@@ -551,8 +551,8 @@ export class Circuit {
     });
   }
 
-  public spawnChips(chips:  Chip[]): void{
-    chips.forEach(chip => this.chips.push(chip));
+  public spawnChip(chip: Chip): void {
+    this.chips.push(chip);
   }
 
   public render(): void {
