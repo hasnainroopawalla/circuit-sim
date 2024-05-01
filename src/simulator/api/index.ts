@@ -1,1 +1,1 @@
-export { BaseRenderer } from "./base-renderer";
+export { AbstractRenderer } from "./abstract-renderer";

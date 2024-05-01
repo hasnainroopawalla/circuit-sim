@@ -3,7 +3,7 @@ import { Circuit } from "../circuit";
 import type {
   CustomChipBlueprint,
   CustomChipSchema,
-} from "../circuit.interface";
+} from "../circuit";
 
 export class BlueprintHelper {
   public static circuitToBlueprint(

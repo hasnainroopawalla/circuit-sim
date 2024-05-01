@@ -1,5 +1,5 @@
 import { Circuit } from "../circuit";
-import { Chip } from "./chip";
+import { Chip } from "./base-chip";
 
 export class CustomChip extends Chip {
   circuit: Circuit;

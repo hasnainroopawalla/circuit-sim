@@ -9,7 +9,7 @@ export type Size = {
 };
 
 // TODO: add generic for entity shape (rect, circle, etc.)
-export abstract class BaseRenderer {
+export abstract class AbstractRenderer {
   p: p5;
   position: Position;
   size: Size;
@@ -21,6 +21,8 @@ export abstract class BaseRenderer {
   }
 
   public abstract isMouseOver(): boolean;
+
+  public abstract mouseDragged(): void;
 
   public abstract render(): void;
 }

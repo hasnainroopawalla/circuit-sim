@@ -1,5 +1,4 @@
-import { Circuit } from "./circuit";
-import { config as circuitConfig } from "./circuit.config";
+import { Circuit, config as circuitConfig } from "./circuit";
 
 const config = { background: "#454545" };
 

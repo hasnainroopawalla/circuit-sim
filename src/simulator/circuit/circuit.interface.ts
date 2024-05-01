@@ -1,8 +1,8 @@
-import { Position, Size } from "./shared.interface";
+import { Position, Size } from "../shared.interface";
 
-import { IOChip, Chip } from "./chip";
-import { Pin } from "./pin";
-import type { WireMarker } from "./wire";
+import { IOChip, Chip } from "../chip";
+import { Pin } from "../pin";
+import type { WireMarker } from "../wire";
 
 export type WiringMode = {
   markers: WireMarker[];

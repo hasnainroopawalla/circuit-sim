@@ -1,7 +1,11 @@
-import { type Position, type Size, BaseRenderer } from "./api/base-renderer";
+import {
+  type Position,
+  type Size,
+  AbstractRenderer,
+} from "../api/abstract-renderer";
 import { config } from "./circuit.config";
 
-export class CircuitRenderer extends BaseRenderer {
+export class CircuitRenderer extends AbstractRenderer {
   constructor(p: p5, position: Position, size: Size) {
     super(p, position, size);
   }
@@ -27,13 +31,14 @@ export class CircuitRenderer extends BaseRenderer {
 
   public isMouseOverOutputChipPanel(): boolean {
     return (
-      this.p.mouseX >=
-        this.position.x + this.size.w + config.widthScale / 2 &&
+      this.p.mouseX >= this.position.x + this.size.w + config.widthScale / 2 &&
       this.p.mouseY >= this.position.y &&
       this.p.mouseY <= this.position.y + this.size.h
       // !this.isMouseOverlapping(this.inputs)
     );
   }
+
+  public mouseDragged(): void {}
 
   public render() {
     this.p.push();

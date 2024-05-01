@@ -1,7 +1,7 @@
 import { State } from "../shared.interface";
 
 import { Pin } from "../pin";
-import { Chip } from "./chip";
+import { Chip } from "./base-chip";
 
 export type CoreGate = "AND" | "OR" | "NOT";
 

@@ -8,20 +8,27 @@ import {
   SpawnIOChipHoverMode,
 } from "./circuit.interface";
 
-import { Chip } from "./chip/chip";
-import { CoreChip, CoreGate, CustomChip, IOChip, IOSlider } from "./chip";
-import { Pin } from "./pin";
-import { Wire, config as wireConfig } from "./wire";
+import {
+  Chip,
+  CoreChip,
+  CoreGate,
+  CustomChip,
+  IOChip,
+  IOSlider,
+} from "../chip";
+import { Pin } from "../pin";
+import { Wire, config as wireConfig } from "../wire";
 import {
   EmitterEvent,
   EmitterEventArgs,
   EmitterHelper,
   emitter,
-} from "../event-service";
-import { CircuitHelper } from "./helpers/circuit-helper";
-import { BlueprintHelper } from "./helpers/blueprint-helper";
-import { idGenerator } from "./helpers/id-generator";
+} from "../../event-service";
+import { CircuitHelper } from "../helpers/circuit-helper";
+import { BlueprintHelper } from "../helpers/blueprint-helper";
+import { idGenerator } from "../helpers/id-generator";
 import { CircuitRenderer } from "./circuit.renderer";
+import { ChipSpawner } from "./modes/spawn-chip-mode";
 
 export class Circuit {
   p: p5;
@@ -35,10 +42,10 @@ export class Circuit {
   repositionMode: RepositionMode;
   spawnChipMode: SpawnChipMode;
   spawnIOChipHoverMode: SpawnIOChipHoverMode;
-  // options: CircuitRenderOptions;
   mouseReleaseAfterDrag: boolean;
 
   renderer: CircuitRenderer;
+  chipSpawner: ChipSpawner;
 
   constructor(
     p5: p5,
@@ -57,11 +64,11 @@ export class Circuit {
     this.repositionMode = {};
     this.spawnChipMode = { chips: [] };
     this.spawnIOChipHoverMode = {};
-    // this.options = options;
     this.mouseReleaseAfterDrag = false;
     !isCustomChip && this.bindEventListeners();
 
     this.renderer = new CircuitRenderer(p5, options.position, options.size);
+    this.chipSpawner = new ChipSpawner(p5);
   }
 
   private bindEventListeners() {
@@ -109,7 +116,7 @@ export class Circuit {
   }
 
   private setSpawnChipMode(chip: Chip): void {
-    this.spawnChipMode.chips.push(chip);
+    this.chipSpawner.createGhostChip(chip);
     this.mode = Mode.SpawnChip;
   }
 
@@ -225,19 +232,6 @@ export class Circuit {
       );
     }
     this.p.pop();
-  }
-
-  private renderSpawnChipMode(): void {
-    for (let i = 0; i < this.spawnChipMode.chips.length; i++) {
-      const chip = this.spawnChipMode.chips[i];
-      chip.options.position = {
-        x: this.p.mouseX - chip.options.size.w / 2,
-        y:
-          this.p.mouseY -
-          chip.options.size.h / 2 -
-          (i * chip.options.size.h) / 0.8, // Extra offset for spacing between chips
-      };
-    }
   }
 
   private renderGhostIOChip(): void {
@@ -413,9 +407,9 @@ export class Circuit {
     }
   }
 
-  public createCoreChip(coreChip: CoreGate): CoreChip {
+  public createCoreChip(coreChip: CoreGate, addToCircuit = true): CoreChip {
     const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
-    this.chips.push(chip);
+    addToCircuit && this.chips.push(chip);
     return chip;
   }
 
@@ -433,15 +427,14 @@ export class Circuit {
     return chip;
   }
 
-  public spawnCoreChip(
+  private spawnCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
-    const { coreChip } = eventData;
-    const chip = this.createCoreChip(coreChip);
+    const chip = this.createCoreChip(eventData.coreChip, false);
     this.setSpawnChipMode(chip);
   }
 
-  public spawnCustomChip(
+  private spawnCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
     const { name, blueprint, color } = eventData;
@@ -578,7 +571,7 @@ export class Circuit {
     this.renderer.render();
 
     this.isWiringMode && this.renderWiringModeWire();
-    this.isSpawnChipMode && this.renderSpawnChipMode();
+    this.isSpawnChipMode && this.chipSpawner.renderGhostChips();
     this.isSpawnIOChipHoverMode && this.renderGhostIOChip();
 
     this.renderWires();
