@@ -1,9 +1,7 @@
 import {
   Interaction,
   Mode,
-  RepositionMode,
   WiringMode,
-  CircuitRenderOptions,
   SpawnIOChipHoverMode,
 } from "./circuit.interface";
 
@@ -27,7 +25,8 @@ import { CircuitHelper } from "../helpers/circuit-helper";
 import { BlueprintHelper } from "../helpers/blueprint-helper";
 import { idGenerator } from "../helpers/id-generator";
 import { CircuitRenderer } from "./circuit.renderer";
-import { ChipSpawner } from "./modes/spawn-chip-mode";
+import { ChipSpawnerService, RepositionService } from "./services";
+import type { Position, Size } from "../api/abstract-renderer";
 
 export class Circuit {
   p: p5;
@@ -38,17 +37,22 @@ export class Circuit {
   chips: Chip[];
   mode: Mode;
   wiringMode: WiringMode;
-  repositionMode: RepositionMode;
+  // repositionMode: RepositionMode;
   spawnIOChipHoverMode: SpawnIOChipHoverMode;
   mouseReleaseAfterDrag: boolean;
 
   renderer: CircuitRenderer;
-  chipSpawner: ChipSpawner;
+
+  chipSpawnerService: ChipSpawnerService;
+  repositionService: RepositionService;
 
   constructor(
     p5: p5,
     name: string,
-    options: CircuitRenderOptions,
+    options: {
+      position: Position;
+      size: Size;
+    },
     isCustomChip?: boolean
   ) {
     this.p = p5;
@@ -59,24 +63,25 @@ export class Circuit {
     this.chips = [];
     this.mode = Mode.Idle;
     this.wiringMode = { markers: [] };
-    this.repositionMode = {};
+    // this.repositionMode = {};
     this.spawnIOChipHoverMode = {};
     this.mouseReleaseAfterDrag = false;
     !isCustomChip && this.bindEventListeners();
 
     this.renderer = new CircuitRenderer(p5, options.position, options.size);
-    this.chipSpawner = new ChipSpawner(p5, this);
+    this.chipSpawnerService = new ChipSpawnerService(p5, this);
+    this.repositionService = new RepositionService(p5, this);
   }
 
   private bindEventListeners() {
     emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
-      this.spawnCoreChip(eventData)
+      this.spawnGhostCoreChip(eventData)
     );
     emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
       this.saveCircuit(eventData)
     );
     emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
-      this.spawnCustomChip(eventData)
+      this.spawnGhostCustomChip(eventData)
     );
     emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
       this.importCustomChip(eventData)
@@ -103,8 +108,9 @@ export class Circuit {
     return this.mode === Mode.Reposition;
   }
 
-  private setRepositionMode(repositionMode: RepositionMode): void {
-    this.repositionMode = repositionMode;
+  // TODO: switch to setMode(mode: Mode) => {}
+  private setRepositionMode(chip: Chip | IOChip): void {
+    this.repositionService.setChip(chip)
     this.mode = Mode.Reposition;
   }
 
@@ -113,7 +119,7 @@ export class Circuit {
   }
 
   private setSpawnChipMode(chip: Chip): void {
-    this.chipSpawner.createGhostChip(chip);
+    this.chipSpawnerService.createGhostChip(chip);
     this.mode = Mode.SpawnChip;
   }
 
@@ -146,8 +152,8 @@ export class Circuit {
   }
 
   public setIdleMode(): void {
-    this.chipSpawner.clear();
-    this.repositionMode = {};
+    this.chipSpawnerService.clear();
+    this.repositionService.clear();
     this.wiringMode = {
       startPin: undefined,
       endPin: undefined,
@@ -307,13 +313,9 @@ export class Circuit {
 
       case Interaction.Drag:
         if (entity instanceof Chip) {
-          this.setRepositionMode({
-            chip: entity,
-          });
+          this.setRepositionMode(entity);
         } else if (entity instanceof IOSlider) {
-          this.setRepositionMode({
-            chip: entity.chip,
-          });
+          this.setRepositionMode(entity.chip);
         }
         break;
 
@@ -354,23 +356,6 @@ export class Circuit {
     }
   }
 
-  private handleRepositionMode(interaction: Interaction): void {
-    switch (interaction) {
-      case Interaction.Click:
-        break;
-
-      case Interaction.Drag:
-        if (this.repositionMode.chip instanceof Chip && this.isMouseOver()) {
-          this.repositionMode.chip.mouseDragged();
-        } else if (this.repositionMode.chip instanceof IOChip) {
-          this.repositionMode.chip.mouseDragged();
-        } else {
-          this.setIdleMode();
-        }
-        break;
-    }
-  }
-
   private handleSpawnIOChipHoverMode(interaction: Interaction): void {
     const entity = this.getMouseOverEntity();
 
@@ -391,15 +376,16 @@ export class Circuit {
     }
   }
 
-  public createCoreChip(coreChip: CoreGate, shouldSpawn = true): CoreChip {
+  public createCoreChip(coreChip: CoreGate, spawn = true): CoreChip {
     const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
-    shouldSpawn && this.spawnChip(chip);
+    spawn && this.chipSpawnerService.spawnChip(chip);
     return chip;
   }
 
   public createCustomChip(
     circuit: Circuit,
-    color: string = "green"
+    color: string = "green",
+    spawn = true
   ): CustomChip {
     const chip = new CustomChip(
       this.p,
@@ -407,18 +393,18 @@ export class Circuit {
       idGenerator.chipId(circuit.name),
       color
     );
-    this.spawnChip(chip);
+    spawn && this.chipSpawnerService.spawnChip(chip);
     return chip;
   }
 
-  private spawnCoreChip(
+  private spawnGhostCoreChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
     const chip = this.createCoreChip(eventData.coreChip, false);
     this.setSpawnChipMode(chip);
   }
 
-  private spawnCustomChip(
+  private spawnGhostCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
     const { name, blueprint, color } = eventData;
@@ -429,7 +415,7 @@ export class Circuit {
       "main"
     );
 
-    const customChip = this.createCustomChip(circuit, color);
+    const customChip = this.createCustomChip(circuit, color, false);
     this.setSpawnChipMode(customChip);
   }
 
@@ -480,8 +466,8 @@ export class Circuit {
     }
     this.isIdleMode && this.handleIdleMode(Interaction.Click);
     this.isWiringMode && this.handleWiringMode(Interaction.Click);
-    this.isSpawnChipMode && this.chipSpawner.handle(Interaction.Click);
-    this.isRepositionMode && this.handleRepositionMode(Interaction.Click);
+    this.isSpawnChipMode && this.chipSpawnerService.handle(Interaction.Click);
+    this.isRepositionMode && this.repositionService.handle(Interaction.Click);
     this.isSpawnIOChipHoverMode &&
       this.handleSpawnIOChipHoverMode(Interaction.Click);
   }
@@ -489,15 +475,15 @@ export class Circuit {
   public mouseDoubleClicked(): void {
     this.isIdleMode && this.handleIdleMode(Interaction.DoubleClick);
     this.isWiringMode && this.handleWiringMode(Interaction.DoubleClick);
-    this.isSpawnChipMode && this.chipSpawner.handle(Interaction.DoubleClick);
-    this.isRepositionMode && this.handleRepositionMode(Interaction.DoubleClick);
+    this.isSpawnChipMode && this.chipSpawnerService.handle(Interaction.DoubleClick);
+    this.isRepositionMode && this.repositionService.handle(Interaction.DoubleClick);
   }
 
   public mouseDragged(): void {
     this.isIdleMode && this.handleIdleMode(Interaction.Drag);
     this.isWiringMode && this.handleWiringMode(Interaction.Drag);
-    this.isSpawnChipMode && this.chipSpawner.handle(Interaction.Drag);
-    this.isRepositionMode && this.handleRepositionMode(Interaction.Drag);
+    this.isSpawnChipMode && this.chipSpawnerService.handle(Interaction.Drag);
+    this.isRepositionMode && this.repositionService.handle(Interaction.Drag);
   }
 
   public mouseReleased(): void {
@@ -551,15 +537,11 @@ export class Circuit {
     });
   }
 
-  public spawnChip(chip: Chip): void {
-    this.chips.push(chip);
-  }
-
   public render(): void {
     this.renderer.render();
 
     this.isWiringMode && this.renderWiringModeWire();
-    this.isSpawnChipMode && this.chipSpawner.renderGhostChips();
+    this.isSpawnChipMode && this.chipSpawnerService.renderGhostChips();
     this.isSpawnIOChipHoverMode && this.renderGhostIOChip();
 
     this.renderWires();

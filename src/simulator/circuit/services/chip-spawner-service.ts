@@ -1,21 +1,22 @@
 import { Chip } from "../../chip";
-// TODO: implement Circuit interface and import from there
 import type { Circuit } from "../circuit";
 import { Interaction } from "../circuit.interface";
+import { AbstractService } from "./abstract-service";
 
-export class ChipSpawner {
-  p: p5;
+export class ChipSpawnerService extends AbstractService {
   private ghostChips: Chip[];
-  private circuit: Circuit;
 
   constructor(p: p5, circuit: Circuit) {
-    this.p = p;
-    this.circuit = circuit;
+    super(p, circuit);
     this.ghostChips = [];
   }
 
   private spawnGhostChips(): void {
-    this.ghostChips.forEach((ghostChip) => this.circuit.spawnChip(ghostChip));
+    this.ghostChips.forEach((ghostChip) => this.spawnChip(ghostChip));
+  }
+
+  public spawnChip(chip: Chip): void {
+    this.circuit.chips.push(chip);
   }
 
   public clear() {

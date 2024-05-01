@@ -10,18 +10,9 @@ export type WiringMode = {
   endPin?: Pin;
 };
 
-export type RepositionMode = {
-  chip?: Chip | IOChip;
-};
-
 export type SpawnIOChipHoverMode = {
   chip?: IOChip;
   type?: "input" | "output";
-};
-
-export type CircuitRenderOptions = {
-  position: Position;
-  size: Size;
 };
 
 export enum Mode {
