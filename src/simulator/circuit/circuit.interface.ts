@@ -14,10 +14,6 @@ export type RepositionMode = {
   chip?: Chip | IOChip;
 };
 
-export type SpawnChipMode = {
-  chips: Chip[];
-};
-
 export type SpawnIOChipHoverMode = {
   chip?: IOChip;
   type?: "input" | "output";
@@ -36,6 +32,7 @@ export enum Mode {
   SpawnIOChipHover = "SpawnIOChipHover",
 }
 
+// TODO: move to modes
 export enum Interaction {
   Click = "Click",
   DoubleClick = "DoubleClick",
