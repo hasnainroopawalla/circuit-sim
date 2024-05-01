@@ -1,5 +1,5 @@
-import { MouseApi } from "./api";
-import { Circuit, config as circuitConfig } from "./circuit";
+import { Circuit } from "./circuit";
+import { config as circuitConfig } from "./circuit.config";
 
 const config = { background: "#454545" };
 

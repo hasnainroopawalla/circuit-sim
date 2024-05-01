@@ -1,1 +1,1 @@
-export { MouseApi } from "./mouse-api";
+export { BaseRenderer } from "./base-renderer";
