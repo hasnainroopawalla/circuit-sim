@@ -73,13 +73,13 @@ export class Circuit {
 
   private bindEventListeners() {
     emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
-      this.spawnGhostCoreChip(eventData)
+      this.coreChipButtonOnClick(eventData)
     );
     emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
       this.saveCircuit(eventData)
     );
     emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
-      this.spawnGhostCustomChip(eventData)
+      this.customChipButtonOnClick(eventData)
     );
     emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
       this.importCustomChip(eventData)
@@ -117,7 +117,7 @@ export class Circuit {
   }
 
   private setSpawnChipMode(chip: Chip): void {
-    this.chipSpawnController.createGhostChip(chip);
+    this.chipSpawnController.setGhostChip(chip);
     this.mode = Mode.SpawnChip;
   }
 
@@ -126,20 +126,8 @@ export class Circuit {
   }
 
   private setSpawnIOChipHoverMode(kind: "input" | "output"): void {
-    const ghostiOChip = new IOChip(
-      this.p,
-      "ghost",
-      kind === "input" ? true : false,
-      {
-        x:
-          kind === "input"
-            ? this.renderer.position.x
-            : this.renderer.position.x + this.renderer.size.w,
-        y: this.p.mouseY,
-      },
-      true
-    );
-    this.iOChipSpawnController.createGhostIOChip(ghostiOChip);
+    const ghostiOChip = this.createIOChip(kind, true, false);
+    this.iOChipSpawnController.setGhostIOChip(ghostiOChip);
     this.mode = Mode.SpawnIOChipHover;
   }
 
@@ -245,9 +233,41 @@ export class Circuit {
     }
   }
 
+  public createIOChip(
+    kind: "input" | "output",
+    isGhost = false,
+    spawn = true
+  ): IOChip {
+    const ioChip =
+      kind === "input"
+        ? new IOChip(
+            this.p,
+            idGenerator.inputChipId(),
+            true,
+            {
+              x: this.renderer.position.x,
+              y: this.p.mouseY,
+            },
+            isGhost
+          )
+        : new IOChip(
+            this.p,
+            idGenerator.outputChipId(),
+            false,
+            {
+              x: this.renderer.position.x + this.renderer.size.w,
+              y: this.p.mouseY,
+            },
+            isGhost
+          );
+
+    spawn && this.spawnIOChip(ioChip);
+    return ioChip;
+  }
+
   public createCoreChip(coreChip: CoreGate, spawn = true): CoreChip {
     const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
-    spawn && this.chipSpawnController.spawnChip(chip);
+    spawn && this.spawnChip(chip);
     return chip;
   }
 
@@ -262,18 +282,19 @@ export class Circuit {
       idGenerator.chipId(circuit.name),
       color
     );
-    spawn && this.chipSpawnController.spawnChip(chip);
+    spawn && this.spawnChip(chip);
     return chip;
   }
 
-  private spawnGhostCoreChip(
+  // TODO: Move to controller
+  private coreChipButtonOnClick(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
     const chip = this.createCoreChip(eventData.coreChip, false);
     this.setSpawnChipMode(chip);
   }
 
-  private spawnGhostCustomChip(
+  private customChipButtonOnClick(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
     const { name, blueprint, color } = eventData;
@@ -288,29 +309,13 @@ export class Circuit {
     this.setSpawnChipMode(customChip);
   }
 
-  // TODO: need to create a proxy chip (ghost) 
-  public spawnIOChip() {
-    this.iOChipSpawnController === "input"
-      ? this.spawnInputIOChip()
-      : this.spawnOutputIOChip();
+  public spawnChip(chip: Chip): void {
+    this.chips.push(chip);
   }
 
-  public spawnInputIOChip(): IOChip {
-    const inputIOChip = new IOChip(this.p, idGenerator.inputChipId(), true, {
-      x: this.renderer.position.x,
-      y: this.p.mouseY,
-    });
-    this.inputs.push(inputIOChip);
-    return inputIOChip;
-  }
-
-  public spawnOutputIOChip(): IOChip {
-    const outputIOChip = new IOChip(this.p, idGenerator.outputChipId(), false, {
-      x: this.renderer.position.x + this.renderer.size.w,
-      y: this.p.mouseY,
-    });
-    this.outputs.push(outputIOChip);
-    return outputIOChip;
+  public spawnIOChip(ioChip: IOChip) {
+    ioChip.ghostToReal();
+    ioChip.isInput ? this.inputs.push(ioChip) : this.outputs.push(ioChip);
   }
 
   public spawnWire(
@@ -340,7 +345,7 @@ export class Circuit {
     this.isRepositionMode &&
       this.repositionController.handle(Interaction.Click);
     this.isSpawnIOChipHoverMode &&
-      this.handleSpawnIOChipHoverMode(Interaction.Click);
+      this.iOChipSpawnController.handle(Interaction.Click);
   }
 
   public mouseDoubleClicked(): void {
@@ -369,7 +374,7 @@ export class Circuit {
   public mouseMoved(): void {
     this.isIdleMode && this.handleIdleMode(Interaction.Move);
     this.isSpawnIOChipHoverMode &&
-      this.handleSpawnIOChipHoverMode(Interaction.Move);
+      this.iOChipSpawnController.handle(Interaction.Move);
   }
 
   public isMouseOver(): boolean {
@@ -415,7 +420,8 @@ export class Circuit {
 
     this.isWiringMode && this.wiringController.renderGhostWire();
     this.isSpawnChipMode && this.chipSpawnController.renderGhostChips();
-    this.isSpawnIOChipHoverMode && this.renderGhostIOChip();
+    this.isSpawnIOChipHoverMode &&
+      this.iOChipSpawnController.renderGhostIOChip();
 
     this.renderWires();
     this.renderChips();

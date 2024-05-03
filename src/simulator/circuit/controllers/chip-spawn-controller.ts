@@ -13,19 +13,14 @@ export class ChipSpawnController extends AbstractController {
   }
 
   private spawnGhostChips(): void {
-    this.ghostChips.forEach((ghostChip) => this.spawnChip(ghostChip));
-  }
-
-  // TODO: where should the spawning logic live?
-  public spawnChip(chip: Chip): void {
-    this.circuit.chips.push(chip);
+    this.ghostChips.forEach((ghostChip) => this.circuit.spawnChip(ghostChip));
   }
 
   public clear() {
     this.ghostChips = [];
   }
 
-  public createGhostChip(chip: Chip): void {
+  public setGhostChip(chip: Chip): void {
     this.ghostChips.push(chip);
   }
 

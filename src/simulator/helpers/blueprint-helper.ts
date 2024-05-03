@@ -109,12 +109,12 @@ export class BlueprintHelper {
 
     for (let i = 0; i < circuitSchema.inputs.length; i++) {
       const input = circuitSchema.inputs[i];
-      entities[input.id] = circuit.spawnInputIOChip();
+      entities[input.id] = circuit.createIOChip("input");
     }
 
     for (let i = 0; i < circuitSchema.outputs.length; i++) {
       const output = circuitSchema.outputs[i];
-      entities[output.id] = circuit.spawnOutputIOChip();
+      entities[output.id] = circuit.createIOChip("output");
     }
 
     for (let i = 0; i < circuitSchema.chips.length; i++) {

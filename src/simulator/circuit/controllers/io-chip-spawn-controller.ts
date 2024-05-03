@@ -10,7 +10,7 @@ export class IOChipSpawnController extends AbstractController {
     super(p, circuit);
   }
 
-  public createGhostIOChip(iOChip: IOChip) {
+  public setGhostIOChip(iOChip: IOChip) {
     this.ghostIOChip = iOChip;
   }
 
@@ -23,7 +23,7 @@ export class IOChipSpawnController extends AbstractController {
 
     switch (interaction) {
       case Interaction.Click:
-        this.circuit.spawnIOChip();
+        this.ghostIOChip && this.circuit.spawnIOChip(this.ghostIOChip);
         break;
 
       case Interaction.Move:

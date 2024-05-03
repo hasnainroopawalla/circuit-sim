@@ -160,4 +160,10 @@ export class IOChip {
       ? this.slider
       : undefined;
   }
+
+  // TODO: rename
+  public ghostToReal(){
+    this.isGhost = false;
+    this.pin.isGhost = false;
+  }
 }

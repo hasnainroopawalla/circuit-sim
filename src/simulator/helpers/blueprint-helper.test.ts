@@ -215,9 +215,9 @@ describe("BlueprintHelper", () => {
 
   const createANDCircuit = (): Circuit => {
     const circuit = createCircuit("AND");
-    const input0 = circuit.spawnInputIOChip();
-    const input1 = circuit.spawnInputIOChip();
-    const output0 = circuit.spawnOutputIOChip();
+    const input0 = circuit.createIOChip("input");
+    const input1 = circuit.createIOChip("input");
+    const output0 = circuit.createIOChip("output");
     const andChip = circuit.createCoreChip("AND");
 
     circuit.spawnWire(input0.pin, andChip.inputPins[0]);
@@ -228,9 +228,9 @@ describe("BlueprintHelper", () => {
 
   const createNANDCircuit = (): Circuit => {
     const circuit = createCircuit("NAND");
-    const input0 = circuit.spawnInputIOChip();
-    const input1 = circuit.spawnInputIOChip();
-    const output0 = circuit.spawnOutputIOChip();
+    const input0 = circuit.createIOChip("input");
+    const input1 = circuit.createIOChip("input");
+    const output0 = circuit.createIOChip("output");
     const andChip = circuit.createCoreChip("AND");
     const notChip = circuit.createCoreChip("NOT");
 
@@ -243,9 +243,9 @@ describe("BlueprintHelper", () => {
 
   const createNORCircuit = (): Circuit => {
     const circuit = createCircuit("NOR");
-    const input0 = circuit.spawnInputIOChip();
-    const input1 = circuit.spawnInputIOChip();
-    const output0 = circuit.spawnOutputIOChip();
+    const input0 = circuit.createIOChip("input");
+    const input1 = circuit.createIOChip("input");
+    const output0 = circuit.createIOChip("output");
     const orChip = circuit.createCoreChip("OR");
     const notChip = circuit.createCoreChip("NOT");
 
@@ -277,9 +277,9 @@ describe("BlueprintHelper", () => {
       const nor1 = baseCircuit.createCustomChip(norCircuit);
       const nor2 = baseCircuit.createCustomChip(norCircuit);
 
-      const input0 = baseCircuit.spawnInputIOChip();
-      const input1 = baseCircuit.spawnInputIOChip();
-      const output1 = baseCircuit.spawnOutputIOChip();
+      const input0 = baseCircuit.createIOChip("input");
+      const input1 = baseCircuit.createIOChip("input");
+      const output1 = baseCircuit.createIOChip("output");
 
       baseCircuit.spawnWire(input0.pin, nor0.inputPins[0]);
       baseCircuit.spawnWire(input0.pin, nor0.inputPins[1]);
