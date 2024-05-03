@@ -1,9 +1,10 @@
 import { Chip } from "../../chip";
 import type { Circuit } from "../circuit";
 import { Interaction } from "../circuit.interface";
-import { AbstractService } from "./abstract-service";
+import { AbstractController } from "./abstract-controller";
 
-export class ChipSpawnerService extends AbstractService {
+// TODO: consider merging the logic with IOChipSpawn
+export class ChipSpawnController extends AbstractController {
   private ghostChips: Chip[];
 
   constructor(p: p5, circuit: Circuit) {
@@ -15,6 +16,7 @@ export class ChipSpawnerService extends AbstractService {
     this.ghostChips.forEach((ghostChip) => this.spawnChip(ghostChip));
   }
 
+  // TODO: where should the spawning logic live?
   public spawnChip(chip: Chip): void {
     this.circuit.chips.push(chip);
   }

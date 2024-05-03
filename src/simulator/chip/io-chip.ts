@@ -19,6 +19,7 @@ export const iOChipConfig = {
   },
 };
 
+// TODO: improve ghost logic
 export class IOChip {
   p: p5;
   name: string;

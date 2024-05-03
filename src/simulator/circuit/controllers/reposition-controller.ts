@@ -1,9 +1,9 @@
 import { Chip, IOChip } from "../../chip";
 import type { Circuit } from "../circuit";
 import { Interaction } from "../circuit.interface";
-import { AbstractService } from "./abstract-service";
+import { AbstractController } from "./abstract-controller";
 
-export class RepositionService extends AbstractService {
+export class RepositionController extends AbstractController {
   private chip?: Chip | IOChip;
 
   constructor(p: p5, circuit: Circuit) {

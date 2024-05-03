@@ -2,7 +2,7 @@
 import type { Circuit } from "../circuit";
 import type { Interaction } from "../circuit.interface";
 
-export abstract class AbstractService {
+export abstract class AbstractController {
   p: p5;
   protected circuit: Circuit;
 

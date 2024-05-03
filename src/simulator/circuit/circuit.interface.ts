@@ -1,19 +1,5 @@
-import { Position, Size } from "../shared.interface";
 
-import { IOChip, Chip } from "../chip";
-import { Pin } from "../pin";
-import type { WireMarker } from "../wire";
-
-export type WiringMode = {
-  markers: WireMarker[];
-  startPin?: Pin;
-  endPin?: Pin;
-};
-
-export type SpawnIOChipHoverMode = {
-  chip?: IOChip;
-  type?: "input" | "output";
-};
+import { IOChip } from "../chip";
 
 export enum Mode {
   Idle = "Idle",
