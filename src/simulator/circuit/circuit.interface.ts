@@ -1,5 +1,5 @@
-
-import { IOChip } from "../chip";
+import type { Chip, IOChip } from "../chip";
+import type { Pin } from "../pin";
 
 export enum Mode {
   Idle = "Idle",
@@ -30,3 +30,9 @@ export type CustomChipSchema = {
 export type CustomChipBlueprint = {
   [chipName: string]: CustomChipSchema;
 };
+
+export type CircuitModeProps =
+  | { mode: Mode.SpawnChip; deps: { chip: Chip } }
+  | { mode: Mode.Reposition; deps: { chip: Chip | IOChip } }
+  | { mode: Mode.Wiring; deps: { startPin: Pin } }
+  | { mode: Mode.SpawnIOChipHover; deps: { kind: "input" | "output" } };

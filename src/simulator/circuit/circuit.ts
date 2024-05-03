@@ -1,5 +1,4 @@
-import { Interaction, Mode } from "./circuit.interface";
-
+import { CircuitModeProps, Interaction, Mode } from "./circuit.interface";
 import {
   Chip,
   CoreChip,
@@ -143,6 +142,14 @@ export class Circuit {
     this.mode = Mode.Idle;
   }
 
+  // TODO: WIP
+  public setMode(props: CircuitModeProps) {
+    switch (props.mode) {
+      case Mode.Reposition:
+        console.log(props.deps.chip);
+    }
+  }
+
   public getMouseOverEntity(): IOChip | IOSlider | Pin | Chip | undefined {
     // Input Entities
     for (let i = 0; i < this.inputs.length; i++) {
@@ -199,6 +206,7 @@ export class Circuit {
   }
 
   private handleIdleMode(interaction: Interaction): void {
+    this.setMode(Mode.SpawnChip, { kind: "output" });
     const entity = this.getMouseOverEntity();
 
     switch (interaction) {
