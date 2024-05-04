@@ -1,6 +1,6 @@
 import { Chip } from "../../chip";
 import type { Circuit } from "../circuit";
-import { Interaction } from "../circuit.interface";
+import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
 
 // TODO: consider merging the logic with IOChipSpawn
@@ -29,7 +29,7 @@ export class ChipSpawnController extends AbstractController {
       case Interaction.Click:
         if (this.circuit.isMouseOver()) {
           this.spawnGhostChips();
-          this.circuit.setIdleMode();
+          this.circuit.setMode({mode: Mode.Idle})
         }
         break;
     }

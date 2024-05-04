@@ -1,6 +1,6 @@
 import { Chip, IOChip } from "../../chip";
 import type { Circuit } from "../circuit";
-import { Interaction } from "../circuit.interface";
+import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
 
 export class RepositionController extends AbstractController {
@@ -26,7 +26,7 @@ export class RepositionController extends AbstractController {
         } else if (this.chip instanceof IOChip) {
           this.chip.mouseDragged();
         } else {
-          this.circuit.setIdleMode();
+          this.circuit.setMode({mode: Mode.Idle})
         }
         break;
     }

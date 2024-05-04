@@ -1,6 +1,6 @@
 import { IOChip, IOSlider } from "../../chip";
 import type { Circuit } from "../circuit";
-import { Interaction } from "../circuit.interface";
+import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
 
 export class IOChipSpawnController extends AbstractController {
@@ -32,7 +32,7 @@ export class IOChipSpawnController extends AbstractController {
           (!this.circuit.isMouseOverInputChipPanel() &&
             !this.circuit.isMouseOverOutputChipPanel())
         ) {
-          this.circuit.setIdleMode();
+          this.circuit.setMode({mode: Mode.Idle})
         }
         break;
     }

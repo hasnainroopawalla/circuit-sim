@@ -100,7 +100,7 @@ export class WiringController extends AbstractController {
             // A wire is not allowed to start and end on the same chip
             if (this.startPin.chip !== entity.chip) {
               this.circuit.spawnWire(this.startPin, entity, this.markers);
-              this.circuit.setIdleMode();
+              this.circuit.setMode({mode: Mode.Idle})
             }
           } else {
             this.addWireMarker();
@@ -109,7 +109,7 @@ export class WiringController extends AbstractController {
         break;
 
       case Interaction.DoubleClick:
-        this.circuit.setIdleMode();
+        this.circuit.setMode({mode: Mode.Idle})
         break;
     }
   }

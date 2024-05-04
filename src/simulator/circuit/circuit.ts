@@ -92,62 +92,52 @@ export class Circuit {
     this.chips = [];
   }
 
-  private get isWiringMode(): boolean {
-    return this.mode === Mode.Wiring;
-  }
+  // private get isWiringMode(): boolean {
+  //   return this.mode === Mode.Wiring;
+  // }
 
-  private setWiringMode(startPin: Pin): void {
-    this.wiringController.setStartPin(startPin);
-    this.mode = Mode.Wiring;
-  }
+  // private get isRepositionMode(): boolean {
+  //   return this.mode === Mode.Reposition;
+  // }
 
-  private get isRepositionMode(): boolean {
-    return this.mode === Mode.Reposition;
-  }
+  // private get isSpawnChipMode(): boolean {
+  //   return this.mode === Mode.SpawnChip;
+  // }
 
-  // TODO: switch to generic setMode<T>(mode: Mode, args) => {}
-  private setRepositionMode(chip: Chip | IOChip): void {
-    this.repositionController.setChip(chip);
-    this.mode = Mode.Reposition;
-  }
+  // private get isSpawnIOChipHoverMode(): boolean {
+  //   return this.mode === Mode.SpawnIOChipHover;
+  // }
 
-  private get isSpawnChipMode(): boolean {
-    return this.mode === Mode.SpawnChip;
-  }
+  // private get isIdleMode(): boolean {
+  //   return this.mode === Mode.Idle;
+  // }
 
-  private setSpawnChipMode(chip: Chip): void {
-    this.chipSpawnController.setGhostChip(chip);
-    this.mode = Mode.SpawnChip;
-  }
-
-  private get isSpawnIOChipHoverMode(): boolean {
-    return this.mode === Mode.SpawnIOChipHover;
-  }
-
-  private setSpawnIOChipHoverMode(kind: "input" | "output"): void {
-    const ghostiOChip = this.createIOChip(kind, true, false);
-    this.iOChipSpawnController.setGhostIOChip(ghostiOChip);
-    this.mode = Mode.SpawnIOChipHover;
-  }
-
-  private get isIdleMode(): boolean {
-    return this.mode === Mode.Idle;
-  }
-
-  public setIdleMode(): void {
-    this.chipSpawnController.clear();
-    this.repositionController.clear();
-    this.wiringController.clear();
-    this.iOChipSpawnController.clear();
-    this.mode = Mode.Idle;
-  }
-
-  // TODO: WIP
   public setMode(props: CircuitModeProps) {
-    switch (props.mode) {
+    const { mode, deps } = props;
+    switch (mode) {
+      case Mode.Idle:
+        this.chipSpawnController.clear();
+        this.repositionController.clear();
+        this.wiringController.clear();
+        this.iOChipSpawnController.clear();
+        break;
       case Mode.Reposition:
-        console.log(props.deps.chip);
+        this.repositionController.setChip(deps.chip);
+        break;
+      case Mode.SpawnChip:
+        this.chipSpawnController.setGhostChip(deps.chip);
+        break;
+      case Mode.SpawnIOChipHover:
+        const ghostiOChip = this.createIOChip(deps.kind, true, false);
+        this.iOChipSpawnController.setGhostIOChip(ghostiOChip);
+        break;
+      case Mode.Wiring:
+        this.wiringController.setStartPin(deps.startPin);
+        break;
+      default:
+        throw new Error("Invalid mode");
     }
+    this.mode = mode;
   }
 
   public getMouseOverEntity(): IOChip | IOSlider | Pin | Chip | undefined {
@@ -206,7 +196,6 @@ export class Circuit {
   }
 
   private handleIdleMode(interaction: Interaction): void {
-    this.setMode(Mode.SpawnChip, { kind: "output" });
     const entity = this.getMouseOverEntity();
 
     switch (interaction) {
@@ -217,7 +206,7 @@ export class Circuit {
               "Wires can only start from an output pin"
             );
           }
-          this.setWiringMode(entity);
+          this.setMode({ mode: Mode.Wiring, deps: { startPin: entity } });
         } else if (entity instanceof IOChip) {
           entity.mouseClicked();
         } else if (entity instanceof IOSlider) {
@@ -227,17 +216,24 @@ export class Circuit {
 
       case Interaction.Drag:
         if (entity instanceof Chip) {
-          this.setRepositionMode(entity);
+          this.setMode({ mode: Mode.Reposition, deps: { chip: entity } });
         } else if (entity instanceof IOSlider) {
-          this.setRepositionMode(entity.chip);
+          this.setMode({ mode: Mode.Reposition, deps: { chip: entity.chip } });
         }
         break;
 
       case Interaction.Move:
         this.isMouseOverInputChipPanel() &&
-          this.setSpawnIOChipHoverMode("input");
+          this.setMode({
+            mode: Mode.SpawnIOChipHover,
+            deps: { kind: "input" },
+          });
+
         this.isMouseOverOutputChipPanel() &&
-          this.setSpawnIOChipHoverMode("output");
+          this.setMode({
+            mode: Mode.SpawnIOChipHover,
+            deps: { kind: "output" },
+          });
     }
   }
 
@@ -299,7 +295,7 @@ export class Circuit {
     eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {
     const chip = this.createCoreChip(eventData.coreChip, false);
-    this.setSpawnChipMode(chip);
+    this.setMode({ mode: Mode.SpawnChip, deps: { chip } });
   }
 
   private customChipButtonOnClick(
@@ -314,7 +310,7 @@ export class Circuit {
     );
 
     const customChip = this.createCustomChip(circuit, color, false);
-    this.setSpawnChipMode(customChip);
+    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
   }
 
   public spawnChip(chip: Chip): void {
@@ -342,47 +338,73 @@ export class Circuit {
     }
   }
 
+  private handleMouse(interaction: Interaction): void {
+    switch (this.mode) {
+      case Mode.Idle:
+        this.handleIdleMode(interaction);
+        break;
+      case Mode.Reposition:
+        this.repositionController.handle(interaction);
+        break;
+      case Mode.SpawnChip:
+        this.chipSpawnController.handle(interaction);
+        break;
+      case Mode.SpawnIOChipHover:
+        this.iOChipSpawnController.handle(interaction);
+        break;
+      case Mode.Wiring:
+        this.wiringController.handle(interaction);
+        break;
+    }
+  }
+
+  // TODO: hover on IOChip bug
   public mouseClicked(): void {
     if (this.mouseReleaseAfterDrag) {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    this.isIdleMode && this.handleIdleMode(Interaction.Click);
-    this.isWiringMode && this.wiringController.handle(Interaction.Click);
-    this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Click);
-    this.isRepositionMode &&
-      this.repositionController.handle(Interaction.Click);
-    this.isSpawnIOChipHoverMode &&
-      this.iOChipSpawnController.handle(Interaction.Click);
+    this.handleMouse(Interaction.Click);
+    // this.isIdleMode && this.handleIdleMode(Interaction.Click);
+    // this.isWiringMode && this.wiringController.handle(Interaction.Click);
+    // this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Click);
+    // this.isRepositionMode &&
+    //   this.repositionController.handle(Interaction.Click);
+    // this.isSpawnIOChipHoverMode &&
+    //   this.iOChipSpawnController.handle(Interaction.Click);
   }
 
   public mouseDoubleClicked(): void {
-    this.isIdleMode && this.handleIdleMode(Interaction.DoubleClick);
-    this.isWiringMode && this.wiringController.handle(Interaction.DoubleClick);
-    this.isSpawnChipMode &&
-      this.chipSpawnController.handle(Interaction.DoubleClick);
-    this.isRepositionMode &&
-      this.repositionController.handle(Interaction.DoubleClick);
+    this.handleMouse(Interaction.DoubleClick);
+    // this.isIdleMode && this.handleIdleMode(Interaction.DoubleClick);
+    // this.isWiringMode && this.wiringController.handle(Interaction.DoubleClick);
+    // this.isSpawnChipMode &&
+    //   this.chipSpawnController.handle(Interaction.DoubleClick);
+    // this.isRepositionMode &&
+    //   this.repositionController.handle(Interaction.DoubleClick);
   }
 
   public mouseDragged(): void {
-    this.isIdleMode && this.handleIdleMode(Interaction.Drag);
-    this.isWiringMode && this.wiringController.handle(Interaction.Drag);
-    this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Drag);
-    this.isRepositionMode && this.repositionController.handle(Interaction.Drag);
+    this.handleMouse(Interaction.Drag);
+
+    // this.isIdleMode && this.handleIdleMode(Interaction.Drag);
+    // this.isWiringMode && this.wiringController.handle(Interaction.Drag);
+    // this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Drag);
+    // this.isRepositionMode && this.repositionController.handle(Interaction.Drag);
   }
 
   public mouseReleased(): void {
-    if (this.isRepositionMode) {
+    if (this.mode === Mode.Reposition) {
       this.mouseReleaseAfterDrag = true;
-      this.setIdleMode();
+      this.setMode({ mode: Mode.Idle });
     }
   }
 
   public mouseMoved(): void {
-    this.isIdleMode && this.handleIdleMode(Interaction.Move);
-    this.isSpawnIOChipHoverMode &&
-      this.iOChipSpawnController.handle(Interaction.Move);
+    this.handleMouse(Interaction.Move);
+    // this.isIdleMode && this.handleIdleMode(Interaction.Move);
+    // this.isSpawnIOChipHoverMode &&
+    //   this.iOChipSpawnController.handle(Interaction.Move);
   }
 
   public isMouseOver(): boolean {
@@ -426,9 +448,9 @@ export class Circuit {
   public render(): void {
     this.renderer.render();
 
-    this.isWiringMode && this.wiringController.renderGhostWire();
-    this.isSpawnChipMode && this.chipSpawnController.renderGhostChips();
-    this.isSpawnIOChipHoverMode &&
+    this.mode === Mode.Wiring && this.wiringController.renderGhostWire();
+    this.mode === Mode.SpawnChip && this.chipSpawnController.renderGhostChips();
+    this.mode === Mode.SpawnIOChipHover &&
       this.iOChipSpawnController.renderGhostIOChip();
 
     this.renderWires();
