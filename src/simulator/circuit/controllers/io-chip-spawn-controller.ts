@@ -29,8 +29,8 @@ export class IOChipSpawnController extends AbstractController {
       case Interaction.Move:
         if (
           entity instanceof IOSlider ||
-          (!this.circuit.isMouseOverInputChipPanel() &&
-            !this.circuit.isMouseOverOutputChipPanel())
+          (!this.circuit.isMouseOverIOChipPanel("input") &&
+            !this.circuit.isMouseOverIOChipPanel("output"))
         ) {
           this.circuit.setMode({mode: Mode.Idle})
         }

@@ -19,23 +19,18 @@ export class CircuitRenderer extends AbstractRenderer {
     );
   }
 
-  public isMouseOverInputChipPanel(): boolean {
-    return (
-      this.p.mouseX >= 0 &&
-      this.p.mouseX <= config.widthScale / 2 &&
-      this.p.mouseY >= this.position.y &&
-      this.p.mouseY <= this.position.y + this.size.h
-      // !this.isMouseOverlapping(this.inputs)
-    );
-  }
-
-  public isMouseOverOutputChipPanel(): boolean {
-    return (
-      this.p.mouseX >= this.position.x + this.size.w + config.widthScale / 2 &&
-      this.p.mouseY >= this.position.y &&
-      this.p.mouseY <= this.position.y + this.size.h
-      // !this.isMouseOverlapping(this.inputs)
-    );
+  public isMouseOverIOChipPanel(kind: "input" | "output"): boolean {
+    return kind === "input"
+      ? this.p.mouseX >= 0 &&
+          this.p.mouseX <= config.widthScale / 2 &&
+          this.p.mouseY >= this.position.y &&
+          this.p.mouseY <= this.position.y + this.size.h
+      : // !this.isMouseOverlapping(this.inputs)
+        this.p.mouseX >=
+          this.position.x + this.size.w + config.widthScale / 2 &&
+          this.p.mouseY >= this.position.y &&
+          this.p.mouseY <= this.position.y + this.size.h;
+        // !this.isMouseOverlapping(this.inputs)
   }
 
   public mouseDragged(): void {}

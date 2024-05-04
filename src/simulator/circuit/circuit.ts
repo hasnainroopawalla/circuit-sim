@@ -25,6 +25,7 @@ import {
   WiringController,
 } from "./controllers";
 import type { Position, Size } from "../api/abstract-renderer";
+import { IdleModeController } from "./controllers/idle-mode-controller";
 
 export class Circuit {
   p: p5;
@@ -38,6 +39,7 @@ export class Circuit {
 
   renderer: CircuitRenderer;
 
+  idleModeController: IdleModeController;
   chipSpawnController: ChipSpawnController;
   repositionController: RepositionController;
   wiringController: WiringController;
@@ -64,31 +66,12 @@ export class Circuit {
 
     this.renderer = new CircuitRenderer(p5, options.position, options.size);
 
+    this.idleModeController = new IdleModeController(p5, this);
     this.chipSpawnController = new ChipSpawnController(p5, this);
     this.repositionController = new RepositionController(p5, this);
     this.wiringController = new WiringController(p5, this);
     this.iOChipSpawnController = new IOChipSpawnController(p5, this);
   }
-
-  // private get isWiringMode(): boolean {
-  //   return this.mode === Mode.Wiring;
-  // }
-
-  // private get isRepositionMode(): boolean {
-  //   return this.mode === Mode.Reposition;
-  // }
-
-  // private get isSpawnChipMode(): boolean {
-  //   return this.mode === Mode.SpawnChip;
-  // }
-
-  // private get isSpawnIOChipHoverMode(): boolean {
-  //   return this.mode === Mode.SpawnIOChipHover;
-  // }
-
-  // private get isIdleMode(): boolean {
-  //   return this.mode === Mode.Idle;
-  // }
 
   public setMode(props: CircuitModeProps) {
     const { mode, deps } = props;
@@ -145,12 +128,8 @@ export class Circuit {
     }
   }
 
-  public isMouseOverInputChipPanel(): boolean {
-    return this.renderer.isMouseOverInputChipPanel();
-  }
-
-  public isMouseOverOutputChipPanel(): boolean {
-    return this.renderer.isMouseOverOutputChipPanel();
+  public isMouseOverIOChipPanel(kind: "input" | "output"): boolean {
+    return this.renderer.isMouseOverIOChipPanel(kind);
   }
 
   public createIOChip(
@@ -238,32 +217,14 @@ export class Circuit {
       return;
     }
     this.handleMouse(Interaction.Click);
-    // this.isIdleMode && this.handleIdleMode(Interaction.Click);
-    // this.isWiringMode && this.wiringController.handle(Interaction.Click);
-    // this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Click);
-    // this.isRepositionMode &&
-    //   this.repositionController.handle(Interaction.Click);
-    // this.isSpawnIOChipHoverMode &&
-    //   this.iOChipSpawnController.handle(Interaction.Click);
   }
 
   public mouseDoubleClicked(): void {
     this.handleMouse(Interaction.DoubleClick);
-    // this.isIdleMode && this.handleIdleMode(Interaction.DoubleClick);
-    // this.isWiringMode && this.wiringController.handle(Interaction.DoubleClick);
-    // this.isSpawnChipMode &&
-    //   this.chipSpawnController.handle(Interaction.DoubleClick);
-    // this.isRepositionMode &&
-    //   this.repositionController.handle(Interaction.DoubleClick);
   }
 
   public mouseDragged(): void {
     this.handleMouse(Interaction.Drag);
-
-    // this.isIdleMode && this.handleIdleMode(Interaction.Drag);
-    // this.isWiringMode && this.wiringController.handle(Interaction.Drag);
-    // this.isSpawnChipMode && this.chipSpawnController.handle(Interaction.Drag);
-    // this.isRepositionMode && this.repositionController.handle(Interaction.Drag);
   }
 
   public mouseReleased(): void {
@@ -275,9 +236,6 @@ export class Circuit {
 
   public mouseMoved(): void {
     this.handleMouse(Interaction.Move);
-    // this.isIdleMode && this.handleIdleMode(Interaction.Move);
-    // this.isSpawnIOChipHoverMode &&
-    //   this.iOChipSpawnController.handle(Interaction.Move);
   }
 
   public isMouseOver(): boolean {
@@ -331,10 +289,11 @@ export class Circuit {
     this.renderIOChips();
   }
 
+  // TODO: rename
   private handleMouse(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
-        this.handleIdleMode(interaction);
+        this.idleModeController.handle(interaction);
         break;
       case Mode.Reposition:
         this.repositionController.handle(interaction);
@@ -372,48 +331,6 @@ export class Circuit {
 
     const customChip = this.createCustomChip(circuit, color, false);
     this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
-  }
-
-  private handleIdleMode(interaction: Interaction): void {
-    const entity = this.getMouseOverEntity();
-
-    switch (interaction) {
-      case Interaction.Click:
-        if (entity instanceof Pin) {
-          if (entity.isInput) {
-            return EmitterHelper.notification(
-              "Wires can only start from an output pin"
-            );
-          }
-          this.setMode({ mode: Mode.Wiring, deps: { startPin: entity } });
-        } else if (entity instanceof IOChip) {
-          entity.mouseClicked();
-        } else if (entity instanceof IOSlider) {
-          // TODO: Show update pin name dialog
-        }
-        break;
-
-      case Interaction.Drag:
-        if (entity instanceof Chip) {
-          this.setMode({ mode: Mode.Reposition, deps: { chip: entity } });
-        } else if (entity instanceof IOSlider) {
-          this.setMode({ mode: Mode.Reposition, deps: { chip: entity.chip } });
-        }
-        break;
-
-      case Interaction.Move:
-        this.isMouseOverInputChipPanel() &&
-          this.setMode({
-            mode: Mode.SpawnIOChipHover,
-            deps: { kind: "input" },
-          });
-
-        this.isMouseOverOutputChipPanel() &&
-          this.setMode({
-            mode: Mode.SpawnIOChipHover,
-            deps: { kind: "output" },
-          });
-    }
   }
 
   private renderIOChips(): void {
