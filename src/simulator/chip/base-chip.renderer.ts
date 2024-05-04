@@ -1,6 +1,5 @@
 import {
   type Position,
-  type Size,
   AbstractRenderer,
 } from "../api/abstract-renderer";
 import { ChipHelper } from "../helpers/chip-helper";
@@ -72,6 +71,11 @@ export class BaseChipRenderer extends AbstractRenderer {
     this.position = position;
   }
 
+  public render() {
+    this.renderChip();
+    this.renderText();
+  }
+
   private renderChip(): void {
     this.p.push();
     this.p.fill(this.color);
@@ -95,10 +99,5 @@ export class BaseChipRenderer extends AbstractRenderer {
     this.p.textSize(baseChipConfig.text.size);
     this.p.text(this.name, this.textPosition.x, this.textPosition.y);
     this.p.pop();
-  }
-
-  public render() {
-    this.renderChip();
-    this.renderText();
   }
 }

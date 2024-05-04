@@ -32,7 +32,7 @@ export type CustomChipBlueprint = {
 };
 
 export type CircuitModeProps =
-  | { mode: Mode.Idle, deps?: {} }
+  | { mode: Mode.Idle, deps?: object }
   | { mode: Mode.SpawnChip; deps: { chip: Chip } }
   | { mode: Mode.Reposition; deps: { chip: Chip | IOChip } }
   | { mode: Mode.Wiring; deps: { startPin: Pin } }

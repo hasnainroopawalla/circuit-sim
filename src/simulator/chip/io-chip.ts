@@ -49,16 +49,66 @@ export class IOChip {
     this.slider = new IOSlider(this.p, this);
   }
 
-  private toggle(): void {
-    this.pin.state = this.pin.state === State.Off ? State.On : State.Off;
-  }
-
   public getPin(): Pin {
     return this.pin;
   }
 
   public execute(): void {
     this.pin.propagate();
+  }
+
+  public render(): void {
+    this.p.push();
+    this.renderSlider();
+    this.renderInnerWire();
+    this.renderChip();
+    this.renderPin();
+    this.p.pop();
+  }
+
+  public mouseClicked(): Pin | IOChip | undefined {
+    if (this.isMouseOverChip() && this.isInput) {
+      this.toggle();
+      return this;
+    }
+    if (this.pin.mouseClicked()) {
+      return this.pin;
+    }
+  }
+
+  public isMouseOverChip(): boolean {
+    return (
+      this.p.dist(
+        this.p.mouseX,
+        this.p.mouseY,
+        this.position.x,
+        this.position.y
+      ) <=
+      iOChipConfig.size / 2
+    );
+  }
+
+  public mouseDragged(): void {
+    this.position = {
+      x: this.position.x,
+      y: this.p.mouseY,
+    };
+  }
+
+  public isMouseOverGetEntity(): IOChip | IOSlider | Pin | undefined {
+    return this.isMouseOverChip()
+      ? this
+      : this.pin.isMouseOver()
+      ? this.pin
+      : this.slider.isMouseOver()
+      ? this.slider
+      : undefined;
+  }
+
+  // TODO: rename
+  public ghostToReal() {
+    this.isGhost = false;
+    this.pin.isGhost = false;
   }
 
   private renderChip(): void {
@@ -113,57 +163,7 @@ export class IOChip {
     this.slider.render();
   }
 
-  public render(): void {
-    this.p.push();
-    this.renderSlider();
-    this.renderInnerWire();
-    this.renderChip();
-    this.renderPin();
-    this.p.pop();
-  }
-
-  public mouseClicked(): Pin | IOChip | undefined {
-    if (this.isMouseOverChip() && this.isInput) {
-      this.toggle();
-      return this;
-    }
-    if (this.pin.mouseClicked()) {
-      return this.pin;
-    }
-  }
-
-  public isMouseOverChip(): boolean {
-    return (
-      this.p.dist(
-        this.p.mouseX,
-        this.p.mouseY,
-        this.position.x,
-        this.position.y
-      ) <=
-      iOChipConfig.size / 2
-    );
-  }
-
-  public mouseDragged(): void {
-    this.position = {
-      x: this.position.x,
-      y: this.p.mouseY,
-    };
-  }
-
-  public isMouseOverGetEntity(): IOChip | IOSlider | Pin | undefined {
-    return this.isMouseOverChip()
-      ? this
-      : this.pin.isMouseOver()
-      ? this.pin
-      : this.slider.isMouseOver()
-      ? this.slider
-      : undefined;
-  }
-
-  // TODO: rename
-  public ghostToReal(){
-    this.isGhost = false;
-    this.pin.isGhost = false;
+  private toggle(): void {
+    this.pin.state = this.pin.state === State.Off ? State.On : State.Off;
   }
 }

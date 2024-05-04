@@ -5,11 +5,6 @@ class IdGenerator {
     this.current = -1;
   }
 
-  private generate(): number {
-    this.current += 1;
-    return this.current;
-  }
-
   public reset(): void {
     this.current = -1;
   }
@@ -24,6 +19,11 @@ class IdGenerator {
 
   public chipId(chipName: string): string {
     return `chip.${chipName}.${this.generate()}`;
+  }
+
+  private generate(): number {
+    this.current += 1;
+    return this.current;
   }
 }
 

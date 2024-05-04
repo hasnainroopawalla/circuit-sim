@@ -70,28 +70,6 @@ export class Circuit {
     this.iOChipSpawnController = new IOChipSpawnController(p5, this);
   }
 
-  private bindEventListeners() {
-    emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
-      this.coreChipButtonOnClick(eventData)
-    );
-    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
-      this.saveCircuit(eventData)
-    );
-    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
-      this.customChipButtonOnClick(eventData)
-    );
-    emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
-      this.importCustomChip(eventData)
-    );
-  }
-
-  private clear(): void {
-    this.inputs = [];
-    this.outputs = [];
-    this.wires = [];
-    this.chips = [];
-  }
-
   // private get isWiringMode(): boolean {
   //   return this.mode === Mode.Wiring;
   // }
@@ -128,8 +106,9 @@ export class Circuit {
         this.chipSpawnController.setGhostChip(deps.chip);
         break;
       case Mode.SpawnIOChipHover:
-        const ghostiOChip = this.createIOChip(deps.kind, true, false);
-        this.iOChipSpawnController.setGhostIOChip(ghostiOChip);
+        this.iOChipSpawnController.setGhostIOChip(
+          this.createIOChip(deps.kind, true, false)
+        );
         break;
       case Mode.Wiring:
         this.wiringController.setStartPin(deps.startPin);
@@ -166,75 +145,12 @@ export class Circuit {
     }
   }
 
-  private renderIOChips(): void {
-    for (let i = 0; i < this.inputs.length; i++) {
-      this.inputs[i].render();
-    }
-    for (let i = 0; i < this.outputs.length; i++) {
-      this.outputs[i].render();
-    }
-  }
-
-  private renderChips(): void {
-    for (let i = 0; i < this.chips.length; i++) {
-      this.chips[i].render();
-    }
-  }
-
-  private renderWires(): void {
-    for (let i = 0; i < this.wires.length; i++) {
-      this.wires[i].render();
-    }
-  }
-
   public isMouseOverInputChipPanel(): boolean {
     return this.renderer.isMouseOverInputChipPanel();
   }
 
   public isMouseOverOutputChipPanel(): boolean {
     return this.renderer.isMouseOverOutputChipPanel();
-  }
-
-  private handleIdleMode(interaction: Interaction): void {
-    const entity = this.getMouseOverEntity();
-
-    switch (interaction) {
-      case Interaction.Click:
-        if (entity instanceof Pin) {
-          if (entity.isInput) {
-            return EmitterHelper.notification(
-              "Wires can only start from an output pin"
-            );
-          }
-          this.setMode({ mode: Mode.Wiring, deps: { startPin: entity } });
-        } else if (entity instanceof IOChip) {
-          entity.mouseClicked();
-        } else if (entity instanceof IOSlider) {
-          // TODO: Show update pin name dialog
-        }
-        break;
-
-      case Interaction.Drag:
-        if (entity instanceof Chip) {
-          this.setMode({ mode: Mode.Reposition, deps: { chip: entity } });
-        } else if (entity instanceof IOSlider) {
-          this.setMode({ mode: Mode.Reposition, deps: { chip: entity.chip } });
-        }
-        break;
-
-      case Interaction.Move:
-        this.isMouseOverInputChipPanel() &&
-          this.setMode({
-            mode: Mode.SpawnIOChipHover,
-            deps: { kind: "input" },
-          });
-
-        this.isMouseOverOutputChipPanel() &&
-          this.setMode({
-            mode: Mode.SpawnIOChipHover,
-            deps: { kind: "output" },
-          });
-    }
   }
 
   public createIOChip(
@@ -290,29 +206,6 @@ export class Circuit {
     return chip;
   }
 
-  // TODO: Move to controller
-  private coreChipButtonOnClick(
-    eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
-  ): void {
-    const chip = this.createCoreChip(eventData.coreChip, false);
-    this.setMode({ mode: Mode.SpawnChip, deps: { chip } });
-  }
-
-  private customChipButtonOnClick(
-    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
-  ): void {
-    const { name, blueprint, color } = eventData;
-    const circuit = BlueprintHelper.blueprintToCircuit(
-      this.p,
-      name,
-      blueprint,
-      "main"
-    );
-
-    const customChip = this.createCustomChip(circuit, color, false);
-    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
-  }
-
   public spawnChip(chip: Chip): void {
     this.chips.push(chip);
   }
@@ -335,26 +228,6 @@ export class Circuit {
   public execute(): void {
     for (let i = 0; i < this.inputs.length; i++) {
       this.inputs[i].execute();
-    }
-  }
-
-  private handleMouse(interaction: Interaction): void {
-    switch (this.mode) {
-      case Mode.Idle:
-        this.handleIdleMode(interaction);
-        break;
-      case Mode.Reposition:
-        this.repositionController.handle(interaction);
-        break;
-      case Mode.SpawnChip:
-        this.chipSpawnController.handle(interaction);
-        break;
-      case Mode.SpawnIOChipHover:
-        this.iOChipSpawnController.handle(interaction);
-        break;
-      case Mode.Wiring:
-        this.wiringController.handle(interaction);
-        break;
     }
   }
 
@@ -456,5 +329,133 @@ export class Circuit {
     this.renderWires();
     this.renderChips();
     this.renderIOChips();
+  }
+
+  private handleMouse(interaction: Interaction): void {
+    switch (this.mode) {
+      case Mode.Idle:
+        this.handleIdleMode(interaction);
+        break;
+      case Mode.Reposition:
+        this.repositionController.handle(interaction);
+        break;
+      case Mode.SpawnChip:
+        this.chipSpawnController.handle(interaction);
+        break;
+      case Mode.SpawnIOChipHover:
+        this.iOChipSpawnController.handle(interaction);
+        break;
+      case Mode.Wiring:
+        this.wiringController.handle(interaction);
+        break;
+    }
+  }
+
+  // TODO: Move to controller
+  private coreChipButtonOnClick(
+    eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
+  ): void {
+    const chip = this.createCoreChip(eventData.coreChip, false);
+    this.setMode({ mode: Mode.SpawnChip, deps: { chip } });
+  }
+
+  private customChipButtonOnClick(
+    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
+  ): void {
+    const { name, blueprint, color } = eventData;
+    const circuit = BlueprintHelper.blueprintToCircuit(
+      this.p,
+      name,
+      blueprint,
+      "main"
+    );
+
+    const customChip = this.createCustomChip(circuit, color, false);
+    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
+  }
+
+  private handleIdleMode(interaction: Interaction): void {
+    const entity = this.getMouseOverEntity();
+
+    switch (interaction) {
+      case Interaction.Click:
+        if (entity instanceof Pin) {
+          if (entity.isInput) {
+            return EmitterHelper.notification(
+              "Wires can only start from an output pin"
+            );
+          }
+          this.setMode({ mode: Mode.Wiring, deps: { startPin: entity } });
+        } else if (entity instanceof IOChip) {
+          entity.mouseClicked();
+        } else if (entity instanceof IOSlider) {
+          // TODO: Show update pin name dialog
+        }
+        break;
+
+      case Interaction.Drag:
+        if (entity instanceof Chip) {
+          this.setMode({ mode: Mode.Reposition, deps: { chip: entity } });
+        } else if (entity instanceof IOSlider) {
+          this.setMode({ mode: Mode.Reposition, deps: { chip: entity.chip } });
+        }
+        break;
+
+      case Interaction.Move:
+        this.isMouseOverInputChipPanel() &&
+          this.setMode({
+            mode: Mode.SpawnIOChipHover,
+            deps: { kind: "input" },
+          });
+
+        this.isMouseOverOutputChipPanel() &&
+          this.setMode({
+            mode: Mode.SpawnIOChipHover,
+            deps: { kind: "output" },
+          });
+    }
+  }
+
+  private renderIOChips(): void {
+    for (let i = 0; i < this.inputs.length; i++) {
+      this.inputs[i].render();
+    }
+    for (let i = 0; i < this.outputs.length; i++) {
+      this.outputs[i].render();
+    }
+  }
+
+  private renderChips(): void {
+    for (let i = 0; i < this.chips.length; i++) {
+      this.chips[i].render();
+    }
+  }
+
+  private renderWires(): void {
+    for (let i = 0; i < this.wires.length; i++) {
+      this.wires[i].render();
+    }
+  }
+
+  private bindEventListeners() {
+    emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
+      this.coreChipButtonOnClick(eventData)
+    );
+    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
+      this.saveCircuit(eventData)
+    );
+    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
+      this.customChipButtonOnClick(eventData)
+    );
+    emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
+      this.importCustomChip(eventData)
+    );
+  }
+
+  private clear(): void {
+    this.inputs = [];
+    this.outputs = [];
+    this.wires = [];
+    this.chips = [];
   }
 }

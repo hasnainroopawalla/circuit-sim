@@ -12,10 +12,6 @@ export class ChipSpawnController extends AbstractController {
     this.ghostChips = [];
   }
 
-  private spawnGhostChips(): void {
-    this.ghostChips.forEach((ghostChip) => this.circuit.spawnChip(ghostChip));
-  }
-
   public clear() {
     this.ghostChips = [];
   }
@@ -29,7 +25,7 @@ export class ChipSpawnController extends AbstractController {
       case Interaction.Click:
         if (this.circuit.isMouseOver()) {
           this.spawnGhostChips();
-          this.circuit.setMode({mode: Mode.Idle})
+          this.circuit.setMode({ mode: Mode.Idle });
         }
         break;
     }
@@ -50,5 +46,9 @@ export class ChipSpawnController extends AbstractController {
       chip.setPosition(position);
       chip.render();
     }
+  }
+
+  private spawnGhostChips(): void {
+    this.ghostChips.forEach((ghostChip) => this.circuit.spawnChip(ghostChip));
   }
 }

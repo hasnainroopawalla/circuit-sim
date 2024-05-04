@@ -10,7 +10,7 @@ export abstract class Chip {
   name: string;
   id: string;
 
-  renderer: BaseChipRenderer
+  renderer: BaseChipRenderer;
 
   constructor(
     p: p5,
@@ -31,6 +31,42 @@ export abstract class Chip {
       numInputPins,
       numOutputPins
     );
+  }
+
+  public getPin(type: string, pinId: number): Pin | undefined {
+    // TODO: convert type to "input" | "output"
+    return type === "input" ? this.inputPins[pinId] : this.outputPins[pinId];
+  }
+
+  public isMouseOverGetEntity(): Chip | Pin | undefined {
+    for (let i = 0; i < this.inputPins.length; i++) {
+      const pin = this.inputPins[i];
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+    for (let i = 0; i < this.outputPins.length; i++) {
+      const pin = this.outputPins[i];
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+    if (this.renderer.isMouseOver()) {
+      return this;
+    }
+  }
+
+  public mouseDragged(): void {
+    this.renderer.mouseDragged();
+  }
+
+  public setPosition(position: Position) {
+    this.renderer.setPosition(position);
+  }
+
+  public render(): void {
+    this.renderer.render();
+    this.renderPins();
   }
 
   private renderPins(): void {
@@ -63,41 +99,5 @@ export abstract class Chip {
     }
   }
 
-  public getPin(type: string, pinId: number): Pin | undefined {
-    // TODO: convert type to "input" | "output"
-    return type === "input" ? this.inputPins[pinId] : this.outputPins[pinId];
-  }
-
-  public isMouseOverGetEntity(): Chip | Pin | undefined {
-    for (let i = 0; i < this.inputPins.length; i++) {
-      const pin = this.inputPins[i];
-      if (pin.isMouseOver()) {
-        return pin;
-      }
-    }
-    for (let i = 0; i < this.outputPins.length; i++) {
-      const pin = this.outputPins[i];
-      if (pin.isMouseOver()) {
-        return pin;
-      }
-    }
-    if (this.renderer.isMouseOver()) {
-      return this;
-    }
-  }
-
-  public mouseDragged(): void {
-    this.renderer.mouseDragged();
-  }
-
-  public setPosition(position: Position){
-    this.renderer.setPosition(position);
-  }
-
-  public render(): void {
-    this.renderer.render();
-    this.renderPins();
-  }
-
-  abstract execute(): void;
+  public abstract execute(): void;
 }
