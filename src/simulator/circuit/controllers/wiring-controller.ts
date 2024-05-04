@@ -1,12 +1,11 @@
 // TODO: move to controller-utils
 import { CircuitHelper } from "../../helpers/circuit-helper";
 import { Pin } from "../../pin";
-import type { WireMarker } from "../../wire";
+// TODO: move all configs to single dir
+import { WireMarker, config as wireConfig } from "../../wire";
 import type { Circuit } from "../circuit";
 import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
-// TODO: move all configs to single dir
-import { config as wireConfig } from "../../wire";
 
 export class WiringController extends AbstractController {
   private markers: WireMarker[];
@@ -15,23 +14,6 @@ export class WiringController extends AbstractController {
   constructor(p: p5, circuit: Circuit) {
     super(p, circuit);
     this.markers = [];
-  }
-
-  private addWireMarker(): void {
-    const waypoint = {
-      x: this.p.mouseX,
-      y: this.p.mouseY,
-    };
-    this.markers.push({
-      waypoint,
-      referencePoint: CircuitHelper.computeReferencePoint(
-        waypoint,
-        // handle the initial scenario when there are no wire markers
-        this.markers.length === 0 && this.startPin
-          ? this.startPin.position
-          : this.markers[this.markers.length - 1].waypoint
-      ),
-    });
   }
 
   public renderGhostWire(): void {
@@ -100,7 +82,7 @@ export class WiringController extends AbstractController {
             // A wire is not allowed to start and end on the same chip
             if (this.startPin.chip !== entity.chip) {
               this.circuit.spawnWire(this.startPin, entity, this.markers);
-              this.circuit.setMode({mode: Mode.Idle})
+              this.circuit.setMode({ mode: Mode.Idle });
             }
           } else {
             this.addWireMarker();
@@ -109,8 +91,25 @@ export class WiringController extends AbstractController {
         break;
 
       case Interaction.DoubleClick:
-        this.circuit.setMode({mode: Mode.Idle})
+        this.circuit.setMode({ mode: Mode.Idle });
         break;
     }
+  }
+
+  private addWireMarker(): void {
+    const waypoint = {
+      x: this.p.mouseX,
+      y: this.p.mouseY,
+    };
+    this.markers.push({
+      waypoint,
+      referencePoint: CircuitHelper.computeReferencePoint(
+        waypoint,
+        // handle the initial scenario when there are no wire markers
+        this.markers.length === 0 && this.startPin
+          ? this.startPin.position
+          : this.markers[this.markers.length - 1].waypoint
+      ),
+    });
   }
 }

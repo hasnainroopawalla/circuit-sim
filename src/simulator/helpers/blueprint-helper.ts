@@ -20,8 +20,7 @@ export class BlueprintHelper {
     }));
 
     const newChips: CustomChipSchema["chips"] = [];
-    for (let i = 0; i < circuit.entities.chips.length; i++) {
-      const chip = circuit.entities.chips[i];
+    for (const chip of circuit.entities.chips) {
       if (chip instanceof CustomChip) {
         this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
       }
@@ -82,19 +81,15 @@ export class BlueprintHelper {
       true
     );
 
-    for (let i = 0; i < circuitSchema.inputs.length; i++) {
-      const input = circuitSchema.inputs[i];
+    for (const input of circuitSchema.inputs) {
       entities[input.id] = circuit.createIOChip("input");
     }
 
-    for (let i = 0; i < circuitSchema.outputs.length; i++) {
-      const output = circuitSchema.outputs[i];
+    for (const output of circuitSchema.outputs) {
       entities[output.id] = circuit.createIOChip("output");
     }
 
-    for (let i = 0; i < circuitSchema.chips.length; i++) {
-      const chip = circuitSchema.chips[i];
-
+    for (const chip of circuitSchema.chips) {
       const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
         ? circuit.createCoreChip(chip.name as CoreGate)
         : circuit.createCustomChip(
@@ -105,8 +100,7 @@ export class BlueprintHelper {
       entities[chip.id] = createdChip;
     }
 
-    for (let i = 0; i < circuitSchema.wires.length; i++) {
-      const wire = circuitSchema.wires[i];
+    for (const wire of circuitSchema.wires) {
       const {
         chipId: startChipId,
         pinType: startPinType,

@@ -186,26 +186,25 @@ export class Circuit {
   }
 
   public execute(): void {
-    for (let i = 0; i < this.entities.inputs.length; i++) {
-      this.entities.inputs[i].execute();
+    for (const input of this.entities.inputs) {
+      input.execute();
     }
   }
 
-  // TODO: hover on IOChip bug
   public mouseClicked(): void {
     if (this.mouseReleaseAfterDrag) {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    this.handleMouse(Interaction.Click);
+    this.handleMouseInteraction(Interaction.Click);
   }
 
   public mouseDoubleClicked(): void {
-    this.handleMouse(Interaction.DoubleClick);
+    this.handleMouseInteraction(Interaction.DoubleClick);
   }
 
   public mouseDragged(): void {
-    this.handleMouse(Interaction.Drag);
+    this.handleMouseInteraction(Interaction.Drag);
   }
 
   public mouseReleased(): void {
@@ -217,7 +216,7 @@ export class Circuit {
 
   public mouseMoved(): void {
     // TODO: temporarily disabled due to IOChip hover bug
-    // this.handleMouse(Interaction.Move);
+    // this.handleMouseInteraction(Interaction.Move);
     this.mode === Mode.Idle && this.idleModeController.handle(Interaction.Move);
     this.mode === Mode.SpawnIOChipHover &&
       this.iOChipSpawnController.handle(Interaction.Move);
@@ -230,10 +229,11 @@ export class Circuit {
   public saveCircuit(
     eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
   ): void {
-    const { name } = eventData;
-
-    // create the custom chip only if inputs and outputs exist
-    if (this.entities.inputs.length === 0 || this.entities.outputs.length === 0) {
+    // Create the custom chip only if inputs and outputs exist
+    if (
+      this.entities.inputs.length === 0 ||
+      this.entities.outputs.length === 0
+    ) {
       return EmitterHelper.notification(
         "Custom chip not created due to missing inputs/outputs"
       );
@@ -242,7 +242,7 @@ export class Circuit {
     const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-      name,
+      name: eventData.name,
       blueprint: JSON.stringify(blueprint),
     });
 
@@ -275,7 +275,7 @@ export class Circuit {
   }
 
   // TODO: rename
-  private handleMouse(interaction: Interaction): void {
+  private handleMouseInteraction(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
         this.idleModeController.handle(interaction);

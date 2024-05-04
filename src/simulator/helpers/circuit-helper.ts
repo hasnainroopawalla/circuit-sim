@@ -27,28 +27,22 @@ export class CircuitHelper {
   public static renderSummary(circuit: Circuit) {
     console.log("\n");
     console.log(`| CIRCUIT: ${circuit.name} |`);
-    for (let i = 0; i < circuit.entities.inputs.length; i++) {
-      const input = circuit.entities.inputs[i];
+    for (const input of circuit.entities.inputs) {
       console.log(`input: ${input.id} (${input.pin.id})`);
     }
-    for (let i = 0; i < circuit.entities.outputs.length; i++) {
-      const output = circuit.entities.outputs[i];
+    for (const output of circuit.entities.outputs) {
       console.log(`output: ${output.id} (${output.pin.id})`);
     }
-    for (let i = 0; i < circuit.entities.chips.length; i++) {
-      const chip = circuit.entities.chips[i];
+    for (const chip of circuit.entities.chips) {
       console.log(`chip: ${chip.name} (${chip.id})`);
-      for (let i = 0; i < chip.inputPins.length; i++) {
-        const inputPin = chip.inputPins[i];
+      for (const inputPin of chip.inputPins) {
         console.log(`-- pin: ${inputPin.id} (${inputPin.chip.name})`);
       }
-      for (let i = 0; i < chip.outputPins.length; i++) {
-        const outputPin = chip.outputPins[i];
+      for (const outputPin of chip.outputPins) {
         console.log(`-- pin: ${outputPin.id} (${outputPin.chip.name})`);
       }
     }
-    for (let i = 0; i < circuit.entities.wires.length; i++) {
-      const wire = circuit.entities.wires[i];
+    for (const wire of circuit.entities.wires) {
       console.log(
         `wire: ${wire.startPin.id} (${wire.startPin.chip.name}) -> ${wire.endPin.id} (${wire.endPin.chip.name})`
       );

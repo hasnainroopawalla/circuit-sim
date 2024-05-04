@@ -57,8 +57,8 @@ export class Pin {
   }
 
   public propagate(): void {
-    for (let i = 0; i < this.outgoingWires.length; i++) {
-      this.outgoingWires[i].propagate();
+    for (const outgoingWire of this.outgoingWires) {
+      outgoingWire.propagate();
     }
   }
 

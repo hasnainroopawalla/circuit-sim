@@ -15,7 +15,7 @@ export class CustomChip extends Chip {
     );
 
     this.circuit = circuit;
-
+    
     for (let i = 0; i < this.circuit.entities.inputs.length; i++) {
       const input = this.circuit.entities.inputs[i];
       const newId = `${id}.input.${i}`;

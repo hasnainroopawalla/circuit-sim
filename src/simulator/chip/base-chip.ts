@@ -39,18 +39,18 @@ export abstract class Chip {
   }
 
   public isMouseOverGetEntity(): Chip | Pin | undefined {
-    for (let i = 0; i < this.inputPins.length; i++) {
-      const pin = this.inputPins[i];
+    for (const pin of this.inputPins) {
       if (pin.isMouseOver()) {
         return pin;
       }
     }
-    for (let i = 0; i < this.outputPins.length; i++) {
-      const pin = this.outputPins[i];
+
+    for (const pin of this.outputPins) {
       if (pin.isMouseOver()) {
         return pin;
       }
     }
+
     if (this.renderer.isMouseOver()) {
       return this;
     }
@@ -78,6 +78,7 @@ export abstract class Chip {
       },
       this.inputPins.length
     );
+
     const outputPinsPositions = ChipHelper.pinsPositions(
       {
         x: this.renderer.position.x + this.renderer.size.w,
@@ -89,6 +90,7 @@ export abstract class Chip {
       },
       this.outputPins.length
     );
+
     for (let i = 0; i < this.inputPins.length; i++) {
       this.inputPins[i].setPosition(inputPinsPositions[i]);
       this.inputPins[i].render();
