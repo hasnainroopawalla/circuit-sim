@@ -4,20 +4,13 @@ import {
   Interaction,
   Mode,
 } from "./circuit.interface";
-import {
-  Chip,
-  CoreChip,
-  CoreGate,
-  CustomChip,
-  IOChip,
-  IOSlider,
-} from "../chip";
+import { Chip, CoreChip, CoreGate, CustomChip, IOChip } from "../chip";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
 import {
   EmitterEvent,
   EmitterEventArgs,
-  EmitterHelper,
+  // EmitterHelper,
   emitter,
 } from "../../event-service";
 import { BlueprintHelper } from "../helpers/blueprint-helper";
@@ -31,6 +24,7 @@ import {
 } from "./controllers";
 import type { Position, Size } from "../api/abstract-renderer";
 import { IdleModeController } from "./controllers/idle-mode-controller";
+import { BlueprintService } from "./services";
 
 export class Circuit {
   p: p5;
@@ -46,6 +40,8 @@ export class Circuit {
   repositionController: RepositionController;
   wiringController: WiringController;
   iOChipSpawnController: IOChipSpawnController;
+
+  blueprintService: BlueprintService;
 
   constructor(
     p5: p5,
@@ -71,6 +67,8 @@ export class Circuit {
     this.repositionController = new RepositionController(p5, this);
     this.wiringController = new WiringController(p5, this);
     this.iOChipSpawnController = new IOChipSpawnController(p5, this);
+
+    this.blueprintService = new BlueprintService(this);
   }
 
   public setMode(props: CircuitModeProps) {
@@ -102,13 +100,16 @@ export class Circuit {
     this.mode = mode;
   }
 
-  // TODO: move to renderer
-  public getMouseOverEntity(): IOChip | IOSlider | Pin | Chip | undefined {
+  public getMouseOverEntity() {
     return this.renderer.getMouseOverEntity(this.entities);
   }
 
-  public isMouseOverIOChipPanel(kind: "input" | "output"): boolean {
+  public isMouseOverIOChipPanel(kind: "input" | "output") {
     return this.renderer.isMouseOverIOChipPanel(kind);
+  }
+
+  public isMouseOver(): boolean {
+    return this.renderer.isMouseOver();
   }
 
   public createIOChip(
@@ -222,32 +223,27 @@ export class Circuit {
       this.iOChipSpawnController.handle(Interaction.Move);
   }
 
-  public isMouseOver(): boolean {
-    return this.renderer.isMouseOver();
-  }
+  //   eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
+  // ): void {
+  //   // Create the custom chip only if inputs and outputs exist
+  //   if (
+  //     this.entities.inputs.length === 0 ||
+  //     this.entities.outputs.length === 0
+  //   ) {
+  //     return EmitterHelper.notification(
+  //       "Custom chip not created due to missing inputs/outputs"
+  //     );
+  //   }
 
-  public saveCircuit(
-    eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
-  ): void {
-    // Create the custom chip only if inputs and outputs exist
-    if (
-      this.entities.inputs.length === 0 ||
-      this.entities.outputs.length === 0
-    ) {
-      return EmitterHelper.notification(
-        "Custom chip not created due to missing inputs/outputs"
-      );
-    }
+  //   const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
 
-    const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
+  //   emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
+  //     name: eventData.name,
+  //     blueprint: JSON.stringify(blueprint),
+  //   });
 
-    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-      name: eventData.name,
-      blueprint: JSON.stringify(blueprint),
-    });
-
-    this.initEntities();
-  }
+  //   this.initEntities();
+  // }
 
   // TODO: does this method need to live here?
   public importCustomChip(
@@ -274,7 +270,15 @@ export class Circuit {
     this.renderer.renderIOChips(this.entities.inputs, this.entities.outputs);
   }
 
-  // TODO: rename
+  public initEntities(): void {
+    this.entities = {
+      inputs: [],
+      outputs: [],
+      wires: [],
+      chips: [],
+    };
+  }
+
   private handleMouseInteraction(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
@@ -323,7 +327,7 @@ export class Circuit {
       this.coreChipButtonOnClick(eventData)
     );
     emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
-      this.saveCircuit(eventData)
+      this.blueprintService.saveCircuit(eventData.name, eventData.color)
     );
     emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
       this.customChipButtonOnClick(eventData)
@@ -331,14 +335,5 @@ export class Circuit {
     emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
       this.importCustomChip(eventData)
     );
-  }
-
-  private initEntities(): void {
-    this.entities = {
-      inputs: [],
-      outputs: [],
-      wires: [],
-      chips: [],
-    };
   }
 }
