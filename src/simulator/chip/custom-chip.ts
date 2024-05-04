@@ -9,15 +9,15 @@ export class CustomChip extends Chip {
       p,
       circuit.name,
       id,
-      circuit.inputs.length,
-      circuit.outputs.length,
+      circuit.entities.inputs.length,
+      circuit.entities.outputs.length,
       color
     );
 
     this.circuit = circuit;
 
-    for (let i = 0; i < this.circuit.inputs.length; i++) {
-      const input = this.circuit.inputs[i];
+    for (let i = 0; i < this.circuit.entities.inputs.length; i++) {
+      const input = this.circuit.entities.inputs[i];
       const newId = `${id}.input.${i}`;
       input.id = newId;
       input.isInput = true;
@@ -27,8 +27,8 @@ export class CustomChip extends Chip {
       this.inputPins[i] = input.pin;
     }
 
-    for (let i = 0; i < this.circuit.outputs.length; i++) {
-      const output = this.circuit.outputs[i];
+    for (let i = 0; i < this.circuit.entities.outputs.length; i++) {
+      const output = this.circuit.entities.outputs[i];
       const newId = `${id}.output.${i}`;
       output.id = newId;
       output.isInput = false;

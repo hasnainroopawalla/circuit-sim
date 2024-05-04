@@ -3,7 +3,11 @@ import {
   type Size,
   AbstractRenderer,
 } from "../api/abstract-renderer";
+import type { Chip, IOChip, IOSlider } from "../chip";
+import { Pin } from "../pin";
+import { Wire } from "../wire";
 import { config } from "./circuit.config";
+import type { CircuitEntities } from "./circuit.interface";
 
 export class CircuitRenderer extends AbstractRenderer {
   constructor(p: p5, position: Position, size: Size) {
@@ -30,7 +34,7 @@ export class CircuitRenderer extends AbstractRenderer {
           this.position.x + this.size.w + config.widthScale / 2 &&
           this.p.mouseY >= this.position.y &&
           this.p.mouseY <= this.position.y + this.size.h;
-        // !this.isMouseOverlapping(this.inputs)
+    // !this.isMouseOverlapping(this.inputs)
   }
 
   public mouseDragged(): void {}
@@ -52,5 +56,33 @@ export class CircuitRenderer extends AbstractRenderer {
       this.size.h
     );
     this.p.pop();
+  }
+
+  public renderIOChips(inputIOChips: IOChip[], outputIOChips: IOChip[]): void {
+    inputIOChips.forEach((inputIOChip) => inputIOChip.render());
+    outputIOChips.forEach((outputIOChip) => outputIOChip.render());
+  }
+
+  public renderChips(chips: Chip[]): void {
+    chips.forEach((chip) => chip.render());
+  }
+
+  public renderWires(wires: Wire[]): void {
+    wires.forEach((wire) => wire.render());
+  }
+
+  public getMouseOverEntity(
+    entities: CircuitEntities
+  ): IOChip | IOSlider | Pin | Chip | undefined {
+    for (const entity of [
+      ...entities.inputs,
+      ...entities.outputs,
+      ...entities.chips,
+    ]) {
+      const mouseOverEntity = entity.isMouseOverGetEntity();
+      if (mouseOverEntity) {
+        return mouseOverEntity;
+      }
+    }
   }
 }

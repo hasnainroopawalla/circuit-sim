@@ -195,8 +195,8 @@ describe("BlueprintHelper", () => {
     idGenerator.reset();
   });
 
-  const createCircuit = (name: string = "main"): Circuit => {
-    return new Circuit(
+  const createCircuit = (name: string = "main"): Circuit =>
+    new Circuit(
       p,
       name,
       {
@@ -211,7 +211,6 @@ describe("BlueprintHelper", () => {
       },
       true
     );
-  };
 
   const createANDCircuit = (): Circuit => {
     const circuit = createCircuit("AND");
@@ -306,25 +305,41 @@ describe("BlueprintHelper", () => {
         andBlueprint,
         "main"
       );
-      expect(andCircuit.inputs.length).toBe(SCHEMA_AND.main.inputs.length);
-      for (let i = 0; i < andCircuit.inputs.length; i++) {
-        expect(andCircuit.inputs[i].id).toBe(SCHEMA_AND.main.inputs[i].id);
+      expect(andCircuit.entities.inputs.length).toBe(
+        SCHEMA_AND.main.inputs.length
+      );
+      for (let i = 0; i < andCircuit.entities.inputs.length; i++) {
+        expect(andCircuit.entities.inputs[i].id).toBe(
+          SCHEMA_AND.main.inputs[i].id
+        );
       }
 
-      expect(andCircuit.outputs.length).toBe(SCHEMA_AND.main.outputs.length);
-      for (let i = 0; i < andCircuit.outputs.length; i++) {
-        expect(andCircuit.outputs[i].id).toBe(SCHEMA_AND.main.outputs[i].id);
+      expect(andCircuit.entities.outputs.length).toBe(
+        SCHEMA_AND.main.outputs.length
+      );
+      for (let i = 0; i < andCircuit.entities.outputs.length; i++) {
+        expect(andCircuit.entities.outputs[i].id).toBe(
+          SCHEMA_AND.main.outputs[i].id
+        );
       }
 
-      expect(andCircuit.chips.length).toBe(SCHEMA_AND.main.chips.length);
-      for (let i = 0; i < andCircuit.chips.length; i++) {
-        expect(andCircuit.chips[i].id).toBe(SCHEMA_AND.main.chips[i].id);
-        expect(andCircuit.chips[i].name).toBe(SCHEMA_AND.main.chips[i].name);
+      expect(andCircuit.entities.chips.length).toBe(
+        SCHEMA_AND.main.chips.length
+      );
+      for (let i = 0; i < andCircuit.entities.chips.length; i++) {
+        expect(andCircuit.entities.chips[i].id).toBe(
+          SCHEMA_AND.main.chips[i].id
+        );
+        expect(andCircuit.entities.chips[i].name).toBe(
+          SCHEMA_AND.main.chips[i].name
+        );
       }
 
-      expect(andCircuit.wires.length).toBe(SCHEMA_AND.main.wires.length);
-      for (let i = 0; i < andCircuit.wires.length; i++) {
-        const wire = andCircuit.wires[i];
+      expect(andCircuit.entities.wires.length).toBe(
+        SCHEMA_AND.main.wires.length
+      );
+      for (let i = 0; i < andCircuit.entities.wires.length; i++) {
+        const wire = andCircuit.entities.wires[i];
         const wireStart = `${wire.startPin.chip.id}/${
           wire.startPin.isInput ? "input" : "output"
         }.${wire.startPin.id}`;
@@ -346,25 +361,41 @@ describe("BlueprintHelper", () => {
         "main"
       );
 
-      expect(nandCircuit.inputs.length).toBe(SCHEMA_NAND.main.inputs.length);
-      for (let i = 0; i < nandCircuit.inputs.length; i++) {
-        expect(nandCircuit.inputs[i].id).toBe(SCHEMA_NAND.main.inputs[i].id);
+      expect(nandCircuit.entities.inputs.length).toBe(
+        SCHEMA_NAND.main.inputs.length
+      );
+      for (let i = 0; i < nandCircuit.entities.inputs.length; i++) {
+        expect(nandCircuit.entities.inputs[i].id).toBe(
+          SCHEMA_NAND.main.inputs[i].id
+        );
       }
 
-      expect(nandCircuit.outputs.length).toBe(SCHEMA_NAND.main.outputs.length);
-      for (let i = 0; i < nandCircuit.outputs.length; i++) {
-        expect(nandCircuit.outputs[i].id).toBe(SCHEMA_NAND.main.outputs[i].id);
+      expect(nandCircuit.entities.outputs.length).toBe(
+        SCHEMA_NAND.main.outputs.length
+      );
+      for (let i = 0; i < nandCircuit.entities.outputs.length; i++) {
+        expect(nandCircuit.entities.outputs[i].id).toBe(
+          SCHEMA_NAND.main.outputs[i].id
+        );
       }
 
-      expect(nandCircuit.chips.length).toBe(SCHEMA_NAND.main.chips.length);
-      for (let i = 0; i < nandCircuit.chips.length; i++) {
-        expect(nandCircuit.chips[i].id).toBe(SCHEMA_NAND.main.chips[i].id);
-        expect(nandCircuit.chips[i].name).toBe(SCHEMA_NAND.main.chips[i].name);
+      expect(nandCircuit.entities.chips.length).toBe(
+        SCHEMA_NAND.main.chips.length
+      );
+      for (let i = 0; i < nandCircuit.entities.chips.length; i++) {
+        expect(nandCircuit.entities.chips[i].id).toBe(
+          SCHEMA_NAND.main.chips[i].id
+        );
+        expect(nandCircuit.entities.chips[i].name).toBe(
+          SCHEMA_NAND.main.chips[i].name
+        );
       }
 
-      expect(nandCircuit.wires.length).toBe(SCHEMA_NAND.main.wires.length);
-      for (let i = 0; i < nandCircuit.wires.length; i++) {
-        const wire = nandCircuit.wires[i];
+      expect(nandCircuit.entities.wires.length).toBe(
+        SCHEMA_NAND.main.wires.length
+      );
+      for (let i = 0; i < nandCircuit.entities.wires.length; i++) {
+        const wire = nandCircuit.entities.wires[i];
 
         const wireStart = `${wire.startPin.chip.id}/${
           wire.startPin.isInput ? "input" : "output"
@@ -387,41 +418,41 @@ describe("BlueprintHelper", () => {
         "main"
       );
 
-      expect(dataLatchCircuit.inputs.length).toBe(
+      expect(dataLatchCircuit.entities.inputs.length).toBe(
         SCHEMA_DATA_LATCH.main.inputs.length
       );
-      for (let i = 0; i < dataLatchCircuit.inputs.length; i++) {
-        expect(dataLatchCircuit.inputs[i].id).toBe(
+      for (let i = 0; i < dataLatchCircuit.entities.inputs.length; i++) {
+        expect(dataLatchCircuit.entities.inputs[i].id).toBe(
           SCHEMA_DATA_LATCH.main.inputs[i].id
         );
       }
 
-      expect(dataLatchCircuit.outputs.length).toBe(
+      expect(dataLatchCircuit.entities.outputs.length).toBe(
         SCHEMA_DATA_LATCH.main.outputs.length
       );
-      for (let i = 0; i < dataLatchCircuit.outputs.length; i++) {
-        expect(dataLatchCircuit.outputs[i].id).toBe(
+      for (let i = 0; i < dataLatchCircuit.entities.outputs.length; i++) {
+        expect(dataLatchCircuit.entities.outputs[i].id).toBe(
           SCHEMA_DATA_LATCH.main.outputs[i].id
         );
       }
 
-      expect(dataLatchCircuit.chips.length).toBe(
+      expect(dataLatchCircuit.entities.chips.length).toBe(
         SCHEMA_DATA_LATCH.main.chips.length
       );
-      for (let i = 0; i < dataLatchCircuit.chips.length; i++) {
-        expect(dataLatchCircuit.chips[i].id).toBe(
+      for (let i = 0; i < dataLatchCircuit.entities.chips.length; i++) {
+        expect(dataLatchCircuit.entities.chips[i].id).toBe(
           SCHEMA_DATA_LATCH.main.chips[i].id
         );
-        expect(dataLatchCircuit.chips[i].name).toBe(
+        expect(dataLatchCircuit.entities.chips[i].name).toBe(
           SCHEMA_DATA_LATCH.main.chips[i].name
         );
       }
 
-      expect(dataLatchCircuit.wires.length).toBe(
+      expect(dataLatchCircuit.entities.wires.length).toBe(
         SCHEMA_DATA_LATCH.main.wires.length
       );
-      for (let i = 0; i < dataLatchCircuit.wires.length; i++) {
-        const wire = dataLatchCircuit.wires[i];
+      for (let i = 0; i < dataLatchCircuit.entities.wires.length; i++) {
+        const wire = dataLatchCircuit.entities.wires[i];
 
         const wireStart = `${wire.startPin.chip.id}/${
           wire.startPin.isInput ? "input" : "output"

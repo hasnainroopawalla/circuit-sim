@@ -1,27 +1,27 @@
 import { CoreChip, CoreGate, CustomChip, IOChip } from "../chip";
-import { Circuit } from "../circuit";
-import type {
-  CustomChipBlueprint,
-  CustomChipSchema,
+import {
+  Circuit,
+  type CustomChipBlueprint,
+  type CustomChipSchema,
 } from "../circuit";
 
 export class BlueprintHelper {
   public static circuitToBlueprint(
     name: string,
-    circuit: Pick<Circuit, "chips" | "wires" | "inputs" | "outputs">,
+    circuit: Circuit,
     blueprint: CustomChipBlueprint = {}
   ): CustomChipBlueprint {
-    const newInputs = circuit.inputs.map((input) => ({
+    const newInputs = circuit.entities.inputs.map((input) => ({
       id: input.id,
     }));
 
-    const newOutputs = circuit.outputs.map((output) => ({
+    const newOutputs = circuit.entities.outputs.map((output) => ({
       id: output.id,
     }));
 
     const newChips: CustomChipSchema["chips"] = [];
-    for (let i = 0; i < circuit.chips.length; i++) {
-      const chip = circuit.chips[i];
+    for (let i = 0; i < circuit.entities.chips.length; i++) {
+      const chip = circuit.entities.chips[i];
       if (chip instanceof CustomChip) {
         this.circuitToBlueprint(chip.name, chip.circuit, blueprint);
       }
@@ -31,7 +31,7 @@ export class BlueprintHelper {
       });
     }
 
-    const newWires = circuit.wires.map((wire) => {
+    const newWires = circuit.entities.wires.map((wire) => {
       const wireStart = `${wire.startPin.chip.id}/${
         wire.startPin.isInput ? "input" : "output"
       }.${wire.startPin.id}`;
@@ -49,31 +49,6 @@ export class BlueprintHelper {
     };
 
     return blueprint;
-  }
-
-  // TODO: tests
-  private static parseWireString(
-    wireString: string,
-    entities: { [id: string]: IOChip | CustomChip | CoreChip }
-  ): {
-    chipId: string;
-    pinType: string;
-    pinId: number;
-  } {
-    const [chipId, pinInfo] = wireString.split("/");
-    const splitChipId = chipId.split(".");
-    const splitPinInfo = pinInfo.split(".");
-
-    const [parsedChipId, pinType, pinId] =
-      splitChipId.length === 5 && !entities[chipId]
-        ? [splitChipId.slice(0, 3).join("."), splitChipId[3], splitChipId[4]]
-        : [chipId, splitPinInfo[0], splitPinInfo[1]];
-
-    return {
-      chipId: parsedChipId,
-      pinType,
-      pinId: Number(pinId),
-    };
   }
 
   public static blueprintToCircuit(
@@ -152,5 +127,30 @@ export class BlueprintHelper {
     }
 
     return circuit;
+  }
+
+  // TODO: tests
+  private static parseWireString(
+    wireString: string,
+    entities: { [id: string]: IOChip | CustomChip | CoreChip }
+  ): {
+    chipId: string;
+    pinType: string;
+    pinId: number;
+  } {
+    const [chipId, pinInfo] = wireString.split("/");
+    const splitChipId = chipId.split(".");
+    const splitPinInfo = pinInfo.split(".");
+
+    const [parsedChipId, pinType, pinId] =
+      splitChipId.length === 5 && !entities[chipId]
+        ? [splitChipId.slice(0, 3).join("."), splitChipId[3], splitChipId[4]]
+        : [chipId, splitPinInfo[0], splitPinInfo[1]];
+
+    return {
+      chipId: parsedChipId,
+      pinType,
+      pinId: Number(pinId),
+    };
   }
 }

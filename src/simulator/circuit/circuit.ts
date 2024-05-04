@@ -1,4 +1,9 @@
-import { CircuitModeProps, Interaction, Mode } from "./circuit.interface";
+import {
+  CircuitEntities,
+  CircuitModeProps,
+  Interaction,
+  Mode,
+} from "./circuit.interface";
 import {
   Chip,
   CoreChip,
@@ -30,11 +35,8 @@ import { IdleModeController } from "./controllers/idle-mode-controller";
 export class Circuit {
   p: p5;
   name: string;
-  inputs: IOChip[];
-  outputs: IOChip[];
-  wires: Wire[];
-  chips: Chip[];
-  public mode: Mode;
+  entities: CircuitEntities;
+  mode: Mode;
   mouseReleaseAfterDrag: boolean;
 
   renderer: CircuitRenderer;
@@ -56,12 +58,10 @@ export class Circuit {
   ) {
     this.p = p5;
     this.name = name;
-    this.inputs = [];
-    this.outputs = [];
-    this.wires = [];
-    this.chips = [];
     this.mode = Mode.Idle;
     this.mouseReleaseAfterDrag = false;
+    this.initEntities();
+
     !isCustomChip && this.bindEventListeners();
 
     this.renderer = new CircuitRenderer(p5, options.position, options.size);
@@ -102,30 +102,9 @@ export class Circuit {
     this.mode = mode;
   }
 
+  // TODO: move to renderer
   public getMouseOverEntity(): IOChip | IOSlider | Pin | Chip | undefined {
-    // Input Entities
-    for (let i = 0; i < this.inputs.length; i++) {
-      const entity = this.inputs[i].isMouseOverGetEntity();
-      if (entity) {
-        return entity;
-      }
-    }
-
-    // Output Entities
-    for (let i = 0; i < this.outputs.length; i++) {
-      const entity = this.outputs[i].isMouseOverGetEntity();
-      if (entity) {
-        return entity;
-      }
-    }
-
-    // Chip Entities
-    for (let i = 0; i < this.chips.length; i++) {
-      const entity = this.chips[i].isMouseOverGetEntity();
-      if (entity) {
-        return entity;
-      }
-    }
+    return this.renderer.getMouseOverEntity(this.entities);
   }
 
   public isMouseOverIOChipPanel(kind: "input" | "output"): boolean {
@@ -186,12 +165,14 @@ export class Circuit {
   }
 
   public spawnChip(chip: Chip): void {
-    this.chips.push(chip);
+    this.entities.chips.push(chip);
   }
 
   public spawnIOChip(ioChip: IOChip) {
     ioChip.ghostToReal();
-    ioChip.isInput ? this.inputs.push(ioChip) : this.outputs.push(ioChip);
+    ioChip.isInput
+      ? this.entities.inputs.push(ioChip)
+      : this.entities.outputs.push(ioChip);
   }
 
   public spawnWire(
@@ -200,13 +181,13 @@ export class Circuit {
     markers: Wire["markers"] = []
   ): void {
     const wire = new Wire(this.p, startPin, endPin, markers);
-    this.wires.push(wire);
+    this.entities.wires.push(wire);
     startPin.outgoingWires.push(wire);
   }
 
   public execute(): void {
-    for (let i = 0; i < this.inputs.length; i++) {
-      this.inputs[i].execute();
+    for (let i = 0; i < this.entities.inputs.length; i++) {
+      this.entities.inputs[i].execute();
     }
   }
 
@@ -235,7 +216,11 @@ export class Circuit {
   }
 
   public mouseMoved(): void {
-    this.handleMouse(Interaction.Move);
+    // TODO: temporarily disabled due to IOChip hover bug
+    // this.handleMouse(Interaction.Move);
+    this.mode === Mode.Idle && this.idleModeController.handle(Interaction.Move);
+    this.mode === Mode.SpawnIOChipHover &&
+      this.iOChipSpawnController.handle(Interaction.Move);
   }
 
   public isMouseOver(): boolean {
@@ -248,7 +233,7 @@ export class Circuit {
     const { name } = eventData;
 
     // create the custom chip only if inputs and outputs exist
-    if (this.inputs.length === 0 || this.outputs.length === 0) {
+    if (this.entities.inputs.length === 0 || this.entities.outputs.length === 0) {
       return EmitterHelper.notification(
         "Custom chip not created due to missing inputs/outputs"
       );
@@ -261,7 +246,7 @@ export class Circuit {
       blueprint: JSON.stringify(blueprint),
     });
 
-    this.clear();
+    this.initEntities();
   }
 
   // TODO: does this method need to live here?
@@ -284,9 +269,9 @@ export class Circuit {
     this.mode === Mode.SpawnIOChipHover &&
       this.iOChipSpawnController.renderGhostIOChip();
 
-    this.renderWires();
-    this.renderChips();
-    this.renderIOChips();
+    this.renderer.renderWires(this.entities.wires);
+    this.renderer.renderChips(this.entities.chips);
+    this.renderer.renderIOChips(this.entities.inputs, this.entities.outputs);
   }
 
   // TODO: rename
@@ -333,27 +318,6 @@ export class Circuit {
     this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
   }
 
-  private renderIOChips(): void {
-    for (let i = 0; i < this.inputs.length; i++) {
-      this.inputs[i].render();
-    }
-    for (let i = 0; i < this.outputs.length; i++) {
-      this.outputs[i].render();
-    }
-  }
-
-  private renderChips(): void {
-    for (let i = 0; i < this.chips.length; i++) {
-      this.chips[i].render();
-    }
-  }
-
-  private renderWires(): void {
-    for (let i = 0; i < this.wires.length; i++) {
-      this.wires[i].render();
-    }
-  }
-
   private bindEventListeners() {
     emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
       this.coreChipButtonOnClick(eventData)
@@ -369,10 +333,12 @@ export class Circuit {
     );
   }
 
-  private clear(): void {
-    this.inputs = [];
-    this.outputs = [];
-    this.wires = [];
-    this.chips = [];
+  private initEntities(): void {
+    this.entities = {
+      inputs: [],
+      outputs: [],
+      wires: [],
+      chips: [],
+    };
   }
 }

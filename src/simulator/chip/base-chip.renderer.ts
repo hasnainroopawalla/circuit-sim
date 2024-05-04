@@ -5,14 +5,6 @@ import {
 import { ChipHelper } from "../helpers/chip-helper";
 import { baseChipConfig } from "./base-chip.config";
 
-// type ChipRendererProps = {
-//   position: Position;
-//   size: Size;
-//   color: string;
-//   textColor: string;
-//   textPosition: Position;
-// };
-
 export class BaseChipRenderer extends AbstractRenderer {
   color: string;
   name: string;

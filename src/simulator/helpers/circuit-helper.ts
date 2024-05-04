@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { Circuit } from "../circuit";
 import { Position } from "../shared.interface";
 
@@ -7,11 +8,9 @@ export class CircuitHelper {
     pins: string[],
     wires: string[][]
   ): boolean {
-    return pins.some((pin) => {
-      return wires.some((wire) => {
-        return wire.some((id) => id === pin);
-      });
-    });
+    return pins.some((pin) =>
+      wires.some((wire) => wire.some((id) => id === pin))
+    );
   }
 
   public static computeReferencePoint(
@@ -28,16 +27,16 @@ export class CircuitHelper {
   public static renderSummary(circuit: Circuit) {
     console.log("\n");
     console.log(`| CIRCUIT: ${circuit.name} |`);
-    for (let i = 0; i < circuit.inputs.length; i++) {
-      const input = circuit.inputs[i];
+    for (let i = 0; i < circuit.entities.inputs.length; i++) {
+      const input = circuit.entities.inputs[i];
       console.log(`input: ${input.id} (${input.pin.id})`);
     }
-    for (let i = 0; i < circuit.outputs.length; i++) {
-      const output = circuit.outputs[i];
+    for (let i = 0; i < circuit.entities.outputs.length; i++) {
+      const output = circuit.entities.outputs[i];
       console.log(`output: ${output.id} (${output.pin.id})`);
     }
-    for (let i = 0; i < circuit.chips.length; i++) {
-      const chip = circuit.chips[i];
+    for (let i = 0; i < circuit.entities.chips.length; i++) {
+      const chip = circuit.entities.chips[i];
       console.log(`chip: ${chip.name} (${chip.id})`);
       for (let i = 0; i < chip.inputPins.length; i++) {
         const inputPin = chip.inputPins[i];
@@ -48,8 +47,8 @@ export class CircuitHelper {
         console.log(`-- pin: ${outputPin.id} (${outputPin.chip.name})`);
       }
     }
-    for (let i = 0; i < circuit.wires.length; i++) {
-      const wire = circuit.wires[i];
+    for (let i = 0; i < circuit.entities.wires.length; i++) {
+      const wire = circuit.entities.wires[i];
       console.log(
         `wire: ${wire.startPin.id} (${wire.startPin.chip.name}) -> ${wire.endPin.id} (${wire.endPin.chip.name})`
       );
