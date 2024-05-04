@@ -9,6 +9,7 @@ export type Size = {
 };
 
 // TODO: add generic for entity shape (rect, circle, etc.)
+// TODO: move out of api dir
 export abstract class AbstractRenderer {
   p: p5;
   position: Position;
