@@ -1,5 +1,5 @@
 {
-  "exclude": ["test", "dist", "node_modules"],
+  "exclude": ["test", "dist", "node_modules", "src/**/*.test.ts"],
   "compilerOptions": {
     "outDir": "./dist",
     "noImplicitAny": true,

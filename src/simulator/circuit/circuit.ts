@@ -7,13 +7,7 @@ import {
 import { Chip, CoreChip, CoreGate, CustomChip, IOChip } from "../chip";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
-import {
-  EmitterEvent,
-  EmitterEventArgs,
-  // EmitterHelper,
-  emitter,
-} from "../../event-service";
-import { BlueprintHelper } from "../helpers/blueprint-helper";
+import { EmitterEvent, EmitterEventArgs, emitter } from "../../event-service";
 import { idGenerator } from "../helpers/id-generator";
 import { CircuitRenderer } from "./circuit.renderer";
 import {
@@ -68,7 +62,7 @@ export class Circuit {
     this.wiringController = new WiringController(p5, this);
     this.iOChipSpawnController = new IOChipSpawnController(p5, this);
 
-    this.blueprintService = new BlueprintService(this);
+    this.blueprintService = new BlueprintService(p5, this);
   }
 
   public setMode(props: CircuitModeProps) {
@@ -310,15 +304,13 @@ export class Circuit {
   private customChipButtonOnClick(
     eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
-    const { name, blueprint, color } = eventData;
-    const circuit = BlueprintHelper.blueprintToCircuit(
-      this.p,
-      name,
-      blueprint,
+    const circuit = this.blueprintService.blueprintToCircuit(
+      eventData.name,
+      eventData.blueprint,
       "main"
     );
 
-    const customChip = this.createCustomChip(circuit, color, false);
+    const customChip = this.createCustomChip(circuit, eventData.color, false);
     this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
   }
 

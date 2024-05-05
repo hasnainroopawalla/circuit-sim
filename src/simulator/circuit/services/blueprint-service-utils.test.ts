@@ -1,7 +1,7 @@
 import p5 from "p5";
-import { BlueprintHelper } from "./blueprint-helper";
+import { idGenerator } from "../../helpers/id-generator";
 import { Circuit } from "../circuit";
-import { idGenerator } from "./id-generator";
+import { blueprintToCircuit, circuitToBlueprint } from "./blueprint-service-utils";
 
 const sketch = (p: p5) => {
   p.setup = () => {};
@@ -258,13 +258,13 @@ describe("BlueprintHelper", () => {
   describe("circuitToBlueprint", () => {
     test("returns the blueprint for a custom AND chip", () => {
       const circuit = createANDCircuit();
-      const andBlueprint = BlueprintHelper.circuitToBlueprint("main", circuit);
+      const andBlueprint = circuitToBlueprint("main", circuit);
       expect(andBlueprint).toStrictEqual(SCHEMA_AND);
     });
 
     test("returns the blueprint for a NAND chip", () => {
       const circuit = createNANDCircuit();
-      const nandBlueprint = BlueprintHelper.circuitToBlueprint("main", circuit);
+      const nandBlueprint = circuitToBlueprint("main", circuit);
       expect(nandBlueprint).toStrictEqual(SCHEMA_NAND);
     });
 
@@ -288,7 +288,7 @@ describe("BlueprintHelper", () => {
       baseCircuit.spawnWire(nor1.outputPins[0], nor2.inputPins[1]);
       baseCircuit.spawnWire(nor2.outputPins[0], output1.pin);
 
-      const andUsingNorBlueprint = BlueprintHelper.circuitToBlueprint(
+      const andUsingNorBlueprint = circuitToBlueprint(
         "main",
         baseCircuit
       );
@@ -299,7 +299,7 @@ describe("BlueprintHelper", () => {
   describe("blueprintToCircuit", () => {
     test("returns the blueprint for a custom AND chip", () => {
       const andBlueprint = `{"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.2"}],"chips":[{"id":"chip.AND.3","name":"AND"}],"wires":[["chip.input.0/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.3/input.1"],["chip.AND.3/output.0","chip.output.2/input.0"]]}}`;
-      const andCircuit = BlueprintHelper.blueprintToCircuit(
+      const andCircuit = blueprintToCircuit(
         p,
         "AND",
         andBlueprint,
@@ -354,7 +354,7 @@ describe("BlueprintHelper", () => {
 
     test("returns the blueprint for a NAND chip", () => {
       const nandBlueprint = `{"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.2"}],"chips":[{"id":"chip.AND.3","name":"AND"},{"id":"chip.NOT.4","name":"NOT"}],"wires":[["chip.input.0/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.3/input.1"],["chip.AND.3/output.0","chip.NOT.4/input.0"],["chip.NOT.4/output.0","chip.output.2/input.0"]]}}`;
-      const nandCircuit = BlueprintHelper.blueprintToCircuit(
+      const nandCircuit = blueprintToCircuit(
         p,
         "NAND",
         nandBlueprint,
@@ -411,7 +411,7 @@ describe("BlueprintHelper", () => {
 
     test("returns the blueprint for a Data Latch", () => {
       const dataLatchBlueprint = `{"NOR":{"inputs":[{"id":"chip.NOR.16.input.0"},{"id":"chip.NOR.16.input.1"}],"outputs":[{"id":"chip.NOR.16.output.0"}],"chips":[{"id":"chip.OR.14","name":"OR"},{"id":"chip.NOT.15","name":"NOT"}],"wires":[["chip.OR.14/output.0","chip.NOT.15/input.0"],["chip.NOR.16.input.0/input.0","chip.OR.14/input.0"],["chip.NOR.16.input.1/input.0","chip.OR.14/input.1"],["chip.NOT.15/output.0","chip.NOR.16.output.0/output.0"]]},"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.17"}],"chips":[{"id":"chip.AND.2","name":"AND"},{"id":"chip.AND.3","name":"AND"},{"id":"chip.NOT.4","name":"NOT"},{"id":"chip.NOR.10","name":"NOR"},{"id":"chip.NOR.16","name":"NOR"}],"wires":[["chip.NOR.16.output.0/output.0","chip.output.17/input.0"],["chip.NOR.10.output.0/output.0","chip.NOR.16.input.0/input.0"],["chip.NOR.16.output.0/output.0","chip.NOR.10.input.1/input.0"],["chip.AND.2/output.0","chip.NOR.10.input.0/input.0"],["chip.AND.3/output.0","chip.NOR.16.input.1/input.0"],["chip.NOT.4/output.0","chip.AND.3/input.1"],["chip.input.1/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.2/input.1"],["chip.input.0/output.0","chip.NOT.4/input.0"],["chip.input.0/output.0","chip.AND.2/input.0"]]}}`;
-      const dataLatchCircuit = BlueprintHelper.blueprintToCircuit(
+      const dataLatchCircuit = blueprintToCircuit(
         p,
         "D-Latch",
         dataLatchBlueprint,
