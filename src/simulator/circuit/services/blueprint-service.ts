@@ -1,4 +1,9 @@
-import { EmitterEvent, EmitterHelper, emitter } from "../../../event-service";
+import {
+  EmitterEvent,
+  EmitterEventArgs,
+  EmitterHelper,
+  emitter,
+} from "../../../event-service";
 import type { Circuit } from "../circuit";
 import {
   blueprintToCircuit,
@@ -12,9 +17,12 @@ export class BlueprintService {
   constructor(p: p5, circuit: Circuit) {
     this.p = p;
     this.circuit = circuit;
+    !this.circuit.isCustomChip && this.registerSubscriptions();
   }
 
-  public saveCircuit(name: string, _color?: string): void {
+  public saveCircuit(
+    eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
+  ): void {
     // Create the custom chip only if inputs and outputs exist
     if (
       this.circuit.entities.inputs.length === 0 ||
@@ -28,23 +36,32 @@ export class BlueprintService {
     const blueprint = circuitToBlueprint("main", this.circuit);
 
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-      name,
+      name: eventData.name,
       blueprint: JSON.stringify(blueprint),
     });
 
     this.circuit.initEntities();
   }
 
-  public blueprintToCircuit(
-    name: string,
-    blueprintString: string,
-    defaultCircuitName?: string // "main"
-  ): Circuit {
-    return blueprintToCircuit(
+  private createCircuitFromBlueprint(
+    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
+  ): void {
+    const circuit = blueprintToCircuit(
       this.p,
-      name,
-      blueprintString,
-      defaultCircuitName
+      eventData.name,
+      eventData.blueprint,
+      "main"
+    );
+
+    this.circuit.createCustomChip(circuit, eventData.color);
+  }
+
+  private registerSubscriptions() {
+    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
+      this.saveCircuit(eventData)
+    );
+    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
+      this.createCircuitFromBlueprint(eventData)
     );
   }
 }

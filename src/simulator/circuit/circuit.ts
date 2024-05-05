@@ -26,6 +26,7 @@ export class Circuit {
   entities: CircuitEntities;
   mode: Mode;
   mouseReleaseAfterDrag: boolean;
+  isCustomChip: boolean;
 
   renderer: CircuitRenderer;
 
@@ -48,6 +49,7 @@ export class Circuit {
   ) {
     this.p = p5;
     this.name = name;
+    this.isCustomChip = !!isCustomChip;
     this.mode = Mode.Idle;
     this.mouseReleaseAfterDrag = false;
     this.initEntities();
@@ -217,28 +219,6 @@ export class Circuit {
       this.iOChipSpawnController.handle(Interaction.Move);
   }
 
-  //   eventData: EmitterEventArgs[EmitterEvent.SaveCircuit]
-  // ): void {
-  //   // Create the custom chip only if inputs and outputs exist
-  //   if (
-  //     this.entities.inputs.length === 0 ||
-  //     this.entities.outputs.length === 0
-  //   ) {
-  //     return EmitterHelper.notification(
-  //       "Custom chip not created due to missing inputs/outputs"
-  //     );
-  //   }
-
-  //   const blueprint = BlueprintHelper.circuitToBlueprint("main", this);
-
-  //   emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-  //     name: eventData.name,
-  //     blueprint: JSON.stringify(blueprint),
-  //   });
-
-  //   this.initEntities();
-  // }
-
   // TODO: does this method need to live here?
   public importCustomChip(
     eventData: EmitterEventArgs[EmitterEvent.ImportCustomChip]
@@ -273,6 +253,14 @@ export class Circuit {
     };
   }
 
+  public customChipButtonOnClick(
+    customChipCircuit: Circuit,
+    color: string
+  ): void {
+    const customChip = this.createCustomChip(customChipCircuit, color, false);
+    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
+  }
+
   private handleMouseInteraction(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
@@ -301,28 +289,9 @@ export class Circuit {
     this.setMode({ mode: Mode.SpawnChip, deps: { chip } });
   }
 
-  private customChipButtonOnClick(
-    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
-  ): void {
-    const circuit = this.blueprintService.blueprintToCircuit(
-      eventData.name,
-      eventData.blueprint,
-      "main"
-    );
-
-    const customChip = this.createCustomChip(circuit, eventData.color, false);
-    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
-  }
-
   private bindEventListeners() {
     emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
       this.coreChipButtonOnClick(eventData)
-    );
-    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
-      this.blueprintService.saveCircuit(eventData.name, eventData.color)
-    );
-    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
-      this.customChipButtonOnClick(eventData)
     );
     emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
       this.importCustomChip(eventData)
