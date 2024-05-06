@@ -1,7 +1,10 @@
 import p5 from "p5";
-import { idGenerator } from "../../helpers/id-generator";
 import { Circuit } from "../circuit";
-import { blueprintToCircuit, circuitToBlueprint } from "./blueprint-service-utils";
+import {
+  blueprintToCircuit,
+  circuitToBlueprint,
+} from "./blueprint-service-utils";
+import { entityIdService } from "./entity-id-service";
 
 const sketch = (p: p5) => {
   p.setup = () => {};
@@ -192,7 +195,7 @@ describe("BlueprintHelper", () => {
 
   beforeEach(() => {
     p = new p5(sketch);
-    idGenerator.reset();
+    entityIdService.reset();
   });
 
   const createCircuit = (name: string = "main"): Circuit =>
@@ -288,10 +291,7 @@ describe("BlueprintHelper", () => {
       baseCircuit.spawnWire(nor1.outputPins[0], nor2.inputPins[1]);
       baseCircuit.spawnWire(nor2.outputPins[0], output1.pin);
 
-      const andUsingNorBlueprint = circuitToBlueprint(
-        "main",
-        baseCircuit
-      );
+      const andUsingNorBlueprint = circuitToBlueprint("main", baseCircuit);
       expect(andUsingNorBlueprint).toStrictEqual(SCHEMA_AND_USING_NOR);
     });
   });
@@ -299,12 +299,7 @@ describe("BlueprintHelper", () => {
   describe("blueprintToCircuit", () => {
     test("returns the blueprint for a custom AND chip", () => {
       const andBlueprint = `{"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.2"}],"chips":[{"id":"chip.AND.3","name":"AND"}],"wires":[["chip.input.0/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.3/input.1"],["chip.AND.3/output.0","chip.output.2/input.0"]]}}`;
-      const andCircuit = blueprintToCircuit(
-        p,
-        "AND",
-        andBlueprint,
-        "main"
-      );
+      const andCircuit = blueprintToCircuit(p, "AND", andBlueprint, "main");
       expect(andCircuit.entities.inputs.length).toBe(
         SCHEMA_AND.main.inputs.length
       );
@@ -354,12 +349,7 @@ describe("BlueprintHelper", () => {
 
     test("returns the blueprint for a NAND chip", () => {
       const nandBlueprint = `{"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.2"}],"chips":[{"id":"chip.AND.3","name":"AND"},{"id":"chip.NOT.4","name":"NOT"}],"wires":[["chip.input.0/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.3/input.1"],["chip.AND.3/output.0","chip.NOT.4/input.0"],["chip.NOT.4/output.0","chip.output.2/input.0"]]}}`;
-      const nandCircuit = blueprintToCircuit(
-        p,
-        "NAND",
-        nandBlueprint,
-        "main"
-      );
+      const nandCircuit = blueprintToCircuit(p, "NAND", nandBlueprint, "main");
 
       expect(nandCircuit.entities.inputs.length).toBe(
         SCHEMA_NAND.main.inputs.length

@@ -7,7 +7,6 @@ import {
 import { Chip, CoreChip, ICoreGate, CustomChip, IOChip } from "../chip";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
-import { idGenerator } from "../helpers/id-generator";
 import { CircuitRenderer } from "./circuit.renderer";
 import {
   ChipSpawnController,
@@ -17,7 +16,11 @@ import {
 } from "./controllers";
 import type { Position, Size } from "../api/abstract-renderer";
 import { IdleModeController } from "./controllers/idle-mode-controller";
-import { BlueprintService, ButtonClickService } from "./services";
+import {
+  BlueprintService,
+  ButtonClickService,
+  entityIdService,
+} from "./services";
 
 export class Circuit {
   p: p5;
@@ -105,7 +108,7 @@ export class Circuit {
       kind === "input"
         ? new IOChip(
             this.p,
-            idGenerator.inputChipId(),
+            entityIdService.inputChipId(),
             true,
             {
               x: this.renderer.position.x,
@@ -115,7 +118,7 @@ export class Circuit {
           )
         : new IOChip(
             this.p,
-            idGenerator.outputChipId(),
+            entityIdService.outputChipId(),
             false,
             {
               x: this.renderer.position.x + this.renderer.size.w,
@@ -129,7 +132,11 @@ export class Circuit {
   }
 
   public createCoreChip(coreChip: ICoreGate, spawn = true): CoreChip {
-    const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
+    const chip = new CoreChip(
+      this.p,
+      coreChip,
+      entityIdService.chipId(coreChip)
+    );
     spawn && this.spawnChip(chip);
     return chip;
   }
@@ -142,7 +149,7 @@ export class Circuit {
     const chip = new CustomChip(
       this.p,
       circuit,
-      idGenerator.chipId(circuit.name),
+      entityIdService.chipId(circuit.name),
       color
     );
     spawn && this.spawnChip(chip);
