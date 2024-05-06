@@ -6,7 +6,7 @@ import {
 import type { Circuit } from "../circuit";
 import { Mode } from "../circuit.interface";
 
-export class ButtonService {
+export class ButtonClickService {
   p: p5;
   circuit: Circuit;
 
@@ -43,7 +43,7 @@ export class ButtonService {
     this.circuit.setMode({ mode: Mode.SpawnChip, deps: { chip } });
   }
 
-  private importCustomChip(
+  private importCustomChipOnClick(
     args: EmitterEventArgs[EmitterEvent.ImportCustomChip]
   ): void {
     emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
@@ -63,7 +63,7 @@ export class ButtonService {
       this.customChipButtonOnClick(eventData)
     );
     emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
-      this.importCustomChip(eventData)
+      this.importCustomChipOnClick(eventData)
     );
   }
 }

@@ -17,7 +17,7 @@ import {
 } from "./controllers";
 import type { Position, Size } from "../api/abstract-renderer";
 import { IdleModeController } from "./controllers/idle-mode-controller";
-import { BlueprintService, ButtonService } from "./services";
+import { BlueprintService, ButtonClickService } from "./services";
 
 export class Circuit {
   p: p5;
@@ -36,7 +36,7 @@ export class Circuit {
   iOChipSpawnController: IOChipSpawnController;
 
   blueprintService: BlueprintService;
-  buttonService: ButtonService;
+  buttonClickService: ButtonClickService;
 
   constructor(
     p5: p5,
@@ -64,7 +64,7 @@ export class Circuit {
 
     this.blueprintService = new BlueprintService(p5, this);
 
-    this.buttonService = new ButtonService(p5, this);
+    this.buttonClickService = new ButtonClickService(p5, this);
   }
 
   public setMode(props: CircuitModeProps) {
@@ -206,8 +206,6 @@ export class Circuit {
     this.mode === Mode.SpawnIOChipHover &&
       this.iOChipSpawnController.handle(Interaction.Move);
   }
-
-  // TODO: does this method need to live here?
 
   public render(): void {
     this.renderer.render();

@@ -1,2 +1,2 @@
 export { BlueprintService } from "./blueprint-service";
-export { ButtonService } from "./button-service";
+export { ButtonClickService } from "./button-click-service";
