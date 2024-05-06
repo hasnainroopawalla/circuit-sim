@@ -3,7 +3,7 @@ import { State } from "../shared.interface";
 import { Pin } from "../pin";
 import { Chip } from "./base-chip";
 
-export type CoreGate = "AND" | "OR" | "NOT";
+export type ICoreGate = "AND" | "OR" | "NOT";
 
 const CORE_GATES = {
   AND: {
@@ -31,7 +31,7 @@ const CORE_GATES = {
 export class CoreChip extends Chip {
   action: (inputPins: Pin[]) => State[];
 
-  constructor(p: p5, coreGate: CoreGate, id: string) {
+  constructor(p: p5, coreGate: ICoreGate, id: string) {
     const numInputPins = CORE_GATES[coreGate].inputPins;
     const numOutputPins = CORE_GATES[coreGate].outputPins;
 

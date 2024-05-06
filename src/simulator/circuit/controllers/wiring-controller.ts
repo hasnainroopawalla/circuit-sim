@@ -72,7 +72,9 @@ export class WiringController extends AbstractController {
   }
 
   public handle(interaction: Interaction) {
-    const entity = this.circuit.getMouseOverEntity();
+    const entity = this.circuit.renderer.getMouseOverEntity(
+      this.circuit.entities
+    );
 
     switch (interaction) {
       case Interaction.Click:

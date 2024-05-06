@@ -4,10 +4,9 @@ import {
   Interaction,
   Mode,
 } from "./circuit.interface";
-import { Chip, CoreChip, CoreGate, CustomChip, IOChip } from "../chip";
+import { Chip, CoreChip, ICoreGate, CustomChip, IOChip } from "../chip";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
-import { EmitterEvent, EmitterEventArgs, emitter } from "../../event-service";
 import { idGenerator } from "../helpers/id-generator";
 import { CircuitRenderer } from "./circuit.renderer";
 import {
@@ -18,7 +17,7 @@ import {
 } from "./controllers";
 import type { Position, Size } from "../api/abstract-renderer";
 import { IdleModeController } from "./controllers/idle-mode-controller";
-import { BlueprintService } from "./services";
+import { BlueprintService, ButtonService } from "./services";
 
 export class Circuit {
   p: p5;
@@ -37,6 +36,7 @@ export class Circuit {
   iOChipSpawnController: IOChipSpawnController;
 
   blueprintService: BlueprintService;
+  buttonService: ButtonService;
 
   constructor(
     p5: p5,
@@ -54,8 +54,6 @@ export class Circuit {
     this.mouseReleaseAfterDrag = false;
     this.initEntities();
 
-    !isCustomChip && this.bindEventListeners();
-
     this.renderer = new CircuitRenderer(p5, options.position, options.size);
 
     this.idleModeController = new IdleModeController(p5, this);
@@ -65,6 +63,8 @@ export class Circuit {
     this.iOChipSpawnController = new IOChipSpawnController(p5, this);
 
     this.blueprintService = new BlueprintService(p5, this);
+
+    this.buttonService = new ButtonService(p5, this);
   }
 
   public setMode(props: CircuitModeProps) {
@@ -94,18 +94,6 @@ export class Circuit {
         throw new Error("Invalid mode");
     }
     this.mode = mode;
-  }
-
-  public getMouseOverEntity() {
-    return this.renderer.getMouseOverEntity(this.entities);
-  }
-
-  public isMouseOverIOChipPanel(kind: "input" | "output") {
-    return this.renderer.isMouseOverIOChipPanel(kind);
-  }
-
-  public isMouseOver(): boolean {
-    return this.renderer.isMouseOver();
   }
 
   public createIOChip(
@@ -140,7 +128,7 @@ export class Circuit {
     return ioChip;
   }
 
-  public createCoreChip(coreChip: CoreGate, spawn = true): CoreChip {
+  public createCoreChip(coreChip: ICoreGate, spawn = true): CoreChip {
     const chip = new CoreChip(this.p, coreChip, idGenerator.chipId(coreChip));
     spawn && this.spawnChip(chip);
     return chip;
@@ -220,16 +208,6 @@ export class Circuit {
   }
 
   // TODO: does this method need to live here?
-  public importCustomChip(
-    eventData: EmitterEventArgs[EmitterEvent.ImportCustomChip]
-  ): void {
-    const { customChipName, blueprint } = eventData;
-
-    emitter.emit(EmitterEvent.AddCustomChipToToolbar, {
-      name: customChipName,
-      blueprint,
-    });
-  }
 
   public render(): void {
     this.renderer.render();
@@ -253,14 +231,6 @@ export class Circuit {
     };
   }
 
-  public customChipButtonOnClick(
-    customChipCircuit: Circuit,
-    color: string
-  ): void {
-    const customChip = this.createCustomChip(customChipCircuit, color, false);
-    this.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
-  }
-
   private handleMouseInteraction(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
@@ -279,22 +249,5 @@ export class Circuit {
         this.wiringController.handle(interaction);
         break;
     }
-  }
-
-  // TODO: Move to controller
-  private coreChipButtonOnClick(
-    eventData: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
-  ): void {
-    const chip = this.createCoreChip(eventData.coreChip, false);
-    this.setMode({ mode: Mode.SpawnChip, deps: { chip } });
-  }
-
-  private bindEventListeners() {
-    emitter.on(EmitterEvent.SpawnCoreChip, (eventData) =>
-      this.coreChipButtonOnClick(eventData)
-    );
-    emitter.on(EmitterEvent.ImportCustomChip, (eventData) =>
-      this.importCustomChip(eventData)
-    );
   }
 }

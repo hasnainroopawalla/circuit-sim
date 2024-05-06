@@ -19,7 +19,9 @@ export class IOChipSpawnController extends AbstractController {
   }
 
   public handle(interaction: Interaction) {
-    const entity = this.circuit.getMouseOverEntity();
+    const entity = this.circuit.renderer.getMouseOverEntity(
+      this.circuit.entities
+    );
 
     switch (interaction) {
       case Interaction.Click:
@@ -29,10 +31,10 @@ export class IOChipSpawnController extends AbstractController {
       case Interaction.Move:
         if (
           entity instanceof IOSlider ||
-          (!this.circuit.isMouseOverIOChipPanel("input") &&
-            !this.circuit.isMouseOverIOChipPanel("output"))
+          (!this.circuit.renderer.isMouseOverIOChipPanel("input") &&
+            !this.circuit.renderer.isMouseOverIOChipPanel("output"))
         ) {
-          this.circuit.setMode({mode: Mode.Idle})
+          this.circuit.setMode({ mode: Mode.Idle });
         }
         break;
     }

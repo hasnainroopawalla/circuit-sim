@@ -21,12 +21,12 @@ export class RepositionController extends AbstractController {
   public handle(interaction: Interaction) {
     switch (interaction) {
       case Interaction.Drag:
-        if (this.chip instanceof Chip && this.circuit.isMouseOver()) {
+        if (this.chip instanceof Chip && this.circuit.renderer.isMouseOver()) {
           this.chip.mouseDragged();
         } else if (this.chip instanceof IOChip) {
           this.chip.mouseDragged();
         } else {
-          this.circuit.setMode({mode: Mode.Idle})
+          this.circuit.setMode({ mode: Mode.Idle });
         }
         break;
     }

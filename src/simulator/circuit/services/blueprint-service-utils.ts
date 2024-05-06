@@ -1,4 +1,4 @@
-import { CustomChip, IOChip, CoreChip, CoreGate } from "../../chip";
+import { CustomChip, IOChip, CoreChip, ICoreGate } from "../../chip";
 import { Circuit } from "../circuit";
 import { CustomChipBlueprint, CustomChipSchema } from "../circuit.interface";
 
@@ -87,7 +87,7 @@ export const blueprintToCircuit = (
 
   for (const chip of circuitSchema.chips) {
     const createdChip = ["AND", "OR", "NOT"].includes(chip.name)
-      ? circuit.createCoreChip(chip.name as CoreGate)
+      ? circuit.createCoreChip(chip.name as ICoreGate)
       : circuit.createCustomChip(
           blueprintToCircuit(p, chip.name, blueprintString),
           "green" // fixed color of all internal chips

@@ -23,7 +23,7 @@ export class ChipSpawnController extends AbstractController {
   public handle(interaction: Interaction) {
     switch (interaction) {
       case Interaction.Click:
-        if (this.circuit.isMouseOver()) {
+        if (this.circuit.renderer.isMouseOver()) {
           this.spawnGhostChips();
           this.circuit.setMode({ mode: Mode.Idle });
         }

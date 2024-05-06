@@ -13,7 +13,9 @@ export class IdleModeController extends AbstractController {
   public clear(): void {}
 
   public handle(interaction: Interaction) {
-    const entity = this.circuit.getMouseOverEntity();
+    const entity = this.circuit.renderer.getMouseOverEntity(
+      this.circuit.entities
+    );
 
     switch (interaction) {
       case Interaction.Click:
@@ -49,13 +51,13 @@ export class IdleModeController extends AbstractController {
         break;
 
       case Interaction.Move:
-        this.circuit.isMouseOverIOChipPanel("input") &&
+        this.circuit.renderer.isMouseOverIOChipPanel("input") &&
           this.circuit.setMode({
             mode: Mode.SpawnIOChipHover,
             deps: { kind: "input" },
           });
 
-        this.circuit.isMouseOverIOChipPanel("output") &&
+        this.circuit.renderer.isMouseOverIOChipPanel("output") &&
           this.circuit.setMode({
             mode: Mode.SpawnIOChipHover,
             deps: { kind: "output" },

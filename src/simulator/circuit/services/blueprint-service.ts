@@ -17,7 +17,6 @@ export class BlueprintService {
   constructor(p: p5, circuit: Circuit) {
     this.p = p;
     this.circuit = circuit;
-    !this.circuit.isCustomChip && this.registerSubscriptions();
   }
 
   public saveCircuit(
@@ -43,25 +42,11 @@ export class BlueprintService {
     this.circuit.initEntities();
   }
 
-  private createCircuitFromBlueprint(
-    eventData: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
-  ): void {
-    const circuit = blueprintToCircuit(
-      this.p,
-      eventData.name,
-      eventData.blueprint,
-      "main"
-    );
-
-    this.circuit.createCustomChip(circuit, eventData.color);
-  }
-
-  private registerSubscriptions() {
-    emitter.on(EmitterEvent.SaveCircuit, (eventData) =>
-      this.saveCircuit(eventData)
-    );
-    emitter.on(EmitterEvent.SpawnCustomChip, (eventData) =>
-      this.createCircuitFromBlueprint(eventData)
-    );
+  public createCircuitFromBlueprint(
+    name: string,
+    blueprint: string,
+    _color: string
+  ): Circuit {
+    return blueprintToCircuit(this.p, name, blueprint, "main");
   }
 }
