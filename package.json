@@ -1,6 +1,6 @@
 {
   "name": "circuit-sim",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "A digital circuit simulator using React, TypeScript and p5.js",
   "homepage": "http://hasnainroopawalla.github.io/circuit-sim",
   "private": true,
@@ -14,7 +14,15 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
-  "keywords": ["react", "typescript", "p5js", "circuit-simulator", "javascript", "webpack", "digital-logic-design"],
+  "keywords": [
+    "react",
+    "typescript",
+    "p5js",
+    "circuit-simulator",
+    "javascript",
+    "webpack",
+    "digital-logic-design"
+  ],
   "author": "Hasnain Roopawalla",
   "license": "MIT",
   "devDependencies": {
