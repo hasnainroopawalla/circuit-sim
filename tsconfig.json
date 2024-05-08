@@ -3,13 +3,13 @@
   "compilerOptions": {
     "outDir": "./dist",
     "noImplicitAny": true,
-    "module": "ES6",
     "jsx": "react",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "strict": true
-    // "strictPropertyInitialization": false,
+    "strict": true,
+    "target": "ES6",
+    "module": "ES6"
   }
 }

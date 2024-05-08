@@ -1,19 +1,19 @@
-import { Circuit, circuitConfig } from "../circuit";
+import { CircuitBoard, circuitBoardConfig } from "../circuit-board";
 import { sketchConfig } from "./sketch.config";
 
-export let circuit: Circuit;
+export let circuitBoard: CircuitBoard;
 
 export const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    circuit = new Circuit(p, "main", {
+    circuitBoard = new CircuitBoard(p, "main", {
       position: {
-        x: circuitConfig.widthScale,
-        y: circuitConfig.heightScale,
+        x: circuitBoardConfig.widthScale,
+        y: circuitBoardConfig.heightScale,
       },
       size: {
-        w: p.windowWidth - circuitConfig.widthScale * 2,
+        w: p.windowWidth - circuitBoardConfig.widthScale * 2,
         h: p.windowHeight - 65,
       },
     });
@@ -21,13 +21,13 @@ export const sketch = (p: p5) => {
 
   p.draw = () => {
     p.background(sketchConfig.background);
-    circuit.execute();
-    circuit.render();
+    circuitBoard.execute();
+    circuitBoard.render();
   };
 
-  p.mouseClicked = () => circuit.mouseClicked();
-  p.mouseDragged = () => circuit.mouseDragged();
-  p.mouseReleased = () => circuit.mouseReleased();
-  p.doubleClicked = () => circuit.mouseDoubleClicked();
-  p.mouseMoved = () => circuit.mouseMoved();
+  p.mouseClicked = () => circuitBoard.mouseClicked();
+  p.mouseDragged = () => circuitBoard.mouseDragged();
+  p.mouseReleased = () => circuitBoard.mouseReleased();
+  p.doubleClicked = () => circuitBoard.mouseDoubleClicked();
+  p.mouseMoved = () => circuitBoard.mouseMoved();
 };

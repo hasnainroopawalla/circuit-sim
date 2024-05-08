@@ -1,6 +1,6 @@
 import * as React from "react";
-import { EmitterEvent, emitter } from "../../event-service";
-import { useCustomChips } from "../hooks";
+import { emitter } from "@circuit-sim/events";
+import { useCircuitChips } from "../hooks";
 import { ImportChipDialog, SaveCircuitDialog } from "../dialogs";
 import { Dialog } from "../factory";
 import { LuImport } from "react-icons/lu";
@@ -17,7 +17,7 @@ export const Toolbar = () => {
   return (
     <>
       <LowerToolbar
-        useCustomChips={useCustomChips}
+        useCircuitChips={useCircuitChips}
         saveButtonOnClick={() =>
           setSaveShowCircuitDialog(!showSaveCircuitDialog)
         }
@@ -32,7 +32,7 @@ export const Toolbar = () => {
           content={
             <SaveCircuitDialog
               onConfirm={(circuitName: string) => {
-                emitter.emit(EmitterEvent.SaveCircuit, { name: circuitName });
+                emitter.emit("SaveCircuit", { name: circuitName });
                 setSaveShowCircuitDialog(false);
               }}
               onDismiss={() => {
@@ -48,9 +48,9 @@ export const Toolbar = () => {
           icon={LuImport}
           content={
             <ImportChipDialog
-              onConfirm={(customChipName: string, blueprint: string) => {
-                emitter.emit(EmitterEvent.ImportCustomChip, {
-                  customChipName,
+              onConfirm={(chipName: string, blueprint: string) => {
+                emitter.emit("ImportChip", {
+                  chipName,
                   blueprint,
                 });
                 setShowImportChipDialog(false);

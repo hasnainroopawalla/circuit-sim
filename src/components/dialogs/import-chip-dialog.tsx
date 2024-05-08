@@ -3,7 +3,7 @@ import { Button } from "../factory";
 import styles from "./import-chip-dialog.module.css";
 
 type ImportChipDialogProps = {
-  onConfirm: (customChipName: string, blueprint: string) => void;
+  onConfirm: (chipName: string, blueprint: string) => void;
   onDismiss: () => void;
 };
 

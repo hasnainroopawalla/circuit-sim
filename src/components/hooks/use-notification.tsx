@@ -1,11 +1,10 @@
 import * as React from "react";
-import { EmitterEvent } from "../../event-service";
 import { useEventListener } from "./use-event-listener";
 
 export const useNotification = () => {
   const [notification, setNotification] = React.useState("");
 
-  const notificationEvent = useEventListener(EmitterEvent.Notification);
+  const notificationEvent = useEventListener("Notification");
 
   React.useEffect(() => {
     if (!notificationEvent) {

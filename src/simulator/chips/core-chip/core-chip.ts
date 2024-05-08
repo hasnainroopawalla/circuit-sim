@@ -1,31 +1,8 @@
+import type { ICoreGate } from "./core-chip.interface";
 import { State } from "../../common";
 import { Pin } from "../../pin";
 import { Chip } from "../base-chip";
-
-export type ICoreGate = "AND" | "OR" | "NOT";
-
-const CORE_GATES = {
-  AND: {
-    inputPins: 2,
-    outputPins: 1,
-    action: (inputPins: Pin[]) => [inputPins[0].state && inputPins[1].state],
-    color: "#ff7f50",
-  },
-  OR: {
-    inputPins: 2,
-    outputPins: 1,
-    action: (inputPins: Pin[]) => [inputPins[0].state || inputPins[1].state],
-    color: "#008000",
-  },
-  NOT: {
-    inputPins: 1,
-    outputPins: 1,
-    action: (inputPins: Pin[]) => [
-      inputPins[0].state === State.On ? State.Off : State.On,
-    ],
-    color: "#a20f52",
-  },
-};
+import { CORE_GATES } from "./core-gates";
 
 export class CoreChip extends Chip {
   action: (inputPins: Pin[]) => State[];

@@ -1,20 +1,19 @@
 import * as React from "react";
 import { Button } from "../factory";
-import { EmitterEvent, emitter } from "../../event-service";
-import type { IUseCustomChips } from "../hooks";
-
+import { emitter } from "@circuit-sim/events";
 import styles from "./toolbar.module.css";
+import type { IUseCircuitChips } from "../hooks";
 
 type LowerToolbarProps = {
-  useCustomChips: IUseCustomChips;
+  useCircuitChips: IUseCircuitChips;
   saveButtonOnClick: () => void;
   importChipButtonOnClick: () => void;
 };
 
 export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
-  const { useCustomChips, saveButtonOnClick, importChipButtonOnClick } = props;
+  const { useCircuitChips, saveButtonOnClick, importChipButtonOnClick } = props;
 
-  const customChips = useCustomChips();
+  const circuitChips = useCircuitChips();
 
   return (
     <div className={`${styles.toolbar} ${styles.lowerToolbar}`}>
@@ -35,7 +34,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit(EmitterEvent.SpawnCoreChip, {
+          emitter.emit("SpawnCoreChip", {
             coreChip: "AND",
           })
         }
@@ -45,7 +44,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit(EmitterEvent.SpawnCoreChip, {
+          emitter.emit("SpawnCoreChip", {
             coreChip: "OR",
           })
         }
@@ -55,18 +54,18 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit(EmitterEvent.SpawnCoreChip, {
+          emitter.emit("SpawnCoreChip", {
             coreChip: "NOT",
           })
         }
       />
-      {customChips.map((customChip) => (
+      {circuitChips.map((circuitChip) => (
         <Button
-          key={customChip.name}
-          text={customChip.name}
+          key={circuitChip.name}
+          text={circuitChip.name}
           appearance="secondary"
           size="large"
-          onClick={customChip.onClick}
+          onClick={circuitChip.onClick}
         />
       ))}
       <Button

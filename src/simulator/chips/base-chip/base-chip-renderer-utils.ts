@@ -1,4 +1,4 @@
-import { Position, Size } from "../../common";
+import type { Position, Size } from "../../common";
 
 // TODO: Test coverage
 export const textPositionInRect = (

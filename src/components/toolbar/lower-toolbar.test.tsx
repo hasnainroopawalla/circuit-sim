@@ -7,9 +7,9 @@ const importChipButtonOnClick = jest.fn();
 const saveButtonOnClick = jest.fn();
 const optionsButtonOnClick = jest.fn();
 
-const customChips = [
+const circuitChips = [
   {
-    name: "customChip1",
+    name: "circuitChip1",
     onClick: jest.fn(),
   },
 ];
@@ -19,7 +19,7 @@ describe("LowerToolbar", () => {
     render(
       <LowerToolbar
         saveButtonOnClick={saveButtonOnClick}
-        useCustomChips={jest.fn().mockReturnValue(customChips)}
+        useCircuitChips={jest.fn().mockReturnValue(circuitChips)}
         importChipButtonOnClick={importChipButtonOnClick}
       />
     );
@@ -49,8 +49,8 @@ describe("LowerToolbar", () => {
     expect(screen.getByText("NOT")).toBeInTheDocument();
   });
 
-  test("custom chip button visible", async () => {
-    expect(screen.getByText("customChip1")).toBeInTheDocument();
+  test("circuit chip button visible", async () => {
+    expect(screen.getByText("circuitChip1")).toBeInTheDocument();
   });
 
   test("import chip button visible", async () => {

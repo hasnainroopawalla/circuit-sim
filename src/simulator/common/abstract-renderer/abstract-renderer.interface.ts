@@ -1,3 +1,4 @@
+// TODO: prefix all interfaces with "I"
 export type Position = {
   x: number;
   y: number;

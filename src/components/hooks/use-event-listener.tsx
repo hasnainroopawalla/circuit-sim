@@ -1,10 +1,10 @@
 import * as React from "react";
-import { EmitterEvent, EmitterEventArgs, emitter } from "../../event-service";
+import { EventKey, EventData, emitter } from "@circuit-sim/events";
 
-export function useEventListener<T extends EmitterEvent>(
+export function useEventListener<T extends EventKey>(
   event: T
-): EmitterEventArgs[T] | undefined {
-  const [eventData, setEventData] = React.useState<EmitterEventArgs[T]>();
+): EventData[T] | undefined {
+  const [eventData, setEventData] = React.useState<EventData[T]>();
 
   React.useEffect(() => {
     emitter.on(event, (error) => {
