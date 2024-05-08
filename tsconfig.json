@@ -1,8 +1,9 @@
 {
-  "exclude": ["test", "dist", "node_modules", "packages/**/*.test.ts"],
+  "exclude": ["test", "dist", "node_modules", "src/**/*.test.ts"],
   "compilerOptions": {
     "outDir": "./dist",
     "noImplicitAny": true,
+    "jsx": "react",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
