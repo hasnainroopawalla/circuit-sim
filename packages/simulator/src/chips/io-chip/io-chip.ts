@@ -66,8 +66,7 @@ export class IOChip {
     return this.renderer.isMouseOverGetEntity();
   }
 
-  // TODO: rename
-  public ghostToReal() {
+  public disableGhostMode() {
     this.isGhost = false;
     this.pin.isGhost = false;
   }

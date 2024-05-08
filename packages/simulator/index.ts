@@ -1,1 +1,1 @@
-export { sketch } from "./src/sketch";
+export { sketch, createP5Instance } from "./src/sketch";

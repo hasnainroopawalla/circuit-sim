@@ -163,7 +163,7 @@ export class CircuitBoard {
   }
 
   public spawnIOChip(ioChip: IOChip) {
-    ioChip.ghostToReal();
+    ioChip.disableGhostMode();
     ioChip.isInput
       ? this.entities.inputs.push(ioChip)
       : this.entities.outputs.push(ioChip);

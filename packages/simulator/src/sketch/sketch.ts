@@ -32,3 +32,6 @@ export const sketch = (p: p5) => {
   p.doubleClicked = () => circuitBoard.mouseDoubleClicked();
   p.mouseMoved = () => circuitBoard.mouseMoved();
 };
+
+export const createP5Instance = (container: HTMLDivElement) =>
+  new p5(sketch, container);
