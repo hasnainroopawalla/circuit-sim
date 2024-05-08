@@ -1,6 +1,5 @@
-// TODO: implement Circuit interface and import from there
 import type { Circuit } from "../circuit";
-import type { Interaction } from "../circuit.interface";
+import type { Interaction } from "./abstract-controller.interface";
 
 export abstract class AbstractController {
   p: p5;

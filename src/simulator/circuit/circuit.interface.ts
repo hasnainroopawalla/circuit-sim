@@ -10,29 +10,6 @@ export enum Mode {
   SpawnIOChipHover = "SpawnIOChipHover",
 }
 
-// TODO: move to modes
-export enum Interaction {
-  Click = "Click",
-  DoubleClick = "DoubleClick",
-  Drag = "Drag",
-  Move = "Move",
-}
-
-export type CustomChipSchema = {
-  inputs: { id: string }[];
-  outputs: { id: string }[];
-  chips: {
-    id: string;
-    name: string;
-  }[];
-  wires: string[][];
-};
-
-// TODO: move to service
-export type CustomChipBlueprint = {
-  [chipName: string]: CustomChipSchema;
-};
-
 export type CircuitEntities = {
   inputs: IOChip[];
   outputs: IOChip[];

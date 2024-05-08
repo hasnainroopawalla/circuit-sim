@@ -9,7 +9,7 @@
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
+    "strict": true
+    // "strictPropertyInitialization": false,
   }
 }

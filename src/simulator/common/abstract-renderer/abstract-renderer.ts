@@ -4,7 +4,6 @@ import type {
   RectSize,
 } from "./abstract-renderer.interface";
 
-// TODO: move out of api dir
 export abstract class AbstractRenderer<T extends RectSize | CircleSize> {
   p: p5;
   position: Position;
@@ -15,10 +14,6 @@ export abstract class AbstractRenderer<T extends RectSize | CircleSize> {
     this.position = position;
     this.size = size;
   }
-
-  // public abstract isMouseOver(): boolean;
-
-  // public abstract mouseDragged(): void;
 
   public abstract render(): void;
 }

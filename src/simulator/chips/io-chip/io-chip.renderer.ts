@@ -1,6 +1,5 @@
-import { type Position, AbstractRenderer, Size } from "../../common";
+import { type Position, AbstractRenderer, Size, State } from "../../common";
 import { Pin } from "../../pin";
-import { State } from "../../common";
 import { IOSlider } from "./io-chip-slider";
 import { iOChipConfig, sliderConfig } from "./io-chip.config";
 import { config } from "../../config";
@@ -8,7 +7,6 @@ import { pinPosition, sliderPosition } from "./io-chip-renderer-utils";
 import { IOChip } from "./io-chip";
 
 export class IOChipRenderer extends AbstractRenderer<Size<"circle">> {
-  name: string;
   iOChip: IOChip;
 
   constructor(p: p5, ioChip: IOChip, position: Position) {

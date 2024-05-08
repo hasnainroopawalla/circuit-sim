@@ -1,7 +1,8 @@
 import { IOChip, IOSlider } from "../../chips";
 import type { Circuit } from "../circuit";
-import { Interaction, Mode } from "../circuit.interface";
+import { Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
+import { Interaction } from "./abstract-controller.interface";
 
 export class IOChipSpawnController extends AbstractController {
   private ghostIOChip?: IOChip;

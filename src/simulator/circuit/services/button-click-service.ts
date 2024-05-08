@@ -16,7 +16,6 @@ export class ButtonClickService {
     !this.circuit.isCustomChip && this.registerSubscriptions();
   }
 
-  // TODO: rename
   private customChipButtonOnClick(
     args: EmitterEventArgs[EmitterEvent.SpawnCustomChip]
   ): void {
@@ -35,7 +34,6 @@ export class ButtonClickService {
     this.circuit.setMode({ mode: Mode.SpawnChip, deps: { chip: customChip } });
   }
 
-  // TODO: rename
   private coreChipButtonOnClick(
     args: EmitterEventArgs[EmitterEvent.SpawnCoreChip]
   ): void {

@@ -1,10 +1,10 @@
 import p5 from "p5";
-import { Circuit } from "../circuit";
+import { Circuit } from "../../circuit";
 import {
   blueprintToCircuit,
   circuitToBlueprint,
 } from "./blueprint-service-utils";
-import { entityIdService } from "./entity-id-service";
+import { entityIdService } from "../entity-id-service";
 
 const sketch = (p: p5) => {
   p.setup = () => {};

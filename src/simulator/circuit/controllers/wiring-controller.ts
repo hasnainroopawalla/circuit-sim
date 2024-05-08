@@ -1,10 +1,10 @@
-// TODO: move to controller-utils
 import { Pin } from "../../pin";
 import { WireMarker, wireConfig } from "../../wire";
 import type { Circuit } from "../circuit";
 import { computeReferencePoint } from "../circuit-renderer-utils";
-import { Interaction, Mode } from "../circuit.interface";
+import { Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
+import { Interaction } from "./abstract-controller.interface";
 
 export class WiringController extends AbstractController {
   private markers: WireMarker[];
@@ -27,8 +27,8 @@ export class WiringController extends AbstractController {
 
     // render initial line from startPin to either mouse position or first waypoint
     this.p.line(
-      this.startPin.position.x,
-      this.startPin.position.y,
+      this.startPin.renderer.position.x,
+      this.startPin.renderer.position.y,
       this.markers.length === 0
         ? this.p.mouseX
         : this.markers[0].referencePoint.x,
@@ -108,7 +108,7 @@ export class WiringController extends AbstractController {
         waypoint,
         // handle the initial scenario when there are no wire markers
         this.markers.length === 0 && this.startPin
-          ? this.startPin.position
+          ? this.startPin.renderer.position
           : this.markers[this.markers.length - 1].waypoint
       ),
     });

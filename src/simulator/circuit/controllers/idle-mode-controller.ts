@@ -2,8 +2,9 @@ import { EmitterHelper } from "../../../event-service";
 import { Chip, IOChip, IOSlider } from "../../chips";
 import { Pin } from "../../pin";
 import type { Circuit } from "../circuit";
-import { Interaction, Mode } from "../circuit.interface";
+import { Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
+import { Interaction } from "./abstract-controller.interface";
 
 export class IdleModeController extends AbstractController {
   constructor(p: p5, circuit: Circuit) {

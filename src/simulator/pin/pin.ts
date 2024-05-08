@@ -1,10 +1,7 @@
-import { State } from "../common";
-
+import { Position, State } from "../common";
 import { Chip, IOChip } from "../chips";
 import { Wire } from "../wire";
-import { Position } from "../common";
-import { config } from "../config";
-import { pinConfig } from "./pin.config";
+import { PinRenderer } from "./pin.renderer";
 
 export class Pin {
   p: p5;
@@ -15,18 +12,18 @@ export class Pin {
   isGhost: boolean;
   outgoingWires: Wire[];
   chip: Chip | IOChip;
-  position: Position;
-  size: number;
+
+  renderer: PinRenderer;
 
   constructor(
-    p5: p5,
+    p: p5,
     id: number,
     state: State,
     isInput: boolean,
     chip: Chip | IOChip,
     isGhost = false
   ) {
-    this.p = p5;
+    this.p = p;
     this.id = id;
     this.state = state;
     this.isInput = isInput;
@@ -35,20 +32,12 @@ export class Pin {
     this.name =
       this.chip instanceof IOChip ? "pin" : `${isInput ? "In" : "Out"} ${id}`;
     this.isGhost = isGhost;
-    this.position = { x: 0, y: 0 };
-    this.size = pinConfig.size;
+
+    this.renderer = new PinRenderer(p, this);
   }
 
   public isMouseOver(): boolean {
-    return (
-      this.p.dist(
-        this.p.mouseX,
-        this.p.mouseY,
-        this.position.x,
-        this.position.y
-      ) <=
-      this.size / 2
-    );
+    return this.renderer.isMouseOver();
   }
 
   public propagate(): void {
@@ -58,7 +47,7 @@ export class Pin {
   }
 
   public setPosition(position: Position): void {
-    this.position = position;
+    this.renderer.setPosition(position);
   }
 
   public mouseClicked(): boolean {
@@ -66,34 +55,6 @@ export class Pin {
   }
 
   public render(): void {
-    this.p.push();
-    this.p.stroke(pinConfig.strokeColor);
-    this.p.strokeWeight(pinConfig.strokeWeight);
-
-    if (this.isMouseOver()) {
-      this.p.textSize(12);
-      const textWidth = this.p.textWidth(this.name) + 5;
-
-      const rect = {
-        x: this.isInput
-          ? this.position.x - this.size - textWidth
-          : this.position.x + this.size / 2 + 4,
-        y: this.position.y - this.size + 6,
-        w: textWidth + 5,
-        h: 18,
-      };
-      this.p.noStroke();
-      this.p.fill(pinConfig.color);
-      this.p.rect(rect.x, rect.y, rect.w, rect.h);
-      this.p.fill("white");
-      this.p.textAlign(this.p.CENTER);
-      this.p.text(this.name, rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
-    } else {
-      this.isGhost
-        ? this.p.fill(config.ghostEntityColor)
-        : this.p.fill(pinConfig.color);
-    }
-    this.p.circle(this.position.x, this.position.y, this.size);
-    this.p.pop();
+    this.renderer.render();
   }
 }

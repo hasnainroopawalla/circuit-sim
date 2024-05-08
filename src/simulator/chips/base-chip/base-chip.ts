@@ -1,14 +1,15 @@
 import { Position } from "../../common";
 import { Pin } from "../../pin";
-import { pinsPositions } from "./base-chip-renderer-utils";
 import { BaseChipRenderer } from "./base-chip.renderer";
 
 export abstract class BaseChip {
   p: p5;
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
-  name: string;
   id: string;
+  name: string;
+  numInputPins: number;
+  numOutputPins: number;
 
   renderer: BaseChipRenderer;
 
@@ -21,16 +22,12 @@ export abstract class BaseChip {
     color: string
   ) {
     this.p = p;
-    this.name = name;
     this.id = id;
+    this.name = name;
+    this.numInputPins = numInputPins;
+    this.numOutputPins = numOutputPins;
 
-    this.renderer = new BaseChipRenderer(
-      p,
-      name,
-      color,
-      numInputPins,
-      numOutputPins
-    );
+    this.renderer = new BaseChipRenderer(p, this, color);
   }
 
   public getPin(type: string, pinId: number): Pin | undefined {
@@ -39,21 +36,7 @@ export abstract class BaseChip {
   }
 
   public isMouseOverGetEntity(): BaseChip | Pin | undefined {
-    for (const pin of this.inputPins) {
-      if (pin.isMouseOver()) {
-        return pin;
-      }
-    }
-
-    for (const pin of this.outputPins) {
-      if (pin.isMouseOver()) {
-        return pin;
-      }
-    }
-
-    if (this.renderer.isMouseOver()) {
-      return this;
-    }
+    return this.renderer.isMouseOverGetEntity();
   }
 
   public mouseDragged(): void {
@@ -66,40 +49,6 @@ export abstract class BaseChip {
 
   public render(): void {
     this.renderer.render();
-    this.renderPins();
-  }
-
-  // TODO: move to renderer
-  private renderPins(): void {
-    const inputPinsPositions = pinsPositions(
-      this.renderer.position,
-      {
-        x: this.renderer.position.x,
-        y: this.renderer.position.y + this.renderer.size.h,
-      },
-      this.inputPins.length
-    );
-
-    const outputPinsPositions = pinsPositions(
-      {
-        x: this.renderer.position.x + this.renderer.size.w,
-        y: this.renderer.position.y,
-      },
-      {
-        x: this.renderer.position.x + this.renderer.size.w,
-        y: this.renderer.position.y + this.renderer.size.h,
-      },
-      this.outputPins.length
-    );
-
-    for (let i = 0; i < this.inputPins.length; i++) {
-      this.inputPins[i].setPosition(inputPinsPositions[i]);
-      this.inputPins[i].render();
-    }
-    for (let i = 0; i < this.outputPins.length; i++) {
-      this.outputPins[i].setPosition(outputPinsPositions[i]);
-      this.outputPins[i].render();
-    }
   }
 
   public abstract execute(): void;

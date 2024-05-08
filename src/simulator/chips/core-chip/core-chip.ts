@@ -1,5 +1,4 @@
 import { State } from "../../common";
-
 import { Pin } from "../../pin";
 import { Chip } from "../base-chip";
 

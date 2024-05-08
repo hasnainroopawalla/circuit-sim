@@ -3,8 +3,8 @@ import {
   EmitterEventArgs,
   EmitterHelper,
   emitter,
-} from "../../../event-service";
-import type { Circuit } from "../circuit";
+} from "../../../../event-service";
+import type { Circuit } from "../../circuit";
 import {
   blueprintToCircuit,
   circuitToBlueprint,

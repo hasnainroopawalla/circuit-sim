@@ -1,9 +1,4 @@
-import {
-  CircuitEntities,
-  CircuitModeProps,
-  Interaction,
-  Mode,
-} from "./circuit.interface";
+import { CircuitEntities, CircuitModeProps, Mode } from "./circuit.interface";
 import { Chip, CoreChip, ICoreGate, CustomChip, IOChip } from "../chips";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
@@ -11,6 +6,7 @@ import { CircuitRenderer } from "./circuit.renderer";
 import {
   ChipSpawnController,
   IOChipSpawnController,
+  Interaction,
   RepositionController,
   WiringController,
 } from "./controllers";
@@ -25,7 +21,7 @@ import {
 export class Circuit {
   p: p5;
   name: string;
-  entities: CircuitEntities;
+  entities!: CircuitEntities;
   mode: Mode;
   mouseReleaseAfterDrag: boolean;
   isCustomChip: boolean;

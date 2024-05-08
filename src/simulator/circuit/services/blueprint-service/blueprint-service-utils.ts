@@ -1,6 +1,9 @@
-import { CustomChip, IOChip, CoreChip, ICoreGate } from "../../chips";
-import { Circuit } from "../circuit";
-import { CustomChipBlueprint, CustomChipSchema } from "../circuit.interface";
+import { CustomChip, IOChip, CoreChip, ICoreGate } from "../../../chips";
+import { Circuit } from "../../circuit";
+import type {
+  CustomChipBlueprint,
+  CustomChipSchema,
+} from "./blueprint-service.interface";
 
 export const circuitToBlueprint = (
   name: string,

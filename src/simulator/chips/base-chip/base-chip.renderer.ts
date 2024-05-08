@@ -1,27 +1,23 @@
 import { type Position, AbstractRenderer, type Size } from "../../common";
-import { chipSize, textPositionInRect } from "./base-chip-renderer-utils";
+import type { Pin } from "../../pin";
+import type { BaseChip } from "./base-chip";
+import {
+  chipSize,
+  pinsPositions,
+  textPositionInRect,
+} from "./base-chip-renderer-utils";
 import { baseChipConfig } from "./base-chip.config";
 
 export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
+  baseChip: BaseChip;
   color: string;
-  name: string;
-  textColor: string;
   textPosition: Position;
 
-  numInputPins: number;
-  numOutputPins: number;
-
-  constructor(
-    p: p5,
-    name: string,
-    color: string,
-    numInputPins: number,
-    numOutputPins: number
-  ) {
+  constructor(p: p5, baseChip: BaseChip, color: string) {
     const size = chipSize(
-      name,
+      baseChip.name,
       baseChipConfig.text.size,
-      Math.max(numInputPins, numOutputPins)
+      Math.max(baseChip.numInputPins, baseChip.numOutputPins)
     );
 
     const position = {
@@ -31,13 +27,9 @@ export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
 
     super(p, position, size);
 
+    this.baseChip = baseChip;
     this.color = color;
-    this.name = name;
-    this.textColor = baseChipConfig.text.color;
     this.textPosition = { x: 0, y: 0 };
-
-    this.numInputPins = numInputPins;
-    this.numOutputPins = numOutputPins;
   }
 
   public isMouseOver() {
@@ -47,6 +39,24 @@ export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
       this.p.mouseY >= this.position.y &&
       this.p.mouseY <= this.position.y + this.size.h
     );
+  }
+
+  public isMouseOverGetEntity(): BaseChip | Pin | undefined {
+    for (const pin of this.baseChip.inputPins) {
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+
+    for (const pin of this.baseChip.outputPins) {
+      if (pin.isMouseOver()) {
+        return pin;
+      }
+    }
+
+    if (this.isMouseOver()) {
+      return this.baseChip;
+    }
   }
 
   public mouseDragged() {
@@ -63,6 +73,7 @@ export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
   public render() {
     this.renderChip();
     this.renderText();
+    this.renderPins();
   }
 
   private renderChip(): void {
@@ -83,10 +94,42 @@ export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
     this.p.push();
     this.p.textStyle(this.p.BOLD);
     this.textPosition = textPositionInRect(this.position, this.size);
-    this.p.fill(this.textColor);
+    this.p.fill(baseChipConfig.text.color);
     this.p.textAlign(this.p.CENTER, this.p.CENTER);
     this.p.textSize(baseChipConfig.text.size);
-    this.p.text(this.name, this.textPosition.x, this.textPosition.y);
+    this.p.text(this.baseChip.name, this.textPosition.x, this.textPosition.y);
     this.p.pop();
+  }
+
+  private renderPins(): void {
+    const inputPinsPositions = pinsPositions(
+      this.position,
+      {
+        x: this.position.x,
+        y: this.position.y + this.size.h,
+      },
+      this.baseChip.numInputPins
+    );
+
+    const outputPinsPositions = pinsPositions(
+      {
+        x: this.position.x + this.size.w,
+        y: this.position.y,
+      },
+      {
+        x: this.position.x + this.size.w,
+        y: this.position.y + this.size.h,
+      },
+      this.baseChip.numOutputPins
+    );
+
+    for (let i = 0; i < this.baseChip.numInputPins; i++) {
+      this.baseChip.inputPins[i].setPosition(inputPinsPositions[i]);
+      this.baseChip.inputPins[i].render();
+    }
+    for (let i = 0; i < this.baseChip.numOutputPins; i++) {
+      this.baseChip.outputPins[i].setPosition(outputPinsPositions[i]);
+      this.baseChip.outputPins[i].render();
+    }
   }
 }
