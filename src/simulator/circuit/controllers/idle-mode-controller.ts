@@ -11,9 +11,9 @@ export class IdleModeController extends AbstractController {
     super(p, circuit);
   }
 
-  public clear(): void {}
+  public stop(): void {}
 
-  public handle(interaction: Interaction) {
+  public start(interaction: Interaction) {
     const entity = this.circuit.renderer.getMouseOverEntity(
       this.circuit.entities
     );

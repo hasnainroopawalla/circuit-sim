@@ -65,12 +65,12 @@ export class WiringController extends AbstractController {
     this.startPin = pin;
   }
 
-  public clear(): void {
+  public stop(): void {
     this.startPin = undefined;
     this.markers = [];
   }
 
-  public handle(interaction: Interaction) {
+  public start(interaction: Interaction) {
     const entity = this.circuit.renderer.getMouseOverEntity(
       this.circuit.entities
     );

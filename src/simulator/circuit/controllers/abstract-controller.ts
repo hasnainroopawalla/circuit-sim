@@ -10,9 +10,7 @@ export abstract class AbstractController {
     this.circuit = circuit;
   }
 
-  // TODO: rename method
-  public abstract clear(): void;
+  public abstract stop(): void;
 
-  // TODO: rename method
-  public abstract handle(interaction: Interaction): void;
+  public abstract start(interaction: Interaction): void;
 }

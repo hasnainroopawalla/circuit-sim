@@ -15,11 +15,11 @@ export class RepositionController extends AbstractController {
     this.chip = chip;
   }
 
-  public clear(): void {
+  public stop(): void {
     this.chip = undefined;
   }
 
-  public handle(interaction: Interaction) {
+  public start(interaction: Interaction) {
     switch (interaction) {
       case Interaction.Drag:
         if (this.chip instanceof Chip && this.circuit.renderer.isMouseOver()) {

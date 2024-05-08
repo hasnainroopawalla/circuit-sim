@@ -13,7 +13,7 @@ export class ChipSpawnController extends AbstractController {
     this.ghostChips = [];
   }
 
-  public clear() {
+  public stop() {
     this.ghostChips = [];
   }
 
@@ -21,7 +21,7 @@ export class ChipSpawnController extends AbstractController {
     this.ghostChips.push(chip);
   }
 
-  public handle(interaction: Interaction) {
+  public start(interaction: Interaction) {
     switch (interaction) {
       case Interaction.Click:
         if (this.circuit.renderer.isMouseOver()) {
@@ -35,16 +35,15 @@ export class ChipSpawnController extends AbstractController {
   public renderGhostChips(): void {
     for (let i = 0; i < this.ghostChips.length; i++) {
       const chip = this.ghostChips[i];
-      // TODO: dont access the chip renderer directly
-      const position = {
+
+      chip.setPosition({
         x: this.p.mouseX - chip.renderer.size.w / 2,
         y:
           this.p.mouseY -
           chip.renderer.size.h / 2 -
           (i * chip.renderer.size.h) / 0.8, // Extra offset for spacing between chips
-      };
+      });
 
-      chip.setPosition(position);
       chip.render();
     }
   }

@@ -15,11 +15,11 @@ export class IOChipSpawnController extends AbstractController {
     this.ghostIOChip = iOChip;
   }
 
-  public clear(): void {
+  public stop(): void {
     this.ghostIOChip = undefined;
   }
 
-  public handle(interaction: Interaction) {
+  public start(interaction: Interaction) {
     const entity = this.circuit.renderer.getMouseOverEntity(
       this.circuit.entities
     );

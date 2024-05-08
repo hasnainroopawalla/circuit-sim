@@ -70,10 +70,10 @@ export class Circuit {
     const { mode, deps } = props;
     switch (mode) {
       case Mode.Idle:
-        this.chipSpawnController.clear();
-        this.repositionController.clear();
-        this.wiringController.clear();
-        this.iOChipSpawnController.clear();
+        this.chipSpawnController.stop();
+        this.repositionController.stop();
+        this.wiringController.stop();
+        this.iOChipSpawnController.stop();
         break;
       case Mode.Reposition:
         this.repositionController.setChip(deps.chip);
@@ -205,9 +205,9 @@ export class Circuit {
   public mouseMoved(): void {
     // TODO: temporarily disabled due to IOChip hover bug
     // this.handleMouseInteraction(Interaction.Move);
-    this.mode === Mode.Idle && this.idleModeController.handle(Interaction.Move);
+    this.mode === Mode.Idle && this.idleModeController.start(Interaction.Move);
     this.mode === Mode.SpawnIOChipHover &&
-      this.iOChipSpawnController.handle(Interaction.Move);
+      this.iOChipSpawnController.start(Interaction.Move);
   }
 
   public render(): void {
@@ -235,19 +235,19 @@ export class Circuit {
   private handleMouseInteraction(interaction: Interaction): void {
     switch (this.mode) {
       case Mode.Idle:
-        this.idleModeController.handle(interaction);
+        this.idleModeController.start(interaction);
         break;
       case Mode.Reposition:
-        this.repositionController.handle(interaction);
+        this.repositionController.start(interaction);
         break;
       case Mode.SpawnChip:
-        this.chipSpawnController.handle(interaction);
+        this.chipSpawnController.start(interaction);
         break;
       case Mode.SpawnIOChipHover:
-        this.iOChipSpawnController.handle(interaction);
+        this.iOChipSpawnController.start(interaction);
         break;
       case Mode.Wiring:
-        this.wiringController.handle(interaction);
+        this.wiringController.start(interaction);
         break;
     }
   }
