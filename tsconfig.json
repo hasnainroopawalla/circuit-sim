@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true,
+    "jsx": "react",
     "target": "ES6",
     "module": "ES6"
   }
