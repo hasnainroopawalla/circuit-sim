@@ -5,8 +5,8 @@
   "homepage": "http://hasnainroopawalla.github.io/circuit-sim",
   "private": true,
   "scripts": {
-    "start": "webpack serve --open",
-    "build": "webpack",
+    "start": "npm run start --workspace @circuit-sim/web",
+    "build": "npm run build --workspace @circuit-sim/web",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "test": "jest --watch",
@@ -14,7 +14,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
-  "keywords": [],
+  "keywords": ["react", "typescript", "p5js", "circuit-simulator", "javascript", "webpack", "digital-logic-design"],
   "author": "Hasnain Roopawalla",
   "license": "MIT",
   "devDependencies": {
@@ -48,5 +48,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-icons": "^4.11.0"
-  }
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
