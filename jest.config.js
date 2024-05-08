@@ -8,7 +8,7 @@ module.exports = {
     collectCoverage: false,
     // TODO: add coverage thresholds
     collectCoverageFrom: [
-        "src/**/*.{js,jsx,ts,tsx}",
+        "packages/**/*.{js,jsx,ts,tsx}",
         "!<rootDir>/node_modules/"
     ],
     coverageThreshold: {
@@ -21,6 +21,6 @@ module.exports = {
         "jest-canvas-mock"
     ],
     moduleNameMapper: {
-        "\\.(css|scss)$": "<rootDir>/src/__mocks__/styleMock.js"
+        "\\.(css|scss)$": "<rootDir>/packages/__mocks__/styleMock.js"
     }
 };
