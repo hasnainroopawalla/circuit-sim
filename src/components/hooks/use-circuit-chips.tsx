@@ -19,7 +19,8 @@ export const useCircuitChips = () => {
     const newChipData = {
       name: newCircuitChipData.name,
       onClick: () =>
-        emitter.emit("SpawnCircuitChip", {
+        emitter.emit("SpawnChip", {
+          kind: "circuit",
           name: newCircuitChipData.name,
           blueprint: newCircuitChipData.blueprint,
           color,

@@ -1,15 +1,16 @@
 export type EventData = {
-  // A core chip spawn button is pressed
-  SpawnCoreChip: {
-    coreChip: "AND" | "NOT" | "OR";
-  };
-
-  // A circuit chip spawn button is pressed
-  SpawnCircuitChip: {
-    name: string;
-    blueprint: string;
-    color: string;
-  };
+  // A core/circuit chip spawn button is pressed
+  SpawnChip:
+    | {
+        kind: "core";
+        name: "AND" | "NOT" | "OR";
+      }
+    | {
+        kind: "circuit";
+        name: string;
+        blueprint: string;
+        color: string;
+      };
 
   // New circuit chip is imported from a blueprint
   ImportChip: {

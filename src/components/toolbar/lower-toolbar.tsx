@@ -34,8 +34,9 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnCoreChip", {
-            coreChip: "AND",
+          emitter.emit("SpawnChip", {
+            kind: "core",
+            name: "AND",
           })
         }
       />
@@ -44,8 +45,9 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnCoreChip", {
-            coreChip: "OR",
+          emitter.emit("SpawnChip", {
+            kind: "core",
+            name: "OR",
           })
         }
       />
@@ -54,8 +56,9 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnCoreChip", {
-            coreChip: "NOT",
+          emitter.emit("SpawnChip", {
+            kind: "core",
+            name: "NOT",
           })
         }
       />
