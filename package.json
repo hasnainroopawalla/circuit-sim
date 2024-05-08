@@ -14,7 +14,7 @@
     "lint": "eslint . --ext .ts,.tsx",
     "lint:fix": "eslint . --fix --ext .ts,.tsx"
   },
-  "keywords": [],
+  "keywords": ["react", "typescript", "p5js", "circuit-simulator", "javascript", "webpack", "digital-logic-design"],
   "author": "Hasnain Roopawalla",
   "license": "MIT",
   "devDependencies": {
