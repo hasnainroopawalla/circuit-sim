@@ -1,14 +1,15 @@
 {
+  "exclude": ["test", "dist", "node_modules", "src/**/*.test.ts"],
   "compilerOptions": {
-    "outDir": "./build/",
+    "outDir": "./dist",
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
+    "module": "ES6",
     "jsx": "react",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "moduleResolution": "node",
     "esModuleInterop": true,
     "strict": true
+    // "strictPropertyInitialization": false,
   }
 }
