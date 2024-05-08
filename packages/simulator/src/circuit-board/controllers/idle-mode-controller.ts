@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { emitter } from "@circuit-sim/events";
+import { pubsub } from "@circuit-sim/pubsub";
 import { Chip, IOChip, IOSlider } from "../../chips";
 import { Pin } from "../../pin";
 import type { CircuitBoard } from "../circuit-board";
@@ -23,7 +23,7 @@ export class IdleModeController extends AbstractController {
       case Interaction.Click:
         if (entity instanceof Pin) {
           if (entity.isInput) {
-            emitter.emit("Notification", {
+            pubsub.publish("Notification", {
               text: "Wires can only start from an output pin",
             });
           }

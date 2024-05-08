@@ -1,5 +1,5 @@
 import * as React from "react";
-import { EventKey, EventData, emitter } from "@circuit-sim/events";
+import { EventKey, EventData, pubsub } from "@circuit-sim/pubsub";
 
 export function useEventListener<T extends EventKey>(
   event: T
@@ -7,12 +7,12 @@ export function useEventListener<T extends EventKey>(
   const [eventData, setEventData] = React.useState<EventData[T]>();
 
   React.useEffect(() => {
-    emitter.on(event, (error) => {
+    pubsub.subscribe(event, (error) => {
       setEventData(error);
     });
 
     return () => {
-      emitter.off(event, () => {});
+      pubsub.unsubscribe(event, () => {});
     };
   }, []);
 

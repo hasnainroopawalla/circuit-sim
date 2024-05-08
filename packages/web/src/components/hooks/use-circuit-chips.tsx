@@ -1,5 +1,5 @@
 import * as React from "react";
-import { emitter } from "@circuit-sim/events";
+import { pubsub } from "@circuit-sim/pubsub";
 import { useEventListener } from "./use-event-listener";
 import { colorGenerator } from "../color-generator";
 
@@ -19,7 +19,7 @@ export const useCircuitChips = () => {
     const newChipData = {
       name: newCircuitChipData.name,
       onClick: () =>
-        emitter.emit("SpawnChip", {
+        pubsub.publish("SpawnChip", {
           kind: "circuit",
           name: newCircuitChipData.name,
           blueprint: newCircuitChipData.blueprint,

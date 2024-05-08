@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { EventData, emitter } from "@circuit-sim/events";
+import { EventData, pubsub } from "@circuit-sim/pubsub";
 import type { CircuitBoard } from "../../circuit-board";
 import {
   blueprintToCircuitBoard,
@@ -22,14 +22,14 @@ export class BlueprintService {
       this.circuitBoard.entities.inputs.length === 0 ||
       this.circuitBoard.entities.outputs.length === 0
     ) {
-      emitter.emit("Notification", {
+      pubsub.publish("Notification", {
         text: "Circuit chip not created due to missing inputs/outputs",
       });
     }
 
     const blueprint = circuitBoardToBlueprint("main", this.circuitBoard);
 
-    emitter.emit("AddCircuitChipToToolbar", {
+    pubsub.publish("AddCircuitChipToToolbar", {
       name: eventData.name,
       blueprint: JSON.stringify(blueprint),
     });

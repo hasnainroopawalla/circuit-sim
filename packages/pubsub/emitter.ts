@@ -8,21 +8,21 @@ class EventEmitterWrapper<TEvents> {
     this.emitter = new EventEmitter();
   }
 
-  public emit<TEventName extends keyof TEvents & string>(
+  public publish<TEventName extends keyof TEvents & string>(
     eventName: TEventName,
     eventArgs: TEvents[TEventName]
   ) {
     this.emitter.emit(eventName, eventArgs);
   }
 
-  public on<TEventName extends keyof TEvents & string>(
+  public subscribe<TEventName extends keyof TEvents & string>(
     eventName: TEventName,
     callback: (args: TEvents[TEventName]) => void
   ) {
     this.emitter.on(eventName, callback);
   }
 
-  public off<TEventName extends keyof TEvents & string>(
+  public unsubscribe<TEventName extends keyof TEvents & string>(
     eventName: TEventName,
     callback: (args: TEvents[TEventName]) => void
   ) {
@@ -30,4 +30,4 @@ class EventEmitterWrapper<TEvents> {
   }
 }
 
-export const emitter = new EventEmitterWrapper<EventData>();
+export const pubsub = new EventEmitterWrapper<EventData>();

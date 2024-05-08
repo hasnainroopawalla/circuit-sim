@@ -1,5 +1,5 @@
 import * as React from "react";
-import { emitter } from "@circuit-sim/events";
+import { pubsub } from "@circuit-sim/pubsub";
 import { useCircuitChips } from "../hooks";
 import { ImportChipDialog, SaveCircuitDialog } from "../dialogs";
 import { Dialog } from "../factory";
@@ -32,7 +32,7 @@ export const Toolbar = () => {
           content={
             <SaveCircuitDialog
               onConfirm={(circuitName: string) => {
-                emitter.emit("SaveCircuit", { name: circuitName });
+                pubsub.publish("SaveCircuit", { name: circuitName });
                 setSaveShowCircuitDialog(false);
               }}
               onDismiss={() => {
@@ -49,7 +49,7 @@ export const Toolbar = () => {
           content={
             <ImportChipDialog
               onConfirm={(chipName: string, blueprint: string) => {
-                emitter.emit("ImportChip", {
+                pubsub.publish("ImportChip", {
                   chipName,
                   blueprint,
                 });

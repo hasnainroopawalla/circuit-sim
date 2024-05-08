@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Button } from "../factory";
-import { emitter } from "@circuit-sim/events";
+import { pubsub } from "@circuit-sim/pubsub";
 import styles from "./toolbar.module.css";
 import type { IUseCircuitChips } from "../hooks";
 
@@ -34,7 +34,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnChip", {
+          pubsub.publish("SpawnChip", {
             kind: "core",
             name: "AND",
           })
@@ -45,7 +45,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnChip", {
+          pubsub.publish("SpawnChip", {
             kind: "core",
             name: "OR",
           })
@@ -56,7 +56,7 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         appearance="secondary"
         size="large"
         onClick={() =>
-          emitter.emit("SpawnChip", {
+          pubsub.publish("SpawnChip", {
             kind: "core",
             name: "NOT",
           })

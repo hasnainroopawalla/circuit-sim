@@ -2,7 +2,7 @@ import p5 from "p5";
 import { Chip } from "../../chips";
 import type { CircuitBoard } from "../circuit-board";
 import { Mode } from "../circuit-board.interface";
-import { EventData, emitter } from "@circuit-sim/events";
+import { EventData, pubsub } from "@circuit-sim/pubsub";
 
 export class ButtonClickService {
   p: p5;
@@ -15,7 +15,7 @@ export class ButtonClickService {
   }
 
   private importChipOnClick(args: EventData["ImportChip"]): void {
-    emitter.emit("AddCircuitChipToToolbar", {
+    pubsub.publish("AddCircuitChipToToolbar", {
       name: args.chipName,
       blueprint: args.blueprint,
     });
@@ -40,12 +40,14 @@ export class ButtonClickService {
   }
 
   private registerSubscriptions() {
-    emitter.on("SaveCircuit", (eventData) =>
+    pubsub.subscribe("SaveCircuit", (eventData) =>
       this.circuitBoard.blueprintService.saveCircuit(eventData)
     );
-    emitter.on("SpawnChip", (eventData) =>
+    pubsub.subscribe("SpawnChip", (eventData) =>
       this.spawnChipOnButtonClick(eventData)
     );
-    emitter.on("ImportChip", (eventData) => this.importChipOnClick(eventData));
+    pubsub.subscribe("ImportChip", (eventData) =>
+      this.importChipOnClick(eventData)
+    );
   }
 }

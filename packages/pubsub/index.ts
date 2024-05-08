@@ -1,2 +1,2 @@
 export type { EventKey, EventData } from "./emitter.interface";
-export { emitter } from "./emitter";
+export { pubsub as pubsub } from "./emitter";
