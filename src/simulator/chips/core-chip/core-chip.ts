@@ -1,7 +1,7 @@
-import { State } from "../shared.interface";
+import { State } from "../../common";
 
-import { Pin } from "../pin";
-import { Chip } from "./base-chip";
+import { Pin } from "../../pin";
+import { Chip } from "../base-chip";
 
 export type ICoreGate = "AND" | "OR" | "NOT";
 

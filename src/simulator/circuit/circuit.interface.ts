@@ -1,4 +1,4 @@
-import type { Chip, IOChip } from "../chip";
+import type { Chip, IOChip } from "../chips";
 import type { Pin } from "../pin";
 import type { Wire } from "../wire";
 
@@ -28,6 +28,7 @@ export type CustomChipSchema = {
   wires: string[][];
 };
 
+// TODO: move to service
 export type CustomChipBlueprint = {
   [chipName: string]: CustomChipSchema;
 };

@@ -1,4 +1,4 @@
-import { Chip, IOChip } from "../../chip";
+import { Chip, IOChip } from "../../chips";
 import type { Circuit } from "../circuit";
 import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";

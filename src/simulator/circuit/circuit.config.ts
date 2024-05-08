@@ -1,4 +1,4 @@
-export const config = {
+export const circuitConfig = {
   widthScale: 40,
   heightScale: 10,
   background: "#3D3D3D",

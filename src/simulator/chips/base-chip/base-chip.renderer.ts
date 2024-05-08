@@ -1,11 +1,8 @@
-import {
-  type Position,
-  AbstractRenderer,
-} from "../api/abstract-renderer";
-import { ChipHelper } from "../helpers/chip-helper";
+import { type Position, AbstractRenderer, type Size } from "../../common";
+import { chipSize, textPositionInRect } from "./base-chip-renderer-utils";
 import { baseChipConfig } from "./base-chip.config";
 
-export class BaseChipRenderer extends AbstractRenderer {
+export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
   color: string;
   name: string;
   textColor: string;
@@ -21,7 +18,7 @@ export class BaseChipRenderer extends AbstractRenderer {
     numInputPins: number,
     numOutputPins: number
   ) {
-    const size = ChipHelper.chipSize(
+    const size = chipSize(
       name,
       baseChipConfig.text.size,
       Math.max(numInputPins, numOutputPins)
@@ -85,7 +82,7 @@ export class BaseChipRenderer extends AbstractRenderer {
   private renderText(): void {
     this.p.push();
     this.p.textStyle(this.p.BOLD);
-    this.textPosition = ChipHelper.textPositionInRect(this.position, this.size);
+    this.textPosition = textPositionInRect(this.position, this.size);
     this.p.fill(this.textColor);
     this.p.textAlign(this.p.CENTER, this.p.CENTER);
     this.p.textSize(baseChipConfig.text.size);

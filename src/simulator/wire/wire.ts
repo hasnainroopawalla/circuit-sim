@@ -1,6 +1,6 @@
-import { State, Position } from "./shared.interface";
-
-import { Pin } from "./pin";
+import { Position } from "../common";
+import { Pin } from "../pin";
+import { State } from "../common";
 
 export const config = {
   color: {

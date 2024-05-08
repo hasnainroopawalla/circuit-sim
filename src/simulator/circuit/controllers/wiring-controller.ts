@@ -1,9 +1,8 @@
 // TODO: move to controller-utils
-import { CircuitHelper } from "../../helpers/circuit-helper";
 import { Pin } from "../../pin";
-// TODO: move all configs to single dir
-import { WireMarker, config as wireConfig } from "../../wire";
+import { WireMarker, wireConfig } from "../../wire";
 import type { Circuit } from "../circuit";
+import { computeReferencePoint } from "../circuit-renderer-utils";
 import { Interaction, Mode } from "../circuit.interface";
 import { AbstractController } from "./abstract-controller";
 
@@ -105,7 +104,7 @@ export class WiringController extends AbstractController {
     };
     this.markers.push({
       waypoint,
-      referencePoint: CircuitHelper.computeReferencePoint(
+      referencePoint: computeReferencePoint(
         waypoint,
         // handle the initial scenario when there are no wire markers
         this.markers.length === 0 && this.startPin

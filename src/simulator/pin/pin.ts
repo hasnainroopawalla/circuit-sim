@@ -1,15 +1,10 @@
-import { Position, State } from "./shared.interface";
+import { State } from "../common";
 
-import { Chip, IOChip } from "./chip";
-import { Wire } from "./wire";
-import { config as sharedConfig } from "../config";
-
-const config = {
-  color: "#121212",
-  size: 15,
-  strokeColor: "#3D3D3D",
-  strokeWeight: 2,
-};
+import { Chip, IOChip } from "../chips";
+import { Wire } from "../wire";
+import { Position } from "../common";
+import { config } from "../config";
+import { pinConfig } from "./pin.config";
 
 export class Pin {
   p: p5;
@@ -41,7 +36,7 @@ export class Pin {
       this.chip instanceof IOChip ? "pin" : `${isInput ? "In" : "Out"} ${id}`;
     this.isGhost = isGhost;
     this.position = { x: 0, y: 0 };
-    this.size = config.size;
+    this.size = pinConfig.size;
   }
 
   public isMouseOver(): boolean {
@@ -72,8 +67,8 @@ export class Pin {
 
   public render(): void {
     this.p.push();
-    this.p.stroke(config.strokeColor);
-    this.p.strokeWeight(config.strokeWeight);
+    this.p.stroke(pinConfig.strokeColor);
+    this.p.strokeWeight(pinConfig.strokeWeight);
 
     if (this.isMouseOver()) {
       this.p.textSize(12);
@@ -88,15 +83,15 @@ export class Pin {
         h: 18,
       };
       this.p.noStroke();
-      this.p.fill(config.color);
+      this.p.fill(pinConfig.color);
       this.p.rect(rect.x, rect.y, rect.w, rect.h);
       this.p.fill("white");
       this.p.textAlign(this.p.CENTER);
       this.p.text(this.name, rect.x + rect.w / 2, rect.y + rect.h / 2 + 4);
     } else {
       this.isGhost
-        ? this.p.fill(sharedConfig.ghostEntityColor)
-        : this.p.fill(config.color);
+        ? this.p.fill(config.ghostEntityColor)
+        : this.p.fill(pinConfig.color);
     }
     this.p.circle(this.position.x, this.position.y, this.size);
     this.p.pop();

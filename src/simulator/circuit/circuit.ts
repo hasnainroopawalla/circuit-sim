@@ -4,7 +4,7 @@ import {
   Interaction,
   Mode,
 } from "./circuit.interface";
-import { Chip, CoreChip, ICoreGate, CustomChip, IOChip } from "../chip";
+import { Chip, CoreChip, ICoreGate, CustomChip, IOChip } from "../chips";
 import { Pin } from "../pin";
 import { Wire } from "../wire";
 import { CircuitRenderer } from "./circuit.renderer";
@@ -14,7 +14,7 @@ import {
   RepositionController,
   WiringController,
 } from "./controllers";
-import type { Position, Size } from "../api/abstract-renderer";
+import type { Position, Size } from "../common";
 import { IdleModeController } from "./controllers/idle-mode-controller";
 import {
   BlueprintService,
@@ -46,7 +46,7 @@ export class Circuit {
     name: string,
     options: {
       position: Position;
-      size: Size;
+      size: Size<"rect">;
     },
     isCustomChip?: boolean
   ) {

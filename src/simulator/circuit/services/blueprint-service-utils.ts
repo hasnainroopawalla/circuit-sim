@@ -1,4 +1,4 @@
-import { CustomChip, IOChip, CoreChip, ICoreGate } from "../../chip";
+import { CustomChip, IOChip, CoreChip, ICoreGate } from "../../chips";
 import { Circuit } from "../circuit";
 import { CustomChipBlueprint, CustomChipSchema } from "../circuit.interface";
 

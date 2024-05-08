@@ -1,5 +1,5 @@
 export { Circuit } from "./circuit";
-export { config } from "./circuit.config";
+export { circuitConfig } from "./circuit.config";
 export type {
   CustomChipSchema,
   CustomChipBlueprint,

@@ -1,9 +1,9 @@
-import { ChipHelper } from "../helpers/chip-helper";
-import { Pin } from "../pin";
-import { Position } from "../shared.interface";
+import { Position } from "../../common";
+import { Pin } from "../../pin";
+import { pinsPositions } from "./base-chip-renderer-utils";
 import { BaseChipRenderer } from "./base-chip.renderer";
 
-export abstract class Chip {
+export abstract class BaseChip {
   p: p5;
   inputPins: Pin[] = [];
   outputPins: Pin[] = [];
@@ -38,7 +38,7 @@ export abstract class Chip {
     return type === "input" ? this.inputPins[pinId] : this.outputPins[pinId];
   }
 
-  public isMouseOverGetEntity(): Chip | Pin | undefined {
+  public isMouseOverGetEntity(): BaseChip | Pin | undefined {
     for (const pin of this.inputPins) {
       if (pin.isMouseOver()) {
         return pin;
@@ -69,8 +69,9 @@ export abstract class Chip {
     this.renderPins();
   }
 
+  // TODO: move to renderer
   private renderPins(): void {
-    const inputPinsPositions = ChipHelper.pinsPositions(
+    const inputPinsPositions = pinsPositions(
       this.renderer.position,
       {
         x: this.renderer.position.x,
@@ -79,7 +80,7 @@ export abstract class Chip {
       this.inputPins.length
     );
 
-    const outputPinsPositions = ChipHelper.pinsPositions(
+    const outputPinsPositions = pinsPositions(
       {
         x: this.renderer.position.x + this.renderer.size.w,
         y: this.renderer.position.y,

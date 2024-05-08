@@ -1,30 +1,27 @@
-import { IOChipHelper } from "../helpers/io-chip-helper";
-import type { Position, Size } from "../shared.interface";
-import { config as sharedConfig } from "../../config";
-import { IOChip, iOChipConfig } from "./io-chip";
-
-export const sliderConfig = {
-  color: "#4A4A4A",
-  padding: 4,
-};
+import type { Position, Size } from "../../common";
+import { config } from "../../config";
+import { IOChip } from "./io-chip";
+import { sliderPosition } from "./io-chip-renderer-utils";
+import { iOChipConfig, sliderConfig } from "./io-chip.config";
 
 export class IOSlider {
   p: p5;
   chip: IOChip;
   position: Position;
-  size: Size;
+  size: Size<"rect">;
 
   constructor(p: p5, chip: IOChip) {
     this.p = p;
     this.chip = chip;
-    const { position, size } = IOChipHelper.sliderPosition(
+    const { position, size } = sliderPosition(
       sliderConfig.padding,
-      chip.position,
+      chip.renderer.position,
       iOChipConfig.size,
       this.p.windowWidth,
       chip.isInput
     );
-    [this.position, this.size] = [position, size];
+    this.position = position;
+    this.size = size;
   }
 
   public isMouseOver(): boolean {
@@ -44,7 +41,7 @@ export class IOSlider {
     this.p.push();
     this.p.strokeWeight(0);
     this.chip.isGhost
-      ? this.p.fill(sharedConfig.ghostEntityColor)
+      ? this.p.fill(config.ghostEntityColor)
       : this.isMouseOver()
       ? this.p.fill("white")
       : this.p.fill(sliderConfig.color);

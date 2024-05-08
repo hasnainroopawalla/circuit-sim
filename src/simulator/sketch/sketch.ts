@@ -1,6 +1,5 @@
-import { Circuit, config as circuitConfig } from "./circuit";
-
-const config = { background: "#454545" };
+import { Circuit, circuitConfig } from "../circuit";
+import { sketchConfig } from "./sketch.config";
 
 export let circuit: Circuit;
 
@@ -21,7 +20,7 @@ export const sketch = (p: p5) => {
   };
 
   p.draw = () => {
-    p.background(config.background);
+    p.background(sketchConfig.background);
     circuit.execute();
     circuit.render();
   };

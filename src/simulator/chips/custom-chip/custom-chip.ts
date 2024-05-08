@@ -1,5 +1,5 @@
-import { Circuit } from "../circuit";
-import { Chip } from "./base-chip";
+import { Circuit } from "../../circuit";
+import { Chip } from "../base-chip";
 
 export class CustomChip extends Chip {
   circuit: Circuit;
@@ -15,7 +15,7 @@ export class CustomChip extends Chip {
     );
 
     this.circuit = circuit;
-    
+
     for (let i = 0; i < this.circuit.entities.inputs.length; i++) {
       const input = this.circuit.entities.inputs[i];
       const newId = `${id}.input.${i}`;

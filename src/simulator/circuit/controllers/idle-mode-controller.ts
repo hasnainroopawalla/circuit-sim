@@ -1,5 +1,5 @@
 import { EmitterHelper } from "../../../event-service";
-import { Chip, IOChip, IOSlider } from "../../chip";
+import { Chip, IOChip, IOSlider } from "../../chips";
 import { Pin } from "../../pin";
 import type { Circuit } from "../circuit";
 import { Interaction, Mode } from "../circuit.interface";
