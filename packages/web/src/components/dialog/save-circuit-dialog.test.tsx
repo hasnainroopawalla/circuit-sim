@@ -11,7 +11,7 @@ const onDismiss = jest.fn();
 
 describe("ImportChipDialog", () => {
   beforeEach(() => {
-    render(<SaveCircuitDialog onConfirm={onConfirm} onDismiss={onDismiss} />);
+    render(<SaveCircuitDialog onConfirm={onConfirm} />);
   });
 
   afterEach(() => {

@@ -1,4 +1,4 @@
-.toolbar {
+.chipsPanelContainer {
   color: #fff;
   position: absolute;
   left: 0;
@@ -6,9 +6,6 @@
   display: flex;
   flex-direction: row;
   gap: 0.2rem;
-}
-
-.lowerToolbar {
   padding: 0.3rem 0.2rem;
   bottom: 0;
   background-color: #1c1b1b;

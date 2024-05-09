@@ -22,15 +22,27 @@
   font-size: 1rem;
   background-color: #1c1b1b;
   display: flex;
-  gap: 0.8rem;
-  justify-content: center;
-  align-items: center;
+  justify-content: space-between;
+  padding-left: 0.7rem;
+  padding-right: 0.7rem;
 }
 
 .modalContent {
   padding: 0.5rem;
   color: #fff;
   letter-spacing: 0.08rem;
-  font-size: 1.2rem;
-  /* background-color: #292828; */
+  font-size: 0.7.2rem;
+}
+
+.clickableIcon {
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.dialogActionButton {
+  margin-top: 1rem;
+  flex: 1;
+  height: 2.5rem;
+  text-align: center;
 }
