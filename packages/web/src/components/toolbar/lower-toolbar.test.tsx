@@ -3,30 +3,27 @@ import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { LowerToolbar } from "./lower-toolbar";
 
+jest.mock("../hooks", () => ({
+  useCircuitChips: jest.fn().mockReturnValue([
+    {
+      name: "circuitChip1",
+      onClick: jest.fn(),
+    },
+  ]),
+}));
+
 const importChipButtonOnClick = jest.fn();
 const saveButtonOnClick = jest.fn();
 const optionsButtonOnClick = jest.fn();
-
-const circuitChips = [
-  {
-    name: "circuitChip1",
-    onClick: jest.fn(),
-  },
-];
 
 describe("LowerToolbar", () => {
   beforeEach(() => {
     render(
       <LowerToolbar
         saveButtonOnClick={saveButtonOnClick}
-        useCircuitChips={jest.fn().mockReturnValue(circuitChips)}
         importChipButtonOnClick={importChipButtonOnClick}
       />
     );
-  });
-
-  afterEach(() => {
-    jest.resetAllMocks();
   });
 
   test("save button visible", async () => {

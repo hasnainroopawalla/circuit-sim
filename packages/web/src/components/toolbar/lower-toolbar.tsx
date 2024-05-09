@@ -1,19 +1,17 @@
 import * as React from "react";
 import { Button } from "../factory";
-import { pubsub } from "@circuit-sim/pubsub";
 import styles from "./toolbar.module.css";
-import type { IUseCircuitChips } from "../hooks";
+import { useChips } from "../hooks";
 
 type LowerToolbarProps = {
-  useCircuitChips: IUseCircuitChips;
   saveButtonOnClick: () => void;
   importChipButtonOnClick: () => void;
 };
 
 export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
-  const { useCircuitChips, saveButtonOnClick, importChipButtonOnClick } = props;
+  const { saveButtonOnClick, importChipButtonOnClick } = props;
 
-  const circuitChips = useCircuitChips();
+  const chips = useChips();
 
   return (
     <div className={`${styles.toolbar} ${styles.lowerToolbar}`}>
@@ -23,52 +21,13 @@ export const LowerToolbar: React.FC<LowerToolbarProps> = (props) => {
         size="large"
         onClick={saveButtonOnClick}
       />
-      {/* <Button
-        text="OPTIONS"
-        appearance="secondary"
-        size="large"
-        onClick={() => {}}
-      /> */}
-      <Button
-        text="AND"
-        appearance="secondary"
-        size="large"
-        onClick={() =>
-          pubsub.publish("SpawnChip", {
-            kind: "core",
-            name: "AND",
-          })
-        }
-      />
-      <Button
-        text="OR"
-        appearance="secondary"
-        size="large"
-        onClick={() =>
-          pubsub.publish("SpawnChip", {
-            kind: "core",
-            name: "OR",
-          })
-        }
-      />
-      <Button
-        text="NOT"
-        appearance="secondary"
-        size="large"
-        onClick={() =>
-          pubsub.publish("SpawnChip", {
-            kind: "core",
-            name: "NOT",
-          })
-        }
-      />
-      {circuitChips.map((circuitChip) => (
+      {chips.map((chip) => (
         <Button
-          key={circuitChip.name}
-          text={circuitChip.name}
+          key={chip.name}
+          text={chip.name}
           appearance="secondary"
           size="large"
-          onClick={circuitChip.onClick}
+          onClick={chip.onClick}
         />
       ))}
       <Button

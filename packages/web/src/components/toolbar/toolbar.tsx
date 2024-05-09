@@ -1,6 +1,5 @@
 import * as React from "react";
 import { pubsub } from "@circuit-sim/pubsub";
-import { useCircuitChips } from "../hooks";
 import { ImportChipDialog, SaveCircuitDialog } from "../dialogs";
 import { Dialog } from "../factory";
 import { LuImport } from "react-icons/lu";
@@ -17,7 +16,6 @@ export const Toolbar = () => {
   return (
     <>
       <LowerToolbar
-        useCircuitChips={useCircuitChips}
         saveButtonOnClick={() =>
           setSaveShowCircuitDialog(!showSaveCircuitDialog)
         }
