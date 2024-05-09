@@ -2,10 +2,10 @@ import * as React from "react";
 import { pubsub } from "@circuit-sim/pubsub";
 import { ImportChipDialog, SaveCircuitDialog } from "../dialogs";
 import { Dialog } from "../factory";
-import { LuImport } from "react-icons/lu";
-import { FaSave } from "react-icons/fa";
-
+import { LuImport as ImportIcon } from "react-icons/lu";
+import { FaSave as SaveIcon } from "react-icons/fa";
 import { LowerToolbar } from "./lower-toolbar";
+import { MenuPanel } from "./menu-panel";
 
 export const Toolbar = () => {
   const [showSaveCircuitDialog, setSaveShowCircuitDialog] =
@@ -15,6 +15,7 @@ export const Toolbar = () => {
 
   return (
     <>
+      <MenuPanel />
       <LowerToolbar
         saveButtonOnClick={() =>
           setSaveShowCircuitDialog(!showSaveCircuitDialog)
@@ -26,7 +27,7 @@ export const Toolbar = () => {
       {showSaveCircuitDialog && (
         <Dialog
           title="SAVE CIRCUIT"
-          icon={FaSave}
+          icon={SaveIcon}
           content={
             <SaveCircuitDialog
               onConfirm={(circuitName: string) => {
@@ -43,7 +44,7 @@ export const Toolbar = () => {
       {showImportChipDialog && (
         <Dialog
           title="IMPORT CHIP"
-          icon={LuImport}
+          icon={ImportIcon}
           content={
             <ImportChipDialog
               onConfirm={(chipName: string, blueprint: string) => {
