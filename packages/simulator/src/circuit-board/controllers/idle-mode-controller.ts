@@ -26,6 +26,7 @@ export class IdleModeController extends AbstractController {
             pubsub.publish("Notification", {
               text: "Wires can only start from an output pin",
             });
+            return;
           }
           this.circuitBoard.setMode({
             mode: Mode.Wiring,
