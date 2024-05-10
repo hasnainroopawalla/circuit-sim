@@ -1,7 +1,7 @@
 import * as React from "react";
-import { Button } from "../factory";
+import { Button } from "../../factory";
 import styles from "./import-chip-dialog.module.css";
-import dialogStyles from "./dialog.module.css";
+import dialogStyles from "../dialog.module.css";
 
 type ImportChipDialogProps = {
   onConfirm: (chipName: string, blueprint: string) => void;
@@ -9,6 +9,7 @@ type ImportChipDialogProps = {
 
 export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
   const { onConfirm } = props;
+
   const chipNameInput = React.useRef<HTMLInputElement>(null);
   const blueprintInput = React.useRef<HTMLInputElement>(null);
 
@@ -17,7 +18,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
       <div className={styles.inputsContainer}>
         <input
           className={styles.chipNameInput}
-          data-testid="importChipNameInput"
+          data-testid="import-chip-name-input"
           type="text"
           ref={chipNameInput}
           autoFocus={true}
@@ -26,7 +27,7 @@ export const ImportChipDialog: React.FC<ImportChipDialogProps> = (props) => {
         <input
           className={styles.blueprintInput}
           type="text"
-          data-testid="importChipBlueprintInput"
+          data-testid="import-chip-blueprint-input"
           ref={blueprintInput}
           autoFocus={true}
           placeholder={`BLUEPRINT`}

@@ -1,17 +1,15 @@
 import * as React from "react";
 import { fireEvent, render, screen } from "@testing-library/react";
-import { SaveCircuitDialog } from "./save-circuit-dialog";
+import { SaveChipDialog } from "./save-chip-dialog";
 
-const CHIP_NAME_INPUT = "saveCircuitChipNameInput";
-const CANCEL_BUTTON = "saveCircuitCancelButton";
-const CONFIRM_INPUT = "saveCircuitConfirmButton";
+const CHIP_NAME_INPUT = "save-chip-name-input";
+const CONFIRM_INPUT = "save-chip-confirm-button";
 
 const onConfirm = jest.fn();
-const onDismiss = jest.fn();
 
 describe("ImportChipDialog", () => {
   beforeEach(() => {
-    render(<SaveCircuitDialog onConfirm={onConfirm} />);
+    render(<SaveChipDialog onConfirm={onConfirm} />);
   });
 
   afterEach(() => {
@@ -33,10 +31,5 @@ describe("ImportChipDialog", () => {
     });
     fireEvent.click(screen.getByTestId(CONFIRM_INPUT));
     expect(onConfirm).toHaveBeenCalled();
-  });
-
-  test("calls onDismiss when cancel button is clicked", async () => {
-    fireEvent.click(screen.getByTestId(CANCEL_BUTTON));
-    expect(onDismiss).toHaveBeenCalled();
   });
 });

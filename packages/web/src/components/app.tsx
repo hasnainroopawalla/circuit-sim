@@ -1,9 +1,8 @@
 import * as React from "react";
 import { Sketch } from "./sketch-renderer";
 import { Toolbar } from "./toolbar";
-import { NotificationBanner } from "./toolbar/notification-banner";
+import { NotificationBanner, useNotification } from "./notification";
 import styles from "./app.module.css";
-import { useNotification } from "./hooks";
 
 export const App = () => {
   const notificationText = useNotification();

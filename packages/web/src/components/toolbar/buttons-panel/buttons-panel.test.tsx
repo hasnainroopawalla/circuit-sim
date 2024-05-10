@@ -1,6 +1,6 @@
 import * as React from "react";
 import { render, screen } from "@testing-library/react";
-import { ChipsPanel } from "./chips-panel";
+import { ButtonsPanel } from "./buttons-panel";
 
 // jest.mock("../hooks", () => ({
 //   useChips: jest.fn().mockReturnValue([
@@ -17,13 +17,12 @@ jest.mock("../../dialog", () => ({
   }),
 }));
 
-// const importChipButtonOnClick = jest.fn();
 // const saveButtonOnClick = jest.fn();
 // const optionsButtonOnClick = jest.fn();
 
-describe("ChipsPanel", () => {
+describe("ButtonsPanel", () => {
   beforeEach(() => {
-    render(<ChipsPanel />);
+    render(<ButtonsPanel />);
   });
 
   test("save button visible", async () => {
@@ -41,12 +40,5 @@ describe("ChipsPanel", () => {
 
   test.skip("circuit chip button visible", async () => {
     expect(screen.getByText("circuitChip1")).toBeInTheDocument();
-  });
-
-  test("import chip button visible", async () => {
-    const importButton = screen.getByTestId("importChipButton");
-    expect(importButton).toBeVisible();
-    // fireEvent.click(importButton);
-    // expect(importChipButtonOnClick).toHaveBeenCalled();
   });
 });

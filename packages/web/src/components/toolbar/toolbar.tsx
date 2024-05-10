@@ -1,13 +1,11 @@
 import * as React from "react";
-import { MenuPanel } from "./menu-panel";
 import { DialogProvider, Dialog } from "../dialog";
-import { ChipsPanel } from "./chips-panel";
+import { ButtonsPanel } from "./buttons-panel";
 
 export const Toolbar = () => (
   <>
     <DialogProvider>
-      <MenuPanel />
-      <ChipsPanel />
+      <ButtonsPanel />
       <Dialog />
     </DialogProvider>
   </>

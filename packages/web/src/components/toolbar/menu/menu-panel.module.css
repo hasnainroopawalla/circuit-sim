@@ -13,10 +13,12 @@
 .menuItemContainer {
   cursor: pointer;
   display: flex;
-  padding: 0.2rem;
-  letter-spacing: 0.02rem;
+  padding: 0.3rem;
+  letter-spacing: 0.04rem;
   font-size: 1rem;
-  gap: 0.6rem;
+  gap: 1rem;
+  background-color: #fff;
+  color: #000;
   &:hover {
     background-color: #2f85bd;
     color: #fff;

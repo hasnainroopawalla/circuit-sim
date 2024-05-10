@@ -1,13 +1,16 @@
 import * as React from "react";
 import styles from "./dialog.module.css";
-import { RxCross2 as CloseIcon } from "react-icons/rx";
 import { useDialog } from "./dialog-context";
 import { getCurrentPanelProps } from "./dialog-panel-props";
+import { CloseIcon } from "../icons";
 
 export const Dialog: React.FC = () => {
   const { currentPanel, closeDialog } = useDialog();
 
-  const { component, Icon, title } = getCurrentPanelProps(currentPanel);
+  const { Component, Icon, title } = getCurrentPanelProps(
+    currentPanel,
+    closeDialog
+  );
 
   return currentPanel ? (
     <div className={styles.modalContainer}>
@@ -18,7 +21,9 @@ export const Dialog: React.FC = () => {
           </div>
           <CloseIcon className={styles.clickableIcon} onClick={closeDialog} />
         </div>
-        <div className={styles.modalContent}>{component}</div>
+        <div className={styles.modalContent}>
+          <Component />
+        </div>
       </div>
     </div>
   ) : null;
