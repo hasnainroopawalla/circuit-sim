@@ -1,5 +1,6 @@
 import * as React from "react";
 import type { PanelKind } from "./dialog-panel-props";
+import { setSketchInteraction } from "@circuit-sim/simulator";
 
 type IDialogContext = {
   openDialog: (kind: PanelKind) => void;
@@ -14,12 +15,15 @@ export const DialogProvider = (props: React.PropsWithChildren) => {
     null
   );
 
-  const openDialog = React.useCallback(
-    (kind: PanelKind) => setCurrentPanel(kind),
-    []
-  );
+  const openDialog = React.useCallback((kind: PanelKind) => {
+    setCurrentPanel(kind);
+    setSketchInteraction(false);
+  }, []);
 
-  const closeDialog = React.useCallback(() => setCurrentPanel(null), []);
+  const closeDialog = React.useCallback(() => {
+    setCurrentPanel(null);
+    setSketchInteraction(true);
+  }, []);
 
   return (
     <DialogContext.Provider

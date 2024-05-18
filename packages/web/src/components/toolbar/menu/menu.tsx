@@ -5,7 +5,7 @@ import { Button } from "../../factory";
 import {
   SaveIcon,
   ImportIcon,
-  OptionsIcon,
+  // OptionsIcon,
   type IconType,
   QuestionIcon,
 } from "../../icons";
@@ -15,15 +15,15 @@ export const Menu: React.FC = () => {
 
   const { openDialog } = useDialog();
 
-  const showSaveCircuitDialog = React.useCallback(
-    () => openDialog("saveCircuit"),
-    [openDialog]
-  );
+  const showSaveCircuitDialog = React.useCallback(() => {
+    openDialog("saveCircuit");
+    setIsMenuOpen(false);
+  }, [openDialog]);
 
-  const showImportChipDialog = React.useCallback(
-    () => openDialog("importChip"),
-    [openDialog]
-  );
+  const showImportChipDialog = React.useCallback(() => {
+    openDialog("importChip");
+    setIsMenuOpen(false);
+  }, [openDialog]);
 
   return (
     <>
@@ -45,11 +45,11 @@ export const Menu: React.FC = () => {
             Icon={ImportIcon}
             onClick={showImportChipDialog}
           />
-          <MenuItem
+          {/* <MenuItem
             text="OPTIONS"
             Icon={OptionsIcon}
             onClick={() => alert("In progress..")}
-          />
+          /> */}
           <MenuItem
             text="HELP"
             Icon={QuestionIcon}

@@ -1,1 +1,1 @@
-export { createP5Instance, sketch } from "./sketch";
+export { createP5Instance, setSketchInteraction } from "./sketch";

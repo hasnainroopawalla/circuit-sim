@@ -2,9 +2,13 @@ import p5 from "p5";
 import { CircuitBoard, circuitBoardConfig } from "../circuit-board";
 import { sketchConfig } from "./sketch.config";
 
-export let circuitBoard: CircuitBoard;
+let circuitBoard: CircuitBoard;
+let sketchInteractionEnabled = true;
 
-export const sketch = (p: p5) => {
+export const setSketchInteraction = (interactionEnabled: boolean) =>
+  (sketchInteractionEnabled = interactionEnabled);
+
+const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
@@ -26,11 +30,15 @@ export const sketch = (p: p5) => {
     circuitBoard.render();
   };
 
-  p.mouseClicked = () => circuitBoard.mouseClicked();
-  p.mouseDragged = () => circuitBoard.mouseDragged();
-  p.mouseReleased = () => circuitBoard.mouseReleased();
-  p.doubleClicked = () => circuitBoard.mouseDoubleClicked();
-  p.mouseMoved = () => circuitBoard.mouseMoved();
+  p.mouseClicked = () =>
+    sketchInteractionEnabled && circuitBoard.mouseClicked();
+  p.mouseDragged = () =>
+    sketchInteractionEnabled && circuitBoard.mouseDragged();
+  p.mouseReleased = () =>
+    sketchInteractionEnabled && circuitBoard.mouseReleased();
+  p.doubleClicked = () =>
+    sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
+  p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
 };
 
 export const createP5Instance = (container: HTMLDivElement) =>
