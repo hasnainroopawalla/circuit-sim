@@ -14,7 +14,7 @@ export function useEventListener<T extends EventKey>(
     return () => {
       pubsub.unsubscribe(event, () => {});
     };
-  }, []);
+  }, [event]);
 
   return eventData;
 }

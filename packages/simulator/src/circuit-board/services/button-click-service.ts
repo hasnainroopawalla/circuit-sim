@@ -33,7 +33,7 @@ export class ButtonClickService {
           this.circuitBoard.blueprintService.createCircuitChipFromBlueprint(
             args.name,
             args.blueprint,
-            "main"
+            args.color
           );
     }
     this.circuitBoard.setMode({ mode: Mode.SpawnChip, deps: { chip } });

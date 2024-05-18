@@ -219,6 +219,7 @@ export class CircuitBoard {
   public render(): void {
     this.renderer.render();
 
+    // TODO: move to renderer
     this.mode === Mode.Wiring && this.wiringController.renderGhostWire();
     this.mode === Mode.SpawnChip && this.chipSpawnController.renderGhostChips();
     this.mode === Mode.SpawnIOChipHover &&

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useEventListener } from "./use-event-listener";
+import { useEventListener } from "../hooks";
 
 export const useNotification = () => {
   const [notification, setNotification] = React.useState("");

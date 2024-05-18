@@ -1,4 +1,8 @@
-const path = require('path');
+/* eslint-disable no-undef */
+/* eslint-disable @typescript-eslint/no-var-requires */
+
+const path = require("path");
+const webpack = require("webpack");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -30,6 +34,9 @@ module.exports = {
     plugins: [
         new HtmlWebpackPlugin({
             template: './index.html',
+        }),
+        new webpack.DefinePlugin({
+            VERSION: JSON.stringify(require("../../package.json").version),
         }),
     ],
 };

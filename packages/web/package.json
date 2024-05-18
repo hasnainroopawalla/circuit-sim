@@ -7,7 +7,8 @@
         "build": "webpack --mode production",
         "test": "jest",
         "test:watch": "jest --watch",
-        "lint": "eslint . --ext .ts,.tsx"
+        "lint": "eslint . --ext .ts,.tsx",
+        "stats": "webpack --json stats.json --env mode=production --env stats=verbose"
     },
     "keywords": [],
     "author": "",

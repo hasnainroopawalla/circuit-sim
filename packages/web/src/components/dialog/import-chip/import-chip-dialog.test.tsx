@@ -1,19 +1,16 @@
 import * as React from "react";
-import "@testing-library/jest-dom";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { ImportChipDialog } from "./import-chip-dialog";
 
-const CHIP_NAME_INPUT = "importChipNameInput";
-const CHIP_BLUEPRINT_INPUT = "importChipBlueprintInput";
-const CANCEL_BUTTON = "importChipCancelButton";
+const CHIP_NAME_INPUT = "import-chip-name-input";
+const CHIP_BLUEPRINT_INPUT = "import-chip-blueprint-input";
 const CONFIRM_INPUT = "importChipConfirmButton";
 
 const onConfirm = jest.fn();
-const onDismiss = jest.fn();
 
 describe("ImportChipDialog", () => {
   beforeEach(() => {
-    render(<ImportChipDialog onConfirm={onConfirm} onDismiss={onDismiss} />);
+    render(<ImportChipDialog onConfirm={onConfirm} />);
   });
 
   afterEach(() => {
@@ -53,10 +50,5 @@ describe("ImportChipDialog", () => {
     });
     fireEvent.click(screen.getByTestId(CONFIRM_INPUT));
     expect(onConfirm).toHaveBeenCalled();
-  });
-
-  test("calls onDismiss when cancel button is clicked", async () => {
-    fireEvent.click(screen.getByTestId(CANCEL_BUTTON));
-    expect(onDismiss).toHaveBeenCalled();
   });
 });
