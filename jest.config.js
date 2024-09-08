@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
@@ -6,7 +8,6 @@ module.exports = {
     },
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
     collectCoverage: false,
-    // TODO: add coverage thresholds
     collectCoverageFrom: [
         "packages/**/*.{js,jsx,ts,tsx}",
         "!<rootDir>/node_modules/"
