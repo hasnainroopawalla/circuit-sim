@@ -24,7 +24,7 @@ module.exports = {
     setupFilesAfterEnv: [
         "<rootDir>/packages/web/src/setupTests.ts"
     ],
-    moduleNameMapper: {
-        "\\.(css|scss)$": "<rootDir>/packages/__mocks__/styleMock.js"
+    "moduleNameMapper": {
+        "\\.(css|scss)$": "identity-obj-proxy"
     }
 };
