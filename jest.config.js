@@ -22,7 +22,7 @@ module.exports = {
         "jest-canvas-mock"
     ],
     setupFilesAfterEnv: [
-        "<rootDir>/packages/web/src/setupTests.ts"
+        "<rootDir>/packages/web/src/setup-tests.ts"
     ],
     "moduleNameMapper": {
         "\\.(css|scss)$": "identity-obj-proxy"
