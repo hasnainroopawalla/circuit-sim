@@ -3,21 +3,29 @@ on:
   release:
     types: [published]
 
+permissions:
+  checks: write
+  contents: read
+
 jobs:
   build-release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: "18.x"
+          node-version: "20.x"
+
       - name: Install dependencies
-        run: npm install
+        run: yarn install
+
       - name: Build package
-        run: npm run build
-      - name: Trigger release job
+        run: yarn build
+
+      - name: Release
         uses: crazy-max/ghaction-github-pages@v3
         with:
           target_branch: release

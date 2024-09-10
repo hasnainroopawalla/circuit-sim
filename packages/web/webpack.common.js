@@ -18,7 +18,7 @@ module.exports = {
             {
                 test: /\.css$/,
                 use: ['style-loader', 'css-loader']
-            }
+            },
         ],
     },
     resolve: {
@@ -36,7 +36,7 @@ module.exports = {
             template: './index.html',
         }),
         new webpack.DefinePlugin({
-            VERSION: JSON.stringify(require("../../package.json").version),
+            APP_VERSION: JSON.stringify(require("../../package.json").version),
         }),
     ],
 };

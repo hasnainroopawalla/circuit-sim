@@ -56,7 +56,7 @@ export const Menu: React.FC = () => {
             onClick={() =>
               // eslint-disable-next-line no-alert
               alert(
-                `https://github.com/hasnainroopawalla/circuit-sim\n\nv${VERSION}`
+                `https://github.com/hasnainroopawalla/circuit-sim\n\nv${APP_VERSION}`
               )
             }
           />

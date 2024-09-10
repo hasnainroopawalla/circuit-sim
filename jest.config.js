@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
@@ -6,7 +8,6 @@ module.exports = {
     },
     transformIgnorePatterns: ['<rootDir>/node_modules/'],
     collectCoverage: false,
-    // TODO: add coverage thresholds
     collectCoverageFrom: [
         "packages/**/*.{js,jsx,ts,tsx}",
         "!<rootDir>/node_modules/"
@@ -21,9 +22,9 @@ module.exports = {
         "jest-canvas-mock"
     ],
     setupFilesAfterEnv: [
-        "<rootDir>/packages/web/src/setupTests.ts"
+        "<rootDir>/packages/web/src/setup-tests.ts"
     ],
-    moduleNameMapper: {
-        "\\.(css|scss)$": "<rootDir>/packages/__mocks__/styleMock.js"
+    "moduleNameMapper": {
+        "\\.(css|scss)$": "identity-obj-proxy"
     }
 };
