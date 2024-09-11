@@ -1,8 +1,12 @@
 import p5 from "p5";
-import { CircuitBoard, circuitBoardConfig } from "../circuit-board";
+import { circuitBoardConfig } from "../circuit-board";
 import { sketchConfig } from "./sketch.config";
+import {
+  createCircuitBoard,
+  ICircuitBoard,
+} from "../circuit-board/circuit-board-mixin";
 
-let circuitBoard: CircuitBoard;
+let circuitBoard: ICircuitBoard;
 let sketchInteractionEnabled = true;
 
 export const setSketchInteraction = (interactionEnabled: boolean) =>
@@ -12,33 +16,48 @@ const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    circuitBoard = new CircuitBoard(p, "main", {
-      position: {
-        x: circuitBoardConfig.widthScale,
-        y: circuitBoardConfig.heightScale,
-      },
-      size: {
-        w: p.windowWidth - circuitBoardConfig.widthScale * 2,
-        h: p.windowHeight - 65,
+    circuitBoard = createCircuitBoard({
+      p,
+      name: "main",
+      options: {
+        position: {
+          x: circuitBoardConfig.widthScale,
+          y: circuitBoardConfig.heightScale,
+        },
+        size: {
+          w: p.windowWidth - circuitBoardConfig.widthScale * 2,
+          h: p.windowHeight - 65,
+        },
       },
     });
+
+    // circuitBoard = new CircuitBoard(p, "main", {
+    //   position: {
+    //     x: circuitBoardConfig.widthScale,
+    //     y: circuitBoardConfig.heightScale,
+    //   },
+    //   size: {
+    //     w: p.windowWidth - circuitBoardConfig.widthScale * 2,
+    //     h: p.windowHeight - 65,
+    //   },
+    // });
   };
 
   p.draw = () => {
     p.background(sketchConfig.background);
-    circuitBoard.execute();
+    // circuitBoard.execute();
     circuitBoard.render();
   };
 
   p.mouseClicked = () =>
     sketchInteractionEnabled && circuitBoard.mouseClicked();
-  p.mouseDragged = () =>
-    sketchInteractionEnabled && circuitBoard.mouseDragged();
-  p.mouseReleased = () =>
-    sketchInteractionEnabled && circuitBoard.mouseReleased();
-  p.doubleClicked = () =>
-    sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
-  p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
+  // p.mouseDragged = () =>
+  //   sketchInteractionEnabled && circuitBoard.mouseDragged();
+  // p.mouseReleased = () =>
+  //   sketchInteractionEnabled && circuitBoard.mouseReleased();
+  // p.doubleClicked = () =>
+  //   sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
+  // p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
 };
 
 export const createP5Instance = (container: HTMLDivElement) =>

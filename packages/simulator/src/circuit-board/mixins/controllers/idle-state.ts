@@ -1,23 +1,23 @@
 import p5 from "p5";
 import { pubsub } from "@circuit-sim/pubsub";
-import { Chip, IOChip, IOSlider } from "../../chips";
-import { Pin } from "../../pin";
-import type { CircuitBoard } from "../circuit-board";
-import { Mode } from "../circuit-board.interface";
-import { AbstractController } from "./abstract-controller";
-import { Interaction } from "./abstract-controller.interface";
+import { Interaction } from ".";
+import { IOChip, IOSlider, Chip } from "../../../chips";
+import { Pin } from "../../../pin";
+import { AbstractState } from "./abstract-state";
+import { ICircuitBoard } from "../../circuit-board-mixin";
+import { State } from "../state-manager-mixin";
 
-export class IdleModeController extends AbstractController {
-  constructor(p: p5, circuitBoard: CircuitBoard) {
+export class IdleState extends AbstractState {
+  constructor(p: p5, circuitBoard: ICircuitBoard) {
     super(p, circuitBoard);
   }
 
-  public stop(): void {}
-
   public start(interaction: Interaction) {
-    const entity = this.circuitBoard.renderer.getMouseOverEntity(
-      this.circuitBoard.entities
-    );
+    // const entity = this.circuitBoard.getMouseOverEntity(
+    //   this.circuitBoard.entities
+    // );
+
+    const entity = undefined;
 
     switch (interaction) {
       case Interaction.Click:
@@ -28,8 +28,8 @@ export class IdleModeController extends AbstractController {
             });
             return;
           }
-          this.circuitBoard.setMode({
-            mode: Mode.Wiring,
+          this.circuitBoard.setState({
+            state: State.Wiring,
             deps: { startPin: entity },
           });
         } else if (entity instanceof IOChip) {
@@ -41,30 +41,32 @@ export class IdleModeController extends AbstractController {
 
       case Interaction.Drag:
         if (entity instanceof Chip) {
-          this.circuitBoard.setMode({
-            mode: Mode.Reposition,
+          this.circuitBoard.setState({
+            state: State.Reposition,
             deps: { chip: entity },
           });
         } else if (entity instanceof IOSlider) {
-          this.circuitBoard.setMode({
-            mode: Mode.Reposition,
+          this.circuitBoard.setState({
+            state: State.Reposition,
             deps: { chip: entity.chip },
           });
         }
         break;
 
       case Interaction.Move:
-        this.circuitBoard.renderer.isMouseOverIOChipPanel("input") &&
-          this.circuitBoard.setMode({
-            mode: Mode.SpawnIOChipHover,
+        this.circuitBoard.isMouseOverIOChipPanel("input") &&
+          this.circuitBoard.setState({
+            state: State.SpawnIOChipHover,
             deps: { kind: "input" },
           });
 
-        this.circuitBoard.renderer.isMouseOverIOChipPanel("output") &&
-          this.circuitBoard.setMode({
-            mode: Mode.SpawnIOChipHover,
+        this.circuitBoard.isMouseOverIOChipPanel("output") &&
+          this.circuitBoard.setState({
+            state: State.SpawnIOChipHover,
             deps: { kind: "output" },
           });
     }
   }
+
+  public stop(): void {}
 }
