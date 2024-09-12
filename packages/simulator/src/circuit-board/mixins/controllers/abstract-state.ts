@@ -15,4 +15,6 @@ export abstract class AbstractState {
   public abstract start(interaction: Interaction): void;
 
   public abstract stop(): void;
+
+  public abstract render(): void;
 }

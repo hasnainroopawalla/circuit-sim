@@ -5,7 +5,6 @@ import { IOChip, Chip, IOSlider } from "../../chips";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { Pin } from "../../pin";
 import { CircuitBoardEntities } from "./entity-manager-mixin";
-import { State } from "./state-manager-mixin";
 
 export enum Interaction {
   Click = "Click",
@@ -16,7 +15,8 @@ export enum Interaction {
 
 export type IMouseInputManager = {
   mouseClicked: () => void;
-  isMouseOver: () => void;
+  mouseMoved: () => void;
+  isMouseOver: () => boolean;
   isMouseOverIOChipPanel(kind: "input" | "output"): boolean;
   getMouseOverEntity(
     entities: CircuitBoardEntities
@@ -41,11 +41,14 @@ class MouseInputManager implements IMouseInputManager {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    console.log("CLICk");
-    this.handleMouseInteraction(Interaction.Click);
+    this.circuitBoard.getState().start(Interaction.Click);
   }
 
-  public isMouseOver() {
+  public mouseMoved(): void {
+    this.circuitBoard.getState().start(Interaction.Move);
+  }
+
+  public isMouseOver(): boolean {
     return (
       this.p.mouseX >= this.circuitBoard.position.x &&
       this.p.mouseX <=
@@ -87,26 +90,6 @@ class MouseInputManager implements IMouseInputManager {
       }
     }
   }
-
-  private handleMouseInteraction(interaction: Interaction): void {
-    switch (this.circuitBoard.state) {
-      case State.Idle:
-        this.idleModeController.start(interaction);
-        break;
-      // case Mode.Reposition:
-      //   this.repositionController.start(interaction);
-      //   break;
-      // case Mode.SpawnChip:
-      //   this.chipSpawnController.start(interaction);
-      //   break;
-      // case Mode.SpawnIOChipHover:
-      //   this.iOChipSpawnController.start(interaction);
-      //   break;
-      // case Mode.Wiring:
-      //   this.wiringController.start(interaction);
-      //   break;
-    }
-  }
 }
 
 export class MouseInputManagerMixin extends BaseMixin<
@@ -120,6 +103,7 @@ export class MouseInputManagerMixin extends BaseMixin<
         "isMouseOver",
         "isMouseOverIOChipPanel",
         "mouseClicked",
+        "mouseMoved",
       ],
       props: [],
       initMixin: circuitBoard => new MouseInputManager(circuitBoard, p),

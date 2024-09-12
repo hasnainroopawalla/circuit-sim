@@ -40,13 +40,13 @@ export class ButtonClickService {
   }
 
   private registerSubscriptions() {
-    pubsub.subscribe("SaveCircuit", (eventData) =>
+    pubsub.subscribe("SaveCircuit", eventData =>
       this.circuitBoard.blueprintService.saveCircuit(eventData)
     );
-    pubsub.subscribe("SpawnChip", (eventData) =>
+    pubsub.subscribe("SpawnChip", eventData =>
       this.spawnChipOnButtonClick(eventData)
     );
-    pubsub.subscribe("ImportChip", (eventData) =>
+    pubsub.subscribe("ImportChip", eventData =>
       this.importChipOnClick(eventData)
     );
   }

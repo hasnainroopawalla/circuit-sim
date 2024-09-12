@@ -57,7 +57,7 @@ const sketch = (p: p5) => {
   //   sketchInteractionEnabled && circuitBoard.mouseReleased();
   // p.doubleClicked = () =>
   //   sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
-  // p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
+  p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
 };
 
 export const createP5Instance = (container: HTMLDivElement) =>

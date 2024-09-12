@@ -1,11 +1,11 @@
 import p5 from "p5";
 import { pubsub } from "@circuit-sim/pubsub";
-import { Interaction } from ".";
 import { IOChip, IOSlider, Chip } from "../../../chips";
 import { Pin } from "../../../pin";
 import { AbstractState } from "./abstract-state";
 import { ICircuitBoard } from "../../circuit-board-mixin";
 import { State } from "../state-manager-mixin";
+import { Interaction } from "../mouse-input-mixin";
 
 export class IdleState extends AbstractState {
   constructor(p: p5, circuitBoard: ICircuitBoard) {
@@ -13,11 +13,9 @@ export class IdleState extends AbstractState {
   }
 
   public start(interaction: Interaction) {
-    // const entity = this.circuitBoard.getMouseOverEntity(
-    //   this.circuitBoard.entities
-    // );
-
-    const entity = undefined;
+    const entity = this.circuitBoard.getMouseOverEntity(
+      this.circuitBoard.entities
+    );
 
     switch (interaction) {
       case Interaction.Click:
@@ -56,17 +54,19 @@ export class IdleState extends AbstractState {
       case Interaction.Move:
         this.circuitBoard.isMouseOverIOChipPanel("input") &&
           this.circuitBoard.setState({
-            state: State.SpawnIOChipHover,
+            state: State.SpawnIOChip,
             deps: { kind: "input" },
           });
 
         this.circuitBoard.isMouseOverIOChipPanel("output") &&
           this.circuitBoard.setState({
-            state: State.SpawnIOChipHover,
+            state: State.SpawnIOChip,
             deps: { kind: "output" },
           });
     }
   }
 
   public stop(): void {}
+
+  public render(): void {}
 }

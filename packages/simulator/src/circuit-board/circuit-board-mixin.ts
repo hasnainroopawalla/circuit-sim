@@ -30,9 +30,14 @@ export const createCircuitBoard = (args: {
     mixins: [
       new StateManagerMixin(args.p),
       // TODO: improve arg types
-      new RendererMixin(args.p, args.options.position, args.options.size),
+      new RendererMixin(
+        args.p,
+        args.name,
+        args.options.position,
+        args.options.size
+      ),
       new MouseInputManagerMixin(args.p),
-      new EntityManagerMixin(),
+      new EntityManagerMixin(args.p),
     ],
   });
 

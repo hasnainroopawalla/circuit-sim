@@ -1,17 +1,17 @@
 import p5 from "p5";
 import { EventData, pubsub } from "@circuit-sim/pubsub";
-import type { CircuitBoard } from "../../circuit-board";
 import {
   blueprintToCircuitBoard,
   circuitBoardToBlueprint,
 } from "./blueprint-service-utils";
 import type { CircuitChip } from "../../../chips";
+import { ICircuitBoard } from "../../circuit-board-mixin";
 
 export class BlueprintService {
   p: p5;
-  circuitBoard: CircuitBoard;
+  circuitBoard: ICircuitBoard;
 
-  constructor(p: p5, circuitBoard: CircuitBoard) {
+  constructor(p: p5, circuitBoard: ICircuitBoard) {
     this.p = p;
     this.circuitBoard = circuitBoard;
   }

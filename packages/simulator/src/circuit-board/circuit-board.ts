@@ -87,7 +87,7 @@
 //       case Mode.SpawnChip:
 //         this.chipSpawnController.setGhostChip(deps.chip);
 //         break;
-//       case Mode.SpawnIOChipHover:
+//       case Mode.SpawnIOChip:
 //         this.iOChipSpawnController.setGhostIOChip(
 //           this.createIOChip(deps.kind, true, false)
 //         );
@@ -212,7 +212,7 @@
 //     // TODO: temporarily disabled due to IOChip hover bug
 //     // this.handleMouseInteraction(Interaction.Move);
 //     this.mode === Mode.Idle && this.idleModeController.start(Interaction.Move);
-//     this.mode === Mode.SpawnIOChipHover &&
+//     this.mode === Mode.SpawnIOChip &&
 //       this.iOChipSpawnController.start(Interaction.Move);
 //   }
 
@@ -222,7 +222,7 @@
 //     // TODO: move to renderer
 //     this.mode === Mode.Wiring && this.wiringController.renderGhostWire();
 //     this.mode === Mode.SpawnChip && this.chipSpawnController.renderGhostChips();
-//     this.mode === Mode.SpawnIOChipHover &&
+//     this.mode === Mode.SpawnIOChip &&
 //       this.iOChipSpawnController.renderGhostIOChip();
 
 //     this.renderer.renderWires(this.entities.wires);
@@ -250,7 +250,7 @@
 //       case Mode.SpawnChip:
 //         this.chipSpawnController.start(interaction);
 //         break;
-//       case Mode.SpawnIOChipHover:
+//       case Mode.SpawnIOChip:
 //         this.iOChipSpawnController.start(interaction);
 //         break;
 //       case Mode.Wiring:

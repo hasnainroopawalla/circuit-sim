@@ -1,9 +1,10 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
 import { ICircuitBoard } from "../circuit-board-mixin";
-import { Chip, IOChip } from "../../chips";
+import { Chip, CircuitChip, IOChip } from "../../chips";
 import { Wire } from "../../wire";
 import { Pin } from "../../pin";
+import { entityIdService } from "../services";
 
 export type CircuitBoardEntities = {
   inputs: IOChip[];
@@ -14,13 +15,24 @@ export type CircuitBoardEntities = {
 
 export type IEntityManager = {
   entities: CircuitBoardEntities;
+  initEntities: () => void;
+  createIOChip: (
+    kind: "input" | "output",
+    isGhost?: boolean,
+    spawn?: boolean
+  ) => IOChip;
+  createCircuitChip: (
+    circuitBoard: ICircuitBoard,
+    color?: string,
+    spawn?: boolean
+  ) => CircuitChip;
   spawnChip: (chip: Chip) => void;
   spawnIOChip: (ioChip: IOChip) => void;
   spawnWire: (startPin: Pin, endPin: Pin, markers: Wire["markers"]) => void;
 };
 
 class EntityManager implements IEntityManager {
-  public entities: CircuitBoardEntities;
+  public entities!: CircuitBoardEntities;
 
   private p: p5;
   private circuitBoard: ICircuitBoard;
@@ -29,12 +41,63 @@ class EntityManager implements IEntityManager {
     this.circuitBoard = circuitBoard;
     this.p = p;
 
+    this.initEntities();
+  }
+
+  public initEntities() {
     this.entities = {
       inputs: [],
       outputs: [],
       wires: [],
       chips: [],
     };
+  }
+
+  public createIOChip(
+    kind: "input" | "output",
+    isGhost = false,
+    spawn = true
+  ): IOChip {
+    const ioChip =
+      kind === "input"
+        ? new IOChip(
+            this.p,
+            entityIdService.inputChipId(),
+            true,
+            {
+              x: this.circuitBoard.position.x,
+              y: this.p.mouseY,
+            },
+            isGhost
+          )
+        : new IOChip(
+            this.p,
+            entityIdService.outputChipId(),
+            false,
+            {
+              x: this.circuitBoard.position.x + this.circuitBoard.size.w,
+              y: this.p.mouseY,
+            },
+            isGhost
+          );
+
+    spawn && this.spawnIOChip(ioChip);
+    return ioChip;
+  }
+
+  public createCircuitChip(
+    circuitBoard: ICircuitBoard,
+    color: string = "green",
+    spawn = true
+  ): CircuitChip {
+    const chip = new CircuitChip(
+      this.p,
+      circuitBoard,
+      entityIdService.chipId(circuitBoard.name),
+      color
+    );
+    spawn && this.spawnChip(chip);
+    return chip;
   }
 
   public spawnChip(chip: Chip): void {
@@ -65,7 +128,14 @@ export class EntityManagerMixin extends BaseMixin<
 > {
   constructor(p: p5) {
     super({
-      methods: ["spawnChip", "spawnIOChip"],
+      methods: [
+        "initEntities",
+        "spawnChip",
+        "spawnIOChip",
+        "spawnWire",
+        "createIOChip",
+        "createCircuitChip",
+      ],
       props: ["entities"],
       initMixin: circuitBoard => new EntityManager(circuitBoard, p),
     });
