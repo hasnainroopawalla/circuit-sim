@@ -1,21 +1,22 @@
 import p5 from "p5";
 import { CircuitChip, IOChip, CoreChip, ICoreGate } from "../../../chips";
-import { CircuitBoard } from "../../circuit-board";
-import type {
+import {
   CircuitChipBlueprint,
   CircuitChipSchema,
 } from "./blueprint-service.interface";
+import type { ICircuitBoard } from "../../circuit-board.interface";
+import { createCircuitBoard } from "../../create-circuit-board";
 
 export const circuitBoardToBlueprint = (
   name: string,
-  circuitBoard: CircuitBoard,
+  circuitBoard: ICircuitBoard,
   blueprint: CircuitChipBlueprint = {}
 ): CircuitChipBlueprint => {
-  const newInputs = circuitBoard.entities.inputs.map((input) => ({
+  const newInputs = circuitBoard.entities.inputs.map(input => ({
     id: input.id,
   }));
 
-  const newOutputs = circuitBoard.entities.outputs.map((output) => ({
+  const newOutputs = circuitBoard.entities.outputs.map(output => ({
     id: output.id,
   }));
 
@@ -30,7 +31,7 @@ export const circuitBoardToBlueprint = (
     });
   }
 
-  const newWires = circuitBoard.entities.wires.map((wire) => {
+  const newWires = circuitBoard.entities.wires.map(wire => {
     const wireStart = `${wire.startPin.chip.id}/${
       wire.startPin.isInput ? "input" : "output"
     }.${wire.startPin.id}`;
@@ -55,7 +56,7 @@ export const blueprintToCircuitBoard = (
   name: string,
   blueprintString: string,
   defaultCircuitName?: string // "main"
-): CircuitBoard => {
+): ICircuitBoard => {
   const blueprint: CircuitChipBlueprint = JSON.parse(blueprintString);
   const circuitSchema = defaultCircuitName
     ? blueprint[defaultCircuitName]
@@ -65,10 +66,10 @@ export const blueprintToCircuitBoard = (
   // this is required since the circuit is fully responsible for instantiating the entities
   const entities: { [id: string]: IOChip | CircuitChip | CoreChip } = {};
 
-  const circuitBoard = new CircuitBoard(
+  const circuitBoard = createCircuitBoard({
     p,
     name,
-    {
+    options: {
       position: {
         x: 0,
         y: 0,
@@ -78,8 +79,8 @@ export const blueprintToCircuitBoard = (
         h: 0,
       },
     },
-    true
-  );
+    isCircuitChip: true,
+  });
 
   for (const input of circuitSchema.inputs) {
     entities[input.id] = circuitBoard.createIOChip("input");

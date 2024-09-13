@@ -4,14 +4,15 @@ import type {
   CircuitBoardEntities,
   ICircuitBoard,
 } from "../circuit-board.interface";
-import { Chip, CircuitChip, IOChip } from "../../chips";
+import { Chip, CircuitChip, CoreChip, ICoreGate, IOChip } from "../../chips";
 import { Wire } from "../../wire";
 import { Pin } from "../../pin";
-import { entityIdService } from "../services";
+import { entityIdService } from "../services/entity-id-service";
 
 export type IEntityManager = {
   entities: CircuitBoardEntities;
   initEntities: () => void;
+  createCoreChip: (coreChip: ICoreGate, spawn?: boolean) => CoreChip;
   createIOChip: (
     kind: "input" | "output",
     isGhost?: boolean,
@@ -24,7 +25,7 @@ export type IEntityManager = {
   ) => CircuitChip;
   spawnChip: (chip: Chip) => void;
   spawnIOChip: (ioChip: IOChip) => void;
-  spawnWire: (startPin: Pin, endPin: Pin, markers: Wire["markers"]) => void;
+  spawnWire: (startPin: Pin, endPin: Pin, markers?: Wire["markers"]) => void;
 };
 
 class EntityManager implements IEntityManager {
@@ -47,6 +48,16 @@ class EntityManager implements IEntityManager {
       wires: [],
       chips: [],
     };
+  }
+
+  public createCoreChip(coreChip: ICoreGate, spawn = true): CoreChip {
+    const chip = new CoreChip(
+      this.p,
+      coreChip,
+      entityIdService.chipId(coreChip)
+    );
+    spawn && this.spawnChip(chip);
+    return chip;
   }
 
   public createIOChip(
@@ -126,6 +137,7 @@ export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityManager> {
         "spawnChip",
         "spawnIOChip",
         "spawnWire",
+        "createCoreChip",
         "createIOChip",
         "createCircuitChip",
       ],

@@ -1,4 +1,4 @@
-import { entityIdService } from "./entity-id-service";
+import { entityIdService } from ".";
 
 describe("EntityIdService", () => {
   beforeEach(() => {

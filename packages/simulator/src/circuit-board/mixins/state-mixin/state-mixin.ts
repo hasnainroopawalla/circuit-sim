@@ -54,6 +54,7 @@ class CircuitBoardState implements ICircuitBoardState {
 
     switch (state) {
       case State.Idle:
+        // TODO: fix
         // this.chipSpawnController.stop();
         // this.repositionController.stop();
         // this.wiringController.stop();

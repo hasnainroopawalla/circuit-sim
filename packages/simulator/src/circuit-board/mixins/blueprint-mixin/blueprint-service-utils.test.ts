@@ -1,10 +1,7 @@
 import p5 from "p5";
-import {
-  blueprintToCircuitBoard,
-  circuitBoardToBlueprint,
-} from "./blueprint-service-utils";
-import { entityIdService } from "../entity-id-service";
-import { CircuitBoard } from "../../circuit-board";
+import { entityIdService } from "../../services";
+import type { ICircuitBoard } from "../../circuit-board.interface";
+import type { createCircuitBoard } from "../../create-circuit-board";
 
 const sketch = (p: p5) => {
   p.setup = () => {};
@@ -198,7 +195,7 @@ describe("BlueprintHelper", () => {
     entityIdService.reset();
   });
 
-  const createCircuitBoard = (name: string = "main"): CircuitBoard =>
+  const createCircuitBoard = (name: string = "main"): ICircuitBoard =>
     new CircuitBoard(
       p,
       name,
@@ -215,7 +212,7 @@ describe("BlueprintHelper", () => {
       true
     );
 
-  const createANDCircuit = (): CircuitBoard => {
+  const createANDCircuit = (): ICircuitBoard => {
     const circuitBoard = createCircuitBoard("AND");
     const input0 = circuitBoard.createIOChip("input");
     const input1 = circuitBoard.createIOChip("input");
@@ -228,7 +225,7 @@ describe("BlueprintHelper", () => {
     return circuitBoard;
   };
 
-  const createNANDCircuit = (): CircuitBoard => {
+  const createNANDCircuit = (): ICircuitBoard => {
     const circuitBoard = createCircuitBoard("NAND");
     const input0 = circuitBoard.createIOChip("input");
     const input1 = circuitBoard.createIOChip("input");
@@ -243,7 +240,7 @@ describe("BlueprintHelper", () => {
     return circuitBoard;
   };
 
-  const createNORCircuit = (): CircuitBoard => {
+  const createNORCircuit = (): ICircuitBoard => {
     const circuitBoard = createCircuitBoard("NOR");
     const input0 = circuitBoard.createIOChip("input");
     const input1 = circuitBoard.createIOChip("input");

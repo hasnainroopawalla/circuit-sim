@@ -1,19 +1,30 @@
 import p5 from "p5";
+import { BaseMixin } from "power-mixin";
+import { ICircuitBoard } from "../../circuit-board.interface";
 import { EventData, pubsub } from "@circuit-sim/pubsub";
+import { CircuitChip } from "../../../chips";
 import {
   blueprintToCircuitBoard,
   circuitBoardToBlueprint,
 } from "./blueprint-service-utils";
-import type { CircuitChip } from "../../../chips";
-import { ICircuitBoard } from "../../create-circuit-board";
 
-export class BlueprintService {
-  p: p5;
-  circuitBoard: ICircuitBoard;
+export type IBlueprintService = {
+  saveCircuit: (eventData: EventData["SaveCircuit"]) => void;
+  // TODO: rename to loadCircuit
+  createCircuitChipFromBlueprint: (
+    name: string,
+    blueprint: string,
+    color: string
+  ) => CircuitChip;
+};
 
-  constructor(p: p5, circuitBoard: ICircuitBoard) {
-    this.p = p;
+class BlueprintService implements IBlueprintService {
+  private p: p5;
+  private circuitBoard: ICircuitBoard;
+
+  constructor(circuitBoard: ICircuitBoard, p: p5) {
     this.circuitBoard = circuitBoard;
+    this.p = p;
   }
 
   public saveCircuit(eventData: EventData["SaveCircuit"]): void {
@@ -50,5 +61,18 @@ export class BlueprintService {
     );
 
     return this.circuitBoard.createCircuitChip(chipCircuitBoard, color, false);
+  }
+}
+
+export class BlueprintMixin extends BaseMixin<
+  ICircuitBoard,
+  IBlueprintService
+> {
+  constructor(p: p5) {
+    super({
+      methods: [],
+      props: [],
+      initMixin: circuitBoard => new BlueprintService(circuitBoard, p),
+    });
   }
 }

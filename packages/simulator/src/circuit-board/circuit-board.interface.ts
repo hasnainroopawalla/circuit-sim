@@ -1,9 +1,11 @@
 import type { IOChip, Chip } from "../chips";
 import type { Wire } from "../wire";
 import type {
+  IBlueprintService,
   ICircuitBoardState,
   ICore,
   IEntityManager,
+  IExternalEventService,
   IMouseInputManager,
   IRenderer,
 } from "./mixins";
@@ -12,7 +14,9 @@ export type ICircuitBoard = ICircuitBoardState &
   IRenderer &
   IMouseInputManager &
   IEntityManager &
-  ICore;
+  ICore &
+  IExternalEventService &
+  IBlueprintService;
 
 export enum MouseInput {
   Click = "Click",

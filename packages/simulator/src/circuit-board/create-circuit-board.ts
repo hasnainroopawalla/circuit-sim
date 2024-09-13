@@ -7,6 +7,8 @@ import {
   CircuitBoardStateMixin,
   RendererMixin,
   CoreMixin,
+  ExternalEventServiceMixin,
+  BlueprintMixin,
 } from "./mixins";
 import type { ICircuitBoard } from "./circuit-board.interface";
 
@@ -32,6 +34,8 @@ export const createCircuitBoard = (args: {
       ),
       new MouseInputMixin(args.p),
       new EntityMixin(args.p),
+      new ExternalEventServiceMixin(),
+      new BlueprintMixin(args.p),
     ],
   });
 
