@@ -1,21 +1,14 @@
 import p5 from "p5";
 import { mix } from "power-mixin";
-import { IStateManager, StateManagerMixin } from "./mixins/state-manager-mixin";
-import { IRenderer, RendererMixin } from "./mixins/renderer-mixin";
 import type { Position, Size } from "../common";
 import {
-  IMouseInputManager,
-  MouseInputManagerMixin,
-} from "./mixins/mouse-input-mixin";
-import {
-  EntityManagerMixin,
-  IEntityManager,
-} from "./mixins/entity-manager-mixin";
-
-export type ICircuitBoard = IStateManager &
-  IRenderer &
-  IMouseInputManager &
-  IEntityManager;
+  MouseInputMixin,
+  EntityMixin,
+  CircuitBoardStateMixin,
+  RendererMixin,
+  CoreMixin,
+} from "./mixins";
+import type { ICircuitBoard } from "./circuit-board.interface";
 
 export const createCircuitBoard = (args: {
   p: p5;
@@ -28,7 +21,8 @@ export const createCircuitBoard = (args: {
 }) => {
   const circuitBoard = mix<ICircuitBoard>({
     mixins: [
-      new StateManagerMixin(args.p),
+      new CoreMixin(),
+      new CircuitBoardStateMixin(args.p),
       // TODO: improve arg types
       new RendererMixin(
         args.p,
@@ -36,8 +30,8 @@ export const createCircuitBoard = (args: {
         args.options.position,
         args.options.size
       ),
-      new MouseInputManagerMixin(args.p),
-      new EntityManagerMixin(args.p),
+      new MouseInputMixin(args.p),
+      new EntityMixin(args.p),
     ],
   });
 

@@ -1,5 +1,5 @@
 import p5 from "p5";
-import type { ICircuitBoard } from "../../circuit-board-mixin";
+import type { ICircuitBoard } from "../../circuit-board.interface";
 import { Interaction } from "../mouse-input-mixin";
 
 export abstract class AbstractState {

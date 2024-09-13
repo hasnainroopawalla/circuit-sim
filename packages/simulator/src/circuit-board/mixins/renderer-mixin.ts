@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import { ICircuitBoard } from "../circuit-board-mixin";
+import type { ICircuitBoard } from "../circuit-board.interface";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { AbstractRenderer, Position, Size } from "../../common";
 

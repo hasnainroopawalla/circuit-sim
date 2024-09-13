@@ -1,10 +1,10 @@
 import p5 from "p5";
-import { circuitBoardConfig } from "../circuit-board";
-import { sketchConfig } from "./sketch.config";
 import {
+  circuitBoardConfig,
   createCircuitBoard,
-  ICircuitBoard,
-} from "../circuit-board/circuit-board-mixin";
+  type ICircuitBoard,
+} from "../circuit-board";
+import { sketchConfig } from "./sketch.config";
 
 let circuitBoard: ICircuitBoard;
 let sketchInteractionEnabled = true;
@@ -45,7 +45,7 @@ const sketch = (p: p5) => {
 
   p.draw = () => {
     p.background(sketchConfig.background);
-    // circuitBoard.execute();
+    circuitBoard.execute();
     circuitBoard.render();
   };
 

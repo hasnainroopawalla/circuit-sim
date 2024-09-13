@@ -1,8 +1,8 @@
 import p5 from "p5";
 import { IOChip, Chip } from "../../../chips";
 import { AbstractState } from "./abstract-state";
-import { ICircuitBoard } from "../../circuit-board-mixin";
-import { State } from "../state-manager-mixin";
+import type { ICircuitBoard } from "../../circuit-board.interface";
+import { State } from "./state-mixin";
 import { Interaction } from "../mouse-input-mixin";
 
 export class RepositionState extends AbstractState {
@@ -33,4 +33,6 @@ export class RepositionState extends AbstractState {
   public stop(): void {
     this.chip = undefined;
   }
+
+  public render(): void {}
 }

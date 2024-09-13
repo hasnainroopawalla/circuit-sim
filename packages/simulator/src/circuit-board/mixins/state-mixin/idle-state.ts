@@ -3,8 +3,8 @@ import { pubsub } from "@circuit-sim/pubsub";
 import { IOChip, IOSlider, Chip } from "../../../chips";
 import { Pin } from "../../../pin";
 import { AbstractState } from "./abstract-state";
-import { ICircuitBoard } from "../../circuit-board-mixin";
-import { State } from "../state-manager-mixin";
+import type { ICircuitBoard } from "../../circuit-board.interface";
+import { State } from "./state-mixin";
 import { Interaction } from "../mouse-input-mixin";
 
 export class IdleState extends AbstractState {

@@ -5,7 +5,7 @@ import {
   circuitBoardToBlueprint,
 } from "./blueprint-service-utils";
 import type { CircuitChip } from "../../../chips";
-import { ICircuitBoard } from "../../circuit-board-mixin";
+import { ICircuitBoard } from "../../create-circuit-board";
 
 export class BlueprintService {
   p: p5;

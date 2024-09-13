@@ -1,4 +1,4 @@
-import { computeReferencePoint } from "./circuit-board-renderer-utils";
+import { computeReferencePoint } from "./state-mixin.utils";
 
 describe("computeReferencePoint", () => {
   test("returns correct value", () => {

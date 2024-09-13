@@ -1,11 +1,11 @@
 import p5 from "p5";
 import { AbstractState } from "./abstract-state";
-import { ICircuitBoard } from "../../circuit-board-mixin";
+import type { ICircuitBoard } from "../../circuit-board.interface";
 import { Interaction } from "../mouse-input-mixin";
-import { State } from "../state-manager-mixin";
+import { State } from "./state-mixin";
 import { wireConfig, WireMarker } from "../../../wire";
 import { Pin } from "../../../pin";
-import { computeReferencePoint } from "../../circuit-board-renderer-utils";
+import { computeReferencePoint } from "./state-mixin.utils";
 
 export class WiringState extends AbstractState {
   private markers: WireMarker[];

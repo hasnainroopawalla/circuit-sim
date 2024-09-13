@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import { ICircuitBoard } from "../circuit-board-mixin";
+import type { ICircuitBoard } from "../circuit-board.interface";
 import { Chip, CircuitChip, IOChip } from "../../chips";
 import { Wire } from "../../wire";
 import { Pin } from "../../pin";
@@ -122,10 +122,7 @@ class EntityManager implements IEntityManager {
   }
 }
 
-export class EntityManagerMixin extends BaseMixin<
-  ICircuitBoard,
-  IEntityManager
-> {
+export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityManager> {
   constructor(p: p5) {
     super({
       methods: [

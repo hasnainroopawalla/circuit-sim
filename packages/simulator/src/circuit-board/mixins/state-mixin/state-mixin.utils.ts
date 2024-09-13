@@ -1,14 +1,9 @@
-/* eslint-disable no-console */
-import { Position } from "../common";
-import type { CircuitBoard } from "./circuit-board";
+import type { Position } from "../../../common";
+import type { ICircuitBoard } from "../../circuit-board.interface";
 
-// TODO: Test coverage
-export const entityHasConnectedWires = (
-  pins: string[],
-  wires: string[][]
-): boolean =>
-  pins.some((pin) => wires.some((wire) => wire.some((id) => id === pin)));
-
+/**
+ * Computes a reference point for the wire's waypoint marker.
+ */
 export const computeReferencePoint = (
   waypoint: Position,
   lastWaypoint: Position,
@@ -18,7 +13,10 @@ export const computeReferencePoint = (
   y: lastWaypoint.y + curveFactor * (waypoint.y - lastWaypoint.y),
 });
 
-export const renderSummary = (circuitBoard: CircuitBoard) => {
+/**
+ * Only used for debugging.
+ */
+export const renderSummary = (circuitBoard: ICircuitBoard) => {
   console.log("\n");
   console.log(`| CIRCUIT: ${circuitBoard.name} |`);
   for (const input of circuitBoard.entities.inputs) {

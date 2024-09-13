@@ -1,10 +1,10 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import { ICircuitBoard } from "../circuit-board-mixin";
+import type { ICircuitBoard } from "../circuit-board.interface";
 import { IOChip, Chip, IOSlider } from "../../chips";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { Pin } from "../../pin";
-import { CircuitBoardEntities } from "./entity-manager-mixin";
+import { CircuitBoardEntities } from "./entity-mixin";
 
 export enum Interaction {
   Click = "Click",
@@ -92,7 +92,7 @@ class MouseInputManager implements IMouseInputManager {
   }
 }
 
-export class MouseInputManagerMixin extends BaseMixin<
+export class MouseInputMixin extends BaseMixin<
   ICircuitBoard,
   IMouseInputManager
 > {

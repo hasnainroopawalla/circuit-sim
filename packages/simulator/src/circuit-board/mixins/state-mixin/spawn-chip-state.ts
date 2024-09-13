@@ -1,9 +1,9 @@
 import p5 from "p5";
 import { Chip } from "../../../chips";
 import { AbstractState } from "./abstract-state";
-import { ICircuitBoard } from "../../circuit-board-mixin";
+import type { ICircuitBoard } from "../../circuit-board.interface";
 import { Interaction } from "../mouse-input-mixin";
-import { State } from "../state-manager-mixin";
+import { State } from "./state-mixin";
 
 export class SpawnChipState extends AbstractState {
   private ghostChips: Chip[];

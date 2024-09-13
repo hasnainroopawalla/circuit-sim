@@ -1,16 +1,14 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import { ICircuitBoard } from "../circuit-board-mixin";
-import { Chip, IOChip } from "../../chips";
-import { Pin } from "../../pin";
-import {
-  type AbstractState,
-  IdleState,
-  RepositionState,
-  SpawnChipState,
-  SpawnIOChipState,
-  WiringState,
-} from "./controllers";
+import type { ICircuitBoard } from "../../circuit-board.interface";
+import { Chip, IOChip } from "../../../chips";
+import { Pin } from "../../../pin";
+import { AbstractState } from "./abstract-state";
+import { IdleState } from "./idle-state";
+import { RepositionState } from "./reposition-state";
+import { SpawnChipState } from "./spawn-chip-state";
+import { SpawnIOChipState } from "./spawn-io-chip-state";
+import { WiringState } from "./wiring-state";
 
 export enum State {
   Idle = "Idle",
@@ -27,13 +25,13 @@ export type StateProps =
   | { state: State.Reposition; deps: { chip: Chip | IOChip } }
   | { state: State.Wiring; deps: { startPin: Pin } };
 
-export type IStateManager = {
+export type ICircuitBoardState = {
   currentState: State;
   setState: (props: StateProps) => void;
   getState: () => AbstractState;
 };
 
-class StateManager implements IStateManager {
+class CircuitBoardState implements ICircuitBoardState {
   public currentState: State;
   private circuitBoard: ICircuitBoard;
 
@@ -77,7 +75,6 @@ class StateManager implements IStateManager {
         this.states[state].setup(deps.chip);
         break;
       case State.SpawnIOChip:
-        console.log("YA");
         this.states[state].setup(
           this.circuitBoard.createIOChip(deps.kind, true, false)
         );
@@ -97,12 +94,15 @@ class StateManager implements IStateManager {
   }
 }
 
-export class StateManagerMixin extends BaseMixin<ICircuitBoard, IStateManager> {
+export class CircuitBoardStateMixin extends BaseMixin<
+  ICircuitBoard,
+  ICircuitBoardState
+> {
   constructor(p: p5) {
     super({
       methods: ["setState", "getState"],
       props: ["currentState"],
-      initMixin: circuitBoard => new StateManager(circuitBoard, p),
+      initMixin: circuitBoard => new CircuitBoardState(circuitBoard, p),
     });
   }
 }
