@@ -1,9 +1,11 @@
 import p5 from "p5";
 import { IOChip, IOSlider } from "../../../chips";
 import { AbstractState } from "./abstract-state";
-import type { ICircuitBoard } from "../../circuit-board.interface";
-import { Interaction } from "../mouse-input-mixin";
-import { State } from "./state-mixin";
+import {
+  State,
+  ICircuitBoard,
+  MouseInput,
+} from "../../circuit-board.interface";
 
 export class SpawnIOChipState extends AbstractState {
   private ghostIOChip?: IOChip;
@@ -16,17 +18,17 @@ export class SpawnIOChipState extends AbstractState {
     this.ghostIOChip = iOChip;
   }
 
-  public start(interaction: Interaction) {
+  public start(mouseInput: MouseInput) {
     const entity = this.circuitBoard.getMouseOverEntity(
       this.circuitBoard.entities
     );
 
-    switch (interaction) {
-      case Interaction.Click:
+    switch (mouseInput) {
+      case MouseInput.Click:
         this.ghostIOChip && this.circuitBoard.spawnIOChip(this.ghostIOChip);
         break;
 
-      case Interaction.Move:
+      case MouseInput.Move:
         if (
           entity instanceof IOSlider ||
           (!this.circuitBoard.isMouseOverIOChipPanel("input") &&

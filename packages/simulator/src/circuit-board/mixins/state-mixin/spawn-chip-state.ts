@@ -1,9 +1,11 @@
 import p5 from "p5";
 import { Chip } from "../../../chips";
 import { AbstractState } from "./abstract-state";
-import type { ICircuitBoard } from "../../circuit-board.interface";
-import { Interaction } from "../mouse-input-mixin";
-import { State } from "./state-mixin";
+import {
+  ICircuitBoard,
+  MouseInput,
+  State,
+} from "../../circuit-board.interface";
 
 export class SpawnChipState extends AbstractState {
   private ghostChips: Chip[];
@@ -17,9 +19,9 @@ export class SpawnChipState extends AbstractState {
     this.ghostChips.push(chip);
   }
 
-  public start(interaction: Interaction) {
-    switch (interaction) {
-      case Interaction.Click:
+  public start(mouseInput: MouseInput) {
+    switch (mouseInput) {
+      case MouseInput.Click:
         if (this.circuitBoard.isMouseOver()) {
           this.spawnGhostChips();
           this.circuitBoard.setState({ state: State.Idle });

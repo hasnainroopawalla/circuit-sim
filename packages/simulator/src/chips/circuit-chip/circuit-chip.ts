@@ -1,11 +1,11 @@
 import p5 from "p5";
-import { CircuitBoard } from "../../circuit-board";
 import { Chip } from "../base-chip";
+import type { ICircuitBoard } from "../../circuit-board";
 
 export class CircuitChip extends Chip {
-  circuitBoard: CircuitBoard;
+  circuitBoard: ICircuitBoard;
 
-  constructor(p: p5, circuitBoard: CircuitBoard, id: string, color: string) {
+  constructor(p: p5, circuitBoard: ICircuitBoard, id: string, color: string) {
     super(
       p,
       circuitBoard.name,

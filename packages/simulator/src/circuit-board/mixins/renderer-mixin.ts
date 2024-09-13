@@ -29,7 +29,7 @@ class Renderer extends AbstractRenderer<Size<"rect">> implements IRenderer {
     this.circuitBoard = circuitBoard;
   }
 
-  public render() {
+  public render(): void {
     this.p.push();
     this.p.stroke(circuitBoardConfig.strokeColor);
     this.p.strokeWeight(2);

@@ -1,9 +1,11 @@
 import p5 from "p5";
 import { IOChip, Chip } from "../../../chips";
 import { AbstractState } from "./abstract-state";
-import type { ICircuitBoard } from "../../circuit-board.interface";
-import { State } from "./state-mixin";
-import { Interaction } from "../mouse-input-mixin";
+import {
+  ICircuitBoard,
+  MouseInput,
+  State,
+} from "../../circuit-board.interface";
 
 export class RepositionState extends AbstractState {
   private chip?: Chip | IOChip;
@@ -16,9 +18,9 @@ export class RepositionState extends AbstractState {
     this.chip = chip;
   }
 
-  public start(interaction: Interaction) {
-    switch (interaction) {
-      case Interaction.Drag:
+  public start(mouseInput: MouseInput) {
+    switch (mouseInput) {
+      case MouseInput.Drag:
         if (this.chip instanceof Chip && this.circuitBoard.isMouseOver()) {
           this.chip.mouseDragged();
         } else if (this.chip instanceof IOChip) {

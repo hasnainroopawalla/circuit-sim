@@ -1,6 +1,5 @@
 import p5 from "p5";
-import type { ICircuitBoard } from "../../circuit-board.interface";
-import { Interaction } from "../mouse-input-mixin";
+import type { ICircuitBoard, MouseInput } from "../../circuit-board.interface";
 
 export abstract class AbstractState {
   protected p: p5;
@@ -12,7 +11,7 @@ export abstract class AbstractState {
   }
 
   // TODO: rename to interact
-  public abstract start(interaction: Interaction): void;
+  public abstract start(mouseInput: MouseInput): void;
 
   public abstract stop(): void;
 

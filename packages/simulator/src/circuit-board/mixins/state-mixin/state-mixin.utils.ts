@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 import type { Position } from "../../../common";
 import type { ICircuitBoard } from "../../circuit-board.interface";
 

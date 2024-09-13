@@ -1,6 +1,6 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import type { ICircuitBoard } from "../../circuit-board.interface";
+import { ICircuitBoard, State } from "../../circuit-board.interface";
 import { Chip, IOChip } from "../../../chips";
 import { Pin } from "../../../pin";
 import { AbstractState } from "./abstract-state";
@@ -10,20 +10,12 @@ import { SpawnChipState } from "./spawn-chip-state";
 import { SpawnIOChipState } from "./spawn-io-chip-state";
 import { WiringState } from "./wiring-state";
 
-export enum State {
-  Idle = "Idle",
-  Reposition = "Reposition",
-  Wiring = "Wiring",
-  SpawnChip = "SpawnChip",
-  SpawnIOChip = "SpawnIOChip",
-}
-
-export type StateProps =
-  | { state: State.Idle; deps?: object }
-  | { state: State.SpawnChip; deps: { chip: Chip } }
-  | { state: State.SpawnIOChip; deps: { kind: "input" | "output" } }
-  | { state: State.Reposition; deps: { chip: Chip | IOChip } }
-  | { state: State.Wiring; deps: { startPin: Pin } };
+type StateProps =
+  | { state: State.Idle; props?: object }
+  | { state: State.SpawnChip; props: { chip: Chip } }
+  | { state: State.SpawnIOChip; props: { kind: "input" | "output" } }
+  | { state: State.Reposition; props: { chip: Chip | IOChip } }
+  | { state: State.Wiring; props: { startPin: Pin } };
 
 export type ICircuitBoardState = {
   currentState: State;
@@ -35,7 +27,6 @@ class CircuitBoardState implements ICircuitBoardState {
   public currentState: State;
   private circuitBoard: ICircuitBoard;
 
-  // private readonly states: Record<State, AbstractState>;
   private readonly states: {
     Idle: IdleState;
     Reposition: RepositionState;
@@ -58,8 +49,8 @@ class CircuitBoardState implements ICircuitBoardState {
     this.currentState = State.Idle;
   }
 
-  public setState(props: StateProps) {
-    const { state, deps } = props;
+  public setState(stateProps: StateProps) {
+    const { state, props } = stateProps;
 
     switch (state) {
       case State.Idle:
@@ -69,18 +60,18 @@ class CircuitBoardState implements ICircuitBoardState {
         // this.iOChipSpawnController.stop();
         break;
       case State.Reposition:
-        this.states[state].setup(deps.chip);
+        this.states[state].setup(props.chip);
         break;
       case State.SpawnChip:
-        this.states[state].setup(deps.chip);
+        this.states[state].setup(props.chip);
         break;
       case State.SpawnIOChip:
         this.states[state].setup(
-          this.circuitBoard.createIOChip(deps.kind, true, false)
+          this.circuitBoard.createIOChip(props.kind, true, false)
         );
         break;
       case State.Wiring:
-        this.states[state].setup(deps.startPin);
+        this.states[state].setup(props.startPin);
         break;
       default:
         throw new Error("Invalid mode");

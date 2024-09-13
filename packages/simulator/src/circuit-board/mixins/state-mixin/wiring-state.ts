@@ -1,8 +1,10 @@
 import p5 from "p5";
 import { AbstractState } from "./abstract-state";
-import type { ICircuitBoard } from "../../circuit-board.interface";
-import { Interaction } from "../mouse-input-mixin";
-import { State } from "./state-mixin";
+import {
+  State,
+  ICircuitBoard,
+  MouseInput,
+} from "../../circuit-board.interface";
 import { wireConfig, WireMarker } from "../../../wire";
 import { Pin } from "../../../pin";
 import { computeReferencePoint } from "./state-mixin.utils";
@@ -66,13 +68,13 @@ export class WiringState extends AbstractState {
     this.startPin = pin;
   }
 
-  public start(interaction: Interaction) {
+  public start(mouseInput: MouseInput) {
     const entity = this.circuitBoard.getMouseOverEntity(
       this.circuitBoard.entities
     );
 
-    switch (interaction) {
-      case Interaction.Click:
+    switch (mouseInput) {
+      case MouseInput.Click:
         // TODO: Improve logic
         if (this.circuitBoard.currentState === State.Wiring && this.startPin) {
           if (entity instanceof Pin) {
@@ -87,7 +89,7 @@ export class WiringState extends AbstractState {
         }
         break;
 
-      case Interaction.DoubleClick:
+      case MouseInput.DoubleClick:
         this.circuitBoard.setState({ state: State.Idle });
         break;
     }

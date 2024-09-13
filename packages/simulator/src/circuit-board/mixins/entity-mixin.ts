@@ -1,17 +1,13 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import type { ICircuitBoard } from "../circuit-board.interface";
+import type {
+  CircuitBoardEntities,
+  ICircuitBoard,
+} from "../circuit-board.interface";
 import { Chip, CircuitChip, IOChip } from "../../chips";
 import { Wire } from "../../wire";
 import { Pin } from "../../pin";
 import { entityIdService } from "../services";
-
-export type CircuitBoardEntities = {
-  inputs: IOChip[];
-  outputs: IOChip[];
-  wires: Wire[];
-  chips: Chip[];
-};
 
 export type IEntityManager = {
   entities: CircuitBoardEntities;
@@ -44,7 +40,7 @@ class EntityManager implements IEntityManager {
     this.initEntities();
   }
 
-  public initEntities() {
+  public initEntities(): void {
     this.entities = {
       inputs: [],
       outputs: [],

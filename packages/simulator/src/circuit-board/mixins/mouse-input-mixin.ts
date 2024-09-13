@@ -1,17 +1,13 @@
 import p5 from "p5";
 import { BaseMixin } from "power-mixin";
-import type { ICircuitBoard } from "../circuit-board.interface";
+import {
+  MouseInput,
+  ICircuitBoard,
+  CircuitBoardEntities,
+} from "../circuit-board.interface";
 import { IOChip, Chip, IOSlider } from "../../chips";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { Pin } from "../../pin";
-import { CircuitBoardEntities } from "./entity-mixin";
-
-export enum Interaction {
-  Click = "Click",
-  DoubleClick = "DoubleClick",
-  Drag = "Drag",
-  Move = "Move",
-}
 
 export type IMouseInputManager = {
   mouseClicked: () => void;
@@ -41,11 +37,11 @@ class MouseInputManager implements IMouseInputManager {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    this.circuitBoard.getState().start(Interaction.Click);
+    this.circuitBoard.getState().start(MouseInput.Click);
   }
 
   public mouseMoved(): void {
-    this.circuitBoard.getState().start(Interaction.Move);
+    this.circuitBoard.getState().start(MouseInput.Move);
   }
 
   public isMouseOver(): boolean {
