@@ -1,8 +1,12 @@
 import p5 from "p5";
-import { CircuitBoard, circuitBoardConfig } from "../circuit-board";
+import {
+  circuitBoardConfig,
+  createCircuitBoard,
+  type ICircuitBoard,
+} from "../entities";
 import { sketchConfig } from "./sketch.config";
 
-let circuitBoard: CircuitBoard;
+let circuitBoard: ICircuitBoard;
 let sketchInteractionEnabled = true;
 
 export const setSketchInteraction = (interactionEnabled: boolean) =>
@@ -12,15 +16,20 @@ const sketch = (p: p5) => {
   p.setup = () => {
     p.createCanvas(p.windowWidth, p.windowHeight);
 
-    circuitBoard = new CircuitBoard(p, "main", {
-      position: {
-        x: circuitBoardConfig.widthScale,
-        y: circuitBoardConfig.heightScale,
+    circuitBoard = createCircuitBoard({
+      p,
+      name: "main",
+      options: {
+        position: {
+          x: circuitBoardConfig.widthScale,
+          y: circuitBoardConfig.heightScale,
+        },
+        size: {
+          w: p.windowWidth - circuitBoardConfig.widthScale * 2,
+          h: p.windowHeight - 65,
+        },
       },
-      size: {
-        w: p.windowWidth - circuitBoardConfig.widthScale * 2,
-        h: p.windowHeight - 65,
-      },
+      isCircuitChip: false,
     });
   };
 

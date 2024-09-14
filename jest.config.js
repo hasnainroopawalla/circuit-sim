@@ -4,9 +4,10 @@ module.exports = {
     preset: 'ts-jest',
     testEnvironment: 'jsdom',
     transform: {
-        '^.+\\.ts?$': 'ts-jest',
+        '^.+\\.tsx?$': 'ts-jest',
+        "^.+\\.[t|j]sx?$": "babel-jest"
     },
-    transformIgnorePatterns: ['<rootDir>/node_modules/'],
+    transformIgnorePatterns: ["<rootDir>/node_modules/(?!(power-mixin)/)"],
     collectCoverage: false,
     collectCoverageFrom: [
         "packages/**/*.{js,jsx,ts,tsx}",
