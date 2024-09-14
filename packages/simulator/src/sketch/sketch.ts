@@ -3,7 +3,7 @@ import {
   circuitBoardConfig,
   createCircuitBoard,
   type ICircuitBoard,
-} from "../circuit-board";
+} from "../entities";
 import { sketchConfig } from "./sketch.config";
 
 let circuitBoard: ICircuitBoard;
