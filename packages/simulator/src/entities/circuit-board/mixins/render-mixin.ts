@@ -11,20 +11,24 @@ export type IRenderService = {
   size: Size<"rect">;
 };
 
+type IRenderServiceArgs = {
+  circuitBoard: ICircuitBoard;
+  p: p5;
+  options: {
+    position: Position;
+    size: Size<"rect">;
+  };
+};
+
 class RenderService
   extends AbstractRenderer<Size<"rect">>
   implements IRenderService
 {
   private circuitBoard: ICircuitBoard;
 
-  constructor(
-    circuitBoard: ICircuitBoard,
-    p: p5,
-    position: Position,
-    size: Size<"rect">
-  ) {
-    super(p, position, size);
-    this.circuitBoard = circuitBoard;
+  constructor(args: IRenderServiceArgs) {
+    super(args.p, args.options.position, args.options.size);
+    this.circuitBoard = args.circuitBoard;
   }
 
   public render(): void {
@@ -75,13 +79,14 @@ class RenderService
   }
 }
 
+type IRenderMixinArgs = Omit<IRenderServiceArgs, "circuitBoard">;
+
 export class RenderMixin extends BaseMixin<ICircuitBoard, IRenderService> {
-  constructor(p: p5, position: Position, size: Size<"rect">) {
+  constructor(args: IRenderMixinArgs) {
     super({
       methods: ["render"],
       props: ["position", "size"],
-      initMixin: circuitBoard =>
-        new RenderService(circuitBoard, p, position, size),
+      initMixin: circuitBoard => new RenderService({ circuitBoard, ...args }),
     });
   }
 }

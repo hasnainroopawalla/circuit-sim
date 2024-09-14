@@ -5,7 +5,7 @@ import type {
   ICoreService,
   IStateService,
   IEntityService,
-  IExternalEventService,
+  IExternalEventsService,
   IMouseInputService,
   IRenderService,
 } from "./mixins";
@@ -15,7 +15,7 @@ export type ICircuitBoard = IStateService &
   IMouseInputService &
   IEntityService &
   ICoreService &
-  IExternalEventService &
+  IExternalEventsService &
   IBlueprintService;
 
 export enum MouseInput {

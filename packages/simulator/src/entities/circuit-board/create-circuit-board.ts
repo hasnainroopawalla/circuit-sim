@@ -6,7 +6,7 @@ import {
   StateMixin,
   RenderMixin,
   CoreMixin,
-  ExternalEventServiceMixin,
+  ExternalEventsMixin,
   BlueprintMixin,
 } from "./mixins";
 import type { ICircuitBoard } from "./circuit-board.interface";
@@ -23,14 +23,13 @@ export const createCircuitBoard = (args: {
 }) => {
   const circuitBoard = mix<ICircuitBoard>({
     mixins: [
-      new CoreMixin(args.name, args.isCircuitChip),
-      new StateMixin(args.p),
-      // TODO: improve arg types
-      new RenderMixin(args.p, args.options.position, args.options.size),
-      new MouseInputMixin(args.p),
-      new EntityMixin(args.p),
-      new ExternalEventServiceMixin(),
-      new BlueprintMixin(args.p),
+      new CoreMixin(args),
+      new StateMixin(args),
+      new RenderMixin(args),
+      new MouseInputMixin(args),
+      new EntityMixin(args),
+      new ExternalEventsMixin(args),
+      new BlueprintMixin(args),
     ],
   });
 

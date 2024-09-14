@@ -13,13 +13,18 @@ export type IBlueprintService = {
   loadCircuit: (name: string, blueprint: string, color: string) => CircuitChip;
 };
 
+type IBlueprintServiceArgs = {
+  p: p5;
+  circuitBoard: ICircuitBoard;
+};
+
 class BlueprintService implements IBlueprintService {
   private p: p5;
   private circuitBoard: ICircuitBoard;
 
-  constructor(circuitBoard: ICircuitBoard, p: p5) {
-    this.circuitBoard = circuitBoard;
-    this.p = p;
+  constructor(args: IBlueprintServiceArgs) {
+    this.circuitBoard = args.circuitBoard;
+    this.p = args.p;
   }
 
   public saveCircuit(eventData: EventData["SaveCircuit"]): void {
@@ -59,15 +64,18 @@ class BlueprintService implements IBlueprintService {
   }
 }
 
+type IBlueprintMixinArgs = Omit<IBlueprintServiceArgs, "circuitBoard">;
+
 export class BlueprintMixin extends BaseMixin<
   ICircuitBoard,
   IBlueprintService
 > {
-  constructor(p: p5) {
+  constructor(args: IBlueprintMixinArgs) {
     super({
       methods: ["loadCircuit", "saveCircuit"],
       props: [],
-      initMixin: circuitBoard => new BlueprintService(circuitBoard, p),
+      initMixin: circuitBoard =>
+        new BlueprintService({ circuitBoard, ...args }),
     });
   }
 }

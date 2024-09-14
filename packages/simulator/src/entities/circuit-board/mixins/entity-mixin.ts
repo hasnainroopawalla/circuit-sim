@@ -28,15 +28,20 @@ export type IEntityService = {
   spawnWire: (startPin: Pin, endPin: Pin, markers?: Wire["markers"]) => void;
 };
 
+type IEntityServiceArgs = {
+  p: p5;
+  circuitBoard: ICircuitBoard;
+};
+
 class EntityService implements IEntityService {
   public entities!: CircuitBoardEntities;
 
   private p: p5;
   private circuitBoard: ICircuitBoard;
 
-  constructor(circuitBoard: ICircuitBoard, p: p5) {
-    this.circuitBoard = circuitBoard;
-    this.p = p;
+  constructor(args: IEntityServiceArgs) {
+    this.circuitBoard = args.circuitBoard;
+    this.p = args.p;
 
     this.initEntities();
   }
@@ -129,8 +134,10 @@ class EntityService implements IEntityService {
   }
 }
 
+type IEntityMixinArgs = Omit<IEntityServiceArgs, "circuitBoard">;
+
 export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityService> {
-  constructor(p: p5) {
+  constructor(args: IEntityMixinArgs) {
     super({
       methods: [
         "initEntities",
@@ -142,7 +149,7 @@ export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityService> {
         "createCircuitChip",
       ],
       props: ["entities"],
-      initMixin: circuitBoard => new EntityService(circuitBoard, p),
+      initMixin: circuitBoard => new EntityService({ circuitBoard, ...args }),
     });
   }
 }

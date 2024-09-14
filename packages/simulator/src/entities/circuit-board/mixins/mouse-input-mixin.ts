@@ -20,15 +20,20 @@ export type IMouseInputService = {
   getMouseOverEntity(entities: CircuitBoardEntities): Entity | undefined;
 };
 
+type IMouseInputServiceArgs = {
+  p: p5;
+  circuitBoard: ICircuitBoard;
+};
+
 class MouseInputService implements IMouseInputService {
   private p: p5;
   private circuitBoard: ICircuitBoard;
 
   private mouseReleaseAfterDrag: boolean;
 
-  constructor(circuitBoard: ICircuitBoard, p: p5) {
-    this.circuitBoard = circuitBoard;
-    this.p = p;
+  constructor(args: IMouseInputServiceArgs) {
+    this.circuitBoard = args.circuitBoard;
+    this.p = args.p;
 
     this.mouseReleaseAfterDrag = false;
   }
@@ -104,12 +109,13 @@ class MouseInputService implements IMouseInputService {
     }
   }
 }
+type IMouseInputMixinArgs = Omit<IMouseInputServiceArgs, "circuitBoard">;
 
 export class MouseInputMixin extends BaseMixin<
   ICircuitBoard,
   IMouseInputService
 > {
-  constructor(p: p5) {
+  constructor(args: IMouseInputMixinArgs) {
     super({
       methods: [
         "getMouseOverEntity",
@@ -122,7 +128,8 @@ export class MouseInputMixin extends BaseMixin<
         "mouseReleased",
       ],
       props: [],
-      initMixin: circuitBoard => new MouseInputService(circuitBoard, p),
+      initMixin: circuitBoard =>
+        new MouseInputService({ circuitBoard, ...args }),
     });
   }
 }

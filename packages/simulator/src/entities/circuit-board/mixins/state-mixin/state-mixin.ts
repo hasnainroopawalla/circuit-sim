@@ -26,6 +26,11 @@ export type IStateService = {
   getState: () => AbstractState;
 };
 
+type IStateServiceArgs = {
+  p: p5;
+  circuitBoard: ICircuitBoard;
+};
+
 class StateService implements IStateService {
   public currentState: State;
   private circuitBoard: ICircuitBoard;
@@ -38,7 +43,9 @@ class StateService implements IStateService {
     Wiring: WiringState;
   };
 
-  constructor(circuitBoard: ICircuitBoard, p: p5) {
+  constructor(args: IStateServiceArgs) {
+    const { p, circuitBoard } = args;
+
     this.circuitBoard = circuitBoard;
 
     this.states = {
@@ -87,12 +94,14 @@ class StateService implements IStateService {
   }
 }
 
+type IStateMixinArgs = Omit<IStateServiceArgs, "circuitBoard">;
+
 export class StateMixin extends BaseMixin<ICircuitBoard, IStateService> {
-  constructor(p: p5) {
+  constructor(args: IStateMixinArgs) {
     super({
       methods: ["setState", "getState"],
       props: ["currentState"],
-      initMixin: circuitBoard => new StateService(circuitBoard, p),
+      initMixin: circuitBoard => new StateService({ circuitBoard, ...args }),
     });
   }
 }

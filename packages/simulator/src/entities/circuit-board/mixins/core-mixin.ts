@@ -7,21 +7,23 @@ export type ICoreService = {
   execute: () => void;
 };
 
+type ICoreServiceArgs = {
+  name: string;
+  isCircuitChip: boolean;
+  circuitBoard: ICircuitBoard;
+};
+
 class CoreService implements ICoreService {
   public name: string;
   public isCircuitChip: boolean;
 
   private circuitBoard: ICircuitBoard;
 
-  constructor(
-    circuitBoard: ICircuitBoard,
-    name: string,
-    isCircuitChip: boolean
-  ) {
-    this.circuitBoard = circuitBoard;
+  constructor(args: ICoreServiceArgs) {
+    this.circuitBoard = args.circuitBoard;
 
-    this.name = name;
-    this.isCircuitChip = isCircuitChip;
+    this.name = args.name;
+    this.isCircuitChip = args.isCircuitChip;
   }
 
   public execute(): void {
@@ -31,13 +33,14 @@ class CoreService implements ICoreService {
   }
 }
 
+type ICoreMixinArgs = Omit<ICoreServiceArgs, "circuitBoard">;
+
 export class CoreMixin extends BaseMixin<ICircuitBoard, ICoreService> {
-  constructor(name: string, isCircuitChip: boolean) {
+  constructor(args: ICoreMixinArgs) {
     super({
       methods: ["execute"],
       props: ["isCircuitChip", "name"],
-      initMixin: circuitBoard =>
-        new CoreService(circuitBoard, name, isCircuitChip),
+      initMixin: circuitBoard => new CoreService({ circuitBoard, ...args }),
     });
   }
 }

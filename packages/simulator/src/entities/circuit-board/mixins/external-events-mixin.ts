@@ -3,15 +3,19 @@ import { ICircuitBoard, State } from "../circuit-board.interface";
 import { EventData, pubsub } from "@circuit-sim/pubsub";
 import { Chip } from "../../chips";
 
-export type IExternalEventService = object;
+export type IExternalEventsService = object;
 
-class ExternalEventService implements IExternalEventService {
+type IExternalEventsServiceArgs = {
+  circuitBoard: ICircuitBoard;
+};
+
+class ExternalEventsService implements IExternalEventsService {
   private circuitBoard: ICircuitBoard;
 
-  constructor(circuitBoard: ICircuitBoard) {
-    this.circuitBoard = circuitBoard;
+  constructor(args: IExternalEventsServiceArgs) {
+    this.circuitBoard = args.circuitBoard;
 
-    if (!circuitBoard.isCircuitChip) {
+    if (!args.circuitBoard.isCircuitChip) {
       this.registerSubscriptions();
     }
   }
@@ -53,15 +57,21 @@ class ExternalEventService implements IExternalEventService {
   }
 }
 
-export class ExternalEventServiceMixin extends BaseMixin<
+type IExternalEventsMixinArgs = Omit<
+  IExternalEventsServiceArgs,
+  "circuitBoard"
+>;
+
+export class ExternalEventsMixin extends BaseMixin<
   ICircuitBoard,
-  IExternalEventService
+  IExternalEventsService
 > {
-  constructor() {
+  constructor(args: IExternalEventsMixinArgs) {
     super({
       methods: [],
       props: [],
-      initMixin: circuitBoard => new ExternalEventService(circuitBoard),
+      initMixin: circuitBoard =>
+        new ExternalEventsService({ circuitBoard, ...args }),
     });
   }
 }
