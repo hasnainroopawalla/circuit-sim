@@ -33,4 +33,8 @@ export class Wire {
   public render(): void {
     this.renderer.render();
   }
+
+  public isMouseOverGetEntity(): Wire | undefined {
+    return undefined;
+  }
 }

@@ -8,6 +8,7 @@ import {
 } from "../../../circuit-board.interface";
 import { computeReferencePoint } from "../state-mixin.utils";
 import { Pin } from "../../../../pin";
+import { Entity } from "../../../../entity.interface";
 
 export class WiringState extends AbstractState {
   private markers: WireMarker[];
@@ -75,22 +76,11 @@ export class WiringState extends AbstractState {
 
     switch (mouseInput) {
       case MouseInput.Click:
-        // TODO: Improve logic
-        if (this.circuitBoard.currentState === State.Wiring && this.startPin) {
-          if (entity instanceof Pin) {
-            // A wire is not allowed to start and end on the same chip
-            if (this.startPin.chip !== entity.chip) {
-              this.circuitBoard.spawnWire(this.startPin, entity, this.markers);
-              this.circuitBoard.setState({ state: State.Idle });
-            }
-          } else {
-            this.addWireMarker();
-          }
-        }
+        this.handleMouseClick(entity);
         break;
 
       case MouseInput.DoubleClick:
-        this.circuitBoard.setState({ state: State.Idle });
+        this.handleMouseDoubleClick();
         break;
     }
   }
@@ -115,5 +105,24 @@ export class WiringState extends AbstractState {
           : this.markers[this.markers.length - 1].waypoint
       ),
     });
+  }
+
+  private handleMouseClick(entity: Entity | undefined): void {
+    // TODO: Improve logic
+    if (this.circuitBoard.currentState === State.Wiring && this.startPin) {
+      if (entity instanceof Pin) {
+        // A wire is not allowed to start and end on the same chip
+        if (this.startPin.chip !== entity.chip) {
+          this.circuitBoard.spawnWire(this.startPin, entity, this.markers);
+          this.circuitBoard.setState({ state: State.Idle });
+        }
+      } else {
+        this.addWireMarker();
+      }
+    }
+  }
+
+  private handleMouseDoubleClick(): void {
+    this.circuitBoard.setState({ state: State.Idle });
   }
 }

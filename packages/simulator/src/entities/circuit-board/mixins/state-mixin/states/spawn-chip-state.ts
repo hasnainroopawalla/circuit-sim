@@ -22,10 +22,7 @@ export class SpawnChipState extends AbstractState {
   public interact(mouseInput: MouseInput) {
     switch (mouseInput) {
       case MouseInput.Click:
-        if (this.circuitBoard.isMouseOver()) {
-          this.spawnGhostChips();
-          this.circuitBoard.setState({ state: State.Idle });
-        }
+        this.handleMouseClick();
         break;
     }
   }
@@ -54,5 +51,12 @@ export class SpawnChipState extends AbstractState {
     this.ghostChips.forEach(ghostChip =>
       this.circuitBoard.spawnChip(ghostChip)
     );
+  }
+
+  private handleMouseClick() {
+    if (this.circuitBoard.isMouseOver()) {
+      this.spawnGhostChips();
+      this.circuitBoard.setState({ state: State.Idle });
+    }
   }
 }

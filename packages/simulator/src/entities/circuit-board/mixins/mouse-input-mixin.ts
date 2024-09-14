@@ -7,8 +7,7 @@ import {
   State,
 } from "../circuit-board.interface";
 import { circuitBoardConfig } from "../circuit-board.config";
-import { IOChip, IOSlider, Chip } from "../../chips";
-import { Pin } from "../../pin";
+import { Entity } from "../../entity.interface";
 
 export type IMouseInputService = {
   mouseClicked: () => void;
@@ -18,9 +17,7 @@ export type IMouseInputService = {
   mouseReleased: () => void;
   isMouseOver: () => boolean;
   isMouseOverIOChipPanel(kind: "input" | "output"): boolean;
-  getMouseOverEntity(
-    entities: CircuitBoardEntities
-  ): IOChip | IOSlider | Pin | Chip | undefined;
+  getMouseOverEntity(entities: CircuitBoardEntities): Entity | undefined;
 };
 
 class MouseInputService implements IMouseInputService {
@@ -93,11 +90,12 @@ class MouseInputService implements IMouseInputService {
 
   public getMouseOverEntity(
     entities: CircuitBoardEntities
-  ): IOChip | IOSlider | Pin | Chip | undefined {
+  ): Entity | undefined {
     for (const entity of [
       ...entities.inputs,
       ...entities.outputs,
       ...entities.chips,
+      ...entities.wires,
     ]) {
       const mouseOverEntity = entity.isMouseOverGetEntity();
       if (mouseOverEntity) {

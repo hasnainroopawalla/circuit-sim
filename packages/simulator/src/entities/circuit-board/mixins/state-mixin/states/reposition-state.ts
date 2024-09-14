@@ -21,18 +21,22 @@ export class RepositionState extends AbstractState {
   public interact(mouseInput: MouseInput) {
     switch (mouseInput) {
       case MouseInput.Drag:
-        if (this.chip instanceof Chip && this.circuitBoard.isMouseOver()) {
-          this.chip.mouseDragged();
-        } else if (this.chip instanceof IOChip) {
-          this.chip.mouseDragged();
-        } else {
-          this.circuitBoard.setState({ state: State.Idle });
-        }
+        this.handleMouseDrag();
         break;
     }
   }
 
   public dispose(): void {
     this.chip = undefined;
+  }
+
+  private handleMouseDrag(): void {
+    if (this.chip instanceof Chip && this.circuitBoard.isMouseOver()) {
+      this.chip.mouseDragged();
+    } else if (this.chip instanceof IOChip) {
+      this.chip.mouseDragged();
+    } else {
+      this.circuitBoard.setState({ state: State.Idle });
+    }
   }
 }

@@ -6,6 +6,7 @@ import {
   MouseInput,
 } from "../../../circuit-board.interface";
 import { IOChip, IOSlider } from "../../../../chips";
+import { Entity } from "../../../../entity.interface";
 
 export class SpawnIOChipState extends AbstractState {
   private ghostIOChip?: IOChip;
@@ -25,17 +26,11 @@ export class SpawnIOChipState extends AbstractState {
 
     switch (mouseInput) {
       case MouseInput.Click:
-        this.ghostIOChip && this.circuitBoard.spawnIOChip(this.ghostIOChip);
+        this.handleMouseClick();
         break;
 
       case MouseInput.Move:
-        if (
-          entity instanceof IOSlider ||
-          (!this.circuitBoard.isMouseOverIOChipPanel("input") &&
-            !this.circuitBoard.isMouseOverIOChipPanel("output"))
-        ) {
-          this.circuitBoard.setState({ state: State.Idle });
-        }
+        this.handleMouseMove(entity);
         break;
     }
   }
@@ -50,5 +45,19 @@ export class SpawnIOChipState extends AbstractState {
     }
     this.ghostIOChip.mouseDragged();
     this.ghostIOChip.render();
+  }
+
+  private handleMouseClick(): void {
+    this.ghostIOChip && this.circuitBoard.spawnIOChip(this.ghostIOChip);
+  }
+
+  private handleMouseMove(entity: Entity | undefined): void {
+    if (
+      entity instanceof IOSlider ||
+      (!this.circuitBoard.isMouseOverIOChipPanel("input") &&
+        !this.circuitBoard.isMouseOverIOChipPanel("output"))
+    ) {
+      this.circuitBoard.setState({ state: State.Idle });
+    }
   }
 }
