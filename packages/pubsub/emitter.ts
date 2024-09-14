@@ -1,4 +1,4 @@
-import type { EventData } from "./emitter.interface";
+import type { EventData } from "./events";
 import EventEmitter from "events";
 
 class EventEmitterWrapper<TEvents> {

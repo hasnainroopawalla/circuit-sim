@@ -70,7 +70,7 @@ export class BlueprintMixin extends BaseMixin<
 > {
   constructor(p: p5) {
     super({
-      methods: [],
+      methods: ["createCircuitChipFromBlueprint", "saveCircuit"],
       props: [],
       initMixin: circuitBoard => new BlueprintService(circuitBoard, p),
     });

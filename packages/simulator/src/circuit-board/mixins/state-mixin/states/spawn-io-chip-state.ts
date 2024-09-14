@@ -1,11 +1,11 @@
 import p5 from "p5";
-import { IOChip, IOSlider } from "../../../chips";
+import { IOChip, IOSlider } from "../../../../chips";
 import { AbstractState } from "./abstract-state";
 import {
   State,
   ICircuitBoard,
   MouseInput,
-} from "../../circuit-board.interface";
+} from "../../../circuit-board.interface";
 
 export class SpawnIOChipState extends AbstractState {
   private ghostIOChip?: IOChip;
@@ -40,7 +40,7 @@ export class SpawnIOChipState extends AbstractState {
     }
   }
 
-  public stop(): void {
+  public dispose(): void {
     this.ghostIOChip = undefined;
   }
 

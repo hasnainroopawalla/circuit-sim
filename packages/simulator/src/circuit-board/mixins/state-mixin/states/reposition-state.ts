@@ -1,11 +1,11 @@
 import p5 from "p5";
-import { IOChip, Chip } from "../../../chips";
+import { IOChip, Chip } from "../../../../chips";
 import { AbstractState } from "./abstract-state";
 import {
   ICircuitBoard,
   MouseInput,
   State,
-} from "../../circuit-board.interface";
+} from "../../../circuit-board.interface";
 
 export class RepositionState extends AbstractState {
   private chip?: Chip | IOChip;
@@ -32,9 +32,7 @@ export class RepositionState extends AbstractState {
     }
   }
 
-  public stop(): void {
+  public dispose(): void {
     this.chip = undefined;
   }
-
-  public render(): void {}
 }

@@ -1,7 +1,11 @@
 import p5 from "p5";
 import { entityIdService } from "../../services";
 import type { ICircuitBoard } from "../../circuit-board.interface";
-import type { createCircuitBoard } from "../../create-circuit-board";
+import { createCircuitBoard as createCircuitBoardCore } from "../../create-circuit-board";
+import {
+  blueprintToCircuitBoard,
+  circuitBoardToBlueprint,
+} from "./blueprint-service-utils";
 
 const sketch = (p: p5) => {
   p.setup = () => {};
@@ -196,10 +200,10 @@ describe("BlueprintHelper", () => {
   });
 
   const createCircuitBoard = (name: string = "main"): ICircuitBoard =>
-    new CircuitBoard(
+    createCircuitBoardCore({
       p,
       name,
-      {
+      options: {
         position: {
           x: 0,
           y: 0,
@@ -209,8 +213,8 @@ describe("BlueprintHelper", () => {
           h: 0,
         },
       },
-      true
-    );
+      isCircuitChip: true,
+    });
 
   const createANDCircuit = (): ICircuitBoard => {
     const circuitBoard = createCircuitBoard("AND");

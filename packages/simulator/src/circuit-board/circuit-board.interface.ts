@@ -2,19 +2,19 @@ import type { IOChip, Chip } from "../chips";
 import type { Wire } from "../wire";
 import type {
   IBlueprintService,
-  ICircuitBoardState,
-  ICore,
-  IEntityManager,
+  ICoreService,
+  IStateService,
+  IEntityService,
   IExternalEventService,
-  IMouseInputManager,
-  IRenderer,
+  IMouseInputService,
+  IRenderService,
 } from "./mixins";
 
-export type ICircuitBoard = ICircuitBoardState &
-  IRenderer &
-  IMouseInputManager &
-  IEntityManager &
-  ICore &
+export type ICircuitBoard = IStateService &
+  IRenderService &
+  IMouseInputService &
+  IEntityService &
+  ICoreService &
   IExternalEventService &
   IBlueprintService;
 

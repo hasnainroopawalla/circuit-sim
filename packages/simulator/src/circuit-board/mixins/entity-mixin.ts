@@ -9,7 +9,7 @@ import { Wire } from "../../wire";
 import { Pin } from "../../pin";
 import { entityIdService } from "../services/entity-id-service";
 
-export type IEntityManager = {
+export type IEntityService = {
   entities: CircuitBoardEntities;
   initEntities: () => void;
   createCoreChip: (coreChip: ICoreGate, spawn?: boolean) => CoreChip;
@@ -28,7 +28,7 @@ export type IEntityManager = {
   spawnWire: (startPin: Pin, endPin: Pin, markers?: Wire["markers"]) => void;
 };
 
-class EntityManager implements IEntityManager {
+class EntityService implements IEntityService {
   public entities!: CircuitBoardEntities;
 
   private p: p5;
@@ -129,7 +129,7 @@ class EntityManager implements IEntityManager {
   }
 }
 
-export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityManager> {
+export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityService> {
   constructor(p: p5) {
     super({
       methods: [
@@ -142,7 +142,7 @@ export class EntityMixin extends BaseMixin<ICircuitBoard, IEntityManager> {
         "createCircuitChip",
       ],
       props: ["entities"],
-      initMixin: circuitBoard => new EntityManager(circuitBoard, p),
+      initMixin: circuitBoard => new EntityService(circuitBoard, p),
     });
   }
 }

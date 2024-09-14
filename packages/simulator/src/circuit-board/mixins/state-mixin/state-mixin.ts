@@ -3,12 +3,15 @@ import { BaseMixin } from "power-mixin";
 import { ICircuitBoard, State } from "../../circuit-board.interface";
 import { Chip, IOChip } from "../../../chips";
 import { Pin } from "../../../pin";
-import { AbstractState } from "./abstract-state";
-import { IdleState } from "./idle-state";
-import { RepositionState } from "./reposition-state";
-import { SpawnChipState } from "./spawn-chip-state";
-import { SpawnIOChipState } from "./spawn-io-chip-state";
-import { WiringState } from "./wiring-state";
+import {
+  IdleState,
+  AbstractState,
+  RepositionState,
+  SpawnChipState,
+  SpawnIOChipState,
+  WiringState,
+} from "./states";
+import { ObjectKeys } from "../../../utils/typing";
 
 type StateProps =
   | { state: State.Idle; props?: object }
@@ -17,13 +20,13 @@ type StateProps =
   | { state: State.Reposition; props: { chip: Chip | IOChip } }
   | { state: State.Wiring; props: { startPin: Pin } };
 
-export type ICircuitBoardState = {
+export type IStateService = {
   currentState: State;
   setState: (props: StateProps) => void;
   getState: () => AbstractState;
 };
 
-class CircuitBoardState implements ICircuitBoardState {
+class StateService implements IStateService {
   public currentState: State;
   private circuitBoard: ICircuitBoard;
 
@@ -54,11 +57,7 @@ class CircuitBoardState implements ICircuitBoardState {
 
     switch (state) {
       case State.Idle:
-        // TODO: fix
-        // this.chipSpawnController.stop();
-        // this.repositionController.stop();
-        // this.wiringController.stop();
-        // this.iOChipSpawnController.stop();
+        this.disposeStates();
         break;
       case State.Reposition:
         this.states[state].setup(props.chip);
@@ -74,8 +73,6 @@ class CircuitBoardState implements ICircuitBoardState {
       case State.Wiring:
         this.states[state].setup(props.startPin);
         break;
-      default:
-        throw new Error("Invalid mode");
     }
 
     this.currentState = state;
@@ -84,17 +81,18 @@ class CircuitBoardState implements ICircuitBoardState {
   public getState(): AbstractState {
     return this.states[this.currentState];
   }
+
+  private disposeStates() {
+    ObjectKeys(this.states).forEach(state => this.states[state].dispose());
+  }
 }
 
-export class CircuitBoardStateMixin extends BaseMixin<
-  ICircuitBoard,
-  ICircuitBoardState
-> {
+export class StateMixin extends BaseMixin<ICircuitBoard, IStateService> {
   constructor(p: p5) {
     super({
       methods: ["setState", "getState"],
       props: ["currentState"],
-      initMixin: circuitBoard => new CircuitBoardState(circuitBoard, p),
+      initMixin: circuitBoard => new StateService(circuitBoard, p),
     });
   }
 }

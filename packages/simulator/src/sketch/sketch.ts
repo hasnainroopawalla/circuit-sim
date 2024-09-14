@@ -29,18 +29,8 @@ const sketch = (p: p5) => {
           h: p.windowHeight - 65,
         },
       },
+      isCircuitChip: false,
     });
-
-    // circuitBoard = new CircuitBoard(p, "main", {
-    //   position: {
-    //     x: circuitBoardConfig.widthScale,
-    //     y: circuitBoardConfig.heightScale,
-    //   },
-    //   size: {
-    //     w: p.windowWidth - circuitBoardConfig.widthScale * 2,
-    //     h: p.windowHeight - 65,
-    //   },
-    // });
   };
 
   p.draw = () => {
@@ -51,12 +41,12 @@ const sketch = (p: p5) => {
 
   p.mouseClicked = () =>
     sketchInteractionEnabled && circuitBoard.mouseClicked();
-  // p.mouseDragged = () =>
-  //   sketchInteractionEnabled && circuitBoard.mouseDragged();
-  // p.mouseReleased = () =>
-  //   sketchInteractionEnabled && circuitBoard.mouseReleased();
-  // p.doubleClicked = () =>
-  //   sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
+  p.mouseDragged = () =>
+    sketchInteractionEnabled && circuitBoard.mouseDragged();
+  p.mouseReleased = () =>
+    sketchInteractionEnabled && circuitBoard.mouseReleased();
+  p.doubleClicked = () =>
+    sketchInteractionEnabled && circuitBoard.mouseDoubleClicked();
   p.mouseMoved = () => sketchInteractionEnabled && circuitBoard.mouseMoved();
 };
 

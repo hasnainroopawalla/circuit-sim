@@ -1,13 +1,13 @@
 import p5 from "p5";
 import { AbstractState } from "./abstract-state";
+import { Pin } from "../../../../pin";
+import { WireMarker, wireConfig } from "../../../../wire";
 import {
-  State,
   ICircuitBoard,
   MouseInput,
-} from "../../circuit-board.interface";
-import { wireConfig, WireMarker } from "../../../wire";
-import { Pin } from "../../../pin";
-import { computeReferencePoint } from "./state-mixin.utils";
+  State,
+} from "../../../circuit-board.interface";
+import { computeReferencePoint } from "../state-mixin.utils";
 
 export class WiringState extends AbstractState {
   private markers: WireMarker[];
@@ -95,7 +95,7 @@ export class WiringState extends AbstractState {
     }
   }
 
-  public stop(): void {
+  public dispose(): void {
     this.startPin = undefined;
     this.markers = [];
   }

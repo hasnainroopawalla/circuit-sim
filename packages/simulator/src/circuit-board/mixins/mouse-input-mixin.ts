@@ -4,14 +4,18 @@ import {
   MouseInput,
   ICircuitBoard,
   CircuitBoardEntities,
+  State,
 } from "../circuit-board.interface";
 import { IOChip, Chip, IOSlider } from "../../chips";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { Pin } from "../../pin";
 
-export type IMouseInputManager = {
+export type IMouseInputService = {
   mouseClicked: () => void;
   mouseMoved: () => void;
+  mouseDragged: () => void;
+  mouseDoubleClicked: () => void;
+  mouseReleased: () => void;
   isMouseOver: () => boolean;
   isMouseOverIOChipPanel(kind: "input" | "output"): boolean;
   getMouseOverEntity(
@@ -19,7 +23,7 @@ export type IMouseInputManager = {
   ): IOChip | IOSlider | Pin | Chip | undefined;
 };
 
-class MouseInputManager implements IMouseInputManager {
+class MouseInputService implements IMouseInputService {
   private p: p5;
   private circuitBoard: ICircuitBoard;
 
@@ -42,6 +46,21 @@ class MouseInputManager implements IMouseInputManager {
 
   public mouseMoved(): void {
     this.circuitBoard.getState().start(MouseInput.Move);
+  }
+
+  public mouseDragged(): void {
+    this.circuitBoard.getState().start(MouseInput.Drag);
+  }
+
+  public mouseDoubleClicked(): void {
+    this.circuitBoard.getState().start(MouseInput.DoubleClick);
+  }
+
+  public mouseReleased(): void {
+    if (this.circuitBoard.currentState === State.Reposition) {
+      this.mouseReleaseAfterDrag = true;
+      this.circuitBoard.setState({ state: State.Idle });
+    }
   }
 
   public isMouseOver(): boolean {
@@ -90,7 +109,7 @@ class MouseInputManager implements IMouseInputManager {
 
 export class MouseInputMixin extends BaseMixin<
   ICircuitBoard,
-  IMouseInputManager
+  IMouseInputService
 > {
   constructor(p: p5) {
     super({
@@ -100,9 +119,12 @@ export class MouseInputMixin extends BaseMixin<
         "isMouseOverIOChipPanel",
         "mouseClicked",
         "mouseMoved",
+        "mouseDragged",
+        "mouseDoubleClicked",
+        "mouseReleased",
       ],
       props: [],
-      initMixin: circuitBoard => new MouseInputManager(circuitBoard, p),
+      initMixin: circuitBoard => new MouseInputService(circuitBoard, p),
     });
   }
 }

@@ -1,13 +1,13 @@
 import p5 from "p5";
 import { pubsub } from "@circuit-sim/pubsub";
-import { IOChip, IOSlider, Chip } from "../../../chips";
-import { Pin } from "../../../pin";
+import { IOChip, IOSlider, Chip } from "../../../../chips";
+import { Pin } from "../../../../pin";
 import { AbstractState } from "./abstract-state";
 import {
   ICircuitBoard,
   MouseInput,
   State,
-} from "../../circuit-board.interface";
+} from "../../../circuit-board.interface";
 
 export class IdleState extends AbstractState {
   constructor(p: p5, circuitBoard: ICircuitBoard) {
@@ -68,7 +68,5 @@ export class IdleState extends AbstractState {
     }
   }
 
-  public stop(): void {}
-
-  public render(): void {}
+  public dispose(): void {}
 }

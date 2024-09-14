@@ -4,8 +4,8 @@ import type { Position, Size } from "../common";
 import {
   MouseInputMixin,
   EntityMixin,
-  CircuitBoardStateMixin,
-  RendererMixin,
+  StateMixin,
+  RenderMixin,
   CoreMixin,
   ExternalEventServiceMixin,
   BlueprintMixin,
@@ -19,19 +19,14 @@ export const createCircuitBoard = (args: {
     position: Position;
     size: Size<"rect">;
   };
-  isCircuitChip?: boolean;
+  isCircuitChip: boolean;
 }) => {
   const circuitBoard = mix<ICircuitBoard>({
     mixins: [
-      new CoreMixin(),
-      new CircuitBoardStateMixin(args.p),
+      new CoreMixin(args.name, args.isCircuitChip),
+      new StateMixin(args.p),
       // TODO: improve arg types
-      new RendererMixin(
-        args.p,
-        args.name,
-        args.options.position,
-        args.options.size
-      ),
+      new RenderMixin(args.p, args.options.position, args.options.size),
       new MouseInputMixin(args.p),
       new EntityMixin(args.p),
       new ExternalEventServiceMixin(),

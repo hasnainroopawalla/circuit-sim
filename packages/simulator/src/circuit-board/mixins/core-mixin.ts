@@ -1,16 +1,28 @@
 import { BaseMixin } from "power-mixin";
 import type { ICircuitBoard } from "../circuit-board.interface";
 
-export type ICore = {
+export type ICoreService = {
+  name: string;
+  isCircuitChip: boolean;
   execute: () => void;
 };
 
 // TODO: rename?
-class Core implements ICore {
+class CoreService implements ICoreService {
+  public name: string;
+  public isCircuitChip: boolean;
+
   private circuitBoard: ICircuitBoard;
 
-  constructor(circuitBoard: ICircuitBoard) {
+  constructor(
+    circuitBoard: ICircuitBoard,
+    name: string,
+    isCircuitChip: boolean
+  ) {
     this.circuitBoard = circuitBoard;
+
+    this.name = name;
+    this.isCircuitChip = isCircuitChip;
   }
 
   public execute(): void {
@@ -20,12 +32,13 @@ class Core implements ICore {
   }
 }
 
-export class CoreMixin extends BaseMixin<ICircuitBoard, ICore> {
-  constructor() {
+export class CoreMixin extends BaseMixin<ICircuitBoard, ICoreService> {
+  constructor(name: string, isCircuitChip: boolean) {
     super({
       methods: ["execute"],
-      props: [],
-      initMixin: circuitBoard => new Core(circuitBoard),
+      props: ["isCircuitChip", "name"],
+      initMixin: circuitBoard =>
+        new CoreService(circuitBoard, name, isCircuitChip),
     });
   }
 }

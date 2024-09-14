@@ -11,7 +11,9 @@ class ExternalEventService implements IExternalEventService {
   constructor(circuitBoard: ICircuitBoard) {
     this.circuitBoard = circuitBoard;
 
-    this.registerSubscriptions();
+    if (!circuitBoard.isCircuitChip) {
+      this.registerSubscriptions();
+    }
   }
 
   private registerSubscriptions(): void {

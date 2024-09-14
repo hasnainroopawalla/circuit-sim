@@ -1,11 +1,11 @@
 import p5 from "p5";
-import { Chip } from "../../../chips";
+import { Chip } from "../../../../chips";
 import { AbstractState } from "./abstract-state";
 import {
   ICircuitBoard,
   MouseInput,
   State,
-} from "../../circuit-board.interface";
+} from "../../../circuit-board.interface";
 
 export class SpawnChipState extends AbstractState {
   private ghostChips: Chip[];
@@ -30,7 +30,7 @@ export class SpawnChipState extends AbstractState {
     }
   }
 
-  public stop() {
+  public dispose(): void {
     this.ghostChips = [];
   }
 

@@ -4,28 +4,25 @@ import type { ICircuitBoard } from "../circuit-board.interface";
 import { circuitBoardConfig } from "../circuit-board.config";
 import { AbstractRenderer, Position, Size } from "../../common";
 
-export type IRenderer = {
-  // TODO: should the name live here?
-  name: string;
+export type IRenderService = {
   render: () => void;
   position: Position;
   size: Size<"rect">;
 };
 
-class Renderer extends AbstractRenderer<Size<"rect">> implements IRenderer {
-  public name: string;
-
+class RenderService
+  extends AbstractRenderer<Size<"rect">>
+  implements IRenderService
+{
   private circuitBoard: ICircuitBoard;
 
   constructor(
     circuitBoard: ICircuitBoard,
     p: p5,
-    name: string,
     position: Position,
     size: Size<"rect">
   ) {
     super(p, position, size);
-    this.name = name;
     this.circuitBoard = circuitBoard;
   }
 
@@ -52,11 +49,11 @@ class Renderer extends AbstractRenderer<Size<"rect">> implements IRenderer {
     );
     this.p.pop();
 
+    this.circuitBoard.getState().render();
+
     this.renderWires();
     this.renderChips();
     this.renderIOChips();
-
-    this.circuitBoard.getState().render();
   }
 
   private renderIOChips(): void {
@@ -77,13 +74,13 @@ class Renderer extends AbstractRenderer<Size<"rect">> implements IRenderer {
   }
 }
 
-export class RendererMixin extends BaseMixin<ICircuitBoard, IRenderer> {
-  constructor(p: p5, name: string, position: Position, size: Size<"rect">) {
+export class RenderMixin extends BaseMixin<ICircuitBoard, IRenderService> {
+  constructor(p: p5, position: Position, size: Size<"rect">) {
     super({
       methods: ["render"],
       props: ["position", "size"],
       initMixin: circuitBoard =>
-        new Renderer(circuitBoard, p, name, position, size),
+        new RenderService(circuitBoard, p, position, size),
     });
   }
 }
