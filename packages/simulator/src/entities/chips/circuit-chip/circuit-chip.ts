@@ -2,18 +2,27 @@ import p5 from "p5";
 import { Chip } from "../base-chip";
 import { ICircuitBoard } from "../../circuit-board";
 
+type ICircuitChipArgs = {
+  p: p5;
+  circuitBoard: ICircuitBoard;
+  id: string;
+  color: string;
+};
+
 export class CircuitChip extends Chip {
   circuitBoard: ICircuitBoard;
 
-  constructor(p: p5, circuitBoard: ICircuitBoard, id: string, color: string) {
-    super(
+  constructor(args: ICircuitChipArgs) {
+    const { p, circuitBoard, id, color } = args;
+
+    super({
       p,
-      circuitBoard.name,
       id,
-      circuitBoard.entities.inputs.length,
-      circuitBoard.entities.outputs.length,
-      color
-    );
+      name: circuitBoard.name,
+      numInputPins: circuitBoard.entities.inputs.length,
+      numOutputPins: circuitBoard.entities.outputs.length,
+      color,
+    });
 
     this.circuitBoard = circuitBoard;
 

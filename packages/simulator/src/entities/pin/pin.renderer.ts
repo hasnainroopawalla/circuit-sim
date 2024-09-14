@@ -5,12 +5,17 @@ import { AbstractRenderer } from "../abstract-renderer";
 import { Size, Position } from "../types";
 import { config } from "../entity.config";
 
+type IPinRendererArgs = {
+  p: p5;
+  pin: Pin;
+};
+
 export class PinRenderer extends AbstractRenderer<Size<"circle">> {
   pin: Pin;
 
-  constructor(p: p5, pin: Pin) {
-    super(p, { x: 0, y: 0 }, { d: pinConfig.size });
-    this.pin = pin;
+  constructor(args: IPinRendererArgs) {
+    super({ p: args.p, position: { x: 0, y: 0 }, size: { d: pinConfig.size } });
+    this.pin = args.pin;
   }
 
   public isMouseOver(): boolean {

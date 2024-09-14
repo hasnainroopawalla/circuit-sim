@@ -10,12 +10,20 @@ import { baseChipConfig } from "./base-chip.config";
 import { AbstractRenderer } from "../../abstract-renderer";
 import { Size, Position } from "../../types";
 
+type IBaseChipRendererArgs = {
+  p: p5;
+  baseChip: BaseChip;
+  color: string;
+};
+
 export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
   baseChip: BaseChip;
   color: string;
   textPosition: Position;
 
-  constructor(p: p5, baseChip: BaseChip, color: string) {
+  constructor(args: IBaseChipRendererArgs) {
+    const { p, baseChip, color } = args;
+
     const size = chipSize(
       baseChip.name,
       baseChipConfig.text.size,
@@ -27,7 +35,7 @@ export class BaseChipRenderer extends AbstractRenderer<Size<"rect">> {
       y: p.mouseY - size.h / 2,
     };
 
-    super(p, position, size);
+    super({ p, position, size });
 
     this.baseChip = baseChip;
     this.color = color;

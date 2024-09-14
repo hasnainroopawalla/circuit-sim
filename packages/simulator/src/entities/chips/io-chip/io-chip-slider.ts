@@ -5,22 +5,29 @@ import { iOChipConfig, sliderConfig } from "./io-chip.config";
 import { Position, Size } from "../../types";
 import { config } from "../../entity.config";
 
+type IIOSliderArgs = {
+  p: p5;
+  chip: IOChip;
+};
+
 export class IOSlider {
   p: p5;
   chip: IOChip;
   position: Position;
   size: Size<"rect">;
 
-  constructor(p: p5, chip: IOChip) {
+  constructor(args: IIOSliderArgs) {
+    const { p, chip } = args;
+
     this.p = p;
     this.chip = chip;
-    const { position, size } = sliderPosition(
-      sliderConfig.padding,
-      chip.renderer.position,
-      iOChipConfig.size,
-      this.p.windowWidth,
-      chip.isInput
-    );
+    const { position, size } = sliderPosition({
+      sliderPadding: sliderConfig.padding,
+      chipPosition: chip.renderer.position,
+      chipSize: iOChipConfig.size,
+      windowWidth: this.p.windowWidth,
+      isInput: chip.isInput,
+    });
     this.position = position;
     this.size = size;
   }

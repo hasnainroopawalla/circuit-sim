@@ -8,12 +8,22 @@ import { AbstractRenderer } from "../../abstract-renderer";
 import { Size, Position } from "../../types";
 import { config } from "../../entity.config";
 
+type IIOChipRendererArgs = {
+  p: p5;
+  ioChip: IOChip;
+  position: Position;
+};
+
 export class IOChipRenderer extends AbstractRenderer<Size<"circle">> {
   iOChip: IOChip;
 
-  constructor(p: p5, ioChip: IOChip, position: Position) {
-    super(p, position, { d: iOChipConfig.size });
-    this.iOChip = ioChip;
+  constructor(args: IIOChipRendererArgs) {
+    super({
+      p: args.p,
+      position: args.position,
+      size: { d: iOChipConfig.size },
+    });
+    this.iOChip = args.ioChip;
   }
 
   public render(): void {
@@ -105,13 +115,13 @@ export class IOChipRenderer extends AbstractRenderer<Size<"circle">> {
 
   private renderSlider(): void {
     this.iOChip.slider.setPosition(
-      sliderPosition(
-        sliderConfig.padding,
-        this.position,
-        iOChipConfig.size,
-        this.p.windowWidth,
-        this.iOChip.isInput
-      ).position
+      sliderPosition({
+        sliderPadding: sliderConfig.padding,
+        chipPosition: this.position,
+        chipSize: iOChipConfig.size,
+        windowWidth: this.p.windowWidth,
+        isInput: this.iOChip.isInput,
+      }).position
     );
     this.iOChip.slider.render();
   }

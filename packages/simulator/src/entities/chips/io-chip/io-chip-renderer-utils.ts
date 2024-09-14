@@ -11,14 +11,16 @@ export const pinPosition = (
   return { x: position, y: chipPosition.y };
 };
 
-export const sliderPosition = (
-  sliderPadding: number,
-  chipPosition: Position,
-  chipSize: number,
-  windowWidth: number,
-  isInput: boolean
-): { position: Position; size: Size<"rect"> } =>
-  isInput
+export const sliderPosition = (args: {
+  sliderPadding: number;
+  chipPosition: Position;
+  chipSize: number;
+  windowWidth: number;
+  isInput: boolean;
+}): { position: Position; size: Size<"rect"> } => {
+  const { sliderPadding, chipPosition, chipSize, windowWidth, isInput } = args;
+
+  return isInput
     ? {
         position: { x: sliderPadding, y: chipPosition.y - chipSize / 2 },
         size: { w: chipSize / 3, h: chipSize },
@@ -30,3 +32,4 @@ export const sliderPosition = (
         },
         size: { w: chipSize / 3, h: chipSize },
       };
+};

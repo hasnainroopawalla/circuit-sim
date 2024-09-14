@@ -27,7 +27,11 @@ class RenderService
   private circuitBoard: ICircuitBoard;
 
   constructor(args: IRenderServiceArgs) {
-    super(args.p, args.options.position, args.options.size);
+    super({
+      p: args.p,
+      position: args.options.position,
+      size: args.options.size,
+    });
     this.circuitBoard = args.circuitBoard;
   }
 

@@ -39,7 +39,7 @@ export class Pin {
       this.chip instanceof IOChip ? "pin" : `${isInput ? "In" : "Out"} ${id}`;
     this.isGhost = isGhost;
 
-    this.renderer = new PinRenderer(p, this);
+    this.renderer = new PinRenderer({ p, pin: this });
   }
 
   public isMouseOver(): boolean {

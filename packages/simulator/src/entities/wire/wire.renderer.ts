@@ -5,12 +5,17 @@ import { PinState } from "../pin";
 import { AbstractRenderer } from "../abstract-renderer";
 import { Size } from "../types";
 
+type IWireRendererArgs = {
+  p: p5;
+  wire: Wire;
+};
+
 export class WireRenderer extends AbstractRenderer<Size<"rect">> {
   wire: Wire;
 
-  constructor(p: p5, wire: Wire) {
-    super(p, { x: 0, y: 0 }, { w: 0, h: 0 });
-    this.wire = wire;
+  constructor(args: IWireRendererArgs) {
+    super({ p: args.p, position: { x: 0, y: 0 }, size: { w: 0, h: 0 } });
+    this.wire = args.wire;
   }
 
   public render(): void {

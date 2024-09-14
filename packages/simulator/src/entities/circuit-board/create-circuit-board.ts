@@ -12,7 +12,7 @@ import {
 import type { ICircuitBoard } from "./circuit-board.interface";
 import { Position, Size } from "../types";
 
-export const createCircuitBoard = (args: {
+type ICreateCircuitBoardArgs = {
   p: p5;
   name: string;
   options: {
@@ -20,7 +20,9 @@ export const createCircuitBoard = (args: {
     size: Size<"rect">;
   };
   isCircuitChip: boolean;
-}) => {
+};
+
+export const createCircuitBoard = (args: ICreateCircuitBoardArgs) => {
   const circuitBoard = mix<ICircuitBoard>({
     mixins: [
       new CoreMixin(args),

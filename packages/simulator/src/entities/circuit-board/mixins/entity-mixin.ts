@@ -56,11 +56,11 @@ class EntityService implements IEntityService {
   }
 
   public createCoreChip(coreChip: ICoreGate, spawn = true): CoreChip {
-    const chip = new CoreChip(
-      this.p,
-      coreChip,
-      entityIdService.chipId(coreChip)
-    );
+    const chip = new CoreChip({
+      p: this.p,
+      coreGate: coreChip,
+      id: entityIdService.chipId(coreChip),
+    });
     spawn && this.spawnChip(chip);
     return chip;
   }
@@ -72,26 +72,26 @@ class EntityService implements IEntityService {
   ): IOChip {
     const ioChip =
       kind === "input"
-        ? new IOChip(
-            this.p,
-            entityIdService.inputChipId(),
-            true,
-            {
+        ? new IOChip({
+            p: this.p,
+            name: entityIdService.inputChipId(),
+            isInput: true,
+            position: {
               x: this.circuitBoard.position.x,
               y: this.p.mouseY,
             },
-            isGhost
-          )
-        : new IOChip(
-            this.p,
-            entityIdService.outputChipId(),
-            false,
-            {
+            isGhost,
+          })
+        : new IOChip({
+            p: this.p,
+            name: entityIdService.outputChipId(),
+            isInput: false,
+            position: {
               x: this.circuitBoard.position.x + this.circuitBoard.size.w,
               y: this.p.mouseY,
             },
-            isGhost
-          );
+            isGhost,
+          });
 
     spawn && this.spawnIOChip(ioChip);
     return ioChip;
@@ -102,12 +102,12 @@ class EntityService implements IEntityService {
     color: string = "green",
     spawn = true
   ): CircuitChip {
-    const chip = new CircuitChip(
-      this.p,
+    const chip = new CircuitChip({
+      p: this.p,
       circuitBoard,
-      entityIdService.chipId(circuitBoard.name),
-      color
-    );
+      id: entityIdService.chipId(circuitBoard.name),
+      color,
+    });
     spawn && this.spawnChip(chip);
     return chip;
   }

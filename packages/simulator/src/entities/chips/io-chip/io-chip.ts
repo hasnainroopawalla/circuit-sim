@@ -5,6 +5,14 @@ import { IOSlider } from "./io-chip-slider";
 import { IOChipRenderer } from "./io-chip.renderer";
 import { Position } from "../../types";
 
+type IIOChipArgs = {
+  p: p5;
+  name: string;
+  isInput: boolean;
+  position: Position;
+  isGhost: boolean;
+};
+
 // TODO: improve ghost logic
 export class IOChip {
   p: p5;
@@ -17,13 +25,9 @@ export class IOChip {
   outgoingWires: Wire[];
   renderer: IOChipRenderer;
 
-  constructor(
-    p: p5,
-    name: string,
-    isInput: boolean,
-    position: Position,
-    isGhost = false
-  ) {
+  constructor(args: IIOChipArgs) {
+    const { p, isInput, name, isGhost, position } = args;
+
     this.p = p;
     this.name = name;
     this.id = name;
@@ -33,9 +37,9 @@ export class IOChip {
 
     this.pin = new Pin(p, 0, PinState.Low, !isInput, this, this.isGhost);
 
-    this.renderer = new IOChipRenderer(p, this, position);
+    this.renderer = new IOChipRenderer({ p, ioChip: this, position });
 
-    this.slider = new IOSlider(this.p, this);
+    this.slider = new IOSlider({ p: this.p, chip: this });
   }
 
   public getPin(): Pin {

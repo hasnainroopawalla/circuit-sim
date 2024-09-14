@@ -3,6 +3,15 @@ import { Pin } from "../../pin";
 import { BaseChipRenderer } from "./base-chip.renderer";
 import { Position } from "../../types";
 
+type IBaseChipArgs = {
+  p: p5;
+  name: string;
+  id: string;
+  numInputPins: number;
+  numOutputPins: number;
+  color: string;
+};
+
 export abstract class BaseChip {
   p: p5;
   inputPins: Pin[] = [];
@@ -14,21 +23,18 @@ export abstract class BaseChip {
 
   renderer: BaseChipRenderer;
 
-  constructor(
-    p: p5,
-    name: string,
-    id: string,
-    numInputPins: number,
-    numOutputPins: number,
-    color: string
-  ) {
-    this.p = p;
-    this.id = id;
-    this.name = name;
-    this.numInputPins = numInputPins;
-    this.numOutputPins = numOutputPins;
+  constructor(args: IBaseChipArgs) {
+    this.p = args.p;
+    this.id = args.id;
+    this.name = args.name;
+    this.numInputPins = args.numInputPins;
+    this.numOutputPins = args.numOutputPins;
 
-    this.renderer = new BaseChipRenderer(p, this, color);
+    this.renderer = new BaseChipRenderer({
+      p: args.p,
+      baseChip: this,
+      color: args.color,
+    });
   }
 
   public getPin(type: string, pinId: number): Pin | undefined {

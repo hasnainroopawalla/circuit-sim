@@ -21,7 +21,7 @@ export class Wire {
     this.state = PinState.Low;
     this.markers = markers;
 
-    this.renderer = new WireRenderer(p, this);
+    this.renderer = new WireRenderer({ p, wire: this });
   }
 
   public propagate(): void {
