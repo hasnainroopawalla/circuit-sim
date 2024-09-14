@@ -1,11 +1,11 @@
 import p5 from "p5";
-import { entityIdService } from "../../services";
 import type { ICircuitBoard } from "../../circuit-board.interface";
 import { createCircuitBoard as createCircuitBoardCore } from "../../create-circuit-board";
 import {
   blueprintToCircuitBoard,
   circuitBoardToBlueprint,
 } from "./blueprint-service-utils";
+import { entityIdService } from "../../../services";
 
 const sketch = (p: p5) => {
   p.setup = () => {};

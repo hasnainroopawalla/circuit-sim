@@ -4,7 +4,7 @@ import type {
   CircuitBoardEntities,
   ICircuitBoard,
 } from "../circuit-board.interface";
-import { entityIdService } from "../services/entity-id-service";
+import { entityIdService } from "../../services";
 import { ICoreGate, CoreChip, IOChip, CircuitChip, Chip } from "../../chips";
 import { Pin } from "../../pin";
 import { Wire } from "../../wire";
