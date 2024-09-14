@@ -10,12 +10,7 @@ import {
 
 export type IBlueprintService = {
   saveCircuit: (eventData: EventData["SaveCircuit"]) => void;
-  // TODO: rename to loadCircuit
-  createCircuitChipFromBlueprint: (
-    name: string,
-    blueprint: string,
-    color: string
-  ) => CircuitChip;
+  loadCircuit: (name: string, blueprint: string, color: string) => CircuitChip;
 };
 
 class BlueprintService implements IBlueprintService {
@@ -48,7 +43,7 @@ class BlueprintService implements IBlueprintService {
     this.circuitBoard.initEntities();
   }
 
-  public createCircuitChipFromBlueprint(
+  public loadCircuit(
     name: string,
     blueprint: string,
     color: string
@@ -70,7 +65,7 @@ export class BlueprintMixin extends BaseMixin<
 > {
   constructor(p: p5) {
     super({
-      methods: ["createCircuitChipFromBlueprint", "saveCircuit"],
+      methods: ["loadCircuit", "saveCircuit"],
       props: [],
       initMixin: circuitBoard => new BlueprintService(circuitBoard, p),
     });

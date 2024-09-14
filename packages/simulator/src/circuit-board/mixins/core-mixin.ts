@@ -7,7 +7,6 @@ export type ICoreService = {
   execute: () => void;
 };
 
-// TODO: rename?
 class CoreService implements ICoreService {
   public name: string;
   public isCircuitChip: boolean;

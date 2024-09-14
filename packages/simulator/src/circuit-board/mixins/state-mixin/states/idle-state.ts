@@ -14,12 +14,13 @@ export class IdleState extends AbstractState {
     super(p, circuitBoard);
   }
 
-  public start(mouseInput: MouseInput): void {
+  public interact(mouseInput: MouseInput): void {
     const entity = this.circuitBoard.getMouseOverEntity(
       this.circuitBoard.entities
     );
 
     switch (mouseInput) {
+      // TODO: split to individual handlers
       case MouseInput.Click:
         if (entity instanceof Pin) {
           if (entity.isInput) {

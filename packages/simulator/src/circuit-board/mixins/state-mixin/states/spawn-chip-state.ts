@@ -19,7 +19,7 @@ export class SpawnChipState extends AbstractState {
     this.ghostChips.push(chip);
   }
 
-  public start(mouseInput: MouseInput) {
+  public interact(mouseInput: MouseInput) {
     switch (mouseInput) {
       case MouseInput.Click:
         if (this.circuitBoard.isMouseOver()) {

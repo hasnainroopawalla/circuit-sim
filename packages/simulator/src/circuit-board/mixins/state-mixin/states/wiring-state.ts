@@ -68,7 +68,7 @@ export class WiringState extends AbstractState {
     this.startPin = pin;
   }
 
-  public start(mouseInput: MouseInput) {
+  public interact(mouseInput: MouseInput) {
     const entity = this.circuitBoard.getMouseOverEntity(
       this.circuitBoard.entities
     );

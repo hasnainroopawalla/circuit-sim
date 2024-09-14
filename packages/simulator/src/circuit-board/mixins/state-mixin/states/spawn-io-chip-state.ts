@@ -18,7 +18,7 @@ export class SpawnIOChipState extends AbstractState {
     this.ghostIOChip = iOChip;
   }
 
-  public start(mouseInput: MouseInput) {
+  public interact(mouseInput: MouseInput) {
     const entity = this.circuitBoard.getMouseOverEntity(
       this.circuitBoard.entities
     );

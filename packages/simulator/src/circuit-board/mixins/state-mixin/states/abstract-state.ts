@@ -15,8 +15,7 @@ export abstract class AbstractState {
 
   public render(): void {}
 
-  // TODO: rename to interact
-  public abstract start(mouseInput: MouseInput): void;
+  public abstract interact(mouseInput: MouseInput): void;
 
   public abstract dispose(): void;
 }

@@ -18,7 +18,7 @@ export class RepositionState extends AbstractState {
     this.chip = chip;
   }
 
-  public start(mouseInput: MouseInput) {
+  public interact(mouseInput: MouseInput) {
     switch (mouseInput) {
       case MouseInput.Drag:
         if (this.chip instanceof Chip && this.circuitBoard.isMouseOver()) {

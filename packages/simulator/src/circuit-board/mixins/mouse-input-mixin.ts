@@ -41,19 +41,19 @@ class MouseInputService implements IMouseInputService {
       this.mouseReleaseAfterDrag = false;
       return;
     }
-    this.circuitBoard.getState().start(MouseInput.Click);
+    this.circuitBoard.getState().interact(MouseInput.Click);
   }
 
   public mouseMoved(): void {
-    this.circuitBoard.getState().start(MouseInput.Move);
+    this.circuitBoard.getState().interact(MouseInput.Move);
   }
 
   public mouseDragged(): void {
-    this.circuitBoard.getState().start(MouseInput.Drag);
+    this.circuitBoard.getState().interact(MouseInput.Drag);
   }
 
   public mouseDoubleClicked(): void {
-    this.circuitBoard.getState().start(MouseInput.DoubleClick);
+    this.circuitBoard.getState().interact(MouseInput.DoubleClick);
   }
 
   public mouseReleased(): void {

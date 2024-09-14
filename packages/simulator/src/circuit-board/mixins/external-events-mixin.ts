@@ -43,7 +43,7 @@ class ExternalEventService implements IExternalEventService {
         chip = this.circuitBoard.createCoreChip(args.name, false);
         break;
       case "circuit":
-        chip = this.circuitBoard.createCircuitChipFromBlueprint(
+        chip = this.circuitBoard.loadCircuit(
           args.name,
           args.blueprint,
           args.color

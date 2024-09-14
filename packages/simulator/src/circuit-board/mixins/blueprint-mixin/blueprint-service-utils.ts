@@ -124,7 +124,6 @@ export const blueprintToCircuitBoard = (
   return circuitBoard;
 };
 
-// TODO: tests
 const parseWireString = (
   wireString: string,
   entities: { [id: string]: IOChip | CircuitChip | CoreChip }

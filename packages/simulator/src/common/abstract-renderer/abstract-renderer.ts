@@ -5,6 +5,7 @@ import type {
   RectSize,
 } from "./abstract-renderer.interface";
 
+// TODO: move to entities/
 export abstract class AbstractRenderer<T extends RectSize | CircleSize> {
   p: p5;
   position: Position;
