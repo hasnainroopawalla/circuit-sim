@@ -10,8 +10,9 @@ export const ButtonsPanel: React.FC = () => {
   return (
     <div className={styles.buttonsPanelContainer}>
       <Menu />
-      {chips.map((chip) => (
+      {chips.map(chip => (
         <Button
+          dataTestId={`toolbar-btn-${chip.name}`}
           key={chip.name}
           text={chip.name}
           appearance="secondary"
