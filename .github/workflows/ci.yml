@@ -22,11 +22,17 @@ jobs:
       - name: Install dependencies
         run: yarn install
 
-      - name: Build package
-        run: yarn build
-
       - name: Run tests
         run: yarn test:unit
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run Playwright tests
+        run: npx playwright test
+
+      - name: Build package
+        run: yarn build
 
       - name: Version bump
         uses: "phips28/gh-action-bump-version@master"
