@@ -10,6 +10,8 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   use: {
     baseURL: "http://localhost:8080/",
+    video: "on-first-retry",
+    screenshot: "only-on-failure",
   },
 
   /* Configure projects for major browsers */
