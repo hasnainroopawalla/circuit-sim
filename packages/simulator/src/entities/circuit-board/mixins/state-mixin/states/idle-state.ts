@@ -30,7 +30,7 @@ export class IdleState extends AbstractState {
         break;
 
       case MouseInput.Move:
-        this.handleMouseMove();
+        this.handleMouseMove(entity);
         break;
     }
   }
@@ -54,18 +54,24 @@ export class IdleState extends AbstractState {
     }
   }
 
-  private handleMouseMove(): void {
-    this.circuitBoard.isMouseOverIOChipPanel("input") &&
+  private handleMouseMove(entity: Entity | undefined): void {
+    if (entity instanceof IOSlider) {
+      return;
+    }
+
+    if (this.circuitBoard.isMouseOverIOChipPanel("input")) {
       this.circuitBoard.setState({
         state: State.SpawnIOChip,
         props: { kind: "input" },
       });
+    }
 
-    this.circuitBoard.isMouseOverIOChipPanel("output") &&
+    if (this.circuitBoard.isMouseOverIOChipPanel("output")) {
       this.circuitBoard.setState({
         state: State.SpawnIOChip,
         props: { kind: "output" },
       });
+    }
   }
 
   private handleMouseDrag(entity: Entity | undefined): void {
