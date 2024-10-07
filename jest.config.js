@@ -8,6 +8,7 @@ module.exports = {
         "^.+\\.[t|j]sx?$": "babel-jest"
     },
     transformIgnorePatterns: ["<rootDir>/node_modules/(?!(power-mixin)/)"],
+    modulePathIgnorePatterns: ["<rootDir>/playwright"],
     collectCoverage: false,
     collectCoverageFrom: [
         "packages/**/*.{js,jsx,ts,tsx}",
