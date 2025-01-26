@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { mix } from "power-mixin";
+import { mix } from "ts-mxn";
 import {
   MouseInputMixin,
   EntityMixin,

@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { BaseMixin } from "power-mixin";
+import { BaseMixin } from "ts-mxn";
 import { ICircuitBoard } from "../../circuit-board.interface";
 import { EventData, pubsub } from "@circuit-sim/pubsub";
 import { CircuitChip } from "../../../chips";

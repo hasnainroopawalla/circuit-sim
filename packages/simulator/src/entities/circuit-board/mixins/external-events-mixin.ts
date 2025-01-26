@@ -1,4 +1,4 @@
-import { BaseMixin } from "power-mixin";
+import { BaseMixin } from "ts-mxn";
 import { ICircuitBoard, State } from "../circuit-board.interface";
 import { EventData, pubsub } from "@circuit-sim/pubsub";
 import { Chip } from "../../chips";

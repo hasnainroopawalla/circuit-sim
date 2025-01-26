@@ -1,5 +1,5 @@
 import p5 from "p5";
-import { BaseMixin } from "power-mixin";
+import { BaseMixin } from "ts-mxn";
 import { ICircuitBoard, State } from "../../circuit-board.interface";
 import {
   IdleState,
