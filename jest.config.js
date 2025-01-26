@@ -7,7 +7,7 @@ module.exports = {
         '^.+\\.tsx?$': 'ts-jest',
         "^.+\\.[t|j]sx?$": "babel-jest"
     },
-    transformIgnorePatterns: ["<rootDir>/node_modules/(?!(power-mixin)/)"],
+    transformIgnorePatterns: ["<rootDir>/node_modules/(?!(ts-mxn)/)"],
     collectCoverage: false,
     collectCoverageFrom: [
         "packages/**/*.{js,jsx,ts,tsx}",

@@ -1,4 +1,4 @@
-import { BaseMixin } from "power-mixin";
+import { BaseMixin } from "ts-mxn";
 import type { ICircuitBoard } from "../circuit-board.interface";
 
 export type ICoreService = {
