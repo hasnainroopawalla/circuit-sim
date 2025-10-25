@@ -1,5 +1,5 @@
-import { IOChip, IOSlider, Chip } from "./chips";
-import { Pin } from "./pin";
-import { Wire } from "./wire";
+import type { Chip, IOChip, IOSlider } from "./chips";
+import type { Pin } from "./pin";
+import type { Wire } from "./wire";
 
 export type Entity = IOChip | IOSlider | Pin | Chip | Wire;

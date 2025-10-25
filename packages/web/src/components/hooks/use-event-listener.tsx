@@ -1,20 +1,20 @@
+import { type EventData, type EventKey, pubsub } from "@circuit-sim/pubsub";
 import * as React from "react";
-import { EventKey, EventData, pubsub } from "@circuit-sim/pubsub";
 
 export function useEventListener<T extends EventKey>(
-  event: T
+	event: T,
 ): EventData[T] | undefined {
-  const [eventData, setEventData] = React.useState<EventData[T]>();
+	const [eventData, setEventData] = React.useState<EventData[T]>();
 
-  React.useEffect(() => {
-    pubsub.subscribe(event, (error) => {
-      setEventData(error);
-    });
+	React.useEffect(() => {
+		pubsub.subscribe(event, (error) => {
+			setEventData(error);
+		});
 
-    return () => {
-      pubsub.unsubscribe(event, () => {});
-    };
-  }, [event]);
+		return () => {
+			pubsub.unsubscribe(event, () => {});
+		};
+	}, [event]);
 
-  return eventData;
+	return eventData;
 }

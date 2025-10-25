@@ -1,3 +1,3 @@
 export const config = {
-  ghostEntityColor: "#707070",
+	ghostEntityColor: "#707070",
 };

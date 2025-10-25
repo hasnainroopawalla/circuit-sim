@@ -12,8 +12,8 @@
     "deploy": "gh-pages -d build",
     "test": "jest --watch",
     "test:unit": "jest --coverage",
-    "lint": "eslint . --ext .ts,.tsx",
-    "lint:fix": "eslint . --fix --ext .ts,.tsx",
+    "lint": "biome check",
+    "lint:fix": "biome check --fix . && biome format --write .",
     "stats": "npm run stats --workspace @circuit-sim/web"
   },
   "keywords": [
@@ -30,6 +30,7 @@
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@babel/preset-env": "^7.25.4",
+    "@biomejs/biome": "2.2.5",
     "@testing-library/jest-dom": "^6.5.0",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.12",
@@ -37,12 +38,7 @@
     "@types/p5": "^1.7.6",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",
-    "@typescript-eslint/eslint-plugin": "^6.5.0",
-    "@typescript-eslint/parser": "^6.5.0",
     "css-loader": "^6.8.1",
-    "eslint": "^8.48.0",
-    "eslint-plugin-filename-rules": "^1.3.1",
-    "eslint-plugin-react-hooks": "^4.6.2",
     "gh-pages": "^6.1.1",
     "html-webpack-plugin": "^5.6.0",
     "identity-obj-proxy": "^3.0.0",

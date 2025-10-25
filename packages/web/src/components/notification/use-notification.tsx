@@ -2,17 +2,17 @@ import * as React from "react";
 import { useEventListener } from "../hooks";
 
 export const useNotification = () => {
-  const [notification, setNotification] = React.useState("");
+	const [notification, setNotification] = React.useState("");
 
-  const notificationEvent = useEventListener("Notification");
+	const notificationEvent = useEventListener("Notification");
 
-  React.useEffect(() => {
-    if (!notificationEvent) {
-      return;
-    }
+	React.useEffect(() => {
+		if (!notificationEvent) {
+			return;
+		}
 
-    setNotification(notificationEvent.text);
-  }, [notificationEvent]);
+		setNotification(notificationEvent.text);
+	}, [notificationEvent]);
 
-  return notification;
+	return notification;
 };

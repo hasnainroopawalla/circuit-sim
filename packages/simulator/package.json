@@ -1,15 +1,14 @@
 {
-    "name": "@circuit-sim/simulator",
-    "version": "1.0.0",
-    "description": "",
-    "scripts": {
-        "test": "jest",
-        "test:watch": "jest --watch",
-        "lint": "eslint . --ext .ts,.tsx"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "devDependencies": {},
-    "dependencies": {}
+	"name": "@circuit-sim/simulator",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"test": "jest",
+		"test:watch": "jest --watch"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {},
+	"dependencies": {}
 }
