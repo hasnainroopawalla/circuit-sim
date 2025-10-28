@@ -1,16 +1,21 @@
-import { createP5Instance } from "@circuit-sim/simulator";
 import * as React from "react";
+import { useSimulator } from "./simulator-context";
+import { useEffectOnce } from "./utils/hooks";
 
-export const Sketch = () => {
-	const p5ContainerRef = React.useRef(null);
+export const Sketch: React.FC = () => {
+	const containerRef = React.useRef(null);
 
-	React.useEffect(() => {
-		if (!p5ContainerRef.current) {
+	const simulator = useSimulator();
+
+	useEffectOnce(() => {
+		if (!containerRef.current) {
 			throw new Error("Sketch not mounted");
 		}
-		const p5Instance = createP5Instance(p5ContainerRef.current);
-		return () => p5Instance.remove();
-	}, []);
 
-	return <div className="sketch-container" ref={p5ContainerRef} />;
+		const p5Instance = simulator.createSketch(containerRef.current);
+
+		return () => p5Instance.remove();
+	}, true /* run on mount */);
+
+	return <div className="sketch-container" ref={containerRef} />;
 };

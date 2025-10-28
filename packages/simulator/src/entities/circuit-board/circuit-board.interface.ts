@@ -33,6 +33,7 @@ export enum State {
 	SpawnIOChip = "SpawnIOChip",
 }
 
+// TODO: move this type to entityservice
 export type CircuitBoardEntities = {
 	inputs: IOChip[];
 	outputs: IOChip[];

@@ -1,37 +1,19 @@
-import { pubsub } from "@circuit-sim/pubsub";
 import * as React from "react";
 import { colorGenerator } from "../color-generator";
 import { useEventListener } from "./use-event-listener";
+import { useSimulator } from "../simulator-context";
 
 type IUseChipsState = { name: string; onClick: () => void };
 
 export const useChips = () => {
-	const [chips, setChips] = React.useState<IUseChipsState[]>([
-		{
-			name: "AND",
-			onClick: () =>
-				pubsub.publish("SpawnChip", {
-					kind: "core",
-					name: "AND",
-				}),
-		},
-		{
-			name: "OR",
-			onClick: () =>
-				pubsub.publish("SpawnChip", {
-					kind: "core",
-					name: "OR",
-				}),
-		},
-		{
-			name: "NOT",
-			onClick: () =>
-				pubsub.publish("SpawnChip", {
-					kind: "core",
-					name: "NOT",
-				}),
-		},
-	]);
+	const simulator = useSimulator();
+
+	const [chips, setChips] = React.useState<IUseChipsState[]>(() =>
+		simulator.chipLibraryService.getAll().map((spec) => ({
+			name: spec.label,
+			onClick: () => simulator.emit("chip.spawn", spec),
+		})),
+	);
 
 	const newChipData = useEventListener("AddCircuitChipToToolbar");
 
@@ -43,13 +25,13 @@ export const useChips = () => {
 
 		const chip = {
 			name: newChipData.name,
-			onClick: () =>
-				pubsub.publish("SpawnChip", {
-					kind: "circuit",
-					name: newChipData.name,
-					blueprint: newChipData.blueprint,
-					color,
-				}),
+			onClick: () => {},
+			// pubsub.publish("SpawnChip", {
+			// 	kind: "circuit",
+			// 	name: newChipData.name,
+			// 	blueprint: newChipData.blueprint,
+			// 	color,
+			// }),
 		};
 		setChips((prevCircuitChips) => [...prevCircuitChips, chip]);
 	}, [newChipData]);
