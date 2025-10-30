@@ -3,7 +3,7 @@ import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
 export class EntityService extends BaseService {
-	protected readonly entities: Entity[];
+	public readonly entities: Entity[];
 
 	constructor(sim: Simulator) {
 		super(sim);
@@ -12,5 +12,9 @@ export class EntityService extends BaseService {
 
 	public add(entity: Entity): void {
 		this.entities.push(entity);
+	}
+
+	public getEntityById(id: string): Entity | undefined {
+		return this.entities.find((entity) => entity.id === id);
 	}
 }

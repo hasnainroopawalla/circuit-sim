@@ -1,22 +1,45 @@
 import { entityIdService } from "../entities/services";
+import type { AtomicChip } from "./atomic-chip";
 import { Entity } from "./entity";
-import { Pin, type PinSpec } from "./pin";
+import { Pin, type PinType, type PinSpec } from "./pin";
 
-export type ChipSpec = {
-	label: string;
-	pins: PinSpec[];
-	execute: (inputs: boolean[]) => boolean[];
+export type ChipType = "input" | "output" | "atomic" | "composite";
+
+type BaseChipSpec = {
+	name: string;
+	inputPins: PinSpec[];
+	outputPins: PinSpec[];
 };
 
-export class Chip extends Entity {
+export type AtomicChipSpec = BaseChipSpec & {
+	type: "atomic";
+	ChipClass: new (spec: AtomicChipSpec) => AtomicChip;
+};
+
+export type CompositeChipSpec = BaseChipSpec & {
+	type: "composite";
+};
+
+export type ChipSpec = AtomicChipSpec | CompositeChipSpec;
+
+export abstract class Chip extends Entity {
 	public readonly spec: ChipSpec;
 
-	private readonly pins: Pin[];
+	private readonly inputPins: Pin[];
+	private readonly outputPins: Pin[];
 
 	constructor(spec: ChipSpec) {
-		super({ id: entityIdService.chipId(spec.label), type: "chip" });
+		super({ id: entityIdService.getId(), type: "chip" });
 
 		this.spec = spec;
-		this.pins = spec.pins.map((pinSpec) => new Pin(pinSpec));
+		this.inputPins = spec.inputPins.map((pinSpec) => new Pin(pinSpec));
+		this.outputPins = spec.outputPins.map((pinSpec) => new Pin(pinSpec));
 	}
+
+	public getPin(mode: PinType, index: number): Pin | undefined {
+		const pins = mode === "in" ? this.inputPins : this.outputPins;
+		return pins[index];
+	}
+
+	public abstract execute(inputs: boolean[]): boolean[];
 }

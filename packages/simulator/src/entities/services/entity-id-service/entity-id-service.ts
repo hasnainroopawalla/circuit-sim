@@ -24,9 +24,10 @@ class EntityIdService {
 		return this.generate(["chip", chipName]);
 	}
 
-	private getId(): number {
+	// TODO :should be private
+	public getId(): string {
 		this.current += 1;
-		return this.current;
+		return this.current.toString();
 	}
 
 	private generate(args: string[]): string {

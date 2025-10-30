@@ -1,4 +1,5 @@
-import { Chip } from "../entities-new/chip";
+import type { Chip } from "../entities-new/chip";
+import { CompositeChip } from "../entities-new/composite-chip";
 import type { IEvents } from "../services/eventing-service";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
@@ -15,7 +16,16 @@ export class ChipManager extends BaseManager {
 	}
 
 	public onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
-		const chip = new Chip(chipSpec);
+		let chip: Chip;
+
+		switch (chipSpec.type) {
+			case "atomic":
+				chip = new chipSpec.ChipClass(chipSpec);
+				break;
+			case "composite":
+				chip = new CompositeChip(chipSpec);
+				break;
+		}
 
 		this.sim.entityService.add(chip);
 	}

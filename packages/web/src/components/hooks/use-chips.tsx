@@ -10,7 +10,7 @@ export const useChips = () => {
 
 	const [chips, setChips] = React.useState<IUseChipsState[]>(() =>
 		simulator.chipLibraryService.getAll().map((spec) => ({
-			name: spec.label,
+			name: spec.name,
 			onClick: () => simulator.emit("chip.spawn", spec),
 		})),
 	);

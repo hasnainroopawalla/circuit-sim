@@ -36,7 +36,7 @@ export class Simulator {
 
 		this.chipManager = new ChipManager(this);
 
-		this.registerDefaultChips();
+		this.setupNandGate();
 	}
 
 	public createSketch(container: HTMLDivElement): p5 {
@@ -180,15 +180,32 @@ export class Simulator {
 		}
 	}
 
-	private registerDefaultChips(): void {
-		this.chipLibraryService.add({
-			label: "AND",
-			pins: [
-				{ direction: "in", label: "input-pin-0" },
-				{ direction: "in", label: "input-pin-1" },
-				{ direction: "out", label: "output-pin-0" },
-			],
-			execute: (inputs) => [inputs[0] && inputs[1]],
-		});
+	// TODO: remove
+	private setupNandGate(): void {
+		const andChipSpec = this.chipLibraryService.getChipSpecByName("AND");
+		const notChipSpec = this.chipLibraryService.getChipSpecByName("NOT");
+
+		const inputChipSpec = this.chipLibraryService.getChipSpecByName("INPUT");
+		const outputChipSpec = this.chipLibraryService.getChipSpecByName("OUTPUT");
+
+		if (!inputChipSpec || !outputChipSpec || !andChipSpec || !notChipSpec) {
+			return;
+		}
+
+		this.emit("chip.spawn", inputChipSpec);
+		this.emit("chip.spawn", outputChipSpec);
+		this.emit("chip.spawn", andChipSpec);
+		this.emit("chip.spawn", notChipSpec);
+
+		const inputChip = this.entityService.getEntityById("0");
+		const outputChip = this.entityService.getEntityById("2");
+		const andChip = this.entityService.getEntityById("4");
+		const notChip = this.entityService.getEntityById("8");
+
+		if (!inputChip || !outputChip || !andChip || !notChip) {
+			return;
+		}
+
+		console.log(this.entityService.entities);
 	}
 }
