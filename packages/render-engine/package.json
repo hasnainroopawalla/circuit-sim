@@ -1,5 +1,5 @@
 {
-  "name": "@digital-logic-sim/simulator",
+  "name": "@digital-logic-sim/render-engine",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.20.0",
-  "dependencies": {
-    "@digital-logic-sim/render-engine": "workspace:^1.0.0"
+  "devDependencies": {
+    "@webgpu/types": "^0.1.66"
   }
 }

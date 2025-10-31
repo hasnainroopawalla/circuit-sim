@@ -1,4 +1,4 @@
-import { Wire } from "../entities-new/wire";
+import { Wire } from "../entities/wire";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 

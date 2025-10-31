@@ -1,5 +1,5 @@
-import type { Chip } from "../entities-new/chip";
-import { CompositeChip } from "../entities-new/composite-chip";
+import type { Chip } from "../entities/chip";
+import { CompositeChip } from "../entities/composite-chip";
 import type { IEvents } from "../services/eventing-service";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";

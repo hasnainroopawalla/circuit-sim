@@ -1,19 +1,11 @@
-import styles from "./app.module.css";
-import { NotificationBanner, useNotification } from "./notification";
-import { SimulatorProvider } from "./simulator-context";
-import { Sketch } from "./sketch-renderer";
-import { Toolbar } from "./toolbar";
+import  * as React from "react";
+import { Canvas } from "./canvas";
+import { runSimulator } from "@digital-logic-sim/simulator";
 
-export const App = () => {
-	const notificationText = useNotification();
+export const App: React.FC = () => {
+	React.useEffect(() => {
+		runSimulator();
+	}, []);
 
-	return (
-		<SimulatorProvider>
-			<div className={styles.app}>
-				<Sketch />
-				<Toolbar />
-				<NotificationBanner getText={() => notificationText} />
-			</div>
-		</SimulatorProvider>
-	);
+	return <div id="app-container"><span>Hello</span><Canvas /></div>;
 };

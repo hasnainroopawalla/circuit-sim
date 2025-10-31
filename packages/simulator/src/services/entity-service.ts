@@ -1,4 +1,4 @@
-import type { Entity } from "../entities-new/entity";
+import type { Entity } from "../entities/entity";
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 

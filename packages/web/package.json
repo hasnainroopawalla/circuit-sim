@@ -1,18 +1,25 @@
 {
-	"name": "@circuit-sim/web",
-	"version": "1.0.0",
-	"description": "",
-	"scripts": {
-		"start": "webpack serve --env NODE_ENV=development --config webpack.dev.js",
-		"start:prod": "webpack serve --env NODE_ENV=production --config webpack.prod.js",
-		"build": "webpack --env NODE_ENV=production --config webpack.prod.js",
-		"test": "jest",
-		"test:watch": "jest --watch",
-		"stats": "webpack --json stats.json --env NODE_ENV=production --config webpack.prod.js --env stats=verbose"
-	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {},
-	"dependencies": {}
+  "name": "@digital-logic-sim/web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@digital-logic-sim/simulator": "workspace:^1.0.0",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "globals": "^16.4.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.1.7"
+  }
 }

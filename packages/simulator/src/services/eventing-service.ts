@@ -1,4 +1,4 @@
-import type { ChipSpec } from "../entities-new/chip";
+import type { ChipSpec } from "../entities/chip";
 
 export type IEvents = {
 	// A spawn chip button is pressed

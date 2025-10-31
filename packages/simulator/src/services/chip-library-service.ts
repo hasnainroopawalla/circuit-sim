@@ -3,8 +3,8 @@ import {
 	InputChip,
 	NotChip,
 	OutputChip,
-} from "../entities-new/atomic-chip";
-import type { ChipSpec } from "../entities-new/chip";
+} from "../entities/atomic-chip";
+import type { ChipSpec } from "../entities/chip";
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
