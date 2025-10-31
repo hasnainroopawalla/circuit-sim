@@ -11,8 +11,10 @@ export class AndChip extends AtomicChip {
 		super(chipSpec);
 	}
 
-	public execute(inputs: boolean[]): boolean[] {
-		return [inputs[0] && inputs[1]];
+	public execute(): void {
+		super.setOutputPins([
+			this.inputPins[0].currentValue && this.inputPins[1].currentValue,
+		]);
 	}
 }
 
@@ -21,8 +23,8 @@ export class NotChip extends AtomicChip {
 		super(chipSpec);
 	}
 
-	public execute(inputs: boolean[]): boolean[] {
-		return [!inputs[0]];
+	public execute(): void {
+		super.setOutputPins([!this.inputPins[0].currentValue]);
 	}
 }
 
@@ -43,7 +45,8 @@ export class OutputChip extends AtomicChip {
 		super(chipSpec);
 	}
 
-	public execute(inputs: boolean[]): boolean[] {
-		return [inputs[0]];
+	public execute(): void {
+		console.log("within", this.inputPins);
+		// return [inputs[0]];
 	}
 }

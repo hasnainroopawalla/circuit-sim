@@ -2,8 +2,8 @@ import { entityIdService } from "../entity-id-service";
 import { Entity } from "./entity";
 
 export class Wire extends Entity {
-	private readonly startPinId: string;
-	private readonly endPinId: string;
+	public readonly startPinId: string;
+	public readonly endPinId: string;
 
 	constructor(args: { startPinId: string; endPinId: string }) {
 		super({

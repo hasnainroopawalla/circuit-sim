@@ -5,14 +5,36 @@ import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 
 export class ChipManager extends BaseManager {
+	public readonly chips: Chip[];
+
 	constructor(sim: Simulator) {
 		super(sim);
+
+		this.chips = [];
 
 		this.init();
 	}
 
 	public init(): void {
 		this.sim.on("chip.spawn", (chipSpec) => this.onSpawnChip(chipSpec));
+	}
+
+	public executeChips(): void {
+		// writes to outputPin.nextValue
+		this.chips.forEach((chip) => {
+			chip.execute();
+		});
+	}
+
+	public getChipById(chipId: string): Chip | undefined {
+		return this.chips.find((chip) => chip.id === chipId);
+	}
+
+	// TODO: better name
+	public commitAllPinValues(): void {
+		this.chips.forEach((chip) => {
+			chip.commitPinValues();
+		});
 	}
 
 	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
@@ -27,6 +49,6 @@ export class ChipManager extends BaseManager {
 				break;
 		}
 
-		this.sim.entityService.add(chip);
+		this.chips.push(chip);
 	}
 }

@@ -3,7 +3,6 @@ import {
 	type IEvents,
 	type Unsubscribe,
 } from "./services/eventing-service";
-import { EntityService } from "./services/entity-service";
 import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
@@ -14,7 +13,6 @@ export class Simulator {
 
 	// services
 	readonly eventingService: EventingService;
-	readonly entityService: EntityService;
 	readonly chipLibraryService: ChipLibraryService;
 
 	// managers
@@ -28,7 +26,6 @@ export class Simulator {
 
 		// services
 		this.eventingService = new EventingService();
-		this.entityService = new EntityService(this);
 		this.chipLibraryService = new ChipLibraryService(this);
 
 		// managers
@@ -55,6 +52,19 @@ export class Simulator {
 
 	private loop(): void {}
 
+	private execute(): void {
+		console.log("CHIPS", this.chipManager.chips);
+		this.chipManager.executeChips();
+
+		this.wireManager.propagateWires();
+
+		this.chipManager.commitAllPinValues();
+
+		this.chipManager.chips.forEach((chip) => {
+			console.log(chip.spec.name, chip.inputPins, chip.outputPins);
+		});
+	}
+
 	// TODO: remove
 	private setupNandGate(): void {
 		const andChipSpec = this.chipLibraryService.getChipSpecByName("AND");
@@ -73,23 +83,23 @@ export class Simulator {
 		this.emit("chip.spawn", notChipSpec);
 		this.emit("chip.spawn", outputChipSpec);
 
-		const inputChip = this.entityService.getEntityById("0");
-		// const inputChip = this.entityService.getEntityById("0");
-		const outputChip = this.entityService.getEntityById("2");
-		const andChip = this.entityService.getEntityById("4");
-		const notChip = this.entityService.getEntityById("8");
+		const inputChip1 = this.chipManager.getChipById("0");
+		const inputChip2 = this.chipManager.getChipById("1");
+		const andChip = this.chipManager.getChipById("2");
+		const notChip = this.chipManager.getChipById("3");
+		const outputChip = this.chipManager.getChipById("4");
 
-		if (!inputChip || !outputChip || !andChip || !notChip) {
+		if (!inputChip1 || !inputChip2 || !outputChip || !andChip || !notChip) {
 			return;
 		}
 
-		this.wireManager.spawnWire("1", "5"); // input 0 to AND in 0
-		this.wireManager.spawnWire("2", "6"); // input 1 to AND in 1
+		this.wireManager.spawnWire("0.out.0", "2.in.0"); // input 0 to AND in 0
+		this.wireManager.spawnWire("1.out.0", "2.in.1"); // input 1 to AND in 1
 
-		this.wireManager.spawnWire("7", "9"); // AND out to NOT in
+		this.wireManager.spawnWire("2.out.0", "3.in.0"); // AND out to NOT in
 
-		this.wireManager.spawnWire("10", "12"); // NOT out to output
+		this.wireManager.spawnWire("3.out.0", "4.in.0"); // NOT out to output
 
-		console.log(this.entityService.entities);
+		this.execute();
 	}
 }

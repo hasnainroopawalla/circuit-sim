@@ -25,21 +25,43 @@ export type ChipSpec = AtomicChipSpec | CompositeChipSpec;
 export abstract class Chip extends Entity {
 	public readonly spec: ChipSpec;
 
-	private readonly inputPins: Pin[];
-	private readonly outputPins: Pin[];
+	protected readonly inputPins: Pin[];
+	protected readonly outputPins: Pin[];
 
 	constructor(spec: ChipSpec) {
-		super({ id: entityIdService.getId(), type: "chip" });
+		const chipId = entityIdService.getId(); // TODO, should not be only inputChipId
+
+		super({
+			id: chipId,
+			type: "chip",
+		});
 
 		this.spec = spec;
-		this.inputPins = spec.inputPins.map((pinSpec) => new Pin(pinSpec));
-		this.outputPins = spec.outputPins.map((pinSpec) => new Pin(pinSpec));
+
+		this.inputPins = spec.inputPins.map(
+			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.in.${idx}`), // TODO: is this the best way for id?
+		);
+		this.outputPins = spec.outputPins.map(
+			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.out.${idx}`),
+		);
 	}
 
-	public getPin(mode: PinType, index: number): Pin | undefined {
-		const pins = mode === "in" ? this.inputPins : this.outputPins;
+	public getPin(pinType: PinType, index: number): Pin | undefined {
+		const pins = pinType === "in" ? this.inputPins : this.outputPins;
 		return pins[index];
 	}
 
-	public abstract execute(inputs: boolean[]): boolean[];
+	public setOutputPins(values: boolean[]): void {
+		this.outputPins.forEach((_, idx) => {
+			this.outputPins[idx].nextValue = values[idx];
+		});
+	}
+
+	public commitPinValues(): void {
+		[...this.inputPins, ...this.outputPins].forEach((pin) => {
+			pin.commitValue();
+		});
+	}
+
+	public abstract execute(): void;
 }
