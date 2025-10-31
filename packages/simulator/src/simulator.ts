@@ -10,6 +10,7 @@ import {
 import { EntityService } from "./services/entity-service";
 import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
+import { WireManager } from "./managers/wire-manager";
 
 // let circuitBoard: ICircuitBoard;
 let sketchInteractionEnabled = true;
@@ -28,13 +29,17 @@ export class Simulator {
 
 	// managers
 	readonly chipManager: ChipManager;
+	readonly wireManager: WireManager;
 
 	constructor() {
+		// services
 		this.eventingService = new EventingService();
 		this.entityService = new EntityService(this);
 		this.chipLibraryService = new ChipLibraryService(this);
 
+		// managers
 		this.chipManager = new ChipManager(this);
+		this.wireManager = new WireManager(this);
 
 		this.setupNandGate();
 	}
@@ -193,11 +198,13 @@ export class Simulator {
 		}
 
 		this.emit("chip.spawn", inputChipSpec);
-		this.emit("chip.spawn", outputChipSpec);
+		this.emit("chip.spawn", inputChipSpec);
 		this.emit("chip.spawn", andChipSpec);
 		this.emit("chip.spawn", notChipSpec);
+		this.emit("chip.spawn", outputChipSpec);
 
 		const inputChip = this.entityService.getEntityById("0");
+		// const inputChip = this.entityService.getEntityById("0");
 		const outputChip = this.entityService.getEntityById("2");
 		const andChip = this.entityService.getEntityById("4");
 		const notChip = this.entityService.getEntityById("8");
@@ -206,6 +213,14 @@ export class Simulator {
 			return;
 		}
 
+		this.wireManager.spawnWire("1", "5") // input 0 to AND in 0
+		this.wireManager.spawnWire("2", "6") // input 1 to AND in 1
+
+		this.wireManager.spawnWire("7", "9") // AND out to NOT in
+
+		this.wireManager.spawnWire("10", "12") // NOT out to output
+
 		console.log(this.entityService.entities);
+
 	}
 }

@@ -15,7 +15,7 @@ export class ChipManager extends BaseManager {
 		this.sim.on("chip.spawn", (chipSpec) => this.onSpawnChip(chipSpec));
 	}
 
-	public onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
+	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
 		let chip: Chip;
 
 		switch (chipSpec.type) {
