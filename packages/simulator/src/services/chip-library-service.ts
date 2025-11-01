@@ -1,25 +1,21 @@
-import {
-	AndChip,
-	InputChip,
-	NotChip,
-	OutputChip,
-} from "../entities/atomic-chip";
+import { AndChip, NotChip } from "../entities/atomic-chip";
 import type { ChipSpec } from "../entities/chip";
+import { InputChip, OutputChip } from "../entities/io-chip";
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
 export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 	{
 		name: "INPUT",
-		type: "atomic",
+		type: "io",
 		inputPins: [],
-		outputPins: [{ type: "out", name: "output-pin-0" }],
+		outputPins: [{ type: "out", name: "io-in-0" }], // TODO: should not be necessary
 		ChipClass: InputChip,
 	},
 	{
 		name: "OUTPUT",
-		type: "atomic",
-		inputPins: [{ type: "in", name: "input-pin-0" }],
+		type: "io",
+		inputPins: [{ type: "in", name: "io-out-0" }],
 		outputPins: [],
 		ChipClass: OutputChip,
 	},
@@ -27,17 +23,17 @@ export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 		name: "AND",
 		type: "atomic",
 		inputPins: [
-			{ type: "in", name: "input-pin-0" },
-			{ type: "in", name: "input-pin-1" },
+			{ type: "in", name: "and-in-0" },
+			{ type: "in", name: "and-in-1" },
 		],
-		outputPins: [{ type: "out", name: "output-pin-0" }],
+		outputPins: [{ type: "out", name: "and-out-0" }],
 		ChipClass: AndChip,
 	},
 	{
 		name: "NOT",
 		type: "atomic",
-		inputPins: [{ type: "in", name: "input-pin-0" }],
-		outputPins: [{ type: "out", name: "output-pin-0" }],
+		inputPins: [{ type: "in", name: "not-in-0" }],
+		outputPins: [{ type: "out", name: "not-out-0" }],
 		ChipClass: NotChip,
 	},
 ];

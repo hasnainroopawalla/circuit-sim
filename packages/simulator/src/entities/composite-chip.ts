@@ -5,7 +5,7 @@ export class CompositeChip extends Chip {
 		super(chipSpec);
 	}
 
-	public execute(inputs: boolean[]): boolean[] {
-		return inputs;
+	public execute(): boolean {
+		return false;
 	}
 }

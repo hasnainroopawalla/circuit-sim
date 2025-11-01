@@ -52,16 +52,42 @@ export class Simulator {
 
 	private loop(): void {}
 
+	// TODO: add maxIterations
 	private execute(): void {
-		console.log("CHIPS", this.chipManager.chips);
-		this.chipManager.executeChips();
+		console.log("---- EXECUTE CALLED ----");
+		let changed: boolean;
 
-		this.wireManager.propagateWires();
+		do {
+			console.log("LOOP");
+			changed = false;
 
-		this.chipManager.commitAllPinValues();
+			changed ||= this.chipManager.executeChips();
+			console.log("executeChips", changed);
+			changed ||= this.wireManager.propagateWires();
+			console.log("propagateWires", changed);
+			changed ||= this.chipManager.commitAllPinValues();
+			console.log("commitAllPinValues", changed);
+		} while (changed);
 
+		console.log("FINAL ->");
 		this.chipManager.chips.forEach((chip) => {
-			console.log(chip.spec.name, chip.inputPins, chip.outputPins);
+			[...chip.inputPins].forEach((inputPin) => {
+				console.log(
+					chip.spec.name,
+					"In",
+					inputPin.currentValue,
+					inputPin.nextValue,
+				);
+			});
+
+			[...chip.outputPins].forEach((outputPin) => {
+				console.log(
+					chip.spec.name,
+					"Out",
+					outputPin.currentValue,
+					outputPin.nextValue,
+				);
+			});
 		});
 	}
 
@@ -95,11 +121,18 @@ export class Simulator {
 
 		this.wireManager.spawnWire("0.out.0", "2.in.0"); // input 0 to AND in 0
 		this.wireManager.spawnWire("1.out.0", "2.in.1"); // input 1 to AND in 1
+		// this.wireManager.spawnWire("2.out.0", "3.in.0"); // AND out to output
 
 		this.wireManager.spawnWire("2.out.0", "3.in.0"); // AND out to NOT in
 
 		this.wireManager.spawnWire("3.out.0", "4.in.0"); // NOT out to output
 
+		this.execute();
+
+		inputChip1.setValue(true);
+		this.execute();
+
+		inputChip2.setValue(true);
 		this.execute();
 	}
 }

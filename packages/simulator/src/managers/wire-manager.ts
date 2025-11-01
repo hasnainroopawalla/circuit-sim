@@ -1,7 +1,7 @@
-import { Chip } from "../entities/chip";
-import { Pin, PinType } from "../entities/pin";
+import type { Pin, PinType } from "../entities/pin";
 import { Wire } from "../entities/wire";
 import type { Simulator } from "../simulator";
+import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
 
 export class WireManager extends BaseManager {
@@ -17,19 +17,21 @@ export class WireManager extends BaseManager {
 
 	public init(): void {}
 
-	public propagateWires(): void {
-		// targetPin.nextValue = sourcePin.nextValue
-		this.wires.forEach((wire) => {
-			console.log("WIRE", wire.id, wire.startPinId, wire.endPinId);
+	public propagateWires(): boolean {
+		return didAnyChange(this.wires, (wire) => {
 			const startPin = this.getPin(wire.startPinId);
 			const endPin = this.getPin(wire.endPinId);
 
 			if (!startPin || !endPin) {
-				return;
+				return false;
 			}
 
-			console.log("wire", wire.id, startPin, startPin);
-			endPin.nextValue = startPin.nextValue;
+			if (endPin.nextValue !== startPin.nextValue) {
+				endPin.nextValue = startPin.nextValue;
+				return true;
+			}
+
+			return false;
 		});
 	}
 

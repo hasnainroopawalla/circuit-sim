@@ -1,26 +1,30 @@
 import { entityIdService } from "../entity-id-service";
+import { didAnyChange } from "../utils";
 import type { AtomicChip } from "./atomic-chip";
 import { Entity } from "./entity";
+import type { IOChip } from "./io-chip";
 import { Pin, type PinType, type PinSpec } from "./pin";
 
-export type ChipType = "input" | "output" | "atomic" | "composite";
+type ChipType = "io" | "atomic" | "composite";
 
-type BaseChipSpec = {
+type BaseChipSpec<TChipType extends ChipType> = {
+	type: TChipType;
 	name: string;
 	inputPins: PinSpec[];
 	outputPins: PinSpec[];
 };
 
-export type AtomicChipSpec = BaseChipSpec & {
-	type: "atomic";
+export type IOChipSpec = BaseChipSpec<"io"> & {
+	ChipClass: new (spec: IOChipSpec) => IOChip;
+};
+
+export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 	ChipClass: new (spec: AtomicChipSpec) => AtomicChip;
 };
 
-export type CompositeChipSpec = BaseChipSpec & {
-	type: "composite";
-};
+export type CompositeChipSpec = BaseChipSpec<"composite">;
 
-export type ChipSpec = AtomicChipSpec | CompositeChipSpec;
+export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
 
 export abstract class Chip extends Entity {
 	public readonly spec: ChipSpec;
@@ -51,17 +55,38 @@ export abstract class Chip extends Entity {
 		return pins[index];
 	}
 
-	public setOutputPins(values: boolean[]): void {
-		this.outputPins.forEach((_, idx) => {
-			this.outputPins[idx].nextValue = values[idx];
+	/**
+	 * Returns true if any pin's nextValue has changed.
+	 */
+	public setOutputPins(values: boolean[]): boolean {
+		return didAnyChange(this.outputPins, (_, idx) => {
+			if (this.outputPins[idx].nextValue !== values[idx]) {
+				this.outputPins[idx].nextValue = values[idx];
+				return true;
+			}
+			return false;
 		});
+
+		// let changed = false;
+
+		// this.outputPins.forEach((_, idx) => {
+		// 	if (this.outputPins[idx].nextValue !== values[idx]) {
+		// 		this.outputPins[idx].nextValue = values[idx];
+		// 		changed = true;
+		// 	}
+		// });
+
+		// return changed;
 	}
 
-	public commitPinValues(): void {
-		[...this.inputPins, ...this.outputPins].forEach((pin) => {
-			pin.commitValue();
-		});
+	public commitPinValues(): boolean {
+		return didAnyChange([...this.inputPins, ...this.outputPins], (pin) =>
+			pin.commitValue(),
+		);
 	}
 
-	public abstract execute(): void;
+	/**
+	 * Returns true if any pin's nextValue has changed.
+	 */
+	public abstract execute(): boolean;
 }

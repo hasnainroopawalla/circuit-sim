@@ -25,8 +25,13 @@ export class Pin extends Entity {
 		this.nextValue = false;
 	}
 
-	public commitValue(): void {
-		this.currentValue = this.nextValue;
+	public commitValue(): boolean {
+		if (this.currentValue !== this.nextValue) {
+			this.currentValue = this.nextValue;
+			console.log("Committing", this.spec.name, "to", this.nextValue);
+			return true;
+		}
+		return false;
 	}
 
 	public execute(): void {}
