@@ -62,11 +62,8 @@ export class Simulator {
 			changed = false;
 
 			changed ||= this.chipManager.executeChips();
-			console.log("executeChips", changed);
 			changed ||= this.wireManager.propagateWires();
-			console.log("propagateWires", changed);
 			changed ||= this.chipManager.commitAllPinValues();
-			console.log("commitAllPinValues", changed);
 		} while (changed);
 
 		console.log("FINAL ->");

@@ -59,6 +59,10 @@ export abstract class Chip extends Entity {
 	 * Returns true if any pin's nextValue has changed.
 	 */
 	public setOutputPins(values: boolean[]): boolean {
+		if (this.outputPins.length !== values.length) {
+			throw new Error("Pin lengths dont match.");
+		}
+
 		return didAnyChange(this.outputPins, (_, idx) => {
 			if (this.outputPins[idx].nextValue !== values[idx]) {
 				this.outputPins[idx].nextValue = values[idx];
@@ -66,17 +70,6 @@ export abstract class Chip extends Entity {
 			}
 			return false;
 		});
-
-		// let changed = false;
-
-		// this.outputPins.forEach((_, idx) => {
-		// 	if (this.outputPins[idx].nextValue !== values[idx]) {
-		// 		this.outputPins[idx].nextValue = values[idx];
-		// 		changed = true;
-		// 	}
-		// });
-
-		// return changed;
 	}
 
 	public commitPinValues(): boolean {
