@@ -1,17 +1,24 @@
 import { entityIdService } from "../entity-id-service";
 import { Entity } from "./entity";
 
-export class Wire extends Entity {
-	public readonly startPinId: string;
-	public readonly endPinId: string;
+export type WireSpec = {
+	startPinId: string;
+	endPinId: string;
+};
 
-	constructor(args: { startPinId: string; endPinId: string }) {
+type WireRenderSpec = { color: string };
+
+export class Wire extends Entity {
+	public readonly spec: WireSpec;
+	public readonly renderSpec: WireRenderSpec;
+
+	constructor(wireSpec: WireSpec, renderSpec: WireRenderSpec) {
 		super({
 			id: entityIdService.getId(), // TODO fix
 			type: "wire",
 		});
 
-		this.startPinId = args.startPinId;
-		this.endPinId = args.endPinId;
+		this.spec = wireSpec;
+		this.renderSpec = renderSpec;
 	}
 }

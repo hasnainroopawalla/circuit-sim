@@ -1,5 +1,5 @@
 import type { Pin, PinType } from "../entities/pin";
-import { Wire } from "../entities/wire";
+import { Wire, type WireSpec } from "../entities/wire";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
@@ -19,8 +19,8 @@ export class WireManager extends BaseManager {
 
 	public propagateWires(): boolean {
 		return didAnyChange(this.wires, (wire) => {
-			const startPin = this.getPin(wire.startPinId);
-			const endPin = this.getPin(wire.endPinId);
+			const startPin = this.getPin(wire.spec.startPinId);
+			const endPin = this.getPin(wire.spec.endPinId);
 
 			if (!startPin || !endPin) {
 				return false;
@@ -41,11 +41,12 @@ export class WireManager extends BaseManager {
 		return chip?.getPin(pinType as PinType, Number(chipPinId));
 	}
 
-	public spawnWire(startPinId: string, endPinId: string): void {
-		const wire = new Wire({
-			startPinId,
-			endPinId,
-		});
+	public spawnWire(wireSpec: WireSpec): void {
+		const renderSpec = {
+			color: "red",
+		};
+
+		const wire = new Wire(wireSpec, renderSpec);
 
 		this.wires.push(wire);
 	}

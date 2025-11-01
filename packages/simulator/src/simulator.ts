@@ -6,7 +6,10 @@ import {
 import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
-import { RenderEngine } from "@digital-logic-sim/render-engine";
+import {
+	RenderEngine,
+	type RenderView,
+} from "@digital-logic-sim/render-engine";
 
 export class Simulator {
 	readonly renderEngine: RenderEngine;
@@ -50,6 +53,21 @@ export class Simulator {
 		return this.renderEngine.initialize().then(() => this.loop());
 	}
 
+	private getRenderView(): RenderView {
+		return {
+			entities: {
+				chips: this.chipManager.chips.map((chip) => ({
+					color: chip.renderSpec.color,
+					position: chip.renderSpec.position,
+					label: chip.spec.name,
+				})),
+				wires: this.wireManager.wires.map((wire) => ({
+					color: wire.renderSpec.color,
+				})),
+			},
+		};
+	}
+
 	private loop(): void {}
 
 	// TODO: add maxIterations
@@ -66,26 +84,26 @@ export class Simulator {
 			changed ||= this.chipManager.commitAllPinValues();
 		} while (changed);
 
-		console.log("FINAL ->");
-		this.chipManager.chips.forEach((chip) => {
-			[...chip.inputPins].forEach((inputPin) => {
-				console.log(
-					chip.spec.name,
-					"In",
-					inputPin.currentValue,
-					inputPin.nextValue,
-				);
-			});
+		// console.log("FINAL ->");
+		// this.chipManager.chips.forEach((chip) => {
+		// 	[...chip.inputPins].forEach((inputPin) => {
+		// 		console.log(
+		// 			chip.spec.name,
+		// 			"In",
+		// 			inputPin.currentValue,
+		// 			inputPin.nextValue,
+		// 		);
+		// 	});
 
-			[...chip.outputPins].forEach((outputPin) => {
-				console.log(
-					chip.spec.name,
-					"Out",
-					outputPin.currentValue,
-					outputPin.nextValue,
-				);
-			});
-		});
+		// 	[...chip.outputPins].forEach((outputPin) => {
+		// 		console.log(
+		// 			chip.spec.name,
+		// 			"Out",
+		// 			outputPin.currentValue,
+		// 			outputPin.nextValue,
+		// 		);
+		// 	});
+		// });
 	}
 
 	// TODO: remove
@@ -116,13 +134,13 @@ export class Simulator {
 			return;
 		}
 
-		this.wireManager.spawnWire("0.out.0", "2.in.0"); // input 0 to AND in 0
-		this.wireManager.spawnWire("1.out.0", "2.in.1"); // input 1 to AND in 1
-		// this.wireManager.spawnWire("2.out.0", "3.in.0"); // AND out to output
+		this.wireManager.spawnWire({ startPinId: "0.out.0", endPinId: "2.in.0" }); // input 0 to AND in 0
+		this.wireManager.spawnWire({ startPinId: "1.out.0", endPinId: "2.in.1" }); // input 1 to AND in 1
+		// this.wireManager.spawnWire({startPinId: "2.out.0",endPinId: "3.in.0"}); // AND out to output
 
-		this.wireManager.spawnWire("2.out.0", "3.in.0"); // AND out to NOT in
+		this.wireManager.spawnWire({ startPinId: "2.out.0", endPinId: "3.in.0" }); // AND out to NOT in
 
-		this.wireManager.spawnWire("3.out.0", "4.in.0"); // NOT out to output
+		this.wireManager.spawnWire({ startPinId: "3.out.0", endPinId: "4.in.0" }); // NOT out to output
 
 		this.execute();
 
@@ -131,5 +149,7 @@ export class Simulator {
 
 		inputChip2.setValue(true);
 		this.execute();
+
+		console.log("Output Chip:", outputChip.getPin("in", 0)?.currentValue);
 	}
 }

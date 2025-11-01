@@ -1,4 +1,4 @@
-import type { ChipSpec } from "../entities/chip";
+import type { ChipSpec } from "../entities/chips";
 
 export type IEvents = {
 	"chip.spawn": ChipSpec;

@@ -1,3 +1,5 @@
+import type { RenderView } from "./render-engine.interface";
+
 export class RenderEngine {
 	private device!: GPUDevice;
 
@@ -23,4 +25,6 @@ export class RenderEngine {
 			});
 		});
 	}
+
+	public render(view: RenderView): void {}
 }

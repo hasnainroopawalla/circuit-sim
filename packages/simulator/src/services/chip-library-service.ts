@@ -1,6 +1,10 @@
-import { AndChip, NotChip } from "../entities/atomic-chip";
-import type { ChipSpec } from "../entities/chip";
-import { InputChip, OutputChip } from "../entities/io-chip";
+import {
+	type ChipSpec,
+	AndChip,
+	NotChip,
+	InputChip,
+	OutputChip,
+} from "../entities/chips";
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 

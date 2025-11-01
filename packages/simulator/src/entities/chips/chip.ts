@@ -1,38 +1,17 @@
-import { entityIdService } from "../entity-id-service";
-import { didAnyChange } from "../utils";
-import type { AtomicChip } from "./atomic-chip";
-import { Entity } from "./entity";
-import type { IOChip } from "./io-chip";
-import { Pin, type PinType, type PinSpec } from "./pin";
-
-type ChipType = "io" | "atomic" | "composite";
-
-type BaseChipSpec<TChipType extends ChipType> = {
-	type: TChipType;
-	name: string;
-	inputPins: PinSpec[];
-	outputPins: PinSpec[];
-};
-
-export type IOChipSpec = BaseChipSpec<"io"> & {
-	ChipClass: new (spec: IOChipSpec) => IOChip;
-};
-
-export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
-	ChipClass: new (spec: AtomicChipSpec) => AtomicChip;
-};
-
-export type CompositeChipSpec = BaseChipSpec<"composite">;
-
-export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
+import { entityIdService } from "../../entity-id-service";
+import { didAnyChange } from "../../utils";
+import { Entity } from "../entity";
+import { Pin, type PinType } from "../pin";
+import type { ChipSpec, ChipRenderSpec } from "./chip.interface";
 
 export abstract class Chip extends Entity {
 	public readonly spec: ChipSpec;
+	public readonly renderSpec: ChipRenderSpec;
 
 	protected readonly inputPins: Pin[];
 	protected readonly outputPins: Pin[];
 
-	constructor(spec: ChipSpec) {
+	constructor(chipSpec: ChipSpec, renderSpec: ChipRenderSpec) {
 		const chipId = entityIdService.getId(); // TODO, should not be only inputChipId
 
 		super({
@@ -40,12 +19,13 @@ export abstract class Chip extends Entity {
 			type: "chip",
 		});
 
-		this.spec = spec;
+		this.spec = chipSpec;
+		this.renderSpec = renderSpec;
 
-		this.inputPins = spec.inputPins.map(
+		this.inputPins = chipSpec.inputPins.map(
 			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.in.${idx}`), // TODO: is this the best way for id?
 		);
-		this.outputPins = spec.outputPins.map(
+		this.outputPins = chipSpec.outputPins.map(
 			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.out.${idx}`),
 		);
 	}

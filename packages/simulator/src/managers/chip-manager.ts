@@ -1,5 +1,4 @@
-import type { Chip } from "../entities/chip";
-import { CompositeChip } from "../entities/composite-chip";
+import { type Chip, CompositeChip } from "../entities/chips";
 import type { IEvents } from "../services/eventing-service";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
@@ -34,17 +33,26 @@ export class ChipManager extends BaseManager {
 	}
 
 	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
+		// TODO: should renderSpec be defined here?
+		const renderSpec = {
+			position: {
+				x: 100,
+				y: 200,
+			},
+			color: "#123456",
+		};
+
 		let chip: Chip;
 
 		switch (chipSpec.type) {
 			case "io":
-				chip = new chipSpec.ChipClass(chipSpec);
+				chip = new chipSpec.ChipClass(chipSpec, renderSpec);
 				break;
 			case "atomic":
-				chip = new chipSpec.ChipClass(chipSpec);
+				chip = new chipSpec.ChipClass(chipSpec, renderSpec);
 				break;
 			case "composite":
-				chip = new CompositeChip(chipSpec);
+				chip = new CompositeChip(chipSpec, renderSpec);
 				break;
 		}
 
