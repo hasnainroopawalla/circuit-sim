@@ -2,6 +2,7 @@ import type { ChipSpec } from "../entities/chips";
 
 export type IEvents = {
 	"chip.spawn": ChipSpec;
+	"chip.save": undefined;
 };
 
 export type Unsubscribe = () => void;

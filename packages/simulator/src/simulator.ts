@@ -10,6 +10,7 @@ import {
 	RenderEngine,
 	type RenderView,
 } from "@digital-logic-sim/render-engine";
+import { BlueprintService } from "./services/blueprint-service";
 
 export class Simulator {
 	readonly renderEngine: RenderEngine;
@@ -17,6 +18,7 @@ export class Simulator {
 	// services
 	readonly eventingService: EventingService;
 	readonly chipLibraryService: ChipLibraryService;
+	readonly blueprintService: BlueprintService;
 
 	// managers
 	readonly chipManager: ChipManager;
@@ -30,6 +32,7 @@ export class Simulator {
 		// services
 		this.eventingService = new EventingService();
 		this.chipLibraryService = new ChipLibraryService(this);
+		this.blueprintService = new BlueprintService(this);
 
 		// managers
 		this.chipManager = new ChipManager(this);
@@ -141,8 +144,6 @@ export class Simulator {
 		this.wireManager.spawnWire({ startPinId: "2.out.0", endPinId: "3.in.0" }); // AND out to NOT in
 
 		this.wireManager.spawnWire({ startPinId: "3.out.0", endPinId: "4.in.0" }); // NOT out to output
-
-		this.execute();
 
 		inputChip1.setValue(true);
 		this.execute();

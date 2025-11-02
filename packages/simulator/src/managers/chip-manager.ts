@@ -15,10 +15,6 @@ export class ChipManager extends BaseManager {
 		this.init();
 	}
 
-	public init(): void {
-		this.sim.on("chip.spawn", (chipSpec) => this.onSpawnChip(chipSpec));
-	}
-
 	public executeChips(): boolean {
 		return didAnyChange(this.chips, (chip) => chip.execute());
 	}
@@ -30,6 +26,10 @@ export class ChipManager extends BaseManager {
 	// TODO: better name
 	public commitAllPinValues(): boolean {
 		return didAnyChange(this.chips, (chip) => chip.commitPinValues());
+	}
+
+	protected init(): void {
+		this.sim.on("chip.spawn", this.onSpawnChip.bind(this));
 	}
 
 	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {

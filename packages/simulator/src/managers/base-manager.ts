@@ -7,5 +7,5 @@ export abstract class BaseManager {
 		this.sim = sim;
 	}
 
-	public abstract init(): void;
+	protected abstract init(): void;
 }
