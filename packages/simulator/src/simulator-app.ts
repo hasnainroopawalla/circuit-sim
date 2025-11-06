@@ -1,13 +1,6 @@
 import { RenderEngine, ToolController } from "@digital-logic-sim/render-engine";
 import { Simulator } from "./simulator";
 
-// export const runSimulator = (): void => {
-// 	const canvas = createCanvas();
-
-// 	const simulator = new Simulator({ canvas });
-// 	simulator.start();
-// };
-
 export class SimulatorApp {
 	private readonly sim: Simulator;
 	private readonly renderEngine: RenderEngine;
