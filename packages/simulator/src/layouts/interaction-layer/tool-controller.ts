@@ -1,4 +1,4 @@
-import type { Tool } from "./layouts/interaction-layer";
+import type { Tool } from "./tools";
 
 export class ToolController {
 	private activeTool: Tool | null;

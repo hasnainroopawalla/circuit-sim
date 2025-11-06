@@ -16,10 +16,6 @@ importers:
         version: 5.9.3
 
   packages/render-engine:
-    dependencies:
-      '@digital-logic-sim/simulator':
-        specifier: workspace:^1.0.0
-        version: link:../simulator
     devDependencies:
       '@webgpu/types':
         specifier: ^0.1.66

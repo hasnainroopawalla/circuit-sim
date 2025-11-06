@@ -17,3 +17,7 @@ export type RenderView = {
 		wires: RenderViewWire[];
 	};
 };
+
+export type Renderable = {
+	// TODO: define this interface
+};
