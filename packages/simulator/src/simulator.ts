@@ -6,15 +6,10 @@ import {
 import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
-import {
-	RenderEngine,
-	type RenderView,
-} from "@digital-logic-sim/render-engine";
+import type { RenderView } from "@digital-logic-sim/render-engine";
 import { BlueprintService } from "./services/blueprint-service";
 
 export class Simulator {
-	readonly renderEngine: RenderEngine;
-
 	// services
 	readonly eventingService: EventingService;
 	readonly chipLibraryService: ChipLibraryService;
@@ -24,11 +19,7 @@ export class Simulator {
 	readonly chipManager: ChipManager;
 	readonly wireManager: WireManager;
 
-	constructor(args: { canvas: HTMLCanvasElement }) {
-		this.renderEngine = new RenderEngine({
-			gpuCanvasContext: args.canvas.getContext("webgpu"),
-		});
-
+	constructor() {
 		// services
 		this.eventingService = new EventingService();
 		this.chipLibraryService = new ChipLibraryService(this);
@@ -52,11 +43,7 @@ export class Simulator {
 		this.eventingService.publish(event, data);
 	}
 
-	public async start(): Promise<void> {
-		return this.renderEngine.initialize().then(() => this.loop());
-	}
-
-	private getRenderView(): RenderView {
+	public getRenderView(): RenderView {
 		return {
 			entities: {
 				chips: this.chipManager.chips.map((chip) => ({
@@ -71,15 +58,13 @@ export class Simulator {
 		};
 	}
 
-	private loop(): void {}
-
 	// TODO: add maxIterations
-	private execute(): void {
-		console.log("---- EXECUTE CALLED ----");
+	public update(): void {
+		// console.log("---- EXECUTE CALLED ----");
 		let changed: boolean;
 
 		do {
-			console.log("LOOP");
+			// console.log("LOOP");
 			changed = false;
 
 			changed ||= this.chipManager.executeChips();
@@ -146,10 +131,10 @@ export class Simulator {
 		this.wireManager.spawnWire({ startPinId: "3.out.0", endPinId: "4.in.0" }); // NOT out to output
 
 		inputChip1.setValue(true);
-		this.execute();
+		this.update();
 
 		inputChip2.setValue(true);
-		this.execute();
+		this.update();
 
 		console.log("Output Chip:", outputChip.getPin("in", 0)?.currentValue);
 	}
