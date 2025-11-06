@@ -29,7 +29,7 @@ export class ChipManager extends BaseManager {
 	}
 
 	protected init(): void {
-		this.sim.on("chip.spawn", this.onSpawnChip.bind(this));
+		this.sim.on("chip.spawn", (chipSpec) => this.onSpawnChip(chipSpec));
 	}
 
 	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {

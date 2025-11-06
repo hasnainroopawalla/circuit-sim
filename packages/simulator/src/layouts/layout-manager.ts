@@ -16,12 +16,12 @@ export class LayoutManager {
 	}
 
 	public getRenderables(): Renderable[] {
-		return this.layers.map((layer) => layer.getRenderables());
+		return this.layers.flatMap((layer) => layer.getRenderables());
 	}
 
-	public onPointerMove(event: PointerEvent): void {
+	public onPointerDown(event: PointerEvent): void {
 		this.layers.forEach((layer) => {
-			layer.onPointerMove(event);
+			layer.onPointerDown(event);
 		});
 	}
 }

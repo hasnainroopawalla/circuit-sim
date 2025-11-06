@@ -1,7 +1,16 @@
+import type { Renderable } from "@digital-logic-sim/render-engine";
+import type { Simulator } from "../../../simulator";
+
+export type ToolArgs = { sim: Simulator };
+
 export abstract class Tool {
-	constructor() {}
+	protected readonly sim: Simulator;
 
-	public abstract render(): void;
+	constructor(args: ToolArgs) {
+		this.sim = args.sim;
+	}
 
-	public abstract onPointerMove(event: Event): void;
+	public abstract getRenderables(): Renderable[];
+
+	public abstract onPointerDown(event: PointerEvent): void;
 }

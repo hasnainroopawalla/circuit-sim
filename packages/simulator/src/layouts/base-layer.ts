@@ -12,10 +12,7 @@ export abstract class BaseLayer {
 		this.sim = args.sim;
 	}
 
-	// TODO: is this needed?
-	public abstract render(): void;
-
 	public abstract getRenderables(): Renderable[];
 
-	public abstract onPointerMove(event: PointerEvent): void;
+	public abstract onPointerDown(event: PointerEvent): void;
 }

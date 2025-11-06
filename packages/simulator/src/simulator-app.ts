@@ -59,8 +59,8 @@ export class SimulatorApp {
 	}
 
 	private registerPointerSubscriptions(canvas: HTMLCanvasElement): void {
-		canvas.addEventListener("pointermove", (e) =>
-			this.layoutManager.onPointerMove(e as PointerEvent),
+		canvas.addEventListener("pointerdown", (e) =>
+			this.layoutManager.onPointerDown(e as PointerEvent),
 		);
 	}
 }

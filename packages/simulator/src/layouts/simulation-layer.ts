@@ -9,19 +9,25 @@ export class SimulationLayer extends BaseLayer {
 	public render(): void {}
 
 	public getRenderables(): Renderable[] {
-		// return {
-		// 	entities: {
-		// 		chips: this.chipManager.chips.map((chip) => ({
-		// 			color: chip.renderSpec.color,
-		// 			position: chip.renderSpec.position,
-		// 			label: chip.spec.name,
-		// 		})),
-		// 		wires: this.wireManager.wires.map((wire) => ({
-		// 			color: wire.renderSpec.color,
-		// 		})),
-		// 	},
-		// };
+		const chipRenderables: Renderable[] = this.sim.chipManager.chips.map(
+			(chip) => ({
+				type: "chip",
+				color: chip.renderSpec.color,
+				position: chip.renderSpec.position,
+				label: chip.spec.name,
+			}),
+		);
+
+		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
+			(wire) => ({
+				type: "wire",
+				color: wire.renderSpec.color,
+			}),
+		);
+
+		// TODO: [optimize] new object created each frame
+		return [...chipRenderables, ...wireRenderables];
 	}
 
-	public onPointerMove(): void {}
+	public onPointerDown(): void {}
 }

@@ -11,7 +11,7 @@ export class BlueprintService extends BaseService {
 	}
 
 	private init(): void {
-		this.sim.on("chip.save", this.saveChipAsBlueprint.bind(this));
+		this.sim.on("chip.save", () => this.saveChipAsBlueprint());
 	}
 
 	private saveChipAsBlueprint(): void {

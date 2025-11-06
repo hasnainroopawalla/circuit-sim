@@ -6,6 +6,7 @@ type BaseRenderable<TRenderable extends RenderableType> = {
 };
 
 export type ChipRenderable = BaseRenderable<"chip"> & {
+	label: string;
 	position: {
 		x: number;
 		y: number;
