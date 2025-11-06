@@ -1,23 +1,17 @@
-type BaseRenderViewEntity = {
+type RenderableType = "chip" | "wire";
+
+type BaseRenderable<TRenderable extends RenderableType> = {
+	type: TRenderable;
 	color: string;
 };
 
-type RenderViewChip = BaseRenderViewEntity & {
+export type ChipRenderable = BaseRenderable<"chip"> & {
 	position: {
 		x: number;
 		y: number;
 	};
 };
 
-type RenderViewWire = BaseRenderViewEntity; // TODO: position data for wire?
+type WireRenderable = BaseRenderable<"wire">; // TODO: position data for wire?
 
-export type RenderView = {
-	entities: {
-		chips: RenderViewChip[]; // TODO: how to represent pins?
-		wires: RenderViewWire[];
-	};
-};
-
-export type Renderable = {
-	// TODO: define this interface
-};
+export type Renderable = ChipRenderable | WireRenderable;

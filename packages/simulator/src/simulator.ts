@@ -6,7 +6,6 @@ import {
 import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
-import type { RenderView } from "@digital-logic-sim/render-engine";
 import { BlueprintService } from "./services/blueprint-service";
 
 export class Simulator {
@@ -41,21 +40,6 @@ export class Simulator {
 
 	public emit<K extends keyof IEvents>(event: K, data: IEvents[K]): void {
 		this.eventingService.publish(event, data);
-	}
-
-	public getRenderView(): RenderView {
-		return {
-			entities: {
-				chips: this.chipManager.chips.map((chip) => ({
-					color: chip.renderSpec.color,
-					position: chip.renderSpec.position,
-					label: chip.spec.name,
-				})),
-				wires: this.wireManager.wires.map((wire) => ({
-					color: wire.renderSpec.color,
-				})),
-			},
-		};
 	}
 
 	// TODO: add maxIterations

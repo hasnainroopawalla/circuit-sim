@@ -13,10 +13,10 @@ export class SimulatorApp {
 	private animationId: number | null = null;
 
 	constructor(args: { canvas: HTMLCanvasElement }) {
-		const initializedCanvas = this.initializeCanvas(args.canvas);
+		this.initializeCanvas(args.canvas);
 
 		this.renderEngine = new RenderEngine({
-			gpuCanvasContext: initializedCanvas.getContext("webgpu"),
+			gpuCanvasContext: args.canvas.getContext("webgpu"),
 		});
 
 		this.sim = new Simulator();
@@ -27,7 +27,7 @@ export class SimulatorApp {
 
 		this.renderEngineInitPromise = this.renderEngine.initialize();
 
-		this.registerPointerSubscriptions(initializedCanvas);
+		this.registerPointerSubscriptions(args.canvas);
 	}
 
 	public async start(): Promise<void> {
@@ -52,11 +52,10 @@ export class SimulatorApp {
 		this.animationId = requestAnimationFrame(() => this.loop());
 	}
 
-	private initializeCanvas(canvas: HTMLCanvasElement): HTMLCanvasElement {
+	private initializeCanvas(canvas: HTMLCanvasElement): void {
 		canvas.width = canvas.clientWidth * window.devicePixelRatio;
 		canvas.height = canvas.clientHeight * window.devicePixelRatio;
 		canvas.focus();
-		return canvas;
 	}
 
 	private registerPointerSubscriptions(canvas: HTMLCanvasElement): void {

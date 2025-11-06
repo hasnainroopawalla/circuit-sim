@@ -7,15 +7,17 @@ export class LayoutManager {
 	private readonly layers: BaseLayer[];
 
 	constructor(args: BaseLayerArgs) {
-		// note: dont change the order.
-		this.layers = [new InteractionLayer(args), new SimulationLayer(args)];
+		this.layers = [
+			// layer 1
+			new InteractionLayer(args),
+			// layer 0
+			new SimulationLayer(args),
+		];
 	}
 
 	public getRenderables(): Renderable[] {
 		return this.layers.map((layer) => layer.getRenderables());
 	}
-
-	public renderAll(): void {}
 
 	public onPointerMove(event: PointerEvent): void {
 		this.layers.forEach((layer) => {
