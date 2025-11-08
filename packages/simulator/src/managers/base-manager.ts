@@ -6,6 +6,4 @@ export abstract class BaseManager {
 	constructor(sim: Simulator) {
 		this.sim = sim;
 	}
-
-	protected abstract init(): void;
 }

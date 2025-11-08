@@ -27,8 +27,6 @@ export class Simulator {
 		// managers
 		this.chipManager = new ChipManager(this);
 		this.wireManager = new WireManager(this);
-
-		this.setupNandGate();
 	}
 
 	public on<K extends keyof IEvents>(
@@ -79,7 +77,7 @@ export class Simulator {
 	}
 
 	// TODO: remove
-	private setupNandGate(): void {
+	public setupNandGate(): void {
 		const andChipSpec = this.chipLibraryService.getChipSpecByName("AND");
 		const notChipSpec = this.chipLibraryService.getChipSpecByName("NOT");
 

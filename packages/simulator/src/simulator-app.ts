@@ -28,6 +28,8 @@ export class SimulatorApp {
 		this.renderEngineInitPromise = this.renderEngine.initialize();
 
 		this.registerPointerSubscriptions(args.canvas);
+
+		this.sim.setupNandGate();
 	}
 
 	public async start(): Promise<void> {
