@@ -5,6 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter @digital-logic-sim/web start",
+    "build": "pnpm --filter @digital-logic-sim/web build",
+    "test:unit": "pnpm vitest run",
+    "test": "pnpm vitest",
     "lint": "biome check",
     "lint:fix": "biome check --fix . && biome format --write ."
   },
@@ -14,6 +17,8 @@
   "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@biomejs/biome": "2.2.5",
-    "typescript": "^5.9.3"
+    "@types/jest": "^30.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.8"
   }
 }
