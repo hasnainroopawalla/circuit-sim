@@ -1,16 +1,17 @@
-import { Chip, type IOChipSpec } from "./chip";
+import { Chip } from "./chip";
+import type { ChipRenderSpec, IOChipSpec } from "./chip.interface";
 
 export abstract class IOChip extends Chip {
-	constructor(chipSpec: IOChipSpec) {
-		super(chipSpec);
+	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
+		super(chipSpec, renderSpec);
 	}
 }
 
 export class InputChip extends IOChip {
 	private nextValue = false;
 
-	constructor(chipSpec: IOChipSpec) {
-		super(chipSpec);
+	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
+		super(chipSpec, renderSpec);
 	}
 
 	public setValue(to: boolean): void {
@@ -30,8 +31,8 @@ export class InputChip extends IOChip {
 }
 
 export class OutputChip extends IOChip {
-	constructor(chipSpec: IOChipSpec) {
-		super(chipSpec);
+	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
+		super(chipSpec, renderSpec);
 	}
 
 	public execute(): boolean {

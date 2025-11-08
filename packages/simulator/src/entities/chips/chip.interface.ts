@@ -5,6 +5,11 @@ import type { IOChip } from "./io-chip";
 
 type ChipType = "io" | "atomic" | "composite";
 
+export type ChipRenderSpec = {
+	position: Position;
+	color: string;
+};
+
 type BaseChipSpec<TChipType extends ChipType> = {
 	type: TChipType;
 	name: string;
@@ -26,8 +31,3 @@ export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 export type CompositeChipSpec = BaseChipSpec<"composite">;
 
 export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
-
-export type ChipRenderSpec = {
-	position: Position;
-	color: string;
-};

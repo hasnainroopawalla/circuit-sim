@@ -1,13 +1,20 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
+import type { ChipSpec } from "../../../entities/chips";
+
+type SpawnChipToolArgs = ToolArgs & {
+	chipSpec: ChipSpec;
+};
 
 export class SpawnChipTool extends Tool {
-	private readonly ghostChip: Renderable | null;
+	private readonly chipSpec: ChipSpec;
 
-	constructor(args: ToolArgs) {
+	private readonly ghostChip: Renderable | null = null;
+
+	constructor(args: SpawnChipToolArgs) {
 		super(args);
 
-		this.ghostChip = null;
+		this.chipSpec = args.chipSpec;
 	}
 
 	public getRenderables(): Renderable[] {
@@ -19,6 +26,10 @@ export class SpawnChipTool extends Tool {
 	}
 
 	public onPointerDown(event: PointerEvent): void {
-		// TODO: spawn chip here
+		// TODO: spawn chip in simulator
+	}
+
+	public onPointerMove(event: PointerEvent): void {
+		// TODO: update ghost chip position
 	}
 }

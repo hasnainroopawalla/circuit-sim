@@ -24,4 +24,10 @@ export class LayoutManager {
 			layer.onPointerDown(event);
 		});
 	}
+
+	public onPointerMove(event: PointerEvent): void {
+		this.layers.forEach((layer) => {
+			layer.onPointerMove(event);
+		});
+	}
 }

@@ -29,5 +29,7 @@ export class SimulationLayer extends BaseLayer {
 		return [...chipRenderables, ...wireRenderables];
 	}
 
-	public onPointerDown(): void {}
+	public onPointerDown(event: PointerEvent): void {}
+
+	public onPointerMove(event: PointerEvent): void {}
 }

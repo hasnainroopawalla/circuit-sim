@@ -1,16 +1,13 @@
 import { ToolManager } from "./tool-manager";
-import { BaseLayer } from "../base-layer";
-import type { Simulator } from "../../simulator";
+import { BaseLayer, type BaseLayerArgs } from "../base-layer";
 import type { Renderable } from "@digital-logic-sim/render-engine";
 
 export class InteractionLayer extends BaseLayer {
 	private readonly toolManager: ToolManager;
 
-	constructor(args: {
-		sim: Simulator;
-	}) {
+	constructor(args: BaseLayerArgs) {
 		super(args);
-		this.toolManager = new ToolManager();
+		this.toolManager = new ToolManager(args);
 	}
 
 	public getRenderables(): Renderable[] {
@@ -24,5 +21,9 @@ export class InteractionLayer extends BaseLayer {
 
 	public onPointerDown(event: PointerEvent): void {
 		this.toolManager.onPointerDown(event);
+	}
+
+	public onPointerMove(event: PointerEvent): void {
+		this.toolManager.onPointerMove(event);
 	}
 }

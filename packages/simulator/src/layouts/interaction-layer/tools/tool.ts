@@ -13,4 +13,6 @@ export abstract class Tool {
 	public abstract getRenderables(): Renderable[];
 
 	public abstract onPointerDown(event: PointerEvent): void;
+
+	public abstract onPointerMove(event: PointerEvent): void;
 }
