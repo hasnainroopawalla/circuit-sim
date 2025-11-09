@@ -43,17 +43,15 @@ export class Simulator {
 	// TODO: add maxIterations
 	public update(): void {
 		// console.log("---- EXECUTE CALLED ----");
-		let changed: boolean;
+		let shouldRunLoop = true;
 
-		do {
-			// console.log("LOOP");
-			changed = false;
+		while (shouldRunLoop) {
+			const chipsChanged = this.chipManager.executeChips();
+			const wiresChanged = this.wireManager.propagateWires();
+			const pinsChanged = this.chipManager.commitAllPinValues();
 
-			changed ||= this.chipManager.executeChips();
-			changed ||= this.wireManager.propagateWires();
-			changed ||= this.chipManager.commitAllPinValues();
-		} while (changed);
-
+			shouldRunLoop = chipsChanged || wiresChanged || pinsChanged;
+		}
 		// console.log("FINAL ->");
 		// this.chipManager.chips.forEach((chip) => {
 		// 	[...chip.inputPins].forEach((inputPin) => {

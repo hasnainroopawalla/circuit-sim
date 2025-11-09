@@ -34,17 +34,28 @@ export class ToolManager {
 		this.activeTool?.onPointerMove(event);
 	}
 
-	private setActiveTool<T extends Tool, Args extends { sim: Simulator }>(
-		Tool: new (args: Args) => T,
-		args: Omit<Args, "sim">,
-	): void {
-		this.activeTool = new Tool({ ...args, sim: this.sim } as Args);
+	private setActiveTool<
+		T extends Tool,
+		Args extends { sim: Simulator; deactivate: () => void },
+	>(Tool: new (args: Args) => T, args: Omit<Args, "sim" | "deactivate">): void {
+		if (this.activeTool) {
+			return;
+		}
+
+		this.activeTool = new Tool({
+			...args,
+			sim: this.sim,
+			deactivate: () => this.clearActiveTool(),
+		} as Args);
 	}
 
 	private registerSubscriptions(): void {
-		// TODO: should a new instance be created each time?
 		this.sim.on("chip.spawn", (chipSpec) =>
 			this.setActiveTool(SpawnChipTool, { chipSpec }),
 		);
+	}
+
+	private clearActiveTool(): void {
+		this.activeTool = null;
 	}
 }

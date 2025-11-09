@@ -26,7 +26,17 @@ export class SpawnChipTool extends Tool {
 	}
 
 	public onPointerDown(event: PointerEvent): void {
-		// TODO: spawn chip in simulator
+		this.sim.chipManager.spawnChip(
+			this.chipSpec,
+			{
+				color: "#123456",
+				position: {
+					x: event.clientX,
+					y: event.clientY,
+				},
+			} /* renderSpec */,
+		);
+		this.deactivate();
 	}
 
 	public onPointerMove(event: PointerEvent): void {

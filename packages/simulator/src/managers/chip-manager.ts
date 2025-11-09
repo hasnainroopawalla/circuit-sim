@@ -1,5 +1,5 @@
-import { type Chip, CompositeChip } from "../entities/chips";
-import type { IEvents } from "../services/eventing-service";
+import { type Chip, type ChipSpec, CompositeChip } from "../entities/chips";
+import type { ChipRenderSpec } from "../entities/chips/chip.interface";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
@@ -21,21 +21,11 @@ export class ChipManager extends BaseManager {
 		return this.chips.find((chip) => chip.id === chipId);
 	}
 
-	// TODO: better name
 	public commitAllPinValues(): boolean {
 		return didAnyChange(this.chips, (chip) => chip.commitPinValues());
 	}
 
-	private onSpawnChip(chipSpec: IEvents["chip.spawn"]): void {
-		// TODO: should renderSpec be defined here?
-		const renderSpec = {
-			position: {
-				x: 100,
-				y: 200,
-			},
-			color: "#123456",
-		};
-
+	public spawnChip(chipSpec: ChipSpec, renderSpec: ChipRenderSpec): void {
 		let chip: Chip;
 
 		switch (chipSpec.type) {
