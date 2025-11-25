@@ -12,5 +12,8 @@
   "packageManager": "pnpm@10.20.0",
   "devDependencies": {
     "@webgpu/types": "^0.1.66"
+  },
+  "dependencies": {
+    "wgpu-matrix": "^3.4.0"
   }
 }

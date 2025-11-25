@@ -19,6 +19,7 @@ export class LayoutManager {
 		return this.layers.flatMap((layer) => layer.getRenderables());
 	}
 
+	// TODO @hasnain - active layer should intercept reqs
 	public onPointerDown(event: PointerEvent): void {
 		this.layers.forEach((layer) => {
 			layer.onPointerDown(event);

@@ -22,6 +22,10 @@ importers:
         version: 4.0.8(@types/node@24.9.2)(jiti@2.6.1)(jsdom@27.1.0)(lightningcss@1.30.2)
 
   packages/render-engine:
+    dependencies:
+      wgpu-matrix:
+        specifier: ^3.4.0
+        version: 3.4.0
     devDependencies:
       '@webgpu/types':
         specifier: ^0.1.66
@@ -2422,6 +2426,9 @@ packages:
   webidl-conversions@8.0.0:
     resolution: {integrity: sha512-n4W4YFyz5JzOfQeA8oN7dUYpR+MBP3PIUsn2jLjWXwK5ASUzt0Jc/A5sAUZoCYFJRGF0FBKJ+1JjN43rNdsQzA==}
     engines: {node: '>=20'}
+
+  wgpu-matrix@3.4.0:
+    resolution: {integrity: sha512-kXHrbAPKEn9A32Wf4wVldyx9MmnzwhuB5p8GCqoJP3ItU5+iDT4J3aTQwPZWkfb153hwGtqZtUwR2M+ipJKadg==}
 
   whatwg-encoding@3.1.1:
     resolution: {integrity: sha512-6qN4hJdMwfYBtE3YBTTHhoeuUrDBPZmbQaxWAqSALV/MeEnR5z1xd8UKud2RAkFoPkmB+hli1TZSnyi84xz1vQ==}
@@ -4929,6 +4936,8 @@ snapshots:
   webidl-conversions@7.0.0: {}
 
   webidl-conversions@8.0.0: {}
+
+  wgpu-matrix@3.4.0: {}
 
   whatwg-encoding@3.1.1:
     dependencies:

@@ -19,6 +19,7 @@ export class Simulator {
 	readonly wireManager: WireManager;
 
 	constructor() {
+		
 		// services
 		this.eventingService = new EventingService();
 		this.chipLibraryService = new ChipLibraryService(this);

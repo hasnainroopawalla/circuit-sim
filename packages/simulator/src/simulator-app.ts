@@ -49,7 +49,7 @@ export class SimulatorApp {
 	private loop(): void {
 		this.sim.update();
 
-		this.renderEngine.render(this.layoutManager.getRenderables());
+		this.renderEngine.render(this.layoutManager.getRenderables(), camera);
 
 		this.animationId = requestAnimationFrame(() => this.loop());
 	}
@@ -68,5 +68,8 @@ export class SimulatorApp {
 		canvas.addEventListener("pointermove", (e) =>
 			this.layoutManager.onPointerMove(e as PointerEvent),
 		);
+
+		// TODO: bypass layout manager
+		canvas.addEventListener("resize", (e) => e);
 	}
 }

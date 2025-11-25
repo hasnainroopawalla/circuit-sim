@@ -1,12 +1,10 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
-import { BaseLayer, type BaseLayerArgs } from "./base-layer";
+import { BaseLayer, type BaseLayerArgs } from "../base-layer";
 
 export class SimulationLayer extends BaseLayer {
 	constructor(args: BaseLayerArgs) {
 		super(args);
 	}
-
-	public render(): void {}
 
 	public getRenderables(): Renderable[] {
 		const chipRenderables: Renderable[] = this.sim.chipManager.chips.map(
@@ -29,7 +27,9 @@ export class SimulationLayer extends BaseLayer {
 		return [...chipRenderables, ...wireRenderables];
 	}
 
-	public onPointerDown(event: PointerEvent): void {}
+	public onPointerDown(event: PointerEvent): void {
+		// TODO: camera update
+	}
 
 	public onPointerMove(event: PointerEvent): void {}
 }

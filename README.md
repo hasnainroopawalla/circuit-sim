@@ -1,5 +1,14 @@
 # Circuit Sim
 
+## Instructions
+
+- Install dependencies
+    1. Install `pnpm` globally on your machine
+    2. In the root of the repo, run `pnpm install`
+
+- Run the app
+    1. `pnpm start`
+
 [Live Demo](http://hasnainroopawalla.github.io/circuit-sim)
 
 A digital circuit simulator build using React, TypeScript and P5.js.

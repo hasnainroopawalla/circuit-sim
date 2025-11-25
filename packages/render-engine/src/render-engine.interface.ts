@@ -16,3 +16,12 @@ export type ChipRenderable = BaseRenderable<"chip"> & {
 type WireRenderable = BaseRenderable<"wire">; // TODO: position data for wire?
 
 export type Renderable = ChipRenderable | WireRenderable;
+
+export type CameraEntity = {
+	position: {
+		x: number;
+		y: number;
+		z: number;
+	};
+	fov: number;
+};
