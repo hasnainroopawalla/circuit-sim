@@ -54,26 +54,26 @@ export class RenderEngine {
 	}
 
 	public render(renderables: Renderable[], camera: CameraEntity): void {
-		this.uploadCamera(camera.eye)
-
+		this.uploadCamera(camera.eye);
 	}
 
-	private uploadCamera (cameraEye: Float32Array):void{const cameraStaging = new Float32Array(
-      2 * renderEngineConfig.matrixFloatSize
-    );
-	const viewProjMatrix =this.getViewProjectionMatrix(cameraEye); 
-	
-    cameraStaging.set(viewProjMatrix, 0);
-    cameraStaging.set(
-      mat4.inverse(viewProjMatrix),
-      renderEngineConfig.matrixFloatSize
-    );
+	private uploadCamera(cameraEye: Float32Array): void {
+		const cameraStaging = new Float32Array(
+			2 * renderEngineConfig.matrixFloatSize,
+		);
+		const viewProjMatrix = this.getViewProjectionMatrix(cameraEye);
 
-    this.device.queue.writeBuffer(
-      this.bufferManager.cameraUBO,
-      0,
-      cameraStaging
-    );
+		cameraStaging.set(viewProjMatrix, 0);
+		cameraStaging.set(
+			mat4.inverse(viewProjMatrix),
+			renderEngineConfig.matrixFloatSize,
+		);
+
+		this.device.queue.writeBuffer(
+			this.bufferManager.cameraUBO,
+			0,
+			cameraStaging,
+		);
 	}
 
 	// TODO @abhishek: rename method
@@ -84,9 +84,9 @@ export class RenderEngine {
 			this.bufferManager.createCameraBuffer(),
 		);
 
-		this.bindGroupManager.createBackgroundBindGroup(
-			this.bufferManager.createBackgroundBuffer(renderEngineConfig.mapSize),
-		);
+		// this.bindGroupManager.createBackgroundBindGroup(
+		// 	this.bufferManager.createBackgroundBuffer(renderEngineConfig.mapSize),
+		// );
 
 		//this.bufferManager.createComputeBuffers(renderEngineConfig.mapSize);
 
@@ -150,25 +150,25 @@ export class RenderEngine {
 			topology: "line-list",
 		});
 
-		this.pipelineManager.addPipeline({
-			pipelineType: PipelineType.GridShader,
-			shader: GridShader,
-			bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
-			depthTesting: false,
-			blend: blendState,
-			topology: "triangle-list",
-		});
+		// this.pipelineManager.addPipeline({
+		// 	pipelineType: PipelineType.GridShader,
+		// 	shader: GridShader,
+		// 	bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
+		// 	depthTesting: false,
+		// 	blend: blendState,
+		// 	topology: "triangle-list",
+		// });
 
-		this.pipelineManager.addPipeline({
-			pipelineType: PipelineType.BackgroundShader,
-			shader: BackgroundShader,
-			bindGroupLayouts: [
-				this.bindGroupManager.cameraBindGroupLayout,
-				this.bindGroupManager.backgroundBindGroupLayout,
-			],
-			depthTesting: false,
-			topology: "triangle-list",
-		});
+		// this.pipelineManager.addPipeline({
+		// 	pipelineType: PipelineType.BackgroundShader,
+		// 	shader: BackgroundShader,
+		// 	bindGroupLayouts: [
+		// 		this.bindGroupManager.cameraBindGroupLayout,
+		// 		this.bindGroupManager.backgroundBindGroupLayout,
+		// 	],
+		// 	depthTesting: false,
+		// 	topology: "triangle-list",
+		// });
 
 		//this.pipelineManager.addPipeline({
 		//	pipelineType: PipelineType.MapEditorShader,
@@ -195,23 +195,30 @@ export class RenderEngine {
 		//});
 	}
 
+	private getViewProjectionMatrix(cameraEye: Float32Array): Float32Array {
+		const { height: screenHeight, width: screenWidth } =
+			this.gpuCanvasContext.canvas;
 
-	private getViewProjectionMatrix(cameraEye :Float32Array): Float32Array {
-	const {height: screenHeight, width: screenWidth} = this.gpuCanvasContext.canvas;
-		
-	const cameraTarget=mat4.add(cameraEye,[0,0,1] /* only look long z-axis */);
-    const camMatrix = mat4.lookAt(cameraEye, cameraTarget, renderEngineConfig.cameraUp);
-    const viewMatrix = mat4.inverse(camMatrix);
+		const cameraTarget = mat4.add(
+			cameraEye,
+			[0, 0, 1] /* only look long z-axis */,
+		);
+		const camMatrix = mat4.lookAt(
+			cameraEye,
+			cameraTarget,
+			renderEngineConfig.cameraUp,
+		);
+		const viewMatrix = mat4.inverse(camMatrix);
 
-    const projectMatrix = mat4.perspective(
-      (renderEngineConfig.cameraFOV * Math.PI) / 180,
-      screenWidth / screenHeight,
-      0.1,
-      100
-    );
-	
-	return mat4.multiply(projectMatrix, viewMatrix);
+		const projectMatrix = mat4.perspective(
+			(renderEngineConfig.cameraFOV * Math.PI) / 180,
+			screenWidth / screenHeight,
+			0.1,
+			100,
+		);
+
+		return mat4.multiply(projectMatrix, viewMatrix);
 	}
 
-	private uploadRenderData(renderables: Renderable[]): void{}
+	private uploadRenderData(renderables: Renderable[]): void {}
 }

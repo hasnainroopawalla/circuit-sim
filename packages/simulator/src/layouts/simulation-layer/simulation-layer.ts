@@ -44,6 +44,6 @@ export class SimulationLayer extends BaseLayer {
 	}
 
 	public onKeyDown(event: KeyboardEvent): boolean {
-		return this.camera.onKeyboardInputEvent(event)
+		return this.camera.onKeyboardInputEvent(event);
 	}
 }
