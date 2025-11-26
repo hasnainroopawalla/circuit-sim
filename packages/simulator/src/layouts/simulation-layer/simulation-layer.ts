@@ -1,9 +1,17 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
+import type { Camera } from "./camera";
+
+type SimulationLayerArgs = BaseLayerArgs & {
+	camera: Camera;
+};
 
 export class SimulationLayer extends BaseLayer {
-	constructor(args: BaseLayerArgs) {
+	private camera: Camera;
+
+	constructor(args: SimulationLayerArgs) {
 		super(args);
+		this.camera = args.camera;
 	}
 
 	public getRenderables(): Renderable[] {
@@ -27,9 +35,15 @@ export class SimulationLayer extends BaseLayer {
 		return [...chipRenderables, ...wireRenderables];
 	}
 
-	public onPointerDown(event: PointerEvent): void {
-		// TODO: camera update
+	public onPointerDown(event: PointerEvent): boolean {
+		return false;
 	}
 
-	public onPointerMove(event: PointerEvent): void {}
+	public onPointerMove(event: PointerEvent): boolean {
+		return false;
+	}
+
+	public onKeyDown(event: KeyboardEvent): boolean {
+		return this.camera.onKeyboardInputEvent(event)
+	}
 }

@@ -26,12 +26,12 @@ export class ToolManager {
 		return this.activeTool.getRenderables();
 	}
 
-	public onPointerDown(event: PointerEvent): void {
-		this.activeTool?.onPointerDown(event);
+	public onPointerDown(event: PointerEvent): boolean {
+		return !!this.activeTool?.onPointerDown(event);
 	}
 
-	public onPointerMove(event: PointerEvent): void {
-		this.activeTool?.onPointerMove(event);
+	public onPointerMove(event: PointerEvent): boolean {
+		return !!this.activeTool?.onPointerMove(event);
 	}
 
 	private setActiveTool<

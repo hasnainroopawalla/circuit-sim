@@ -36,6 +36,9 @@ importers:
       '@digital-logic-sim/render-engine':
         specifier: workspace:^1.0.0
         version: link:../render-engine
+      wgpu-matrix:
+        specifier: ^3.4.0
+        version: 3.4.0
 
   packages/web:
     dependencies:

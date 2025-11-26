@@ -2,8 +2,7 @@ export enum PipelineType {
 	GenericShader,
 	GridShader,
 	BackgroundShader,
-	MapEditorShader,
-	PatchShader,
+	LineShader,
 }
 
 type PipelineManagerProps = { device: GPUDevice };
@@ -51,6 +50,7 @@ export class PipelineManager {
 		depthTesting?: boolean;
 		vertexLayout?: GPUVertexBufferLayout[];
 		blend?: GPUBlendState;
+		topology: GPUPrimitiveTopology;
 	}): void {
 		const {
 			pipelineType,
@@ -59,6 +59,7 @@ export class PipelineManager {
 			depthTesting,
 			vertexLayout,
 			blend,
+			topology,
 		} = args;
 		const pipelineLayout = this.createPipelineLayout(
 			this.device,
@@ -90,7 +91,7 @@ export class PipelineManager {
 				},
 
 				primitive: {
-					topology: "triangle-list",
+					topology: topology,
 				},
 
 				layout: pipelineLayout,

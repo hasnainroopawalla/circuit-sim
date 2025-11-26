@@ -2,6 +2,12 @@ import { BindGroupManager } from "./bind-group-manager";
 import { BufferManager } from "./buffer-manager";
 import { PipelineManager, PipelineType } from "./pipeline-manager";
 import type { CameraEntity, Renderable } from "./render-engine.interface";
+import { mat4 } from "wgpu-matrix";
+
+// shaders
+import Shader from "./shaders/shader.wgsl?raw";
+import LineShader from "./shaders/line.wgsl?raw";
+import { renderEngineConfig } from "./render-engine.config";
 
 export class RenderEngine {
 	private device!: GPUDevice;
@@ -47,7 +53,28 @@ export class RenderEngine {
 		});
 	}
 
-	public render(renderables: Renderable[], camera: CameraEntity): void {}
+	public render(renderables: Renderable[], camera: CameraEntity): void {
+		this.uploadCamera(camera.eye)
+
+	}
+
+	private uploadCamera (cameraEye: Float32Array):void{const cameraStaging = new Float32Array(
+      2 * renderEngineConfig.matrixFloatSize
+    );
+	const viewProjMatrix =this.getViewProjectionMatrix(cameraEye); 
+	
+    cameraStaging.set(viewProjMatrix, 0);
+    cameraStaging.set(
+      mat4.inverse(viewProjMatrix),
+      renderEngineConfig.matrixFloatSize
+    );
+
+    this.device.queue.writeBuffer(
+      this.bufferManager.cameraUBO,
+      0,
+      cameraStaging
+    );
+	}
 
 	// TODO @abhishek: rename method
 	private setupPipelines() {
@@ -56,6 +83,7 @@ export class RenderEngine {
 		this.bindGroupManager.createCameraBindGroup(
 			this.bufferManager.createCameraBuffer(),
 		);
+
 		this.bindGroupManager.createBackgroundBindGroup(
 			this.bufferManager.createBackgroundBuffer(renderEngineConfig.mapSize),
 		);
@@ -96,6 +124,9 @@ export class RenderEngine {
 			},
 		};
 
+		this.bufferManager.createVertexBuffer();
+		this.bufferManager.createModelSBO();
+
 		this.pipelineManager.addPipeline({
 			pipelineType: PipelineType.GenericShader,
 			shader: Shader,
@@ -104,8 +135,19 @@ export class RenderEngine {
 				this.bindGroupManager.modelBindGroupLayout,
 			],
 			depthTesting: true,
-			vertexLayout,
+			vertexLayout: undefined,
 			blend: blendState,
+			topology: "triangle-list",
+		});
+
+		this.pipelineManager.addPipeline({
+			pipelineType: PipelineType.LineShader,
+			shader: LineShader,
+			bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
+			depthTesting: true,
+			vertexLayout: vertexLayout,
+			blend: blendState,
+			topology: "line-list",
 		});
 
 		this.pipelineManager.addPipeline({
@@ -114,6 +156,7 @@ export class RenderEngine {
 			bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
 			depthTesting: false,
 			blend: blendState,
+			topology: "triangle-list",
 		});
 
 		this.pipelineManager.addPipeline({
@@ -124,6 +167,7 @@ export class RenderEngine {
 				this.bindGroupManager.backgroundBindGroupLayout,
 			],
 			depthTesting: false,
+			topology: "triangle-list",
 		});
 
 		//this.pipelineManager.addPipeline({
@@ -150,4 +194,24 @@ export class RenderEngine {
 		//	blend: blendState,
 		//});
 	}
+
+
+	private getViewProjectionMatrix(cameraEye :Float32Array): Float32Array {
+	const {height: screenHeight, width: screenWidth} = this.gpuCanvasContext.canvas;
+		
+	const cameraTarget=mat4.add(cameraEye,[0,0,1] /* only look long z-axis */);
+    const camMatrix = mat4.lookAt(cameraEye, cameraTarget, renderEngineConfig.cameraUp);
+    const viewMatrix = mat4.inverse(camMatrix);
+
+    const projectMatrix = mat4.perspective(
+      (renderEngineConfig.cameraFOV * Math.PI) / 180,
+      screenWidth / screenHeight,
+      0.1,
+      100
+    );
+	
+	return mat4.multiply(projectMatrix, viewMatrix);
+	}
+
+	private uploadRenderData(renderables: Renderable[]): void{}
 }

@@ -1,43 +1,27 @@
+import type { CameraEntity } from "@digital-logic-sim/render-engine";
+import { vec3, type Vec3Arg } from "wgpu-matrix";
+
+type VelocityDelta = [number, number, number];
+
 const cameraConfig = {
-	fov: 60,
-	cameraUp: [0, 1, 0],
 	speed: 2,
 	zoomSpeed: 5,
-	keyToVelocityDeltaMap: {
-		w: [0, -1, 0],
-		s: [0, 1, 0],
-		a: [1, 0, 0],
-		d: [-1, 0, 0],
-	},
-};
-
-type CameraProps = {
-	width: number;
-	height: number;
+	keyToVelocityDeltaMap: new Map<KeyboardEvent["key"], VelocityDelta>([
+		["w", [0, -1, 0]],
+		["s", [0, 1, 0]],
+		["a", [1, 0, 0]],
+		["d", [-1, 0, 0]],
+	]),
 };
 
 export class Camera {
-	private width: number;
-	private height: number;
-
 	private eye: Float32Array;
-	private target: Float32Array;
-
-	private viewProjMatrix: Float32Array;
-	private viewProjInvMatrix: Float32Array;
 
 	private inputVelocity: Float32Array;
 
-	constructor(props: CameraProps) {
-		this.width = props.width;
-		this.height = props.height;
+	constructor() {
 		this.eye = new Float32Array([0, 0, -5]);
-		this.target = new Float32Array([0, 0, 0]);
-		this.viewProjMatrix = this.viewProjectionMatrix();
-		this.viewProjInvMatrix = mat4.inverse(this.viewProjMatrix);
 		this.inputVelocity = new Float32Array([0, 0, 0]);
-
-		this.registerSubscriptions();
 	}
 
 	public update(deltaTime: number): void {
@@ -50,39 +34,44 @@ export class Camera {
 		this.eye = vec3.add(this.eye, vec3.scale(cameraVelocity, deltaTime));
 		this.eye[2] = clamp(this.eye[2], -10, -1);
 
-		// render engine
-		this.target = vec3.add(this.target, vec3.scale(cameraVelocity, deltaTime));
-		this.viewProjMatrix = this.viewProjectionMatrix();
-		this.viewProjInvMatrix = mat4.inverse(this.viewProjMatrix);
-		// render engine
-
+		// TODO: required?
 		this.inputVelocity.set([0, 0, 0]);
 	}
 
-	private registerSubscriptions(): void {
-		this.inputManager.onKeyboardEvent("w", "press", () =>
-			this.setVelocity("w"),
-		);
-		this.inputManager.onKeyboardEvent("a", "press", () =>
-			this.setVelocity("a"),
-		);
-		this.inputManager.onKeyboardEvent("s", "press", () =>
-			this.setVelocity("s"),
-		);
-		this.inputManager.onKeyboardEvent("d", "press", () =>
-			this.setVelocity("d"),
-		);
-
-		this.inputManager.onMouseScrollEvent("scrollUp", () => this.zoomIn());
-		this.inputManager.onMouseScrollEvent("scrollDown", () => this.zoomOut());
+	public getPosition(): CameraEntity {
+		return {
+			eye: this.eye,
+		};
 	}
 
-	private setVelocity(key: string): void {
-		vec3.add(
-			this.inputVelocity,
-			cameraConfig.keyToVelocityDeltaMap[key as "w" | "a" | "s" | "d"],
-			this.inputVelocity,
-		);
+	public onKeyboardInputEvent(event: KeyboardEvent): boolean {
+		const velocityDelta = cameraConfig.keyToVelocityDeltaMap.get(event.key);
+
+		if (!velocityDelta) {
+			return false;
+		}
+
+		this.setVelocity(velocityDelta);
+		return true;
+	}
+
+	public onMouseInputEvent(event: "scrollUp" | "scrollDown"): boolean {
+		switch (event) {
+			case "scrollUp": {
+				this.zoomIn();
+				return true;
+			}
+			case "scrollDown": {
+				this.zoomOut();
+				return true;
+			}
+			default:
+				return false;
+		}
+	}
+
+	private setVelocity(velocityDelta: Vec3Arg): void {
+		vec3.add(this.inputVelocity, velocityDelta, this.inputVelocity);
 	}
 
 	private zoomIn(): void {
@@ -93,3 +82,6 @@ export class Camera {
 		vec3.add(this.inputVelocity, [0, 0, -1], this.inputVelocity);
 	}
 }
+
+const clamp = (value: number, min: number, max: number): number =>
+	Math.min(Math.max(value, min), max);

@@ -14,7 +14,11 @@ export abstract class BaseLayer {
 
 	public abstract getRenderables(): Renderable[];
 
-	public abstract onPointerDown(event: PointerEvent): void;
+	// mouse
+	// TODO: abstract these methods to an InputManager
+	public abstract onPointerDown(event: PointerEvent): boolean;
+	public abstract onPointerMove(event: PointerEvent): boolean;
 
-	public abstract onPointerMove(event: PointerEvent): void;
+	// keyboard
+	public abstract onKeyDown(event: KeyboardEvent): boolean;
 }

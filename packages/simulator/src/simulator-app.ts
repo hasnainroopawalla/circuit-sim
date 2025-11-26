@@ -3,12 +3,12 @@ import { Simulator } from "./simulator";
 import { LayoutManager } from "./layouts/layout-manager";
 
 export class SimulatorApp {
-	private readonly sim: Simulator;
+	private sim: Simulator;
 
-	private readonly renderEngine: RenderEngine;
-	private readonly renderEngineInitPromise: Promise<void>;
+	private renderEngine: RenderEngine;
+	private renderEngineInitPromise: Promise<void>;
 
-	private readonly layoutManager: LayoutManager;
+	private layoutManager: LayoutManager;
 
 	private animationId: number | null = null;
 
@@ -23,6 +23,8 @@ export class SimulatorApp {
 
 		this.layoutManager = new LayoutManager({
 			sim: this.sim,
+			screenHeight: args.canvas.height,
+			screenWidth: args.canvas.width,
 		});
 
 		this.renderEngineInitPromise = this.renderEngine.initialize();
@@ -49,7 +51,10 @@ export class SimulatorApp {
 	private loop(): void {
 		this.sim.update();
 
-		this.renderEngine.render(this.layoutManager.getRenderables(), camera);
+		this.renderEngine.render(
+			this.layoutManager.getRenderables(),
+			this.layoutManager.getCamera(),
+		);
 
 		this.animationId = requestAnimationFrame(() => this.loop());
 	}
@@ -61,15 +66,19 @@ export class SimulatorApp {
 	}
 
 	private registerPointerSubscriptions(canvas: HTMLCanvasElement): void {
-		canvas.addEventListener("pointerdown", (e) =>
-			this.layoutManager.onPointerDown(e as PointerEvent),
+		canvas.addEventListener("pointerdown", (event) =>
+			this.layoutManager.onPointerDown(event as PointerEvent),
 		);
 
-		canvas.addEventListener("pointermove", (e) =>
-			this.layoutManager.onPointerMove(e as PointerEvent),
+		canvas.addEventListener("pointermove", (event) =>
+			this.layoutManager.onPointerMove(event as PointerEvent),
+		);
+
+		canvas.addEventListener("keydown", (event) =>
+			this.layoutManager.onKeyDown(event),
 		);
 
 		// TODO: bypass layout manager
-		canvas.addEventListener("resize", (e) => e);
+		canvas.addEventListener("resize", (event) => event);
 	}
 }

@@ -1,3 +1,6 @@
+import { renderEngineConfig } from "./render-engine.config";
+import type { Renderable } from "./render-engine.interface";
+
 type BufferManagerProps = { device: GPUDevice };
 
 export class BufferManager {
@@ -5,65 +8,61 @@ export class BufferManager {
 
 	public vertexBuffers: GPUBuffer[];
 	public modelSBOs: GPUBuffer[];
-	public computeBuffers: GPUBuffer[];
+	//public computeBuffers: GPUBuffer[];
 
-	public computeUBO!: GPUBuffer;
-	public readBuffer!: GPUBuffer;
+	//public computeUBO!: GPUBuffer;
+	//public readBuffer!: GPUBuffer;
 
 	public backgroundBuffer!: GPUBuffer;
-	public patchBuffer!: GPUBuffer;
+	//public patchBuffer!: GPUBuffer;
 
-	private readonly device: GPUDevice;
+	private device: GPUDevice;
 
 	constructor(props: BufferManagerProps) {
 		this.device = props.device;
 
 		this.vertexBuffers = [];
 		this.modelSBOs = [];
-		this.computeBuffers = [];
+		//this.computeBuffers = [];
 	}
 
 	public createCameraBuffer(): GPUBuffer {
 		this.cameraUBO = this.device.createBuffer({
-			size:
-				2 *
-				renderEngineConfig.cameraDataFloatSize *
-				Float32Array.BYTES_PER_ELEMENT,
+			size: 2 * 16 * Float32Array.BYTES_PER_ELEMENT,
 			usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
 		});
 
 		return this.cameraUBO;
 	}
 
-	public createPatchBuffer(): GPUBuffer {
-		this.patchBuffer = this.device.createBuffer({
-			label: "Patch Buffer",
-			size:
-				Float32Array.BYTES_PER_ELEMENT *
-				renderEngineConfig.patchChunkSize *
-				renderEngineConfig.patchDataFloatSize,
-			usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
-		});
-		return this.patchBuffer;
-	}
+	//public createPatchBuffer(): GPUBuffer {
+	//	this.patchBuffer = this.device.createBuffer({
+	//		label: "Patch Buffer",
+	//		size:
+	//			Float32Array.BYTES_PER_ELEMENT *
+	//			renderEngineConfig.patchChunkSize *
+	//			renderEngineConfig.patchDataFloatSize,
+	//		usage: GPUBufferUsage.UNIFORM | GPUBufferUsage.COPY_DST,
+	//	});
+	//	return this.patchBuffer;
+	//}
 
-	public createVertexBuffer(entity: Entity): void {
+	public createVertexBuffer(): void {
 		const vertexBuffer = this.device.createBuffer({
-			label: entity.entityType,
-			size: entity.vertexData.length * Float32Array.BYTES_PER_ELEMENT,
+			label: `wireData-${this.vertexBuffers.length}`,
+			size: renderEngineConfig.chunkSize * Float32Array.BYTES_PER_ELEMENT,
 			usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
+			mappedAtCreation: false,
 		});
 
 		this.vertexBuffers.push(vertexBuffer);
-
-		this.device.queue.writeBuffer(vertexBuffer, 0, entity.vertexData);
 	}
 
-	public createModelSBO(entity: Entity): GPUBuffer {
+	public createModelSBO(): GPUBuffer {
 		const modelSBO = this.device.createBuffer({
-			label: entity.entityType,
+			label: `models-${this.modelSBOs.length}`,
 			size:
-				renderEngineConfig.modelDataFloatSize *
+				renderEngineConfig.matrixFloatSize *
 				Float32Array.BYTES_PER_ELEMENT *
 				renderEngineConfig.chunkSize,
 			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
@@ -84,42 +83,42 @@ export class BufferManager {
 		return this.backgroundBuffer;
 	}
 
-	public createComputeBuffers(size: number): void {
-		this.computeBuffers.push(
-			this.device.createBuffer({
-				label: "ping-pong buffer1",
-				size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-				usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE,
-			}),
-		);
-
-		this.computeBuffers.push(
-			this.device.createBuffer({
-				label: "ping-pong buffer2",
-				size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-				usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE,
-			}),
-		);
-		this.computeUBO = this.device.createBuffer({
-			label: "compute UBO",
-			size: 3 * Uint32Array.BYTES_PER_ELEMENT,
-			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
-		});
-		this.readBuffer = this.device.createBuffer({
-			label: "compute read",
-			size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-			usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
-		});
-	}
-
-	public deleteComputeBuffers(): void {
-		this.computeBuffers.pop()?.destroy();
-
-		this.computeBuffers.pop()?.destroy();
-		this.backgroundBuffer;
-	}
-
-	public isEntityTypeInModelSBOs(entityType: EntityType): boolean {
-		return this.modelSBOs.some((modelSBO) => modelSBO.label === entityType);
-	}
+	//	public createComputeBuffers(size: number): void {
+	//		this.computeBuffers.push(
+	//			this.device.createBuffer({
+	//				label: "ping-pong buffer1",
+	//				size: size * size * Uint32Array.BYTES_PER_ELEMENT,
+	//				usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.STORAGE,
+	//			}),
+	//		);
+	//
+	//		this.computeBuffers.push(
+	//			this.device.createBuffer({
+	//				label: "ping-pong buffer2",
+	//				size: size * size * Uint32Array.BYTES_PER_ELEMENT,
+	//				usage: GPUBufferUsage.COPY_SRC | GPUBufferUsage.STORAGE,
+	//			}),
+	//		);
+	//		this.computeUBO = this.device.createBuffer({
+	//			label: "compute UBO",
+	//			size: 3 * Uint32Array.BYTES_PER_ELEMENT,
+	//			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,
+	//		});
+	//		this.readBuffer = this.device.createBuffer({
+	//			label: "compute read",
+	//			size: size * size * Uint32Array.BYTES_PER_ELEMENT,
+	//			usage: GPUBufferUsage.COPY_DST | GPUBufferUsage.MAP_READ,
+	//		});
+	//	}
+	//
+	//	public deleteComputeBuffers(): void {
+	//		this.computeBuffers.pop()?.destroy();
+	//
+	//		this.computeBuffers.pop()?.destroy();
+	//		this.backgroundBuffer;
+	//	}
+	//
+	//	public isEntityTypeInModelSBOs(entityType: EntityType): boolean {
+	//		return this.modelSBOs.some((modelSBO) => modelSBO.label === entityType);
+	//	}
 }
