@@ -1,7 +1,12 @@
 import { BindGroupManager } from "./bind-group-manager";
 import { BufferManager } from "./buffer-manager";
 import { PipelineManager, PipelineType } from "./pipeline-manager";
-import type { CameraEntity, Renderable, ChipRenderable, WireRenderable} from "./render-engine.interface";
+import type {
+	CameraEntity,
+	Renderable,
+	ChipRenderable,
+	WireRenderable,
+} from "./render-engine.interface";
 import { mat4, vec3 } from "wgpu-matrix";
 
 // shaders
@@ -29,34 +34,38 @@ export class RenderEngine {
 			throw new Error("WebGPU is not supported in this browser");
 		}
 
-		return navigator.gpu.requestAdapter().then((adapter) => {
+		try {
+			const adapter = await navigator.gpu.requestAdapter();
 			if (!adapter) {
 				throw new Error("No appropriate GPUAdapter found");
 			}
 
-			adapter.requestDevice().then((device) => {
-				this.device = device;
-				console.log("Device created!");
+			this.device = await adapter.requestDevice();
 
-				this.gpuCanvasContext.configure({
-					device,
-					format: "bgra8unorm",
-					alphaMode: "premultiplied",
-				});
+			console.log("Device created!");
 
-				this.bindGroupManager = new BindGroupManager({ device });
-				this.bufferManager = new BufferManager({ device });
-				this.pipelineManager = new PipelineManager({ device });
-
-				this.setupPipelines();
+			this.gpuCanvasContext.configure({
+				device: this.device,
+				format: "bgra8unorm",
+				alphaMode: "premultiplied",
 			});
-		});
+
+			this.bindGroupManager = new BindGroupManager({ device: this.device });
+			this.bufferManager = new BufferManager({ device: this.device });
+			this.pipelineManager = new PipelineManager({ device: this.device });
+
+			this.setupPipelines();
+		} catch (err) {
+			console.log("RenderEngine init failed:", err);
+		}
 	}
 
-	public render(chipData: ChipRenderable[], wireData: WireRenderable[], camera: CameraEntity): void {
+	public render(renderables: Renderable[], camera: CameraEntity): void {
+		const { chips, wires } = this.partitionRenderables(renderables);
+
 		this.uploadCamera(camera.eye);
-		this.uploadChipRenderData(chipData);
-		this.uploadWireRenderData(wireData);
+		this.uploadChipRenderData(chips);
+		this.uploadWireRenderData(wires);
 	}
 
 	private uploadCamera(cameraEye: Float32Array): void {
@@ -223,54 +232,75 @@ export class RenderEngine {
 	}
 
 	private uploadChipRenderData(chipData: ChipRenderable[]): void {
-		const modelMatrixData = new Float32Array(renderEngineConfig.chunkSize * renderEngineConfig.matrixFloatSize);
+		const modelMatrixData = new Float32Array(
+			renderEngineConfig.chunkSize * renderEngineConfig.matrixFloatSize,
+		);
 		chipData.forEach((element, index) => {
 			modelMatrixData.set(
 				mat4.translate(
 					mat4.scale(
 						mat4.identity(),
-						 vec3.create(
+						vec3.create(
 							element.dimensions.width,
-							 element.dimensions.height,
-							  1.0)),
-							   vec3.create(
-								element.position.x,
-								 element.position.y)),
-								  index*renderEngineConfig.matrixFloatSize);
+							element.dimensions.height,
+							1.0,
+						),
+					),
+					vec3.create(element.position.x, element.position.y),
+				),
+				index * renderEngineConfig.matrixFloatSize,
+			);
 		});
 
-		this.bufferManager.modelSBOs.forEach(modelSBO => {
-      this.device.queue.writeBuffer(
-        modelSBO,
-        0,
-        modelMatrixData,
-		0,
-		chipData.length*renderEngineConfig.matrixFloatSize
-      );
-    });
+		this.bufferManager.modelSBOs.forEach((modelSBO) => {
+			this.device.queue.writeBuffer(
+				modelSBO,
+				0,
+				modelMatrixData,
+				0,
+				chipData.length * renderEngineConfig.matrixFloatSize,
+			);
+		});
 	}
 
-	private uploadWireRenderData(wireData: WireRenderable[]): void{
-
-		const lineVertexData = new Float32Array(renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize);
-		let offset=0;
-		wireData.forEach((element)=>{
-			for(let i=1;i<element.controlPoints.length/2;++i){
-				const start= element.controlPoints.subarray(2*(i-1), 2*i);
-				lineVertexData.set(start,offset+(2*(i-1))) ;
-				const end = element.controlPoints.subarray(2*i, 2*(i+1));
-				lineVertexData.set(end,offset+(2*(i))) ;
+	private uploadWireRenderData(wireData: WireRenderable[]): void {
+		const lineVertexData = new Float32Array(
+			renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize,
+		);
+		let offset = 0;
+		wireData.forEach((element) => {
+			for (let i = 1; i < element.controlPoints.length / 2; ++i) {
+				const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
+				lineVertexData.set(start, offset + 2 * (i - 1));
+				const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
+				lineVertexData.set(end, offset + 2 * i);
 			}
-			offset+= 2*element.controlPoints.length-4;
+			offset += 2 * element.controlPoints.length - 4;
 		});
 		this.device.queue.writeBuffer(
 			this.bufferManager.vertexBuffers[0],
 			0,
 			lineVertexData,
 			0,
-			offset*Float32Array.BYTES_PER_ELEMENT
-		)
+			offset * Float32Array.BYTES_PER_ELEMENT,
+		);
+	}
 
-
+	/**
+	 * Splits the Renderables list based on the type.
+	 */
+	private partitionRenderables(renderables: Renderable[]): {
+		chips: ChipRenderable[];
+		wires: WireRenderable[];
+	} {
+		return renderables.reduce(
+			(acc, renderable) => {
+				renderable.type === "chip"
+					? acc.chips.push(renderable)
+					: acc.wires.push(renderable);
+				return acc;
+			},
+			{ chips: [] as ChipRenderable[], wires: [] as WireRenderable[] },
+		);
 	}
 }
