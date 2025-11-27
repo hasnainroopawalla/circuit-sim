@@ -29,12 +29,12 @@ export class RenderEngine {
 			throw new Error("WebGPU is not supported in this browser");
 		}
 
-		return navigator.gpu.requestAdapter().then(async (adapter) => {
+		return navigator.gpu.requestAdapter().then((adapter) => {
 			if (!adapter) {
 				throw new Error("No appropriate GPUAdapter found");
 			}
 
-			return adapter.requestDevice().then((device) => {
+			adapter.requestDevice().then((device) => {
 				this.device = device;
 				console.log("Device created!");
 
@@ -257,9 +257,9 @@ export class RenderEngine {
 		wireData.forEach((element)=>{
 			for(let i=1;i<element.controlPoints.length/2;++i){
 				const start= element.controlPoints.subarray(2*(i-1), 2*i);
-				lineVertexData.set(start,offset+(2*i)) ;
+				lineVertexData.set(start,offset+(2*(i-1))) ;
 				const end = element.controlPoints.subarray(2*i, 2*(i+1));
-				lineVertexData.set(end,offset+2*(i+1)) ;
+				lineVertexData.set(end,offset+(2*(i))) ;
 			}
 			offset+= 2*element.controlPoints.length-4;
 		});
