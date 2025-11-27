@@ -29,12 +29,12 @@ export class RenderEngine {
 			throw new Error("WebGPU is not supported in this browser");
 		}
 
-		return navigator.gpu.requestAdapter().then((adapter) => {
+		return navigator.gpu.requestAdapter().then(async (adapter) => {
 			if (!adapter) {
 				throw new Error("No appropriate GPUAdapter found");
 			}
 
-			adapter.requestDevice().then((device) => {
+			return adapter.requestDevice().then((device) => {
 				this.device = device;
 				console.log("Device created!");
 
