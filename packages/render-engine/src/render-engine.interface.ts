@@ -11,9 +11,15 @@ export type ChipRenderable = BaseRenderable<"chip"> & {
 		x: number;
 		y: number;
 	};
+	dimensions: {
+		width: number;
+		height: number;
+	}
 };
 
-export type WireRenderable = BaseRenderable<"wire">; // TODO: position data for wire?
+export type WireRenderable = BaseRenderable<"wire">&{
+	controlPoints: Float32Array;
+}; // TODO: position data for wire?
 
 export type Renderable = ChipRenderable | WireRenderable;
 

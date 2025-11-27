@@ -1,8 +1,8 @@
 import { BindGroupManager } from "./bind-group-manager";
 import { BufferManager } from "./buffer-manager";
 import { PipelineManager, PipelineType } from "./pipeline-manager";
-import type { CameraEntity, Renderable } from "./render-engine.interface";
-import { mat4 } from "wgpu-matrix";
+import type { CameraEntity, Renderable, ChipRenderable, WireRenderable} from "./render-engine.interface";
+import { mat4, vec3 } from "wgpu-matrix";
 
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
@@ -53,8 +53,10 @@ export class RenderEngine {
 		});
 	}
 
-	public render(renderables: Renderable[], camera: CameraEntity): void {
+	public render(chipData: ChipRenderable[], wireData: WireRenderable[], camera: CameraEntity): void {
 		this.uploadCamera(camera.eye);
+		this.uploadChipRenderData(chipData);
+		this.uploadWireRenderData(wireData);
 	}
 
 	private uploadCamera(cameraEye: Float32Array): void {
@@ -220,5 +222,55 @@ export class RenderEngine {
 		return mat4.multiply(projectMatrix, viewMatrix);
 	}
 
-	private uploadRenderData(renderables: Renderable[]): void {}
+	private uploadChipRenderData(chipData: ChipRenderable[]): void {
+		const modelMatrixData = new Float32Array(renderEngineConfig.chunkSize * renderEngineConfig.matrixFloatSize);
+		chipData.forEach((element, index) => {
+			modelMatrixData.set(
+				mat4.translate(
+					mat4.scale(
+						mat4.identity(),
+						 vec3.create(
+							element.dimensions.width,
+							 element.dimensions.height,
+							  1.0)),
+							   vec3.create(
+								element.position.x,
+								 element.position.y)),
+								  index*renderEngineConfig.matrixFloatSize);
+		});
+
+		this.bufferManager.modelSBOs.forEach(modelSBO => {
+      this.device.queue.writeBuffer(
+        modelSBO,
+        0,
+        modelMatrixData,
+		0,
+		chipData.length*renderEngineConfig.matrixFloatSize
+      );
+    });
+	}
+
+	private uploadWireRenderData(wireData: WireRenderable[]): void{
+
+		const lineVertexData = new Float32Array(renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize);
+		let offset=0;
+		wireData.forEach((element)=>{
+			for(let i=1;i<element.controlPoints.length/2;++i){
+				const start= element.controlPoints.subarray(2*(i-1), 2*i);
+				lineVertexData.set(start,offset+(2*i)) ;
+				const end = element.controlPoints.subarray(2*i, 2*(i+1));
+				lineVertexData.set(end,offset+2*(i+1)) ;
+			}
+			offset+= 2*element.controlPoints.length-4;
+		});
+		this.device.queue.writeBuffer(
+			this.bufferManager.vertexBuffers[0],
+			0,
+			lineVertexData,
+			0,
+			offset*Float32Array.BYTES_PER_ELEMENT
+		)
+
+
+	}
 }
