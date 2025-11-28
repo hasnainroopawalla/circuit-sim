@@ -29,11 +29,12 @@ export class SpawnChipTool extends Tool {
 		this.sim.chipManager.spawnChip(
 			this.chipSpec,
 			{
-				color: "#123456",
+				color: { r: 0, g: 1, b: 1, a: 1 },
 				position: {
 					x: event.clientX,
 					y: event.clientY,
 				},
+				dimensions: { width: 1, height: 1 },
 			} /* renderSpec */,
 		);
 		this.deactivate();

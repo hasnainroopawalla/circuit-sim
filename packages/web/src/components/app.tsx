@@ -15,8 +15,7 @@ export const App: React.FC = () => {
 	}, []);
 
 	return (
-		<div id="app-container" className="border-4 border-blue-500">
-			<span>Hello</span>
+		<div id="app-container" className="h-full border-4 border-blue-500">
 			<Canvas canvasRef={canvasRef} />
 		</div>
 	);

@@ -1,28 +1,34 @@
 type RenderableType = "chip" | "wire";
 
+export type Position = {
+	x: number;
+	y: number;
+};
+
+export type Dimension = {
+	width: number;
+	height: number;
+};
+
+export type ColorRGBA = {
+	r: number;
+	g: number;
+	b: number;
+	a: number;
+};
+
 type BaseRenderable<TRenderable extends RenderableType> = {
 	type: TRenderable;
-	color: {
-		r:number;
-		g:number;
-		b:number;
-		a:number;
-	}
+	color: ColorRGBA;
 };
 
 export type ChipRenderable = BaseRenderable<"chip"> & {
 	label: string;
-	position: {
-		x: number;
-		y: number;
-	};
-	dimensions: {
-		width: number;
-		height: number;
-	}
+	position: Position;
+	dimensions: Dimension;
 };
 
-export type WireRenderable = BaseRenderable<"wire">&{
+export type WireRenderable = BaseRenderable<"wire"> & {
 	controlPoints: Float32Array;
 }; // TODO: position data for wire?
 

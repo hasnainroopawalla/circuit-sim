@@ -1,3 +1,5 @@
+import { renderEngineConfig } from "./render-engine.config";
+
 type BindGroupManagerProps = { device: GPUDevice };
 
 export class BindGroupManager {
@@ -25,9 +27,6 @@ export class BindGroupManager {
 	public createBindGroupLayouts(): void {
 		this.createCameraBindGroupLayout();
 		this.createModelBindGroupLayout();
-		this.createComputeBindGroupLayout();
-		this.createBackgroundBindGroupLayout();
-		this.createPatchBindGroupLayout();
 	}
 
 	public createCameraBindGroup(cameraUBO: GPUBuffer): void {
@@ -40,7 +39,7 @@ export class BindGroupManager {
 						buffer: cameraUBO,
 						size:
 							2 *
-							renderEngineConfig.cameraDataFloatSize *
+							renderEngineConfig.matrixFloatSize *
 							Float32Array.BYTES_PER_ELEMENT,
 					},
 				},
@@ -48,10 +47,10 @@ export class BindGroupManager {
 		});
 	}
 
-	public createModelBindGroup(entity: Entity, modelSBO: GPUBuffer): void {
+	public createModelBindGroup(modelSBO: GPUBuffer): void {
 		this.modelBindGroups.push(
 			this.device.createBindGroup({
-				label: entity.entityType,
+				label: "chip", // TODO: dont hardcode chip
 				layout: this.modelBindGroupLayout,
 				entries: [
 					{
@@ -59,7 +58,7 @@ export class BindGroupManager {
 						resource: {
 							buffer: modelSBO,
 							size:
-								renderEngineConfig.modelDataFloatSize *
+								renderEngineConfig.modelFloatSize *
 								Float32Array.BYTES_PER_ELEMENT *
 								renderEngineConfig.chunkSize,
 						},
@@ -67,124 +66,6 @@ export class BindGroupManager {
 				],
 			}),
 		);
-	}
-
-	public createPatchBindGroup(patchBuffer: GPUBuffer): void {
-		this.patchBindGroup = this.device.createBindGroup({
-			label: "patchBindGroup",
-			layout: this.patchBindGroupLayout,
-			entries: [
-				{
-					binding: 0,
-					resource: {
-						buffer: patchBuffer,
-						size:
-							renderEngineConfig.patchChunkSize *
-							Float32Array.BYTES_PER_ELEMENT *
-							renderEngineConfig.patchDataFloatSize,
-					},
-				},
-			],
-		});
-	}
-
-	public createComputeBindGroup(
-		computeBuffers: GPUBuffer[],
-		uniformBuffer: GPUBuffer,
-		size: number,
-	): void {
-		this.computeBindGroups.push(
-			this.device.createBindGroup({
-				label: "compute BindGroup1",
-				layout: this.computeBindGroupLayout,
-				entries: [
-					{
-						binding: 0,
-						resource: {
-							buffer: computeBuffers[0],
-							size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-					{
-						binding: 1,
-						resource: {
-							buffer: computeBuffers[1],
-							size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-					{
-						binding: 2,
-						resource: {
-							buffer: uniformBuffer,
-							size: 3 * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-				],
-			}),
-		);
-		this.computeBindGroups.push(
-			this.device.createBindGroup({
-				label: "compute BindGroup2",
-				layout: this.computeBindGroupLayout,
-				entries: [
-					{
-						binding: 0,
-						resource: {
-							buffer: computeBuffers[1],
-							size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-					{
-						binding: 1,
-						resource: {
-							buffer: computeBuffers[0],
-							size: size * size * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-					{
-						binding: 2,
-						resource: {
-							buffer: uniformBuffer,
-							size: 3 * Uint32Array.BYTES_PER_ELEMENT,
-						},
-					},
-				],
-			}),
-		);
-	}
-
-	public createBackgroundBindGroup(backgroundBuffer: GPUBuffer): void {
-		this.backgroundBindGroup = this.device.createBindGroup({
-			label: "background bindgroup",
-			layout: this.backgroundBindGroupLayout,
-			entries: [
-				{
-					binding: 0,
-					resource: {
-						buffer: backgroundBuffer,
-						size:
-							renderEngineConfig.mapSize *
-							renderEngineConfig.mapSize *
-							Uint32Array.BYTES_PER_ELEMENT,
-					},
-				},
-			],
-		});
-	}
-
-	private createBackgroundBindGroupLayout(): void {
-		this.backgroundBindGroupLayout = this.device.createBindGroupLayout({
-			entries: [
-				{
-					binding: 0,
-					visibility: GPUShaderStage.FRAGMENT,
-					buffer: {
-						type: "uniform",
-					},
-				},
-			],
-			label: "backgroundLayout",
-		});
 	}
 
 	private createCameraBindGroupLayout(): void {
@@ -202,21 +83,6 @@ export class BindGroupManager {
 		});
 	}
 
-	private createPatchBindGroupLayout(): void {
-		this.patchBindGroupLayout = this.device.createBindGroupLayout({
-			entries: [
-				{
-					binding: 0,
-					visibility: GPUShaderStage.VERTEX,
-					buffer: {
-						type: "uniform",
-					},
-				},
-			],
-			label: "patchLayout",
-		});
-	}
-
 	private createModelBindGroupLayout(): void {
 		this.modelBindGroupLayout = this.device.createBindGroupLayout({
 			entries: [
@@ -229,35 +95,6 @@ export class BindGroupManager {
 				},
 			],
 			label: "modelLayout",
-		});
-	}
-
-	private createComputeBindGroupLayout(): void {
-		this.computeBindGroupLayout = this.device.createBindGroupLayout({
-			entries: [
-				{
-					binding: 0,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: {
-						type: "read-only-storage",
-					},
-				},
-				{
-					binding: 1,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: {
-						type: "storage",
-					},
-				},
-				{
-					binding: 2,
-					visibility: GPUShaderStage.COMPUTE,
-					buffer: {
-						type: "storage",
-					},
-				},
-			],
-			label: "compute layout",
 		});
 	}
 }

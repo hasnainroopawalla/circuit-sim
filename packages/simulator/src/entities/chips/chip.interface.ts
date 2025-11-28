@@ -1,4 +1,8 @@
-import type { Position } from "../../types";
+import type {
+	ColorRGBA,
+	Dimension,
+	Position,
+} from "@digital-logic-sim/render-engine";
 import type { PinSpec } from "../pin";
 import type { AtomicChip } from "./atomic-chip";
 import type { IOChip } from "./io-chip";
@@ -7,7 +11,8 @@ type ChipType = "io" | "atomic" | "composite";
 
 export type ChipRenderSpec = {
 	position: Position;
-	color: string;
+	dimensions: Dimension;
+	color: ColorRGBA;
 };
 
 type BaseChipSpec<TChipType extends ChipType> = {

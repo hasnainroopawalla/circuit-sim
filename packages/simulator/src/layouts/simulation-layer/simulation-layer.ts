@@ -20,6 +20,7 @@ export class SimulationLayer extends BaseLayer {
 				type: "chip",
 				color: chip.renderSpec.color,
 				position: chip.renderSpec.position,
+				dimensions: chip.renderSpec.dimensions,
 				label: chip.spec.name,
 			}),
 		);
@@ -28,6 +29,7 @@ export class SimulationLayer extends BaseLayer {
 			(wire) => ({
 				type: "wire",
 				color: wire.renderSpec.color,
+				controlPoints: new Float32Array(),
 			}),
 		);
 
@@ -40,6 +42,7 @@ export class SimulationLayer extends BaseLayer {
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {
+		// return this.camera.onMouseInputEvent("scrollDown")
 		return false;
 	}
 

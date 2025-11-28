@@ -50,7 +50,10 @@ export class BufferManager {
 	public createVertexBuffer(): void {
 		const vertexBuffer = this.device.createBuffer({
 			label: `wireData-${this.vertexBuffers.length}`,
-			size: renderEngineConfig.chunkSize * Float32Array.BYTES_PER_ELEMENT,
+			size:
+				renderEngineConfig.chunkSize *
+				Float32Array.BYTES_PER_ELEMENT *
+				renderEngineConfig.lineDataFloatSize,
 			usage: GPUBufferUsage.VERTEX | GPUBufferUsage.COPY_DST,
 			mappedAtCreation: false,
 		});
@@ -62,7 +65,8 @@ export class BufferManager {
 		const modelSBO = this.device.createBuffer({
 			label: `models-${this.modelSBOs.length}`,
 			size:
-				(renderEngineConfig.matrixFloatSize + renderEngineConfig.colourFloatSize) *
+				(renderEngineConfig.matrixFloatSize +
+					renderEngineConfig.colorFloatSize) *
 				Float32Array.BYTES_PER_ELEMENT *
 				renderEngineConfig.chunkSize,
 			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,

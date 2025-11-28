@@ -7,5 +7,5 @@ type CanvasProps = {
 };
 
 export const Canvas: React.FC<CanvasProps> = ({ canvasRef }) => (
-	<canvas id={CANVAS_ID} ref={canvasRef} />
+	<canvas className="h-full w-full" id={CANVAS_ID} ref={canvasRef} />
 );

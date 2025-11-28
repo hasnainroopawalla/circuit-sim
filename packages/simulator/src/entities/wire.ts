@@ -1,3 +1,4 @@
+import type { ColorRGBA } from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../entity-id-service";
 import { Entity } from "./entity";
 
@@ -6,7 +7,7 @@ export type WireSpec = {
 	endPinId: string;
 };
 
-type WireRenderSpec = { color: string };
+type WireRenderSpec = { color: ColorRGBA };
 
 export class Wire extends Entity {
 	public readonly spec: WireSpec;

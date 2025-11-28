@@ -20,18 +20,20 @@ struct UBO{
 @vertex
 fn vs_main(input : VSInput) -> Fragment {
     const pos = array(
-    vec2( 1.0,  1.0),
-    vec2( 1.0, -1.0),
+    vec2(1.0, 1.0),
+    vec2(1.0, -1.0),
     vec2(-1.0, -1.0),
-    vec2( 1.0,  1.0),
+    vec2(1.0, 1.0),
     vec2(-1.0, -1.0),
-    vec2(-1.0,  1.0),
-  );
+    vec2(-1.0, 1.0),
+    );
 
     var output : Fragment;
 
     output.Position = viewProj[0]*uniforms[input.instanceID].model * vec4 < f32 > (pos[input.vertexID], 0.0, 1.0);
+    //output.Position = viewProj[0]*vec4 < f32 > (pos[input.vertexID], 0.0, 1.0);
     output.Color = vec4 < f32 > (uniforms[input.instanceID].color, uniforms[input.instanceID].alpha);
+    //output.Color = vec4 < f32 > (0.0,1.0,0.0,1.0);
 
     return output;
 }
