@@ -74,7 +74,7 @@ export class RenderEngine {
 		const wires: WireRenderable[] = [
 			{
 				type: "wire",
-				controlPoints: new Float32Array([-1, 0, 1, 0, 1, -1]),
+				controlPoints: new Float32Array([-1, -1, 1, -1, 1, 1,-1,1,-1,-1]),
 				color: { r: 0, g: 1, b: 1, a: 1 },
 			},
 		];
@@ -252,9 +252,9 @@ export class RenderEngine {
 		wireData.forEach((element) => {
 			for (let i = 1; i < element.controlPoints.length / 2; ++i) {
 				const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
-				lineVertexData.set(start, offset + 2 * (i - 1));
+				lineVertexData.set(start, offset + 4 * (i - 1));
 				const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
-				lineVertexData.set(end, offset + 2 * i);
+				lineVertexData.set(end, offset + (4*i)-2);
 			}
 			offset += 2 * element.controlPoints.length - 4;
 		});
@@ -265,7 +265,6 @@ export class RenderEngine {
 			0 /* dataOffset */,
 			offset * Float32Array.BYTES_PER_ELEMENT,
 		);
-
 		return offset / 2; /* number of wire vertrices */
 	}
 
