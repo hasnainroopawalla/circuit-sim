@@ -2,7 +2,12 @@ type RenderableType = "chip" | "wire";
 
 type BaseRenderable<TRenderable extends RenderableType> = {
 	type: TRenderable;
-	color: string;
+	color: {
+		r:number;
+		g:number;
+		b:number;
+		a:number;
+	}
 };
 
 export type ChipRenderable = BaseRenderable<"chip"> & {

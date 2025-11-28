@@ -62,7 +62,7 @@ export class BufferManager {
 		const modelSBO = this.device.createBuffer({
 			label: `models-${this.modelSBOs.length}`,
 			size:
-				renderEngineConfig.matrixFloatSize *
+				(renderEngineConfig.matrixFloatSize + renderEngineConfig.colourFloatSize) *
 				Float32Array.BYTES_PER_ELEMENT *
 				renderEngineConfig.chunkSize,
 			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,

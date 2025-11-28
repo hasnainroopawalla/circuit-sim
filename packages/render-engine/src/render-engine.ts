@@ -7,7 +7,7 @@ import type {
 	ChipRenderable,
 	WireRenderable,
 } from "./render-engine.interface";
-import { mat4, vec3 } from "wgpu-matrix";
+import { mat4, vec3, vec4 } from "wgpu-matrix";
 
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
@@ -66,6 +66,12 @@ export class RenderEngine {
 		this.uploadCamera(camera.eye);
 		this.uploadChipRenderData(chips);
 		this.uploadWireRenderData(wires);
+
+		const commandEncoder = this.device.createCommandEncoder();
+		this.chipRenderPass(commandEncoder);
+		this.wireRenderPass(commandEncoder);
+
+		this.device.queue.submit([commandEncoder.finish()]);
 	}
 
 	private uploadCamera(cameraEye: Float32Array): void {
@@ -233,7 +239,7 @@ export class RenderEngine {
 
 	private uploadChipRenderData(chipData: ChipRenderable[]): void {
 		const modelMatrixData = new Float32Array(
-			renderEngineConfig.chunkSize * renderEngineConfig.matrixFloatSize,
+			renderEngineConfig.chunkSize * (renderEngineConfig.matrixFloatSize + renderEngineConfig.colourFloatSize),
 		);
 		chipData.forEach((element, index) => {
 			modelMatrixData.set(
@@ -248,8 +254,13 @@ export class RenderEngine {
 					),
 					vec3.create(element.position.x, element.position.y),
 				),
-				index * renderEngineConfig.matrixFloatSize,
+				index * (renderEngineConfig.matrixFloatSize + renderEngineConfig.colourFloatSize),
 			);
+
+			modelMatrixData.set(
+				vec4.create(
+					element.color.r,element.color.g,element.color.b,element.color.a),
+					 index*(renderEngineConfig.matrixFloatSize + renderEngineConfig.colourFloatSize)+renderEngineConfig.matrixFloatSize);
 		});
 
 		this.bufferManager.modelSBOs.forEach((modelSBO) => {
@@ -302,5 +313,83 @@ export class RenderEngine {
 			},
 			{ chips: [] as ChipRenderable[], wires: [] as WireRenderable[] },
 		);
+	}
+
+	private chipRenderPass(commandEncoder: GPUCommandEncoder):void{
+		const passEncoder = commandEncoder.beginRenderPass({
+    	  colorAttachments: [
+    	    {
+    	      view: this.gpuCanvasContext.getCurrentTexture().createView(),
+    	      clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
+    	      loadOp: "clear",
+    	      storeOp: "store",
+    	    },
+    	  ],
+    	  depthStencilAttachment: {
+    	    view: this.depthTexture.createView(),
+    	    depthClearValue: 1.0,
+    	    depthLoadOp: "clear",
+    	    depthStoreOp: "store",
+    	  },
+    	});
+
+    	const pipeline = this.pipelineManager.getPipeline(
+    	  PipelineType.GenericShader
+    	);
+
+    	if (!pipeline) {
+    	  throw new Error("GenericShader pipeline not initialized.");
+    	}
+
+    	passEncoder.setPipeline(pipeline);
+
+    	passEncoder.setBindGroup(
+    	  0,
+    	  this.bindGroupManager.cameraBindGroup
+    	);
+		passEncoder.setBindGroup(
+        1,
+        this.bindGroupManager.modelBindGroups[0]
+      	);
+      	passEncoder.draw(6, this.bufferManager.modelSBOs[0].size/(Float32Array.BYTES_PER_ELEMENT*(renderEngineConfig.matrixFloatSize+renderEngineConfig.colourFloatSize)) , 0, 0);
+    	passEncoder.end();
+	}
+
+	private wireRenderPass(commandEncoder: GPUCommandEncoder): void{
+		const passEncoder = commandEncoder.beginRenderPass({
+    	  colorAttachments: [
+    	    {
+    	      view: this.gpuCanvasContext.getCurrentTexture().createView(),
+    	      clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
+    	      loadOp: "load",
+    	      storeOp: "store",
+    	    },
+    	  ],
+    	  depthStencilAttachment: {
+    	    view: this.depthTexture.createView(),
+    	    depthClearValue: 1.0,
+    	    depthLoadOp: "load",
+    	    depthStoreOp: "store",
+    	  },
+    	});
+
+    	const pipeline = this.pipelineManager.getPipeline(
+    	  PipelineType.LineShader
+    	);
+
+    	if (!pipeline) {
+    	  throw new Error("LineShader pipeline not initialized.");
+    	}
+
+    	passEncoder.setPipeline(pipeline);
+
+    	passEncoder.setBindGroup(
+    	  0,
+    	  this.bindGroupManager.cameraBindGroup
+    	);
+		passEncoder.setVertexBuffer(0, this.bufferManager.vertexBuffers[0]);
+      	passEncoder.draw(this.bufferManager.vertexBuffers[0].size/(Float32Array.BYTES_PER_ELEMENT*(renderEngineConfig.lineDataFloatSize)), 1 , 0, 0);
+    	passEncoder.end();
+
 	}
 }
