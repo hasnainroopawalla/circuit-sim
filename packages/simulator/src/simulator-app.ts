@@ -32,7 +32,6 @@ export class SimulatorApp {
 		this.registerPointerSubscriptions(args.canvas);
 
 		// this.sim.setupNandGate();
-		this.sim.createDebugChip();
 	}
 
 	public async start(): Promise<void> {
@@ -53,8 +52,7 @@ export class SimulatorApp {
 		this.sim.update();
 
 		this.renderEngine.render(
-			// this.layoutManager.getRenderables(),
-			[],
+			this.layoutManager.getRenderables(),
 			this.layoutManager.getCamera(),
 		);
 

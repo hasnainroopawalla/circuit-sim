@@ -1,15 +1,18 @@
-import type * as React from "react";
+import * as React from "react";
 import { useSimulatorApp } from "../contexts/simulator-app-context";
-import type { ChipSpec } from "@digital-logic-sim/simulator";
+import type { ChipSpec, SimulatorApp } from "@digital-logic-sim/simulator";
 
 export const Toolbar: React.FC = () => {
-	const { getChipSpecs } = useSimulatorApp();
+	const simulatorApp = useSimulatorApp();
 
 	return (
 		<div className="absolute bottom-0 left-0 m-1 flex flex-row gap-2">
-			{/* TODO: add chip spawn logic */}
-			{getChipSpecs().map((chipSpec) => (
-				<ToolbarItem key={chipSpec.name} chipSpec={chipSpec} />
+			{simulatorApp.sim.chipLibraryService.getAll().map((chipSpec) => (
+				<ToolbarItem
+					key={chipSpec.name}
+					chipSpec={chipSpec}
+					simulatorApp={simulatorApp}
+				/>
 			))}
 		</div>
 	);
@@ -17,8 +20,21 @@ export const Toolbar: React.FC = () => {
 
 type ToolbarItemProps = {
 	chipSpec: ChipSpec;
+	simulatorApp: Pick<SimulatorApp, "sim">;
 };
 
-const ToolbarItem: React.FC<ToolbarItemProps> = ({ chipSpec }) => {
-	return <div className="bg-amber-500 p-0.5">{chipSpec.name}</div>;
+const ToolbarItem: React.FC<ToolbarItemProps> = ({
+	chipSpec,
+	simulatorApp,
+}) => {
+	const spawnChip = React.useCallback(
+		() => simulatorApp.sim.emit("chip.spawn", chipSpec),
+		[simulatorApp, chipSpec],
+	);
+
+	return (
+		<div className="bg-amber-500 p-0.5" onClick={spawnChip}>
+			{chipSpec.name}
+		</div>
+	);
 };

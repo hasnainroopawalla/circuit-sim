@@ -74,13 +74,6 @@ export class Simulator {
 		// });
 	}
 
-	public createDebugChip() {
-		const andChipSpec = this.chipLibraryService.getChipSpecByName("AND");
-		if (andChipSpec) {
-			this.emit("chip.spawn", andChipSpec);
-		}
-	}
-
 	// TODO: remove
 	public setupNandGate(): void {
 		const andChipSpec = this.chipLibraryService.getChipSpecByName("AND");

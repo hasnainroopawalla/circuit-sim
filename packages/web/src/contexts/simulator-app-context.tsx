@@ -1,53 +1,79 @@
 import * as React from "react";
-import { SimulatorApp, type ChipSpec } from "@digital-logic-sim/simulator";
+import { SimulatorApp } from "@digital-logic-sim/simulator";
 
-export type ISimulatorAppContext = {
+type SimulatorContextValue = {
 	startSimulator: (canvas: HTMLCanvasElement) => void;
 	stopSimulator: () => void;
-	getChipSpecs: () => ChipSpec[];
+	simulatorApp: SimulatorApp | null;
+	isSimulatorRunning: boolean;
 };
 
-const SimulatorAppContext = React.createContext<ISimulatorAppContext>(
-	{} as ISimulatorAppContext,
+const SimulatorContext = React.createContext<SimulatorContextValue | null>(
+	null,
 );
 
 export const SimulatorAppProvider = ({ children }: React.PropsWithChildren) => {
-	const [simulatorApp, setSimulatorApp] = React.useState<SimulatorApp | null>(
-		null,
-	);
+	const simulatorAppRef = React.useRef<SimulatorApp | null>(null);
 
-	const startSimulator = React.useCallback(
-		(canvas: HTMLCanvasElement) => {
-			if (simulatorApp) {
-				return;
-			}
+	const [isSimulatorRunning, setIsSimulatorRunning] = React.useState(false);
 
-			const simApp = new SimulatorApp({ canvas });
-			setSimulatorApp(simApp);
-			simApp.start();
-		},
-		[simulatorApp],
-	);
+	const startSimulator = React.useCallback((canvas: HTMLCanvasElement) => {
+		if (simulatorAppRef.current) {
+			return;
+		}
+
+		const app = new SimulatorApp({ canvas });
+		app.start();
+
+		simulatorAppRef.current = app;
+		setIsSimulatorRunning(true);
+	}, []);
 
 	const stopSimulator = React.useCallback(() => {
-		simulatorApp?.stop();
-	}, [simulatorApp]);
+		if (!simulatorAppRef.current) {
+			return;
+		}
 
-	const getChipSpecs = React.useCallback(() => {
-		return simulatorApp?.sim.chipLibraryService.getAll() ?? [];
-	}, [simulatorApp]);
+		simulatorAppRef.current.stop();
+		simulatorAppRef.current = null;
+		setIsSimulatorRunning(false);
+	}, []);
 
 	return (
-		<SimulatorAppContext.Provider
+		<SimulatorContext.Provider
 			value={{
+				simulatorApp: simulatorAppRef.current,
 				startSimulator,
 				stopSimulator,
-				getChipSpecs,
+				isSimulatorRunning,
 			}}
 		>
 			{children}
-		</SimulatorAppContext.Provider>
+		</SimulatorContext.Provider>
 	);
 };
 
-export const useSimulatorApp = () => React.useContext(SimulatorAppContext);
+export const useSimulatorApp = (): SimulatorApp => {
+	const ctx = React.useContext(SimulatorContext);
+
+	if (!ctx || !ctx.simulatorApp) {
+		throw new Error("useSimulatorApp used before simulator was initialized");
+	}
+
+	return ctx.simulatorApp;
+};
+
+export const useSimulatorAppControls = (): Pick<
+	SimulatorContextValue,
+	"startSimulator" | "stopSimulator" | "isSimulatorRunning"
+> => {
+	const ctx = React.useContext(SimulatorContext);
+
+	if (!ctx) {
+		throw new Error(
+			"useSimulatorAppControls used outside the scope of the provider",
+		);
+	}
+
+	return ctx;
+};
