@@ -10,13 +10,13 @@ import { BlueprintService } from "./services/blueprint-service";
 
 export class Simulator {
 	// services
-	readonly eventingService: EventingService;
-	readonly chipLibraryService: ChipLibraryService;
-	readonly blueprintService: BlueprintService;
+	public eventingService: EventingService;
+	public chipLibraryService: ChipLibraryService;
+	public blueprintService: BlueprintService;
 
 	// managers
-	readonly chipManager: ChipManager;
-	readonly wireManager: WireManager;
+	public chipManager: ChipManager;
+	public wireManager: WireManager;
 
 	constructor() {
 		// services

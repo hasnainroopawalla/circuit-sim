@@ -3,7 +3,7 @@ import { Simulator } from "./simulator";
 import { LayoutManager } from "./layouts/layout-manager";
 
 export class SimulatorApp {
-	private sim: Simulator;
+	public sim: Simulator;
 
 	private renderEngine: RenderEngine;
 	private renderEngineInitPromise: Promise<void>;
