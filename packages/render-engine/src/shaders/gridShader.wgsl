@@ -41,33 +41,17 @@ struct FSInput{
     @location(0) PosNear : vec3f,
     @location(1) PosFar : vec3f
 };
-fn grid(fragPos : vec2f, scale : f32) -> vec4f{
-    var coord = fragPos * scale;
-    var grid = abs(fract((coord + 0.002) * 5));
-    var line = min(grid.x, grid.y);
-    if(line < 0.02)
-    {
-        return vec4f(0.5, 0.5, 0.5, 1);
-    }else{
-        return vec4f(0, 0, 0, 0.0);
-    }
-
-}
-
 fn gridAA(fragPos : vec2f, scale : f32, lineThickness : f32) -> vec4f{
-    var coord = fragPos * scale;
-    var dist = abs(fract(coord * 2) - 1);
+    const divisions =2;
+    var coord = fragPos * scale*divisions;
+    var dist = abs(fract(coord));
     var norm = fwidth(coord);
-    var drawWidth = clamp(lineThickness, norm.x, 0.5);
+    norm*=1.5;
+    var grid = smoothstep(lineThickness-norm, lineThickness+norm, dist);
 
-    var grid = smoothstep(lineThickness - (norm * 1.5), lineThickness + (norm * 1.5), dist);
-    grid *= saturate(lineThickness / drawWidth);
-
-    var lineWidth = grid.x * grid.y;
-
+    var lineWidth = grid.x*grid.y;
     var alpha = 1.0 - clamp(lineWidth, 0.0, 1.0);
-
-    if(alpha < 0.001)
+    if(alpha < 0.0001)
     {
         return vec4f(0.0, 0.0, 0.0, 0.0);
     }
@@ -82,11 +66,8 @@ fn fs_main(input : FSInput) -> @location(0) vec4 < f32> {
     var screenPos = viewProj[0]*vec4(worldPos.xy, 0, 1.0);
     var zoomLevel = abs(screenPos.z) / 4;
     var zoom = pow(2, floor(zoomLevel));
-
-    var out = (gridAA(worldPos, 1 / zoom, 0.01) * (1 - fract(zoomLevel))) + ((fract(zoomLevel)) * gridAA(worldPos, 1 / (2 * zoom), 0.01));
-    if(out.a < 0.001)
-    {
-        discard;
-    }
+    var lineThickness1 = mix(0.01, 0.05, fract(zoomLevel));
+    var lineThickness2 = mix(0.05, 0.01, fract(zoomLevel));
+    var out = mix(gridAA(worldPos,1/zoom, lineThickness2), gridAA(worldPos, 1/(2*zoom), lineThickness1), fract(zoomLevel));
     return out;
 }
