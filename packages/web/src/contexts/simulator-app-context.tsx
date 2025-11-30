@@ -1,80 +1,30 @@
 import * as React from "react";
-import { SimulatorApp } from "@digital-logic-sim/simulator";
+import type { SimulatorApp } from "@digital-logic-sim/simulator";
 
-type SimulatorContextValue = {
-	startSimulator: (canvas: HTMLCanvasElement) => void;
-	stopSimulator: () => void;
-	simulatorApp: SimulatorApp | null;
-	isSimulatorRunning: boolean;
+type SimulatorAppContextValue = {
+	simulatorApp: SimulatorApp;
 };
 
-const SimulatorContext = React.createContext<SimulatorContextValue | null>(
-	null,
+type SimulatorAppProviderProps = SimulatorAppContextValue;
+
+const SimulatorAppContext = React.createContext<SimulatorAppContextValue>(
+	{} as SimulatorAppContextValue,
 );
 
-export const SimulatorAppProvider = ({ children }: React.PropsWithChildren) => {
-	const simulatorAppRef = React.useRef<SimulatorApp | null>(null);
-
-	const [isSimulatorRunning, setIsSimulatorRunning] = React.useState(false);
-
-	const startSimulator = React.useCallback((canvas: HTMLCanvasElement) => {
-		if (simulatorAppRef.current) {
-			return;
-		}
-
-		const app = new SimulatorApp({ canvas });
-		app.start();
-
-		simulatorAppRef.current = app;
-		setIsSimulatorRunning(true);
-	}, []);
-
-	const stopSimulator = React.useCallback(() => {
-		if (!simulatorAppRef.current) {
-			return;
-		}
-
-		simulatorAppRef.current.stop();
-		simulatorAppRef.current = null;
-		setIsSimulatorRunning(false);
-	}, []);
-
+export const SimulatorAppProvider = ({
+	children,
+	simulatorApp,
+}: React.PropsWithChildren<SimulatorAppProviderProps>) => {
 	return (
-		<SimulatorContext.Provider
+		<SimulatorAppContext.Provider
 			value={{
-				simulatorApp: simulatorAppRef.current,
-				startSimulator,
-				stopSimulator,
-				isSimulatorRunning,
+				simulatorApp,
 			}}
 		>
 			{children}
-		</SimulatorContext.Provider>
+		</SimulatorAppContext.Provider>
 	);
 };
 
-// TODO: maybe switch to <StartSimulatorAction> to simplify the context.
-export const useSimulatorApp = (): SimulatorApp => {
-	const ctx = React.useContext(SimulatorContext);
-
-	if (!ctx || !ctx.simulatorApp) {
-		throw new Error("useSimulatorApp used before simulator was initialized");
-	}
-
-	return ctx.simulatorApp;
-};
-
-export const useSimulatorAppControls = (): Pick<
-	SimulatorContextValue,
-	"startSimulator" | "stopSimulator" | "isSimulatorRunning"
-> => {
-	const ctx = React.useContext(SimulatorContext);
-
-	if (!ctx) {
-		throw new Error(
-			"useSimulatorAppControls used outside the scope of the provider",
-		);
-	}
-
-	return ctx;
-};
+export const useSimulatorApp = (): SimulatorApp =>
+	React.useContext(SimulatorAppContext).simulatorApp;

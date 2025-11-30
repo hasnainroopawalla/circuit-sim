@@ -27,13 +27,16 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({
 	chipSpec,
 	simulatorApp,
 }) => {
-	const spawnChip = React.useCallback(
-		() => simulatorApp.sim.emit("chip.spawn", chipSpec),
+	const onClick = React.useCallback(
+		(e: React.MouseEvent<HTMLDivElement>) => {
+			e.preventDefault();
+			simulatorApp.sim.emit("chip.spawn", chipSpec);
+		},
 		[simulatorApp, chipSpec],
 	);
 
 	return (
-		<div className="bg-amber-500 p-0.5" onClick={spawnChip}>
+		<div className="bg-amber-500 p-0.5" onMouseDown={onClick}>
 			{chipSpec.name}
 		</div>
 	);

@@ -1,43 +1,28 @@
 import * as React from "react";
-import { useSimulatorAppControls } from "../contexts/simulator-app-context";
 
 const CANVAS_ID = "simulator-canvas"; // TODO: move to config
 
-export const SimulatorCanvas = ({ children }: React.PropsWithChildren) => {
-	// const ctx = React.useContext(SimulatorContext);
-	const canvasRef = React.useRef<HTMLCanvasElement>(null);
+type SimulatorCanvasProps = {
+	onCanvasReady: (canvas: HTMLCanvasElement) => void;
+	canvasRef: React.RefObject<HTMLCanvasElement | null>;
+};
 
-	// if (!ctx) {
-	// 	throw new Error("SimulatorCanvas must be inside SimulatorAppProvider");
-	// }
-
-	// const { startSimulator, simulatorApp } = ctx;
-
-	const { startSimulator, stopSimulator, isSimulatorRunning } =
-		useSimulatorAppControls();
-
-	// Start the simulator only after the canvas has mounted
+export const SimulatorCanvas = ({
+	onCanvasReady,
+	canvasRef,
+}: React.PropsWithChildren<SimulatorCanvasProps>) => {
 	React.useLayoutEffect(() => {
-		if (!canvasRef.current) {
-			return;
+		if (canvasRef.current) {
+			onCanvasReady(canvasRef.current);
 		}
-
-		startSimulator(canvasRef.current);
-
-		canvasRef.current.focus();
-
-		return () => stopSimulator();
-	}, [startSimulator, stopSimulator]);
+	}, [canvasRef.current, onCanvasReady]);
 
 	return (
-		<>
-			<canvas
-				className="h-full w-full"
-				id={CANVAS_ID}
-				ref={canvasRef}
-				tabIndex={0} // required for focus
-			/>
-			{isSimulatorRunning && children}
-		</>
+		<canvas
+			className="h-full w-full"
+			id={CANVAS_ID}
+			ref={canvasRef}
+			tabIndex={0} // required for focus
+		/>
 	);
 };
