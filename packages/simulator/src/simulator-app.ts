@@ -1,19 +1,31 @@
 import { RenderEngine } from "@digital-logic-sim/render-engine";
 import { Simulator } from "./simulator";
 import { LayoutManager } from "./layouts/layout-manager";
+import { Camera } from "./layouts/simulation-layer";
+import { Clock } from "./clock";
+import { InputManager } from "./input-manager";
 
 export class SimulatorApp {
 	public sim: Simulator;
+
+	private clock: Clock;
 
 	private renderEngine: RenderEngine;
 	private renderEngineInitPromise: Promise<void>;
 
 	private layoutManager: LayoutManager;
+	private inputManager: InputManager;
+
+	private camera: Camera;
 
 	private animationId: number | null = null;
 
 	constructor(args: { canvas: HTMLCanvasElement }) {
+		this.clock = new Clock({ showFrameTime: false });
+
 		this.initializeCanvas(args.canvas);
+
+		this.inputManager = new InputManager({ canvas: args.canvas });
 
 		this.renderEngine = new RenderEngine({
 			gpuCanvasContext: args.canvas.getContext("webgpu"),
@@ -21,17 +33,18 @@ export class SimulatorApp {
 
 		this.sim = new Simulator();
 
+		this.camera = new Camera({ canvas: args.canvas });
+
 		this.layoutManager = new LayoutManager({
 			sim: this.sim,
+			camera: this.camera,
 			screenHeight: args.canvas.height,
 			screenWidth: args.canvas.width,
 		});
 
 		this.renderEngineInitPromise = this.renderEngine.initialize();
 
-		this.registerPointerSubscriptions(args.canvas);
-
-		// this.sim.setupNandGate();
+		this.registerInputManagerSubscriptions();
 	}
 
 	public async start(): Promise<void> {
@@ -49,11 +62,16 @@ export class SimulatorApp {
 	}
 
 	private loop(): void {
+		const deltaTime = this.clock.tick();
+
 		this.sim.update();
+
+		this.inputManager.update(deltaTime);
+		this.camera.update(deltaTime);
 
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),
-			this.layoutManager.getCamera(),
+			this.camera.getProjectionData(),
 		);
 
 		this.animationId = requestAnimationFrame(() => this.loop());
@@ -65,20 +83,26 @@ export class SimulatorApp {
 		canvas.focus();
 	}
 
-	private registerPointerSubscriptions(canvas: HTMLCanvasElement): void {
-		canvas.addEventListener("pointerdown", (event) =>
-			this.layoutManager.onPointerDown(event as PointerEvent),
+	private registerInputManagerSubscriptions(): void {
+		this.inputManager.onMouseScrollEvent("scrollUp", (event) =>
+			this.layoutManager.onMouseScrollEvent(event),
 		);
 
-		canvas.addEventListener("pointermove", (event) =>
-			this.layoutManager.onPointerMove(event as PointerEvent),
+		this.inputManager.onMouseScrollEvent("scrollDown", (event) =>
+			this.layoutManager.onMouseScrollEvent(event),
 		);
 
-		canvas.addEventListener("keydown", (event) =>
-			this.layoutManager.onKeyDown(event),
-		);
+		this.inputManager.onMouseButtonEvent(
+			"leftMouseButton",
+			"click",
+			(event, nature) => {
+				const screenSpaceMousePosition = this.inputManager.getMousePosition();
 
-		// TODO: bypass layout manager
-		canvas.addEventListener("resize", (event) => event);
+				this.layoutManager.onMouseButtonEvent(event, nature, {
+					screen: screenSpaceMousePosition,
+					world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
+				});
+			},
+		);
 	}
 }

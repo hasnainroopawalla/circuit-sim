@@ -1,6 +1,8 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { SpawnChipTool, type Tool } from "./tools";
 import type { Simulator } from "../../simulator";
+import type { ButtonEvent, MouseButtonType } from "../../input-manager";
+import type { MousePosition } from "../../types";
 
 export class ToolManager {
 	private readonly sim: Simulator;
@@ -26,8 +28,12 @@ export class ToolManager {
 		return this.activeTool.getRenderables();
 	}
 
-	public onPointerDown(event: PointerEvent): boolean {
-		return !!this.activeTool?.onPointerDown(event);
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+	): boolean {
+		return !!this.activeTool?.onMouseButtonEvent(event, nature, mousePosition);
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {

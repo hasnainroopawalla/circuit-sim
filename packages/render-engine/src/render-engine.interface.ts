@@ -30,10 +30,11 @@ export type ChipRenderable = BaseRenderable<"chip"> & {
 
 export type WireRenderable = BaseRenderable<"wire"> & {
 	controlPoints: Float32Array;
-}; // TODO: position data for wire?
+};
 
 export type Renderable = ChipRenderable | WireRenderable;
 
-export type CameraEntity = {
-	eye: Float32Array;
+export type CameraProjectionData = {
+	viewProjectionMatrix: Float32Array;
+	viewProjectionInvMatrix: Float32Array;
 };

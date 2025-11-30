@@ -1,6 +1,13 @@
 import { ToolManager } from "./tool-manager";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import type { Position, Renderable } from "@digital-logic-sim/render-engine";
+import type {
+	MouseButtonType,
+	ButtonEvent,
+	MouseScrollType,
+	KeyboardButtonType,
+} from "../../input-manager";
+import { MousePosition } from "../../types";
 
 export class InteractionLayer extends BaseLayer {
 	private readonly toolManager: ToolManager;
@@ -19,15 +26,34 @@ export class InteractionLayer extends BaseLayer {
 		return tool.getRenderables();
 	}
 
-	public onPointerDown(event: PointerEvent): boolean {
-		return this.toolManager.onPointerDown(event);
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+	): boolean {
+		switch (event) {
+			case "leftMouseButton":
+				return this.toolManager.onMouseButtonEvent(
+					event,
+					nature,
+					mousePosition,
+				);
+		}
+		return false;
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {
 		return this.toolManager.onPointerMove(event);
 	}
 
-	public onKeyDown(_event: KeyboardEvent): boolean {
+	public onMouseScrollEvent(event: MouseScrollType): boolean {
+		return false;
+	}
+
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean {
 		return false;
 	}
 }

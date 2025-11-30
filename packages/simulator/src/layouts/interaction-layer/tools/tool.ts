@@ -1,5 +1,7 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import type { Simulator } from "../../../simulator";
+import type { MouseButtonType, ButtonEvent } from "../../../input-manager";
+import type { MousePosition } from "../../../types";
 
 export type ToolArgs = { sim: Simulator; deactivate: () => void };
 
@@ -14,7 +16,11 @@ export abstract class Tool {
 
 	public abstract getRenderables(): Renderable[];
 
-	public abstract onPointerDown(event: PointerEvent): void;
-
 	public abstract onPointerMove(event: PointerEvent): void;
+
+	public abstract onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+	): void;
 }

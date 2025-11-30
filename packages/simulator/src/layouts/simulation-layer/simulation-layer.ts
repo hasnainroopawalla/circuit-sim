@@ -1,6 +1,12 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
 import type { Camera } from "./camera";
+import type {
+	ButtonEvent,
+	KeyboardButtonType,
+	MouseButtonType,
+	MouseScrollType,
+} from "../../input-manager";
 
 type SimulationLayerArgs = BaseLayerArgs & {
 	camera: Camera;
@@ -37,16 +43,32 @@ export class SimulationLayer extends BaseLayer {
 		return [...chipRenderables, ...wireRenderables];
 	}
 
-	public onPointerDown(event: PointerEvent): boolean {
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+	): boolean {
 		return false;
+	}
+
+	public onMouseScrollEvent(event: MouseScrollType): boolean {
+		switch (event) {
+			case "scrollDown":
+				return this.camera.onMouseInputEvent("scrollDown");
+			case "scrollUp":
+				return this.camera.onMouseInputEvent("scrollUp");
+			default:
+				return false;
+		}
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {
-		// return this.camera.onMouseInputEvent("scrollDown")
 		return false;
 	}
 
-	public onKeyDown(event: KeyboardEvent): boolean {
-		return this.camera.onKeyboardInputEvent(event);
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean {
+		return this.camera.onKeyboardEvent(event, nature);
 	}
 }

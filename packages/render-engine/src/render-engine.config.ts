@@ -6,7 +6,6 @@ export const renderEngineConfig = {
 	matrixFloatSize: MATRIX_FLOAT_SIZE,
 	colorFloatSize: COLOR_FLOAT_SIZE,
 	modelFloatSize: MATRIX_FLOAT_SIZE + COLOR_FLOAT_SIZE,
-	cameraFOV: 60,
-	cameraUp: [0, 1, 0],
+
 	lineDataFloatSize: 4,
 };

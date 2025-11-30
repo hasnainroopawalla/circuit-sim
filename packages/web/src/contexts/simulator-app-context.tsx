@@ -53,6 +53,7 @@ export const SimulatorAppProvider = ({ children }: React.PropsWithChildren) => {
 	);
 };
 
+// TODO: maybe switch to <StartSimulatorAction> to simplify the context.
 export const useSimulatorApp = (): SimulatorApp => {
 	const ctx = React.useContext(SimulatorContext);
 

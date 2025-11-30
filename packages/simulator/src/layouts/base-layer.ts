@@ -1,5 +1,12 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import type { Simulator } from "../simulator";
+import type {
+	ButtonEvent,
+	KeyboardButtonType,
+	MouseButtonType,
+	MouseScrollType,
+} from "../input-manager";
+import type { MousePosition } from "../types";
 
 export type BaseLayerArgs = {
 	sim: Simulator;
@@ -16,9 +23,19 @@ export abstract class BaseLayer {
 
 	// mouse
 	// TODO: abstract these methods to an InputManager
-	public abstract onPointerDown(event: PointerEvent): boolean;
 	public abstract onPointerMove(event: PointerEvent): boolean;
 
+	public abstract onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+	): boolean;
+
+	public abstract onMouseScrollEvent(event: MouseScrollType): boolean;
+
 	// keyboard
-	public abstract onKeyDown(event: KeyboardEvent): boolean;
+	public abstract onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean;
 }

@@ -2,10 +2,10 @@ import { BindGroupManager } from "./bind-group-manager";
 import { BufferManager } from "./buffer-manager";
 import { PipelineManager, PipelineType } from "./pipeline-manager";
 import type {
-	CameraEntity,
 	Renderable,
 	ChipRenderable,
 	WireRenderable,
+	CameraProjectionData,
 } from "./render-engine.interface";
 import { mat4, vec3, vec4 } from "wgpu-matrix";
 import { renderEngineConfig } from "./render-engine.config";
@@ -13,6 +13,7 @@ import { renderEngineConfig } from "./render-engine.config";
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
 import LineShader from "./shaders/line.wgsl?raw";
+import GridShader from "./shaders/gridShader.wgsl?raw";
 
 export class RenderEngine {
 	private device!: GPUDevice;
@@ -60,45 +61,49 @@ export class RenderEngine {
 		}
 	}
 
-	public render(renderables: Renderable[], camera: CameraEntity): void {
-		//const { chips, wires } = this.partitionRenderables(renderables);
-		const chips: ChipRenderable[] = [
-			//{
-			//	dimensions: { width: 1, height: 1 },
-			//	color: { r: 0, g: 1, b: 1, a: 1 },
-			//	position: { x: 0, y: 0 },
-			//	type: "chip",
-			//	label: "stubChip",
-			//},
-		];
-		const wires: WireRenderable[] = [
-			{
-				type: "wire",
-				controlPoints: new Float32Array([-1, -1, 1, -1, 1, 1,-1,1,-1,-1]),
-				color: { r: 0, g: 1, b: 1, a: 1 },
-			},
-		];
+	public render(
+		renderables: Renderable[],
+		cameraProjectionData: CameraProjectionData,
+	): void {
+		const { chips, wires } = this.partitionRenderables(renderables);
+		//const chips: ChipRenderable[] = [
+		//	{
+		//		dimensions: { width: 1, height: 1 },
+		//		color: { r: 0, g: 1, b: 1, a: 1 },
+		//		position: { x: 0, y: 0 },
+		//		type: "chip",
+		//		label: "stubChip",
+		//	},
+		//];
+		//const wires: WireRenderable[] = [
+		//	{
+		//		type: "wire",
+		//		controlPoints: new Float32Array([-1, -1, 1, -1, 1, 1,-1,1,-1,-1]),
+		//		color: { r: 0, g: 1, b: 1, a: 1 },
+		//	},
+		//];
 
-		this.uploadCamera(camera.eye);
+		this.uploadCamera(cameraProjectionData);
 		this.uploadChipRenderData(chips);
 		const wireVertexCount = this.uploadWireRenderData(wires);
 
 		const commandEncoder = this.device.createCommandEncoder();
+		this.clearScreen(commandEncoder);
+		this.gridRenderPass(commandEncoder);
 		this.chipRenderPass(commandEncoder, chips.length /* chipCount */);
 		this.wireRenderPass(commandEncoder, wireVertexCount);
 
 		this.device.queue.submit([commandEncoder.finish()]);
 	}
 
-	private uploadCamera(cameraEye: Float32Array): void {
+	private uploadCamera(cameraProjectionData: CameraProjectionData): void {
 		const cameraStaging = new Float32Array(
 			2 * renderEngineConfig.matrixFloatSize,
 		);
-		const viewProjMatrix = this.getViewProjectionMatrix(cameraEye);
 
-		cameraStaging.set(viewProjMatrix, 0);
+		cameraStaging.set(cameraProjectionData.viewProjectionMatrix, 0);
 		cameraStaging.set(
-			mat4.inverse(viewProjMatrix),
+			cameraProjectionData.viewProjectionInvMatrix,
 			renderEngineConfig.matrixFloatSize,
 		);
 
@@ -168,31 +173,16 @@ export class RenderEngine {
 			blend: blendState,
 			topology: "line-list",
 		});
-	}
 
-	private getViewProjectionMatrix(cameraEye: Float32Array): Float32Array {
-		const { height: screenHeight, width: screenWidth } =
-			this.gpuCanvasContext.canvas;
-
-		const cameraTarget = mat4.add(
-			cameraEye,
-			[0, 0, 1] /* only look long z-axis */,
-		);
-		const camMatrix = mat4.lookAt(
-			cameraEye,
-			cameraTarget,
-			renderEngineConfig.cameraUp,
-		);
-		const viewMatrix = mat4.inverse(camMatrix);
-
-		const projectMatrix = mat4.perspective(
-			(renderEngineConfig.cameraFOV * Math.PI) / 180,
-			screenWidth / screenHeight,
-			0.1,
-			100,
-		);
-
-		return mat4.multiply(projectMatrix, viewMatrix);
+		this.pipelineManager.addPipeline({
+			pipelineType: PipelineType.GridShader,
+			shader: GridShader,
+			bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
+			depthTesting: false,
+			vertexLayout: undefined,
+			blend: blendState,
+			topology: "triangle-list",
+		});
 	}
 
 	private uploadChipRenderData(chipData: ChipRenderable[]): void {
@@ -254,7 +244,7 @@ export class RenderEngine {
 				const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
 				lineVertexData.set(start, offset + 4 * (i - 1));
 				const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
-				lineVertexData.set(end, offset + (4*i)-2);
+				lineVertexData.set(end, offset + 4 * i - 2);
 			}
 			offset += 2 * element.controlPoints.length - 4;
 		});
@@ -295,14 +285,14 @@ export class RenderEngine {
 				{
 					view: this.gpuCanvasContext.getCurrentTexture().createView(),
 					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
-					loadOp: "clear",
+					loadOp: "load",
 					storeOp: "store",
 				},
 			],
 			depthStencilAttachment: {
 				view: this.depthTexture.createView(),
 				depthClearValue: 1.0,
-				depthLoadOp: "clear",
+				depthLoadOp: "load",
 				depthStoreOp: "store",
 			},
 		});
@@ -355,6 +345,57 @@ export class RenderEngine {
 		passEncoder.setBindGroup(0, this.bindGroupManager.cameraBindGroup);
 		passEncoder.setVertexBuffer(0, this.bufferManager.vertexBuffers[0]);
 		passEncoder.draw(wireVertexCount, 1, 0, 0);
+		passEncoder.end();
+	}
+	private gridRenderPass(commandEncoder: GPUCommandEncoder): void {
+		const passEncoder = commandEncoder.beginRenderPass({
+			colorAttachments: [
+				{
+					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
+					loadOp: "load",
+					storeOp: "store",
+				},
+			],
+			depthStencilAttachment: {
+				view: this.depthTexture.createView(),
+				depthClearValue: 1.0,
+				depthLoadOp: "load",
+				depthStoreOp: "store",
+			},
+		});
+
+		const pipeline = this.pipelineManager.getPipeline(PipelineType.GridShader);
+
+		if (!pipeline) {
+			throw new Error("GenericShader pipeline not initialized.");
+		}
+
+		passEncoder.setPipeline(pipeline);
+
+		passEncoder.setBindGroup(0, this.bindGroupManager.cameraBindGroup);
+		passEncoder.draw(6, 1, 0, 0);
+		passEncoder.end();
+	}
+
+	private clearScreen(commandEncoder: GPUCommandEncoder): void {
+		const passEncoder = commandEncoder.beginRenderPass({
+			colorAttachments: [
+				{
+					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					clearValue: { r: 0, g: 0.5, b: 0.5, a: 1.0 },
+					loadOp: "clear",
+					storeOp: "store",
+				},
+			],
+			depthStencilAttachment: {
+				view: this.depthTexture.createView(),
+				depthClearValue: 1.0,
+				depthLoadOp: "clear",
+				depthStoreOp: "store",
+			},
+		});
+
 		passEncoder.end();
 	}
 }

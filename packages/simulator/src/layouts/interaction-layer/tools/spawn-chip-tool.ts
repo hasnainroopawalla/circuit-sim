@@ -1,6 +1,8 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import type { ChipSpec } from "../../../entities/chips";
+import type { ButtonEvent, MouseButtonType } from "../../../input-manager";
+import type { MousePosition } from "../../../types";
 
 type SpawnChipToolArgs = ToolArgs & {
 	chipSpec: ChipSpec;
@@ -25,15 +27,16 @@ export class SpawnChipTool extends Tool {
 		return [this.ghostChip];
 	}
 
-	public onPointerDown(event: PointerEvent): void {
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+	): void {
 		this.sim.chipManager.spawnChip(
 			this.chipSpec,
 			{
 				color: { r: 0, g: 1, b: 1, a: 1 },
-				position: {
-					x: event.clientX,
-					y: event.clientY,
-				},
+				position: mousePosition.world,
 				dimensions: { width: 1, height: 1 },
 			} /* renderSpec */,
 		);
