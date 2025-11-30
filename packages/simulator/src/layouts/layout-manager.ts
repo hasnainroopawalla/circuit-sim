@@ -1,14 +1,14 @@
 import { InteractionLayer } from "./interaction-layer";
 import type { BaseLayer, BaseLayerArgs } from "./base-layer";
 import { type Camera, SimulationLayer } from "./simulation-layer";
-import type { Position, Renderable } from "@digital-logic-sim/render-engine";
+import type { Renderable } from "@digital-logic-sim/render-engine";
 import type {
 	MouseButtonType,
 	ButtonEvent,
 	MouseScrollType,
 	KeyboardButtonType,
 } from "../input-manager";
-import { MousePosition } from "../types";
+import type { MousePosition } from "../types";
 
 type LayoutManagerArgs = BaseLayerArgs & {
 	camera: Camera;

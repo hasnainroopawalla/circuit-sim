@@ -24,12 +24,19 @@ export const SimulatorCanvas = ({ children }: React.PropsWithChildren) => {
 
 		startSimulator(canvasRef.current);
 
+		canvasRef.current.focus();
+
 		return () => stopSimulator();
 	}, [startSimulator, stopSimulator]);
 
 	return (
 		<>
-			<canvas className="h-full w-full" id={CANVAS_ID} ref={canvasRef} />
+			<canvas
+				className="h-full w-full"
+				id={CANVAS_ID}
+				ref={canvasRef}
+				tabIndex={0} // required for focus
+			/>
 			{isSimulatorRunning && children}
 		</>
 	);

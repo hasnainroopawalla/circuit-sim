@@ -11,6 +11,7 @@ type SpawnChipToolArgs = ToolArgs & {
 export class SpawnChipTool extends Tool {
 	private readonly chipSpec: ChipSpec;
 
+	// TODO: ghost chip not required for right-click based spawn
 	private readonly ghostChip: Renderable | null = null;
 
 	constructor(args: SpawnChipToolArgs) {

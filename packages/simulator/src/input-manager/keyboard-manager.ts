@@ -51,7 +51,7 @@ export class KeyboardManager {
 	private performButtonCallback(
 		keyboardButton: KeyboardButtonType,
 		topic: InputEventTopic<KeyboardButtonType>,
-	) {
+	): void {
 		switch (topic.nature) {
 			case "click":
 				this.keyboardButtonState[keyboardButton].pollCount === 1 &&
@@ -67,7 +67,7 @@ export class KeyboardManager {
 		}
 	}
 
-	private keyDownEventHandler(event: KeyboardEvent) {
+	private keyDownEventHandler(event: KeyboardEvent): void {
 		if (!this.isKeyEventAllowed(event)) {
 			return;
 		}
@@ -75,7 +75,7 @@ export class KeyboardManager {
 		this.keyboardButtonState[event.key as KeyboardButtonType].isDown = true;
 	}
 
-	private keyUpEventHandler(event: KeyboardEvent) {
+	private keyUpEventHandler(event: KeyboardEvent): void {
 		if (!this.isKeyEventAllowed(event)) {
 			return;
 		}

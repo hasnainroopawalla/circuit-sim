@@ -8,8 +8,8 @@ import type { KeyboardButtonType, ButtonEvent } from "../../input-manager";
 type VelocityDelta = [number, number, number];
 
 const cameraConfig = {
-	speed: 2,
-	zoomSpeed: 5,
+	speed: 5,
+	zoomSpeed: 20,
 	cameraFOV: 60,
 	cameraUp: [0, 1, 0],
 	keyToVelocityDeltaMap: new Map<KeyboardEvent["key"], VelocityDelta>([
@@ -91,7 +91,9 @@ export class Camera {
 		return mat4.multiply(projectMatrix, viewMatrix);
 	}
 
-	public getViewProjectionInvMatrix(viewProjectionMatrix?: Float32Array) {
+	public getViewProjectionInvMatrix(
+		viewProjectionMatrix?: Float32Array,
+	): Float32Array {
 		return mat4.inverse(viewProjectionMatrix ?? this.getViewProjectionMatrix());
 	}
 

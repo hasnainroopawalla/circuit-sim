@@ -54,20 +54,16 @@ fn grid(fragPos : vec2f, scale : f32) -> vec4f{
 
 }
 
-fn gridAA(fragPos : vec2f, scale : f32) -> vec4f{
+fn gridAA(fragPos : vec2f, scale : f32, lineThickness : f32) -> vec4f{
     var coord = fragPos * scale;
-
-    //var ddx = dpdx(coord);
-    //var ddy = dpdy(coord);
-
-    //var normx = max(abs(ddx.x), 1 / 1e2);
-    //var normy = max(abs(ddy.y), 1 / 1e2);
-
-    var distx = 1 - abs(fract(coord.x * 2) - 1);
-    var disty = 1 - abs(fract(coord.y * 2) - 1);
+    var dist = abs(fract(coord * 2) - 1);
     var norm = fwidth(coord);
+    var drawWidth = clamp(lineThickness, norm.x, 0.5);
 
-    var lineWidth = min(distx / norm.x, disty / norm.y);
+    var grid = smoothstep(lineThickness - (norm * 1.5), lineThickness + (norm * 1.5), dist);
+    grid *= saturate(lineThickness / drawWidth);
+
+    var lineWidth = grid.x * grid.y;
 
     var alpha = 1.0 - clamp(lineWidth, 0.0, 1.0);
 
@@ -87,8 +83,7 @@ fn fs_main(input : FSInput) -> @location(0) vec4 < f32> {
     var zoomLevel = abs(screenPos.z) / 4;
     var zoom = pow(2, floor(zoomLevel));
 
-    var out = (gridAA(worldPos, 1 / zoom) * (1 - fract(zoomLevel))) + ((fract(zoomLevel)) * gridAA(worldPos, 1 / (2 * zoom)));
-    //var out = gridAA(worldPos, 1 / zoom);
+    var out = (gridAA(worldPos, 1 / zoom, 0.01) * (1 - fract(zoomLevel))) + ((fract(zoomLevel)) * gridAA(worldPos, 1 / (2 * zoom), 0.01));
     if(out.a < 0.001)
     {
         discard;

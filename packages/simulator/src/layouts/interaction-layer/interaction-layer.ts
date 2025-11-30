@@ -1,13 +1,13 @@
 import { ToolManager } from "./tool-manager";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
-import type { Position, Renderable } from "@digital-logic-sim/render-engine";
+import type { Renderable } from "@digital-logic-sim/render-engine";
 import type {
 	MouseButtonType,
 	ButtonEvent,
 	MouseScrollType,
 	KeyboardButtonType,
 } from "../../input-manager";
-import { MousePosition } from "../../types";
+import type { MousePosition } from "../../types";
 
 export class InteractionLayer extends BaseLayer {
 	private readonly toolManager: ToolManager;
