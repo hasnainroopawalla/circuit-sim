@@ -21,6 +21,9 @@ export class RenderEngine {
 	private bufferManager!: BufferManager;
 	private pipelineManager!: PipelineManager;
 	private depthTexture!: GPUTexture;
+	private depthView! : GPUTextureView;
+
+	private renderTargetView! : GPUTextureView;
 
 	private gpuCanvasContext: GPUCanvasContext;
 
@@ -88,6 +91,7 @@ export class RenderEngine {
 		const wireVertexCount = this.uploadWireRenderData(wires);
 
 		const commandEncoder = this.device.createCommandEncoder();
+		this.renderTargetView = this.gpuCanvasContext.getCurrentTexture().createView();
 		this.clearScreen(commandEncoder);
 		this.gridRenderPass(commandEncoder);
 		this.chipRenderPass(commandEncoder, chips.length /* chipCount */);
@@ -118,6 +122,7 @@ export class RenderEngine {
 				format: "depth24plus",
 				usage: GPUTextureUsage.RENDER_ATTACHMENT,
 			});
+			this.depthView = this.depthTexture.createView();
 		}
 	}
 
@@ -162,6 +167,7 @@ export class RenderEngine {
 			format: "depth24plus",
 			usage: GPUTextureUsage.RENDER_ATTACHMENT,
 		});
+		this.depthView = this.depthTexture.createView();
 
 		const blendState: GPUBlendState = {
 			color: { srcFactor: "one", dstFactor: "one-minus-src-alpha" },
@@ -308,14 +314,14 @@ export class RenderEngine {
 		const passEncoder = commandEncoder.beginRenderPass({
 			colorAttachments: [
 				{
-					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					view: this.renderTargetView,
 					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
 					loadOp: "load",
 					storeOp: "store",
 				},
 			],
 			depthStencilAttachment: {
-				view: this.depthTexture.createView(),
+				view: this.depthView,
 				depthClearValue: 1.0,
 				depthLoadOp: "load",
 				depthStoreOp: "store",
@@ -345,14 +351,14 @@ export class RenderEngine {
 		const passEncoder = commandEncoder.beginRenderPass({
 			colorAttachments: [
 				{
-					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					view: this.renderTargetView,
 					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
 					loadOp: "load",
 					storeOp: "store",
 				},
 			],
 			depthStencilAttachment: {
-				view: this.depthTexture.createView(),
+				view: this.depthView,
 				depthClearValue: 1.0,
 				depthLoadOp: "load",
 				depthStoreOp: "store",
@@ -376,14 +382,14 @@ export class RenderEngine {
 		const passEncoder = commandEncoder.beginRenderPass({
 			colorAttachments: [
 				{
-					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					view: this.renderTargetView,
 					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
 					loadOp: "load",
 					storeOp: "store",
 				},
 			],
 			depthStencilAttachment: {
-				view: this.depthTexture.createView(),
+				view: this.depthView,
 				depthClearValue: 1.0,
 				depthLoadOp: "load",
 				depthStoreOp: "store",
@@ -407,14 +413,14 @@ export class RenderEngine {
 		const passEncoder = commandEncoder.beginRenderPass({
 			colorAttachments: [
 				{
-					view: this.gpuCanvasContext.getCurrentTexture().createView(),
+					view: this.renderTargetView,
 					clearValue: { r: 0, g: 0.5, b: 0.5, a: 1.0 },
 					loadOp: "clear",
 					storeOp: "store",
 				},
 			],
 			depthStencilAttachment: {
-				view: this.depthTexture.createView(),
+				view: this.depthView,
 				depthClearValue: 1.0,
 				depthLoadOp: "clear",
 				depthStoreOp: "store",
