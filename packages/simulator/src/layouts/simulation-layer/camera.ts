@@ -127,6 +127,10 @@ export class Camera {
 		};
 	}
 
+	public onResize(width: number, height: number):void{
+		this.screenDimensions = {width: width, height: height};
+	}
+
 	public onKeyboardEvent(
 		event: KeyboardButtonType,
 		nature: ButtonEvent,

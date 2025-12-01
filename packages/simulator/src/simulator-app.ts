@@ -7,7 +7,7 @@ import { InputManager } from "./input-manager";
 
 export class SimulatorApp {
 	public sim: Simulator;
-
+	
 	private clock: Clock;
 
 	private renderEngine: RenderEngine;
@@ -19,6 +19,7 @@ export class SimulatorApp {
 	private camera: Camera;
 
 	private animationId: number | null = null;
+
 
 	constructor(args: { canvas: HTMLCanvasElement }) {
 		this.clock = new Clock({ showFrameTime: false });
@@ -45,6 +46,8 @@ export class SimulatorApp {
 		this.renderEngineInitPromise = this.renderEngine.initialize();
 
 		this.registerInputManagerSubscriptions();
+		const observer = new ResizeObserver(entries=>this.onResize(entries));
+		observer.observe(args.canvas);
 	}
 
 	public async start(): Promise<void> {
@@ -117,5 +120,14 @@ export class SimulatorApp {
 				this.layoutManager.onKeyboardEvent(event, nature),
 			);
 		});
+	}
+
+	private async onResize(entries: ResizeObserverEntry[]): Promise<void>{
+		for(const entry of entries){
+			const width  = entry.contentBoxSize[0].inlineSize;
+			const height = entry.contentBoxSize[0].blockSize;
+			await this.renderEngine.onResize(width, height);
+			this.camera.onResize(width, height);
+		}
 	}
 }

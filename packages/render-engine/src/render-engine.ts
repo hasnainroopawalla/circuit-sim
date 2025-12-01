@@ -96,6 +96,31 @@ export class RenderEngine {
 		this.device.queue.submit([commandEncoder.finish()]);
 	}
 
+	public async  onResize(width: number, height: number): Promise<void>{
+		if(this.device){
+			await this.device.queue.onSubmittedWorkDone(); 
+			this.gpuCanvasContext.canvas.width = width;
+			this.gpuCanvasContext.canvas.height = height;
+			this.gpuCanvasContext.unconfigure();
+			this.gpuCanvasContext.configure({
+				device: this.device,
+				format: "bgra8unorm",
+				alphaMode: "premultiplied",
+			});
+			this.gpuCanvasContext.canvas.width = width;
+			this.gpuCanvasContext.canvas.height = height;
+			this.depthTexture.destroy();
+			this.depthTexture = this.device.createTexture({
+				size: [
+					this.gpuCanvasContext.canvas.width,
+					this.gpuCanvasContext.canvas.height,
+				],
+				format: "depth24plus",
+				usage: GPUTextureUsage.RENDER_ATTACHMENT,
+			});
+		}
+	}
+
 	private uploadCamera(cameraProjectionData: CameraProjectionData): void {
 		const cameraStaging = new Float32Array(
 			2 * renderEngineConfig.matrixFloatSize,
