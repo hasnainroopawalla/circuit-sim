@@ -9,4 +9,5 @@ export const renderEngineConfig = {
 
 	lineDataFloatSize: 4,
 	pinSize: 0.1,
+	chipAspectRatio: 1.5,
 };

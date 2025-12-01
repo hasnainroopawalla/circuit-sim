@@ -401,7 +401,7 @@ export class RenderEngine {
 
 		const height =
 			(maxPins*1.5 + 0.5) * renderEngineConfig.pinSize;
-		const width = 1.5 * height;
+		const width = renderEngineConfig.chipAspectRatio * height;
 		const translate  = mat4.translate(mat4.identity(),vec3.create(chip.position.x, chip.position.y));
 		const scale = mat4.scale(mat4.identity(), vec3.create(width, height, 1.0));
 		modelMatrixData.set(mat4.multiply(translate, scale), offset, )
