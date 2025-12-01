@@ -8,5 +8,5 @@ export const renderEngineConfig = {
 	modelFloatSize: MATRIX_FLOAT_SIZE + COLOR_FLOAT_SIZE,
 
 	lineDataFloatSize: 4,
-	pinSize: 0.5,
+	pinSize: 0.1,
 };

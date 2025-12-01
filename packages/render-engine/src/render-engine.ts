@@ -69,23 +69,6 @@ export class RenderEngine {
 		cameraProjectionData: CameraProjectionData,
 	): void {
 		const { chips, wires } = this.partitionRenderables(renderables);
-		//const chips: ChipRenderable[] = [
-		//	{
-		//		dimensions: { width: 1, height: 1 },
-		//		color: { r: 0, g: 1, b: 1, a: 1 },
-		//		position: { x: 0, y: 0 },
-		//		type: "chip",
-		//		label: "stubChip",
-		//	},
-		//];
-		//const wires: WireRenderable[] = [
-		//	{
-		//		type: "wire",
-		//		controlPoints: new Float32Array([-1, -1, 1, -1, 1, 1,-1,1,-1,-1]),
-		//		color: { r: 0, g: 1, b: 1, a: 1 },
-		//	},
-		//];
-
 		this.uploadCamera(cameraProjectionData);
 		const numChips = this.uploadChipRenderData(chips);
 		const wireVertexCount = this.uploadWireRenderData(wires);
@@ -229,40 +212,6 @@ export class RenderEngine {
 			0 /* initial value */,
 		);
 
-		// let offset = 0;
-		// chipData.forEach((chip) => {
-		//modelMatrixData.set(
-		//	mat4.translate(
-		//		mat4.scale(
-		//			mat4.identity(),
-		//			vec3.create(
-		//				element.dimensions.width,
-		//				element.dimensions.height,
-		//				1.0,
-		//			),
-		//		),
-		//		vec3.create(element.position.x, element.position.y),
-		//	),
-		//	index *
-		//		(renderEngineConfig.matrixFloatSize +
-		//			renderEngineConfig.colorFloatSize),
-		//);
-
-		//modelMatrixData.set(
-		//	vec4.create(
-		//		element.color.r,
-		//		element.color.g,
-		//		element.color.b,
-		//		element.color.a,
-		//	),
-		//	index *
-		//		(renderEngineConfig.matrixFloatSize +
-		//			renderEngineConfig.colorFloatSize) +
-		//		renderEngineConfig.matrixFloatSize,
-		//);
-		// offset = this.generateChipMesh(chip, modelMatrixData, offset);
-		// });
-
 		this.bufferManager.modelSBOs.forEach((modelSBO) => {
 			this.device.queue.writeBuffer(
 				modelSBO,
@@ -292,16 +241,6 @@ export class RenderEngine {
 			return offset + 2 * element.controlPoints.length - 4;
 		}, 0 /* initial value */);
 
-		// let offset = 0;
-		// wireData.forEach((element) => {
-		// 	for (let i = 1; i < element.controlPoints.length / 2; ++i) {
-		// 		const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
-		// 		lineVertexData.set(start, offset + 4 * (i - 1));
-		// 		const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
-		// 		lineVertexData.set(end, offset + 4 * i - 2);
-		// 	}
-		// 	offset += 2 * element.controlPoints.length - 4;
-		// });
 		this.device.queue.writeBuffer(
 			this.bufferManager.vertexBuffers[0],
 			0 /* bufferOffset */,
@@ -461,16 +400,11 @@ export class RenderEngine {
 		const maxPins = Math.max(chip.outputPins.length, chip.inputPins.length);
 
 		const height =
-			maxPins * renderEngineConfig.pinSize + renderEngineConfig.pinSize * 2;
-		const width = 0.5 * height;
-
-		modelMatrixData.set(
-			mat4.translate(
-				mat4.scale(mat4.identity(), vec3.create(width, height, 1.0)),
-				vec3.create(chip.position.x, chip.position.y),
-			),
-			offset,
-		);
+			(maxPins*1.5 + 0.5) * renderEngineConfig.pinSize;
+		const width = 1.5 * height;
+		const translate  = mat4.translate(mat4.identity(),vec3.create(chip.position.x, chip.position.y));
+		const scale = mat4.scale(mat4.identity(), vec3.create(width, height, 1.0));
+		modelMatrixData.set(mat4.multiply(translate, scale), offset, )
 		offset += renderEngineConfig.matrixFloatSize;
 		modelMatrixData.set(
 			vec4.create(chip.color.r, chip.color.g, chip.color.b, chip.color.a),
@@ -478,10 +412,13 @@ export class RenderEngine {
 		);
 		offset += renderEngineConfig.colorFloatSize;
 
+		const inputPinOffset ={x:chip.position.x+width,y: chip.position.y+height-renderEngineConfig.pinSize*(2+(3*(maxPins-chip.inputPins.length)/2))};
+		const outputPinOffset ={x:chip.position.x-width,y: chip.position.y+height - renderEngineConfig.pinSize*(2+(3*(maxPins-chip.outputPins.length)/2))};
+
 		for (let i = 0; i < chip.inputPins.length; ++i) {
 			const pinPosition = {
-				x: chip.position.x - width / 2,
-				y: chip.position.y + height / 2 - renderEngineConfig.pinSize * (2 + i),
+				x: inputPinOffset.x,
+				y: inputPinOffset.y- renderEngineConfig.pinSize * 3*i,
 			};
 			const pinColour = {
 				r: Number(!chip.inputPins[i].value),
@@ -489,20 +426,9 @@ export class RenderEngine {
 				b: 0.0,
 				a: 1.0,
 			};
-			modelMatrixData.set(
-				mat4.translate(
-					mat4.scale(
-						mat4.identity(),
-						vec3.create(
-							renderEngineConfig.pinSize,
-							renderEngineConfig.pinSize,
-							1.0,
-						),
-					),
-					vec3.create(pinPosition.x, pinPosition.y, -0.0001),
-				),
-				offset,
-			);
+			const translate  = mat4.translate(mat4.identity(),vec3.create(pinPosition.x, pinPosition.y, -0.001));
+			const scale = mat4.scale(mat4.identity(), vec3.create(renderEngineConfig.pinSize, renderEngineConfig.pinSize, 1.0));
+			modelMatrixData.set(mat4.multiply(translate, scale), offset, );
 			offset += renderEngineConfig.matrixFloatSize;
 			modelMatrixData.set(
 				vec4.create(pinColour.r, pinColour.g, pinColour.b, pinColour.a),
@@ -512,8 +438,8 @@ export class RenderEngine {
 		}
 		for (let i = 0; i < chip.outputPins.length; ++i) {
 			const pinPosition = {
-				x: chip.position.x + width / 2,
-				y: chip.position.y + height / 2 - renderEngineConfig.pinSize * (2 + i),
+				x: outputPinOffset.x,
+				y: outputPinOffset.y - renderEngineConfig.pinSize * (3*i),
 			};
 			const pinColour = {
 				r: Number(!chip.outputPins[i].value),
@@ -521,20 +447,9 @@ export class RenderEngine {
 				b: 0.0,
 				a: 1.0,
 			};
-			modelMatrixData.set(
-				mat4.translate(
-					mat4.scale(
-						mat4.identity(),
-						vec3.create(
-							renderEngineConfig.pinSize,
-							renderEngineConfig.pinSize,
-							1.0,
-						),
-					),
-					vec3.create(pinPosition.x, pinPosition.y, -0.001),
-				),
-				offset,
-			);
+			const translate  = mat4.translate(mat4.identity(),vec3.create(pinPosition.x, pinPosition.y, -0.001));
+			const scale = mat4.scale(mat4.identity(), vec3.create(renderEngineConfig.pinSize, renderEngineConfig.pinSize, 1.0));
+			modelMatrixData.set(mat4.multiply(translate, scale), offset, );
 			offset += renderEngineConfig.matrixFloatSize;
 			modelMatrixData.set(
 				vec4.create(pinColour.r, pinColour.g, pinColour.b, pinColour.a),
