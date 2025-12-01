@@ -1,6 +1,7 @@
 import type { ColorRGBA } from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../entity-id-service";
 import { BaseEntity } from "./entity";
+import type { Pin } from "./pin";
 
 export type WireSpec = {
 	startPinId: string;
@@ -10,16 +11,27 @@ export type WireSpec = {
 export type WireRenderSpec = { color: ColorRGBA; controlPoints: Float32Array };
 
 export class Wire extends BaseEntity<"wire"> {
-	public readonly spec: WireSpec;
-	public readonly renderSpec: WireRenderSpec;
+	public spec: WireSpec;
+	public renderSpec: WireRenderSpec;
 
-	constructor(wireSpec: WireSpec, renderSpec: WireRenderSpec) {
+	public startPin: Pin;
+	public endPin: Pin;
+
+	constructor(args: {
+		spec: WireSpec;
+		renderSpec: WireRenderSpec;
+		startPin: Pin;
+		endPin: Pin;
+	}) {
 		super({
-			id: entityIdService.getId(), // TODO fix
+			id: entityIdService.generateId(),
 			type: "wire",
 		});
 
-		this.spec = wireSpec;
-		this.renderSpec = renderSpec;
+		this.spec = args.spec;
+		this.renderSpec = args.renderSpec;
+
+		this.startPin = args.startPin;
+		this.endPin = args.endPin;
 	}
 }

@@ -19,7 +19,7 @@ export class WiringTool extends Tool {
 		super(args);
 
 		this.startPin = args.startPin;
-		this.controlPoints = [this.getPinPosition(args.startPin)];
+		this.controlPoints = [MeshUtils.getPinPosition(args.startPin)];
 	}
 
 	public getRenderables(): Renderable[] {
@@ -58,7 +58,7 @@ export class WiringTool extends Tool {
 		}
 
 		// TODO @abhishek: Wire should use Position[]
-		this.controlPoints.push(this.getPinPosition(hoveredEntity));
+		this.controlPoints.push(MeshUtils.getPinPosition(hoveredEntity));
 		const controlPoints = new Float32Array(2 * this.controlPoints.length);
 		for (let i = 0; i < this.controlPoints.length; ++i) {
 			controlPoints.set(
@@ -83,11 +83,5 @@ export class WiringTool extends Tool {
 
 	public onPointerMove(event: PointerEvent): void {
 		//TODO: add subscription in input manager
-	}
-
-	private getPinPosition(pin: Pin): Position {
-		// TODO: Remove bang !
-		const chip = this.sim.chipManager.getChipById(pin.chipId)!;
-		return MeshUtils.getPinPosition(chip, pin);
 	}
 }

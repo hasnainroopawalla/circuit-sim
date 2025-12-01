@@ -22,8 +22,6 @@ export abstract class BaseLayer {
 
 	public abstract getRenderables(): Renderable[];
 
-	// mouse
-	// TODO: abstract these methods to an InputManager
 	public abstract onPointerMove(event: PointerEvent): boolean;
 
 	public abstract onMouseButtonEvent(

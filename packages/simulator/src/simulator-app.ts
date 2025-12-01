@@ -7,7 +7,7 @@ import { InputManager } from "./input-manager";
 import { MeshUtils } from "./mesh-utils";
 import type { MousePosition } from "./types";
 
-type SimulatorAppArgs = { canvas: HTMLCanvasElement }
+type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
 export class SimulatorApp {
 	public sim: Simulator;
@@ -47,10 +47,10 @@ export class SimulatorApp {
 		});
 
 		this.renderEngineInitPromise = this.renderEngine.initialize().then(() => {
-this.registerCanvasResizeObserver(args.canvas);
+			this.registerCanvasResizeObserver(args.canvas);
 		});
 
-		this.registerInputManagerSubscriptions(args.canvas);
+		this.registerInputManagerSubscriptions();
 	}
 
 	public async start(): Promise<void> {
@@ -69,7 +69,6 @@ this.registerCanvasResizeObserver(args.canvas);
 		this.inputManager.destroy();
 	}
 
-
 	private loop(): void {
 		const deltaTime = this.clock.tick();
 
@@ -78,7 +77,10 @@ this.registerCanvasResizeObserver(args.canvas);
 		this.inputManager.update(deltaTime);
 		this.camera.update(deltaTime);
 
-		this.layoutManager.hoveredEntity = MeshUtils.getHoveredEntity(this.getMousePosition().world, this.sim.chipManager.chips);
+		this.layoutManager.hoveredEntity = MeshUtils.getHoveredEntity(
+			this.getMousePosition().world,
+			this.sim.chipManager.chips,
+		);
 
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),
@@ -94,15 +96,12 @@ this.registerCanvasResizeObserver(args.canvas);
 		canvas.focus();
 	}
 
-	private registerCanvasResizeObserver(canvas: HTMLCanvasElement): void{
+	private registerCanvasResizeObserver(canvas: HTMLCanvasElement): void {
 		const observer = new ResizeObserver((entries) => this.onResize(entries));
 		observer.observe(canvas);
 	}
 
-
-	private registerInputManagerSubscriptions(canvas: HTMLCanvasElement): void {
-		
-
+	private registerInputManagerSubscriptions(): void {
 		this.inputManager.onMouseScrollEvent("scrollUp", (event) =>
 			this.layoutManager.onMouseScrollEvent(event),
 		);
@@ -115,7 +114,11 @@ this.registerCanvasResizeObserver(args.canvas);
 			"leftMouseButton",
 			"click",
 			(event, nature) => {
-				this.layoutManager.onMouseButtonEvent(event, nature, this.getMousePosition());
+				this.layoutManager.onMouseButtonEvent(
+					event,
+					nature,
+					this.getMousePosition(),
+				);
 			},
 		);
 
@@ -142,13 +145,12 @@ this.registerCanvasResizeObserver(args.canvas);
 		});
 	}
 
-	private getMousePosition(): MousePosition{
+	private getMousePosition(): MousePosition {
 		const screenSpaceMousePosition = this.inputManager.getMousePosition();
 
-					return {
-						screen: screenSpaceMousePosition,
-						world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
-					}
+		return {
+			screen: screenSpaceMousePosition,
+			world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
+		};
 	}
-	
 }

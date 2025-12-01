@@ -12,7 +12,7 @@ export abstract class Chip extends BaseEntity<"chip"> {
 	public outputPins: Pin[];
 
 	constructor(chipSpec: ChipSpec, renderSpec: ChipRenderSpec) {
-		const chipId = entityIdService.getId(); // TODO, should not be only inputChipId
+		const chipId = entityIdService.generateId();
 
 		super({
 			id: chipId,
@@ -24,11 +24,19 @@ export abstract class Chip extends BaseEntity<"chip"> {
 
 		this.inputPins = chipSpec.inputPins.map(
 			(pinSpec, idx) =>
-				new Pin({ spec: pinSpec, id: `${chipId}.in.${idx}`, chipId }), // TODO: is this the best way for id?
+				new Pin({
+					spec: pinSpec,
+					id: entityIdService.generatePinId(chipId, idx, "in"),
+					chip: this,
+				}),
 		);
 		this.outputPins = chipSpec.outputPins.map(
 			(pinSpec, idx) =>
-				new Pin({ spec: pinSpec, id: `${chipId}.out.${idx}`, chipId }),
+				new Pin({
+					spec: pinSpec,
+					id: entityIdService.generatePinId(chipId, idx, "out"),
+					chip: this,
+				}),
 		);
 	}
 

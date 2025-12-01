@@ -1,3 +1,4 @@
+import type { Chip } from "./chips";
 import { BaseEntity } from "./entity";
 
 export type PinType = "in" | "out";
@@ -8,21 +9,21 @@ export type PinSpec = {
 };
 
 export class Pin extends BaseEntity<"pin"> {
-	public readonly spec: PinSpec;
+	public spec: PinSpec;
 
-	public chipId: string;
+	public chip: Chip;
 
 	public currentValue: boolean;
 	public nextValue: boolean;
 
-	constructor(args: { spec: PinSpec; id: string; chipId: string }) {
+	constructor(args: { spec: PinSpec; id: string; chip: Chip }) {
 		super({
 			id: args.id,
 			type: "pin",
 		});
 
 		this.spec = args.spec;
-		this.chipId = args.chipId;
+		this.chip = args.chip;
 
 		this.currentValue = false;
 		this.nextValue = false;

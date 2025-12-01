@@ -77,7 +77,9 @@ export const MeshUtils = {
 
 		return null;
 	},
-	getPinPosition(chip: Chip, pin: Pin): Position {
+	getPinPosition(pin: Pin): Position {
+		const chip = pin.chip;
+
 		const numInputPins = chip.inputPins.length;
 		const numOutputPins = chip.outputPins.length;
 		const maxPins = Math.max(numInputPins, numOutputPins);

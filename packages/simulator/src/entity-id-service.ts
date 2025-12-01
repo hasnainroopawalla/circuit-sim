@@ -1,3 +1,5 @@
+import type { PinType } from "./entities/pin";
+
 const ENTITY_ID_SEPARATOR = ".";
 const ENTITY_ID_START_INDEX = -1;
 
@@ -12,26 +14,30 @@ class EntityIdService {
 		this.current = ENTITY_ID_START_INDEX;
 	}
 
-	public inputChipId(): string {
-		return this.generate(["chip", "input"]);
-	}
-
-	public outputChipId(): string {
-		return this.generate(["chip", "output"]);
-	}
-
-	public chipId(chipName: string): string {
-		return this.generate(["chip", chipName]);
-	}
-
-	// TODO :should be private
-	public getId(): string {
+	public generateId(): string {
 		this.current += 1;
 		return this.current.toString();
 	}
 
+	public generatePinId(
+		chipId: string,
+		chipPinIndex: number,
+		pinType: PinType,
+	): string {
+		return `${chipId}.${pinType}.${chipPinIndex}`;
+	}
+
+	public parsePinId(pinId: string): {
+		chipId: string;
+		pinType: PinType;
+		chipPinId: string;
+	} {
+		const [chipId, pinType, chipPinId] = pinId.split(".");
+		return { chipId, pinType: pinType as PinType, chipPinId };
+	}
+
 	private generate(args: string[]): string {
-		return [...args, this.getId()].join(ENTITY_ID_SEPARATOR);
+		return [...args, this.generateId()].join(ENTITY_ID_SEPARATOR);
 	}
 }
 
