@@ -7,13 +7,17 @@ import type {
 	WireRenderable,
 	CameraProjectionData,
 } from "./render-engine.interface";
-import { mat4, vec3, vec4 } from "wgpu-matrix";
 import { renderEngineConfig } from "./render-engine.config";
 
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
 import LineShader from "./shaders/line.wgsl?raw";
 import GridShader from "./shaders/gridShader.wgsl?raw";
+
+// renderers
+import { ChipRenderer } from "./render-engine.chip";
+import { WireRenderer } from "./render-engine.wire";
+import { GridRenderer } from "./render-engine.grid";
 
 export class RenderEngine {
 	private device!: GPUDevice;
@@ -27,10 +31,20 @@ export class RenderEngine {
 
 	private gpuCanvasContext: GPUCanvasContext;
 
+	// renderers
+	private chipRenderer: ChipRenderer;
+	private wireRenderer: WireRenderer;
+	private gridRenderer: GridRenderer;
+
 	constructor(args: {
 		gpuCanvasContext: GPUCanvasContext;
 	}) {
 		this.gpuCanvasContext = args.gpuCanvasContext;
+
+		// renderers
+		this.chipRenderer = new ChipRenderer(this);
+		this.wireRenderer = new WireRenderer(this);
+		this.gridRenderer = new GridRenderer(this);
 	}
 
 	public async initialize(): Promise<void> {
@@ -64,23 +78,35 @@ export class RenderEngine {
 		}
 	}
 
+	public get view() {
+		return {
+			device: this.device,
+			bindGroupManager: this.bindGroupManager,
+			bufferManager: this.bufferManager,
+			pipelineManager: this.pipelineManager,
+			depthTexture: this.depthTexture,
+			depthView: this.depthView,
+			renderTargetView: this.renderTargetView,
+		};
+	}
+
 	public render(
 		renderables: Renderable[],
 		cameraProjectionData: CameraProjectionData,
 	): void {
 		const { chips, wires } = this.partitionRenderables(renderables);
 		this.uploadCamera(cameraProjectionData);
-		const numChips = this.uploadChipRenderData(chips);
-		const wireVertexCount = this.uploadWireRenderData(wires);
 
 		const commandEncoder = this.device.createCommandEncoder();
 		this.renderTargetView = this.gpuCanvasContext
 			.getCurrentTexture()
 			.createView();
 		this.clearScreen(commandEncoder);
-		this.gridRenderPass(commandEncoder);
-		this.chipRenderPass(commandEncoder, numChips /* chipCount */);
-		this.wireRenderPass(commandEncoder, wireVertexCount);
+
+		// renderers
+		this.gridRenderer.render(commandEncoder);
+		this.chipRenderer.render(commandEncoder, chips);
+		this.wireRenderer.render(commandEncoder, wires);
 
 		this.device.queue.submit([commandEncoder.finish()]);
 	}
@@ -128,7 +154,6 @@ export class RenderEngine {
 		);
 	}
 
-	// TODO @abhishek: rename method
 	private setupPipelines() {
 		this.bindGroupManager.createBindGroupLayouts();
 
@@ -200,57 +225,6 @@ export class RenderEngine {
 		});
 	}
 
-	private uploadChipRenderData(chipData: ChipRenderable[]): number {
-		const modelMatrixData = new Float32Array(
-			renderEngineConfig.chunkSize *
-				(renderEngineConfig.matrixFloatSize +
-					renderEngineConfig.colorFloatSize),
-		);
-
-		const offset = chipData.reduce(
-			(offset, chip) => this.generateChipMesh(chip, modelMatrixData, offset),
-			0 /* initial value */,
-		);
-
-		this.bufferManager.modelSBOs.forEach((modelSBO) => {
-			this.device.queue.writeBuffer(
-				modelSBO,
-				0 /* bufferOffset */,
-				modelMatrixData,
-				0 /*dataOffset */,
-				offset * Float32Array.BYTES_PER_ELEMENT,
-			);
-		});
-		return offset / renderEngineConfig.modelFloatSize;
-	}
-
-	private uploadWireRenderData(wireData: WireRenderable[]): number {
-		const lineVertexData = new Float32Array(
-			renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize,
-		);
-
-		const offset = wireData.reduce((offset, element) => {
-			for (let i = 1; i < element.controlPoints.length / 2; ++i) {
-				const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
-				lineVertexData.set(start, offset + 4 * (i - 1));
-
-				const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
-				lineVertexData.set(end, offset + 4 * i - 2);
-			}
-
-			return offset + 2 * element.controlPoints.length - 4;
-		}, 0 /* initial value */);
-
-		this.device.queue.writeBuffer(
-			this.bufferManager.vertexBuffers[0],
-			0 /* bufferOffset */,
-			lineVertexData,
-			0 /* dataOffset */,
-			offset * Float32Array.BYTES_PER_ELEMENT,
-		);
-		return offset / 2; /* number of wire vertrices */
-	}
-
 	/**
 	 * Splits the Renderables list based on the type.
 	 */
@@ -267,108 +241,6 @@ export class RenderEngine {
 			},
 			{ chips: [] as ChipRenderable[], wires: [] as WireRenderable[] },
 		);
-	}
-
-	private chipRenderPass(
-		commandEncoder: GPUCommandEncoder,
-		chipCount: number,
-	): void {
-		const passEncoder = commandEncoder.beginRenderPass({
-			colorAttachments: [
-				{
-					view: this.renderTargetView,
-					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
-					loadOp: "load",
-					storeOp: "store",
-				},
-			],
-			depthStencilAttachment: {
-				view: this.depthView,
-				depthClearValue: 1.0,
-				depthLoadOp: "load",
-				depthStoreOp: "store",
-			},
-		});
-
-		const pipeline = this.pipelineManager.getPipeline(
-			PipelineType.GenericShader,
-		);
-
-		if (!pipeline) {
-			throw new Error("GenericShader pipeline not initialized.");
-		}
-
-		passEncoder.setPipeline(pipeline);
-
-		passEncoder.setBindGroup(0, this.bindGroupManager.cameraBindGroup);
-		passEncoder.setBindGroup(1, this.bindGroupManager.modelBindGroups[0]);
-		passEncoder.draw(6, chipCount, 0, 0);
-		passEncoder.end();
-	}
-
-	private wireRenderPass(
-		commandEncoder: GPUCommandEncoder,
-		wireVertexCount: number,
-	): void {
-		const passEncoder = commandEncoder.beginRenderPass({
-			colorAttachments: [
-				{
-					view: this.renderTargetView,
-					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
-					loadOp: "load",
-					storeOp: "store",
-				},
-			],
-			depthStencilAttachment: {
-				view: this.depthView,
-				depthClearValue: 1.0,
-				depthLoadOp: "load",
-				depthStoreOp: "store",
-			},
-		});
-
-		const pipeline = this.pipelineManager.getPipeline(PipelineType.LineShader);
-
-		if (!pipeline) {
-			throw new Error("LineShader pipeline not initialized.");
-		}
-
-		passEncoder.setPipeline(pipeline);
-
-		passEncoder.setBindGroup(0, this.bindGroupManager.cameraBindGroup);
-		passEncoder.setVertexBuffer(0, this.bufferManager.vertexBuffers[0]);
-		passEncoder.draw(wireVertexCount, 1, 0, 0);
-		passEncoder.end();
-	}
-	private gridRenderPass(commandEncoder: GPUCommandEncoder): void {
-		const passEncoder = commandEncoder.beginRenderPass({
-			colorAttachments: [
-				{
-					view: this.renderTargetView,
-					clearValue: { r: 0, g: 0, b: 0, a: 1.0 },
-					loadOp: "load",
-					storeOp: "store",
-				},
-			],
-			depthStencilAttachment: {
-				view: this.depthView,
-				depthClearValue: 1.0,
-				depthLoadOp: "load",
-				depthStoreOp: "store",
-			},
-		});
-
-		const pipeline = this.pipelineManager.getPipeline(PipelineType.GridShader);
-
-		if (!pipeline) {
-			throw new Error("GenericShader pipeline not initialized.");
-		}
-
-		passEncoder.setPipeline(pipeline);
-
-		passEncoder.setBindGroup(0, this.bindGroupManager.cameraBindGroup);
-		passEncoder.draw(6, 1, 0, 0);
-		passEncoder.end();
 	}
 
 	private clearScreen(commandEncoder: GPUCommandEncoder): void {
@@ -390,73 +262,5 @@ export class RenderEngine {
 		});
 
 		passEncoder.end();
-	}
-
-	private generateChipMesh(
-		chip: ChipRenderable,
-		modelMatrixData: Float32Array,
-		offset: number,
-	): number {
-		const maxPins = Math.max(chip.outputPins.length, chip.inputPins.length);
-
-		const height =
-			(maxPins*1.5 + 0.5) * renderEngineConfig.pinSize;
-		const width = 1.5 * height;
-		const translate  = mat4.translate(mat4.identity(),vec3.create(chip.position.x, chip.position.y));
-		const scale = mat4.scale(mat4.identity(), vec3.create(width, height, 1.0));
-		modelMatrixData.set(mat4.multiply(translate, scale), offset, )
-		offset += renderEngineConfig.matrixFloatSize;
-		modelMatrixData.set(
-			vec4.create(chip.color.r, chip.color.g, chip.color.b, chip.color.a),
-			offset,
-		);
-		offset += renderEngineConfig.colorFloatSize;
-
-		const inputPinOffset ={x:chip.position.x+width,y: chip.position.y+height-renderEngineConfig.pinSize*(2+(3*(maxPins-chip.inputPins.length)/2))};
-		const outputPinOffset ={x:chip.position.x-width,y: chip.position.y+height - renderEngineConfig.pinSize*(2+(3*(maxPins-chip.outputPins.length)/2))};
-
-		for (let i = 0; i < chip.inputPins.length; ++i) {
-			const pinPosition = {
-				x: inputPinOffset.x,
-				y: inputPinOffset.y- renderEngineConfig.pinSize * 3*i,
-			};
-			const pinColour = {
-				r: Number(!chip.inputPins[i].value),
-				g: Number(chip.inputPins[i].value),
-				b: 0.0,
-				a: 1.0,
-			};
-			const translate  = mat4.translate(mat4.identity(),vec3.create(pinPosition.x, pinPosition.y, -0.001));
-			const scale = mat4.scale(mat4.identity(), vec3.create(renderEngineConfig.pinSize, renderEngineConfig.pinSize, 1.0));
-			modelMatrixData.set(mat4.multiply(translate, scale), offset, );
-			offset += renderEngineConfig.matrixFloatSize;
-			modelMatrixData.set(
-				vec4.create(pinColour.r, pinColour.g, pinColour.b, pinColour.a),
-				offset,
-			);
-			offset += renderEngineConfig.colorFloatSize;
-		}
-		for (let i = 0; i < chip.outputPins.length; ++i) {
-			const pinPosition = {
-				x: outputPinOffset.x,
-				y: outputPinOffset.y - renderEngineConfig.pinSize * (3*i),
-			};
-			const pinColour = {
-				r: Number(!chip.outputPins[i].value),
-				g: Number(chip.outputPins[i].value),
-				b: 0.0,
-				a: 1.0,
-			};
-			const translate  = mat4.translate(mat4.identity(),vec3.create(pinPosition.x, pinPosition.y, -0.001));
-			const scale = mat4.scale(mat4.identity(), vec3.create(renderEngineConfig.pinSize, renderEngineConfig.pinSize, 1.0));
-			modelMatrixData.set(mat4.multiply(translate, scale), offset, );
-			offset += renderEngineConfig.matrixFloatSize;
-			modelMatrixData.set(
-				vec4.create(pinColour.r, pinColour.g, pinColour.b, pinColour.a),
-				offset,
-			);
-			offset += renderEngineConfig.colorFloatSize;
-		}
-		return offset;
 	}
 }
