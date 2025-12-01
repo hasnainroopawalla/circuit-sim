@@ -5,11 +5,11 @@ import { Pin, type PinType } from "../pin";
 import type { ChipSpec, ChipRenderSpec } from "./chip.interface";
 
 export abstract class Chip extends Entity {
-	public readonly spec: ChipSpec;
-	public readonly renderSpec: ChipRenderSpec;
+	public spec: ChipSpec;
+	public renderSpec: ChipRenderSpec;
 
-	protected readonly inputPins: Pin[];
-	protected readonly outputPins: Pin[];
+	public inputPins: Pin[];
+	public outputPins: Pin[];
 
 	constructor(chipSpec: ChipSpec, renderSpec: ChipRenderSpec) {
 		const chipId = entityIdService.getId(); // TODO, should not be only inputChipId

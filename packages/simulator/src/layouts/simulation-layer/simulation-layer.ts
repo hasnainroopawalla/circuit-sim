@@ -26,8 +26,9 @@ export class SimulationLayer extends BaseLayer {
 				type: "chip",
 				color: chip.renderSpec.color,
 				position: chip.renderSpec.position,
-				dimensions: chip.renderSpec.dimensions,
 				label: chip.spec.name,
+				inputPins: chip.inputPins.map((pin) => ({ value: pin.currentValue })),
+				outputPins: chip.outputPins.map((pin) => ({ value: pin.currentValue })),
 			}),
 		);
 

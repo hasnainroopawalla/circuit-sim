@@ -49,6 +49,10 @@ export class LayoutManager {
 		this.layers.some((layer) => layer.onMouseScrollEvent(event));
 	}
 
+	public handleMouseHover(): void {
+		// this.layers.some((layer) => layer.handleMouseHover());
+	}
+
 	public onKeyboardEvent(event: KeyboardButtonType, nature: ButtonEvent): void {
 		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
 	}

@@ -17,8 +17,9 @@ export const StartSimulatorAction: React.FC<StartSimulatorActionProps> = ({
 
 		onSimulatorAppStart(simulatorApp);
 
-		// cleanup
-		return () => simulatorApp.stop();
+		// TODO: cleanup and stop simulator
+		return () => {};
+		// return () => simulatorApp.stop();
 	});
 
 	return null;

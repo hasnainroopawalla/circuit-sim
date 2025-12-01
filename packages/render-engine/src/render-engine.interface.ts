@@ -5,11 +5,6 @@ export type Position = {
 	y: number;
 };
 
-export type Dimension = {
-	width: number;
-	height: number;
-};
-
 export type ColorRGBA = {
 	r: number;
 	g: number;
@@ -22,10 +17,13 @@ type BaseRenderable<TRenderable extends RenderableType> = {
 	color: ColorRGBA;
 };
 
+type PinRenderable = { value: boolean };
+
 export type ChipRenderable = BaseRenderable<"chip"> & {
 	label: string;
 	position: Position;
-	dimensions: Dimension;
+	inputPins: PinRenderable[];
+	outputPins: PinRenderable[];
 };
 
 export type WireRenderable = BaseRenderable<"wire"> & {

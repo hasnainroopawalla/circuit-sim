@@ -22,6 +22,11 @@ export class InputManager {
 		this.mouseManager = new MouseManager(args.canvas);
 	}
 
+	public destroy(): void {
+		this.mouseManager.destroy();
+		this.keyboardManager.destroy();
+	}
+
 	public update(deltaTime: number): void {
 		this.mouseManager.update(deltaTime);
 		this.keyboardManager.update(deltaTime);

@@ -1,5 +1,5 @@
 {
-  "name": "@digital-logic-sim/render-engine",
+  "name": "@digital-logic-sim/shared-utils",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,11 +10,8 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.20.0",
-  "devDependencies": {
-    "@webgpu/types": "^0.1.66"
-  },
+  "devDependencies": {},
   "dependencies": {
-    "@digital-logic-sim/shared-utils": "workspace:^1.0.0",
     "wgpu-matrix": "^3.4.0"
   }
 }

@@ -4,6 +4,7 @@ import { LayoutManager } from "./layouts/layout-manager";
 import { Camera } from "./layouts/simulation-layer";
 import { Clock } from "./clock";
 import { InputManager } from "./input-manager";
+import { MeshUtils } from "./mesh-utils";
 
 export class SimulatorApp {
 	public sim: Simulator;
@@ -59,6 +60,8 @@ export class SimulatorApp {
 			cancelAnimationFrame(this.animationId);
 			this.animationId = null;
 		}
+
+		this.inputManager.destroy();
 	}
 
 	private loop(): void {
@@ -68,6 +71,11 @@ export class SimulatorApp {
 
 		this.inputManager.update(deltaTime);
 		this.camera.update(deltaTime);
+
+		const hoveredEntites = MeshUtils.getHoveredEntities();
+		if (hoveredEntites.length > 0) {
+			this.layoutManager.handleMouseHover();
+		}
 
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),
@@ -84,8 +92,9 @@ export class SimulatorApp {
 	}
 
 	private registerInputManagerSubscriptions(canvas: HTMLCanvasElement): void {
-		const observer = new ResizeObserver((entries) => this.onResize(entries));
-		observer.observe(canvas);
+		// TODO: fix device not initialzed before subscription
+		// const observer = new ResizeObserver((entries) => this.onResize(entries));
+		// observer.observe(canvas);
 
 		this.inputManager.onMouseScrollEvent("scrollUp", (event) =>
 			this.layoutManager.onMouseScrollEvent(event),
@@ -123,11 +132,11 @@ export class SimulatorApp {
 	}
 
 	private async onResize(entries: ResizeObserverEntry[]): Promise<void> {
-		for (const entry of entries) {
+		entries.forEach(async (entry) => {
 			const width = entry.contentBoxSize[0].inlineSize;
 			const height = entry.contentBoxSize[0].blockSize;
 			await this.renderEngine.onResize(width, height);
 			this.camera.onResize(width, height);
-		}
+		});
 	}
 }

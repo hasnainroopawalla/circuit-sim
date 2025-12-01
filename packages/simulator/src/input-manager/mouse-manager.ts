@@ -34,16 +34,19 @@ export class MouseManager {
 		scrollDown: new Set(),
 	};
 
+	private abortController: AbortController;
+
 	constructor(canvas: HTMLCanvasElement) {
 		this.scrollDirection = null;
 		this.mousePosition = { x: 0, y: 0 };
 
-		canvas.addEventListener("wheel", (e) => this.setScrolling(e));
-		canvas.addEventListener("mousemove", (e) =>
-			this.setMousePosition(e, canvas),
-		);
-		canvas.addEventListener("mousedown", (e) => this.mouseDownEventHandler(e));
-		canvas.addEventListener("mouseup", (e) => this.mouseUpEventHandler(e));
+		this.abortController = new AbortController();
+
+		this.registerSubscriptions(canvas);
+	}
+
+	public destroy(): void {
+		this.abortController.abort();
 	}
 
 	public onButtonHandler(
@@ -166,5 +169,22 @@ export class MouseManager {
 
 	private isMouseEventAllowed(event: MouseEvent): boolean {
 		return mouseButtonMap[event.button] in this.mouseButtonState;
+	}
+
+	private registerSubscriptions(canvas: HTMLCanvasElement): void {
+		const signal = this.abortController.signal;
+
+		canvas.addEventListener("wheel", (e) => this.setScrolling(e), { signal });
+		canvas.addEventListener(
+			"mousemove",
+			(e) => this.setMousePosition(e, canvas),
+			{ signal },
+		);
+		canvas.addEventListener("mousedown", (e) => this.mouseDownEventHandler(e), {
+			signal,
+		});
+		canvas.addEventListener("mouseup", (e) => this.mouseUpEventHandler(e), {
+			signal,
+		});
 	}
 }

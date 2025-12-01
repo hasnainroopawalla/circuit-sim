@@ -17,9 +17,16 @@ export class KeyboardManager {
 			{},
 		) as InputManagerState<KeyboardButtonType>;
 
+	private abortController: AbortController;
+
 	constructor(canvas: HTMLCanvasElement) {
-		canvas.addEventListener("keydown", (e) => this.keyDownEventHandler(e));
-		canvas.addEventListener("keyup", (e) => this.keyUpEventHandler(e));
+		this.abortController = new AbortController();
+
+		this.registerSubscriptions(canvas);
+	}
+
+	public destroy(): void {
+		this.abortController.abort();
 	}
 
 	public onButtonHandler(
@@ -85,5 +92,16 @@ export class KeyboardManager {
 
 	private isKeyEventAllowed(event: KeyboardEvent): boolean {
 		return event.key in this.keyboardButtonState;
+	}
+
+	private registerSubscriptions(canvas: HTMLCanvasElement): void {
+		const signal = this.abortController.signal;
+
+		canvas.addEventListener("keydown", (e) => this.keyDownEventHandler(e), {
+			signal,
+		});
+		canvas.addEventListener("keyup", (e) => this.keyUpEventHandler(e), {
+			signal,
+		});
 	}
 }

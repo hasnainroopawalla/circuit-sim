@@ -1,8 +1,6 @@
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
-type ChipBlueprint = {};
-
 export class BlueprintService extends BaseService {
 	constructor(sim: Simulator) {
 		super(sim);
