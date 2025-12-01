@@ -100,7 +100,7 @@ export const MeshUtils = {
 				renderEngineConfig.pinSize *
 					(2 + (3 * (maxPins - chip.outputPins.length)) / 2),
 		};
-		if (pin.spec.pinType === "in") {
+		if (pin.pinType === "in") {
 			const index = chip.inputPins.findIndex((element) => {
 				return element.id === pin.id;
 			});

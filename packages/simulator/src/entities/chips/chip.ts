@@ -1,7 +1,7 @@
 import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
-import { Pin, type PinType } from "../pin";
+import { Pin, type PinSpec, type PinType } from "../pin";
 import type { ChipSpec, ChipRenderSpec } from "./chip.interface";
 
 export abstract class Chip extends BaseEntity<"chip"> {
@@ -22,22 +22,8 @@ export abstract class Chip extends BaseEntity<"chip"> {
 		this.spec = chipSpec;
 		this.renderSpec = renderSpec;
 
-		this.inputPins = chipSpec.inputPins.map(
-			(pinSpec, idx) =>
-				new Pin({
-					spec: pinSpec,
-					id: entityIdService.generatePinId(chipId, idx, "in"),
-					chip: this,
-				}),
-		);
-		this.outputPins = chipSpec.outputPins.map(
-			(pinSpec, idx) =>
-				new Pin({
-					spec: pinSpec,
-					id: entityIdService.generatePinId(chipId, idx, "out"),
-					chip: this,
-				}),
-		);
+		this.inputPins = this.createPins(chipSpec.inputPins, "in", chipId);
+		this.outputPins = this.createPins(chipSpec.outputPins, "out", chipId);
 	}
 
 	public getPin(pinType: PinType, index: number): Pin | undefined {
@@ -72,4 +58,20 @@ export abstract class Chip extends BaseEntity<"chip"> {
 	 * Returns true if any pin's nextValue has changed.
 	 */
 	public abstract execute(): boolean;
+
+	private createPins(
+		pinSpec: PinSpec[],
+		pinType: PinType,
+		chipId: string,
+	): Pin[] {
+		return pinSpec.map(
+			(pinSpec, idx) =>
+				new Pin({
+					spec: pinSpec,
+					id: entityIdService.generatePinId(chipId, idx, pinType),
+					pinType,
+					chip: this,
+				}),
+		);
+	}
 }

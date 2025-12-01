@@ -13,13 +13,13 @@ export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 		name: "INPUT",
 		type: "io",
 		inputPins: [],
-		outputPins: [{ pinType: "out", name: "io-in-0" }], // TODO: should not be necessary
+		outputPins: [{ name: "out 0" }], 
 		ChipClass: InputChip,
 	},
 	{
 		name: "OUTPUT",
 		type: "io",
-		inputPins: [{ pinType: "in", name: "io-out-0" }],
+		inputPins: [{  name: "in 0" }],
 		outputPins: [],
 		ChipClass: OutputChip,
 	},
@@ -27,17 +27,17 @@ export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 		name: "AND",
 		type: "atomic",
 		inputPins: [
-			{ pinType: "in", name: "and-in-0" },
-			{ pinType: "in", name: "and-in-1" },
+			{  name: "and in 0" },
+			{  name: "and in 1" },
 		],
-		outputPins: [{ pinType: "out", name: "and-out-0" }],
+		outputPins: [{ name: "and out 0" }],
 		ChipClass: AndChip,
 	},
 	{
 		name: "NOT",
 		type: "atomic",
-		inputPins: [{ pinType: "in", name: "not-in-0" }],
-		outputPins: [{ pinType: "out", name: "not-out-0" }],
+		inputPins: [{  name: "not in 0" }],
+		outputPins: [{  name: "not out 0" }],
 		ChipClass: NotChip,
 	},
 ];
