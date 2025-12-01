@@ -1,8 +1,9 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
-import { SpawnChipTool, type Tool } from "./tools";
+import { SpawnChipTool, WiringTool, type Tool } from "./tools";
 import type { Simulator } from "../../simulator";
 import type { ButtonEvent, MouseButtonType } from "../../input-manager";
 import type { MousePosition } from "../../types";
+import type { Entity } from "../../entities/entity";
 
 export class ToolManager {
 	private readonly sim: Simulator;
@@ -32,8 +33,15 @@ export class ToolManager {
 		event: MouseButtonType,
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
 	): boolean {
-		return !!this.activeTool?.onMouseButtonEvent(event, nature, mousePosition);
+		// console.log("active tool", this.activeTool);
+		return !!this.activeTool?.onMouseButtonEvent(
+			event,
+			nature,
+			mousePosition,
+			hoveredEntity,
+		);
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {
@@ -58,6 +66,10 @@ export class ToolManager {
 	private registerSubscriptions(): void {
 		this.sim.on("chip.spawn", (chipSpec) =>
 			this.setActiveTool(SpawnChipTool, { chipSpec }),
+		);
+
+		this.sim.on("wire.spawn", ({ startPin }) =>
+			this.setActiveTool(WiringTool, { startPin }),
 		);
 	}
 

@@ -8,6 +8,7 @@ import type {
 	KeyboardButtonType,
 } from "../../input-manager";
 import type { MousePosition } from "../../types";
+import type { Entity } from "../../entities/entity";
 
 export class InteractionLayer extends BaseLayer {
 	private readonly toolManager: ToolManager;
@@ -30,16 +31,24 @@ export class InteractionLayer extends BaseLayer {
 		event: MouseButtonType,
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
 	): boolean {
+		// return false if a tool is not active
+		if (!this.toolManager.getActiveTool()) {
+			return false;
+		}
+
 		switch (event) {
 			case "leftMouseButton":
-				return this.toolManager.onMouseButtonEvent(
+				this.toolManager.onMouseButtonEvent(
 					event,
 					nature,
 					mousePosition,
+					hoveredEntity,
 				);
 		}
-		return false;
+
+		return true;
 	}
 
 	public onPointerMove(event: PointerEvent): boolean {

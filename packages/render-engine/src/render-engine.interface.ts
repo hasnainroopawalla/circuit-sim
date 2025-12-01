@@ -27,6 +27,7 @@ export type ChipRenderable = BaseRenderable<"chip"> & {
 };
 
 export type WireRenderable = BaseRenderable<"wire"> & {
+	// TODO @abhishek: change this to Position[]
 	controlPoints: Float32Array;
 };
 

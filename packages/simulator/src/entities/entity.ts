@@ -1,9 +1,17 @@
+import type { Chip } from "./chips";
+import type { Pin } from "./pin";
+import type { Wire } from "./wire";
+
 type EntityType = "chip" | "pin" | "wire";
 
-export abstract class Entity {
-	public readonly id: string;
+export type Entity = Chip | Wire | Pin;
 
-	constructor(args: { id: string; type: EntityType }) {
+export abstract class BaseEntity<T extends EntityType> {
+	public readonly id: string;
+	public readonly type: T;
+
+	protected constructor(args: { id: string; type: T }) {
 		this.id = args.id;
+		this.type = args.type;
 	}
 }

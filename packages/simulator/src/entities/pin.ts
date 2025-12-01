@@ -1,24 +1,28 @@
-import { Entity } from "./entity";
+import { BaseEntity } from "./entity";
 
 export type PinType = "in" | "out";
 
 export type PinSpec = {
 	name: string;
+	pinType: PinType;
 };
 
-export class Pin extends Entity {
+export class Pin extends BaseEntity<"pin"> {
 	public readonly spec: PinSpec;
+
+	public chipId: string;
 
 	public currentValue: boolean;
 	public nextValue: boolean;
 
-	constructor(spec: PinSpec, id: string) {
+	constructor(args: { spec: PinSpec; id: string; chipId: string }) {
 		super({
-			id,
+			id: args.id,
 			type: "pin",
 		});
 
-		this.spec = spec;
+		this.spec = args.spec;
+		this.chipId = args.chipId;
 
 		this.currentValue = false;
 		this.nextValue = false;
@@ -27,7 +31,6 @@ export class Pin extends Entity {
 	public commitValue(): boolean {
 		if (this.currentValue !== this.nextValue) {
 			this.currentValue = this.nextValue;
-			console.log("Committing", this.spec.name, "to", this.nextValue);
 			return true;
 		}
 		return false;

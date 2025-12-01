@@ -9,6 +9,7 @@ import type {
 	KeyboardButtonType,
 } from "../input-manager";
 import type { MousePosition } from "../types";
+import type { Entity } from "../entities/entity";
 
 type LayoutManagerArgs = BaseLayerArgs & {
 	camera: Camera;
@@ -18,8 +19,11 @@ type LayoutManagerArgs = BaseLayerArgs & {
 
 export class LayoutManager {
 	private readonly layers: BaseLayer[];
+	private _hoveredEntity: Entity | null;
 
 	constructor(args: LayoutManagerArgs) {
+		this._hoveredEntity = null;
+
 		this.layers = [
 			// layer 1
 			new InteractionLayer(args),
@@ -41,7 +45,12 @@ export class LayoutManager {
 		mousePosition: MousePosition,
 	): void {
 		this.layers.some((layer) =>
-			layer.onMouseButtonEvent(event, nature, mousePosition),
+			layer.onMouseButtonEvent(
+				event,
+				nature,
+				mousePosition,
+				this._hoveredEntity,
+			),
 		);
 	}
 
@@ -49,11 +58,15 @@ export class LayoutManager {
 		this.layers.some((layer) => layer.onMouseScrollEvent(event));
 	}
 
-	public handleMouseHover(): void {
-		// this.layers.some((layer) => layer.handleMouseHover());
-	}
-
 	public onKeyboardEvent(event: KeyboardButtonType, nature: ButtonEvent): void {
 		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
+	}
+
+	public get hoveredEntity(): Entity | null {
+		return this._hoveredEntity;
+	}
+
+	public set hoveredEntity(value: Entity | null) {
+		this._hoveredEntity = value;
 	}
 }

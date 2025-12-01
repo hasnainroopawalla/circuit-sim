@@ -7,6 +7,9 @@ import type {
 	MouseButtonType,
 	MouseScrollType,
 } from "../../input-manager";
+import type { MousePosition } from "../../types";
+import type { Entity } from "../../entities/entity";
+import type { Pin } from "../../entities/pin";
 
 type SimulationLayerArgs = BaseLayerArgs & {
 	camera: Camera;
@@ -36,7 +39,7 @@ export class SimulationLayer extends BaseLayer {
 			(wire) => ({
 				type: "wire",
 				color: wire.renderSpec.color,
-				controlPoints: new Float32Array(),
+				controlPoints: wire.renderSpec.controlPoints,
 			}),
 		);
 
@@ -47,7 +50,19 @@ export class SimulationLayer extends BaseLayer {
 	public onMouseButtonEvent(
 		event: MouseButtonType,
 		nature: ButtonEvent,
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
 	): boolean {
+		console.log("Hovered Entity", hoveredEntity);
+
+		if (!hoveredEntity) {
+			return false;
+		}
+
+		if (hoveredEntity.type === "pin") {
+			return this.activateWiringTool(hoveredEntity);
+		}
+
 		return false;
 	}
 
@@ -71,5 +86,15 @@ export class SimulationLayer extends BaseLayer {
 		nature: ButtonEvent,
 	): boolean {
 		return this.camera.onKeyboardEvent(event, nature);
+	}
+
+	private activateWiringTool(pin: Pin): boolean {
+		console.log("Wiring mode triggered, startPin", pin);
+
+		this.sim.emit("wire.spawn", {
+			startPin: pin,
+		});
+
+		return true;
 	}
 }

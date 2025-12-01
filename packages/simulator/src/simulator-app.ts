@@ -5,6 +5,9 @@ import { Camera } from "./layouts/simulation-layer";
 import { Clock } from "./clock";
 import { InputManager } from "./input-manager";
 import { MeshUtils } from "./mesh-utils";
+import type { MousePosition } from "./types";
+
+type SimulatorAppArgs = { canvas: HTMLCanvasElement }
 
 export class SimulatorApp {
 	public sim: Simulator;
@@ -21,7 +24,7 @@ export class SimulatorApp {
 
 	private animationId: number | null = null;
 
-	constructor(args: { canvas: HTMLCanvasElement }) {
+	constructor(args: SimulatorAppArgs) {
 		this.clock = new Clock({ showFrameTime: false });
 
 		this.initializeCanvas(args.canvas);
@@ -43,7 +46,9 @@ export class SimulatorApp {
 			screenWidth: args.canvas.width,
 		});
 
-		this.renderEngineInitPromise = this.renderEngine.initialize();
+		this.renderEngineInitPromise = this.renderEngine.initialize().then(() => {
+this.registerCanvasResizeObserver(args.canvas);
+		});
 
 		this.registerInputManagerSubscriptions(args.canvas);
 	}
@@ -64,6 +69,7 @@ export class SimulatorApp {
 		this.inputManager.destroy();
 	}
 
+
 	private loop(): void {
 		const deltaTime = this.clock.tick();
 
@@ -72,10 +78,7 @@ export class SimulatorApp {
 		this.inputManager.update(deltaTime);
 		this.camera.update(deltaTime);
 
-		const hoveredEntites = MeshUtils.getHoveredEntities();
-		if (hoveredEntites.length > 0) {
-			this.layoutManager.handleMouseHover();
-		}
+		this.layoutManager.hoveredEntity = MeshUtils.getHoveredEntity(this.getMousePosition().world, this.sim.chipManager.chips);
 
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),
@@ -91,10 +94,14 @@ export class SimulatorApp {
 		canvas.focus();
 	}
 
+	private registerCanvasResizeObserver(canvas: HTMLCanvasElement): void{
+		const observer = new ResizeObserver((entries) => this.onResize(entries));
+		observer.observe(canvas);
+	}
+
+
 	private registerInputManagerSubscriptions(canvas: HTMLCanvasElement): void {
-		// TODO: fix device not initialzed before subscription
-		// const observer = new ResizeObserver((entries) => this.onResize(entries));
-		// observer.observe(canvas);
+		
 
 		this.inputManager.onMouseScrollEvent("scrollUp", (event) =>
 			this.layoutManager.onMouseScrollEvent(event),
@@ -108,12 +115,7 @@ export class SimulatorApp {
 			"leftMouseButton",
 			"click",
 			(event, nature) => {
-				const screenSpaceMousePosition = this.inputManager.getMousePosition();
-
-				this.layoutManager.onMouseButtonEvent(event, nature, {
-					screen: screenSpaceMousePosition,
-					world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
-				});
+				this.layoutManager.onMouseButtonEvent(event, nature, this.getMousePosition());
 			},
 		);
 
@@ -139,4 +141,14 @@ export class SimulatorApp {
 			this.camera.onResize(width, height);
 		});
 	}
+
+	private getMousePosition(): MousePosition{
+		const screenSpaceMousePosition = this.inputManager.getMousePosition();
+
+					return {
+						screen: screenSpaceMousePosition,
+						world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
+					}
+	}
+	
 }

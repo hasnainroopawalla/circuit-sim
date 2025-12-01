@@ -7,6 +7,7 @@ import type {
 	MouseScrollType,
 } from "../input-manager";
 import type { MousePosition } from "../types";
+import type { Entity } from "../entities/entity";
 
 export type BaseLayerArgs = {
 	sim: Simulator;
@@ -29,6 +30,7 @@ export abstract class BaseLayer {
 		event: MouseButtonType,
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
 	): boolean;
 
 	public abstract onMouseScrollEvent(event: MouseScrollType): boolean;

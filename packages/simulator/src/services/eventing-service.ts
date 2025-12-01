@@ -1,8 +1,10 @@
 import type { ChipSpec } from "../entities/chips";
+import type { Pin } from "../entities/pin";
 
 export type IEvents = {
 	"chip.spawn": ChipSpec;
 	"chip.save": undefined;
+	"wire.spawn": { startPin: Pin };
 };
 
 export type Unsubscribe = () => void;

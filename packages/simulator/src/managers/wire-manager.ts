@@ -1,5 +1,5 @@
 import type { Pin, PinType } from "../entities/pin";
-import { Wire, type WireSpec } from "../entities/wire";
+import { Wire, WireRenderSpec, type WireSpec } from "../entities/wire";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
@@ -41,13 +41,10 @@ export class WireManager extends BaseManager {
 		return chip?.getPin(pinType as PinType, Number(chipPinId));
 	}
 
-	public spawnWire(wireSpec: WireSpec): void {
-		const renderSpec = {
-			color: "red",
-		};
-
+	public spawnWire(wireSpec: WireSpec, renderSpec: WireRenderSpec): void {
 		const wire = new Wire(wireSpec, renderSpec);
 
+		console.log("Wire created", wire);
 		this.wires.push(wire);
 	}
 

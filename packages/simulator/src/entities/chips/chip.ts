@@ -1,10 +1,10 @@
 import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
-import { Entity } from "../entity";
+import { BaseEntity } from "../entity";
 import { Pin, type PinType } from "../pin";
 import type { ChipSpec, ChipRenderSpec } from "./chip.interface";
 
-export abstract class Chip extends Entity {
+export abstract class Chip extends BaseEntity<"chip"> {
 	public spec: ChipSpec;
 	public renderSpec: ChipRenderSpec;
 
@@ -23,10 +23,12 @@ export abstract class Chip extends Entity {
 		this.renderSpec = renderSpec;
 
 		this.inputPins = chipSpec.inputPins.map(
-			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.in.${idx}`), // TODO: is this the best way for id?
+			(pinSpec, idx) =>
+				new Pin({ spec: pinSpec, id: `${chipId}.in.${idx}`, chipId }), // TODO: is this the best way for id?
 		);
 		this.outputPins = chipSpec.outputPins.map(
-			(pinSpec, idx) => new Pin(pinSpec, `${chipId}.out.${idx}`),
+			(pinSpec, idx) =>
+				new Pin({ spec: pinSpec, id: `${chipId}.out.${idx}`, chipId }),
 		);
 	}
 
