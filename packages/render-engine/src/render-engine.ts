@@ -21,9 +21,9 @@ export class RenderEngine {
 	private bufferManager!: BufferManager;
 	private pipelineManager!: PipelineManager;
 	private depthTexture!: GPUTexture;
-	private depthView! : GPUTextureView;
+	private depthView!: GPUTextureView;
 
-	private renderTargetView! : GPUTextureView;
+	private renderTargetView!: GPUTextureView;
 
 	private gpuCanvasContext: GPUCanvasContext;
 
@@ -91,7 +91,9 @@ export class RenderEngine {
 		const wireVertexCount = this.uploadWireRenderData(wires);
 
 		const commandEncoder = this.device.createCommandEncoder();
-		this.renderTargetView = this.gpuCanvasContext.getCurrentTexture().createView();
+		this.renderTargetView = this.gpuCanvasContext
+			.getCurrentTexture()
+			.createView();
 		this.clearScreen(commandEncoder);
 		this.gridRenderPass(commandEncoder);
 		this.chipRenderPass(commandEncoder, chips.length /* chipCount */);
@@ -100,30 +102,32 @@ export class RenderEngine {
 		this.device.queue.submit([commandEncoder.finish()]);
 	}
 
-	public async  onResize(width: number, height: number): Promise<void>{
-		if(this.device){
-			await this.device.queue.onSubmittedWorkDone(); 
-			this.gpuCanvasContext.canvas.width = width;
-			this.gpuCanvasContext.canvas.height = height;
-			this.gpuCanvasContext.unconfigure();
-			this.gpuCanvasContext.configure({
-				device: this.device,
-				format: "bgra8unorm",
-				alphaMode: "premultiplied",
-			});
-			this.gpuCanvasContext.canvas.width = width;
-			this.gpuCanvasContext.canvas.height = height;
-			this.depthTexture.destroy();
-			this.depthTexture = this.device.createTexture({
-				size: [
-					this.gpuCanvasContext.canvas.width,
-					this.gpuCanvasContext.canvas.height,
-				],
-				format: "depth24plus",
-				usage: GPUTextureUsage.RENDER_ATTACHMENT,
-			});
-			this.depthView = this.depthTexture.createView();
+	public async onResize(width: number, height: number): Promise<void> {
+		if (!this.device) {
+			return;
 		}
+		await this.device.queue.onSubmittedWorkDone();
+
+		this.gpuCanvasContext.canvas.width = width;
+		this.gpuCanvasContext.canvas.height = height;
+		this.gpuCanvasContext.unconfigure();
+		this.gpuCanvasContext.configure({
+			device: this.device,
+			format: "bgra8unorm",
+			alphaMode: "premultiplied",
+		});
+		this.gpuCanvasContext.canvas.width = width;
+		this.gpuCanvasContext.canvas.height = height;
+		this.depthTexture.destroy();
+		this.depthTexture = this.device.createTexture({
+			size: [
+				this.gpuCanvasContext.canvas.width,
+				this.gpuCanvasContext.canvas.height,
+			],
+			format: "depth24plus",
+			usage: GPUTextureUsage.RENDER_ATTACHMENT,
+		});
+		this.depthView = this.depthTexture.createView();
 	}
 
 	private uploadCamera(cameraProjectionData: CameraProjectionData): void {
