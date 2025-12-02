@@ -5,6 +5,7 @@ import type {
 	MouseScrollType,
 	KeyboardButtonType,
 	InputEventTopic,
+	MouseMoveEventCallback,
 } from "./input-manager.interface";
 import { KeyboardManager } from "./keyboard-manager";
 import { MouseManager } from "./mouse-manager";
@@ -49,6 +50,10 @@ export class InputManager {
 		callback: InputEventTopic<MouseScrollType>["callback"],
 	): void {
 		this.mouseManager.onScrollHandler(event, callback);
+	}
+
+	public onMouseMoveEvent(callback: MouseMoveEventCallback): void {
+		this.mouseManager.onMoveHandler(callback);
 	}
 
 	public onKeyboardEvent(

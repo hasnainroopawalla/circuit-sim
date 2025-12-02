@@ -1,3 +1,5 @@
+import type { Position } from "@digital-logic-sim/render-engine";
+
 export type ButtonEvent = "click" | "press" | "release";
 
 type InputType = MouseButtonType | MouseScrollType | KeyboardButtonType;
@@ -28,6 +30,8 @@ export type MouseButtonType = ArrayToUnion<typeof MouseButton>;
 
 export const MouseScroll = ["scrollUp", "scrollDown"] as const;
 export type MouseScrollType = ArrayToUnion<typeof MouseScroll>;
+
+export type MouseMoveEventCallback = (mousePosition: Position) => void;
 
 export const mouseButtonMap: Record<MouseEvent["button"], MouseButtonType> = {
 	0: "leftMouseButton",

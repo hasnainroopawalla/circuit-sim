@@ -5,6 +5,7 @@ import {
 	type ButtonEvent,
 	type InputManagerState,
 	type InputEventTopic,
+	type MouseMoveEventCallback,
 	mouseButtonMap,
 	MouseButton,
 } from "./input-manager.interface";
@@ -38,6 +39,8 @@ export class MouseManager {
 		scrollDown: new Set(),
 	};
 
+	private mouseMoveEventSubscribers = new Set<MouseMoveEventCallback>();
+
 	private abortController: AbortController;
 
 	constructor(canvas: HTMLCanvasElement) {
@@ -68,6 +71,10 @@ export class MouseManager {
 		this.scrollSubscriberMap[event].add(callback);
 	}
 
+	public onMoveHandler(callback: MouseMoveEventCallback): void {
+		this.mouseMoveEventSubscribers.add(callback);
+	}
+
 	public update(_deltaTime: number): void {
 		this.mouseButtonUpdate();
 		this.mouseScrollUpdate();
@@ -75,14 +82,6 @@ export class MouseManager {
 
 	public getMousePosition(): MouseManager["mousePosition"] {
 		return this.mousePosition;
-	}
-
-	public isScrollingUp(): boolean {
-		return this.scrollDirection === "up";
-	}
-
-	public isScrollingDown(): boolean {
-		return this.scrollDirection === "down";
 	}
 
 	private setScrolling(e: WheelEvent): void {
@@ -143,7 +142,7 @@ export class MouseManager {
 		}
 	}
 
-	private setMousePosition(e: MouseEvent, canvas: HTMLCanvasElement) {
+	private setMousePosition(e: MouseEvent, canvas: HTMLCanvasElement): void {
 		const rect = canvas.getBoundingClientRect();
 
 		const scaleX = canvas.width / rect.width;
@@ -153,6 +152,10 @@ export class MouseManager {
 			x: (e.clientX - rect.left) * scaleX,
 			y: (e.clientY - rect.top) * scaleY,
 		};
+
+		this.mouseMoveEventSubscribers.forEach((callback) => {
+			callback(this.mousePosition);
+		});
 	}
 
 	private mouseDownEventHandler(event: MouseEvent): void {
