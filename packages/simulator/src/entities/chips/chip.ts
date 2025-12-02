@@ -2,22 +2,35 @@ import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
 import { Pin, type PinSpec, type PinType } from "../pin";
-import type { ChipSpec, ChipRenderSpec } from "./chip.interface";
+import type {
+	ChipSpec,
+	ChipRenderSpec,
+	ChipType,
+	Chip,
+} from "./chip.interface";
 
-export abstract class Chip extends BaseEntity<"chip"> {
-	public spec: ChipSpec;
+type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
+
+export abstract class BaseChip<
+	TChipType extends ChipType,
+> extends BaseEntity<"chip"> {
+	public spec: ChipSpecOf<TChipType>;
 	public renderSpec: ChipRenderSpec;
 
 	public inputPins: Pin[];
 	public outputPins: Pin[];
 
-	constructor(chipSpec: ChipSpec, renderSpec: ChipRenderSpec) {
+	public chipType: TChipType;
+
+	constructor(chipSpec: ChipSpecOf<TChipType>, renderSpec: ChipRenderSpec) {
 		const chipId = entityIdService.generateId();
 
 		super({
 			id: chipId,
-			type: "chip",
+			entityType: "chip",
 		});
+
+		this.chipType = chipSpec.chipType;
 
 		this.spec = chipSpec;
 		this.renderSpec = renderSpec;
@@ -70,7 +83,7 @@ export abstract class Chip extends BaseEntity<"chip"> {
 					spec: pinSpec,
 					id: entityIdService.generatePinId(chipId, idx, pinType),
 					pinType,
-					chip: this,
+					chip: this as Chip,
 				}),
 		);
 	}

@@ -1,25 +1,43 @@
 import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
 import type { PinSpec } from "../pin";
 import type { AtomicChip } from "./atomic-chip";
-import type { IOChip } from "./io-chip";
+import type { InputChip, OutputChip } from "./io-chip";
+import type { CompositeChip } from "./composite-chip";
 
-type ChipType = "io" | "atomic" | "composite";
+export type ChipType = "io" | "atomic" | "composite";
+export type Chip = IOChip | AtomicChip | CompositeChip;
 
 export type ChipRenderSpec = {
 	position: Position;
 	color: ColorRGBA;
 };
 
+export type IOChipType = "input" | "output";
+export type IOChip = InputChip | OutputChip;
+
 type BaseChipSpec<TChipType extends ChipType> = {
-	type: TChipType;
+	chipType: TChipType;
 	name: string;
 	inputPins: PinSpec[];
 	outputPins: PinSpec[];
 };
 
-export type IOChipSpec = BaseChipSpec<"io"> & {
-	ChipClass: new (chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) => IOChip;
+type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {
+	ioChipType: TIOChipType;
 };
+
+export type InputChipSpec = BaseIOChipSpec<"input"> & {
+	ChipClass: new (spec: InputChipSpec, renderSpec: ChipRenderSpec) => InputChip;
+};
+
+export type OutputChipSpec = BaseIOChipSpec<"output"> & {
+	ChipClass: new (
+		spec: OutputChipSpec,
+		renderSpec: ChipRenderSpec,
+	) => OutputChip;
+};
+
+export type IOChipSpec = InputChipSpec | OutputChipSpec;
 
 export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 	ChipClass: new (

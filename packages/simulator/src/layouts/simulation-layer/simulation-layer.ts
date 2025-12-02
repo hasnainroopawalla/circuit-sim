@@ -9,7 +9,6 @@ import type {
 } from "../../input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
-import type { Pin } from "../../entities/pin";
 
 type SimulationLayerArgs = BaseLayerArgs & {
 	camera: Camera;
@@ -59,8 +58,21 @@ export class SimulationLayer extends BaseLayer {
 			return false;
 		}
 
-		if (hoveredEntity.type === "pin") {
-			return this.activateWiringTool(hoveredEntity);
+		if (hoveredEntity.entityType === "pin") {
+			this.sim.emit("wire.spawn", {
+				startPin: hoveredEntity,
+			});
+			return true;
+		}
+
+		if (
+			hoveredEntity.entityType === "chip" &&
+			hoveredEntity.chipType === "io" &&
+			hoveredEntity.ioChipType === "input"
+		) {
+			console.log("TOGGE");
+			hoveredEntity.toggle();
+			return true;
 		}
 
 		return false;
@@ -86,15 +98,5 @@ export class SimulationLayer extends BaseLayer {
 		nature: ButtonEvent,
 	): boolean {
 		return this.camera.onKeyboardEvent(event, nature);
-	}
-
-	private activateWiringTool(pin: Pin): boolean {
-		console.log("Wiring mode triggered, startPin", pin);
-
-		this.sim.emit("wire.spawn", {
-			startPin: pin,
-		});
-
-		return true;
 	}
 }

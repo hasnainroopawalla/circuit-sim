@@ -8,10 +8,10 @@ export type Entity = Chip | Wire | Pin;
 
 export abstract class BaseEntity<T extends EntityType> {
 	public readonly id: string;
-	public readonly type: T;
+	public readonly entityType: T;
 
-	protected constructor(args: { id: string; type: T }) {
+	protected constructor(args: { id: string; entityType: T }) {
 		this.id = args.id;
-		this.type = args.type;
+		this.entityType = args.entityType;
 	}
 }

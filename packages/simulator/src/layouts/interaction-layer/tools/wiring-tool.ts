@@ -53,7 +53,7 @@ export class WiringTool extends Tool {
 		}
 
 		// Wiring tool only deactivates if an end pin is clicked
-		if (hoveredEntity.type !== "pin") {
+		if (hoveredEntity.entityType !== "pin") {
 			return;
 		}
 

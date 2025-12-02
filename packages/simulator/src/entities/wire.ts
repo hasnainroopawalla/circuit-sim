@@ -25,7 +25,7 @@ export class Wire extends BaseEntity<"wire"> {
 	}) {
 		super({
 			id: entityIdService.generateId(),
-			type: "wire",
+			entityType: "wire",
 		});
 
 		this.spec = args.spec;

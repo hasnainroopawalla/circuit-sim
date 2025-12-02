@@ -1,7 +1,7 @@
-import { Chip } from "./chip";
+import { BaseChip } from "./chip";
 import type { AtomicChipSpec, ChipRenderSpec } from "./chip.interface";
 
-export abstract class AtomicChip extends Chip {
+export abstract class AtomicChip extends BaseChip<"atomic"> {
 	constructor(chipSpec: AtomicChipSpec, renderSpec: ChipRenderSpec) {
 		super(chipSpec, renderSpec);
 	}

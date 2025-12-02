@@ -2,9 +2,9 @@ import {
 	renderEngineConfig,
 	type Position,
 } from "@digital-logic-sim/render-engine";
-import type { Chip } from "./entities/chips";
 import type { Pin } from "./entities/pin";
 import type { Entity } from "./entities/entity";
+import type { Chip } from "./entities/chips";
 
 export const MeshUtils = {
 	getHoveredEntity: (

@@ -1,25 +1,50 @@
-import { Chip } from "./chip";
-import type { ChipRenderSpec, IOChipSpec } from "./chip.interface";
+import type { Pin } from "../pin";
+import { BaseChip } from "./chip";
+import type {
+	ChipRenderSpec,
+	InputChipSpec,
+	IOChipSpec,
+	IOChipType,
+	OutputChipSpec,
+} from "./chip.interface";
 
-export abstract class IOChip extends Chip {
-	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
-		super(chipSpec, renderSpec);
+type IOChipSpecOf<TIOChipType> = Extract<
+	IOChipSpec,
+	{ ioChipType: TIOChipType }
+>;
+
+export abstract class BaseIOChip<
+	TIOChipType extends IOChipType,
+> extends BaseChip<"io"> {
+	public ioChipType: TIOChipType;
+
+	constructor(
+		ioChipSpec: IOChipSpecOf<TIOChipType>,
+		renderSpec: ChipRenderSpec,
+	) {
+		super(ioChipSpec, renderSpec);
+
+		this.ioChipType = ioChipSpec.ioChipType;
+	}
+
+	public getPin(): Pin {
+		return this.ioChipType === "input" ? this.outputPins[0] : this.inputPins[0];
 	}
 }
 
-export class InputChip extends IOChip {
+export class InputChip extends BaseIOChip<"input"> {
 	private nextValue = false;
 
-	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
+	constructor(chipSpec: InputChipSpec, renderSpec: ChipRenderSpec) {
 		super(chipSpec, renderSpec);
 	}
 
-	public setValue(to: boolean): void {
-		this.nextValue = to;
+	public toggle(): void {
+		this.nextValue = !this.getPin().currentValue;
 	}
 
 	public execute(): boolean {
-		const pin = this.outputPins[0];
+		const pin = this.getPin();
 
 		if (pin.nextValue !== this.nextValue) {
 			pin.nextValue = this.nextValue;
@@ -30,8 +55,8 @@ export class InputChip extends IOChip {
 	}
 }
 
-export class OutputChip extends IOChip {
-	constructor(chipSpec: IOChipSpec, renderSpec: ChipRenderSpec) {
+export class OutputChip extends BaseIOChip<"output"> {
+	constructor(chipSpec: OutputChipSpec, renderSpec: ChipRenderSpec) {
 		super(chipSpec, renderSpec);
 	}
 

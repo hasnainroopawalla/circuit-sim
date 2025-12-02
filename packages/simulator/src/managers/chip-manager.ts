@@ -1,5 +1,11 @@
-import { type Chip, type ChipSpec, CompositeChip } from "../entities/chips";
-import type { ChipRenderSpec } from "../entities/chips/chip.interface";
+import {
+	type Chip,
+	type ChipSpec,
+	type ChipRenderSpec,
+	type IOChipSpec,
+	type IOChip,
+	CompositeChip,
+} from "../entities/chips";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
@@ -28,9 +34,9 @@ export class ChipManager extends BaseManager {
 	public spawnChip(chipSpec: ChipSpec, renderSpec: ChipRenderSpec): void {
 		let chip: Chip;
 
-		switch (chipSpec.type) {
+		switch (chipSpec.chipType) {
 			case "io":
-				chip = new chipSpec.ChipClass(chipSpec, renderSpec);
+				chip = this.createIOChip(chipSpec, renderSpec);
 				break;
 			case "atomic":
 				chip = new chipSpec.ChipClass(chipSpec, renderSpec);
@@ -41,5 +47,17 @@ export class ChipManager extends BaseManager {
 		}
 
 		this.chips.push(chip);
+	}
+
+	private createIOChip(
+		chipSpec: IOChipSpec,
+		renderSpec: ChipRenderSpec,
+	): IOChip {
+		switch (chipSpec.ioChipType) {
+			case "input":
+				return new chipSpec.ChipClass(chipSpec, renderSpec);
+			case "output":
+				return new chipSpec.ChipClass(chipSpec, renderSpec);
+		}
 	}
 }

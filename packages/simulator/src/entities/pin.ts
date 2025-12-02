@@ -25,7 +25,7 @@ export class Pin extends BaseEntity<"pin"> {
 	}) {
 		super({
 			id: args.id,
-			type: "pin",
+			entityType: "pin",
 		});
 
 		this.spec = args.spec;
