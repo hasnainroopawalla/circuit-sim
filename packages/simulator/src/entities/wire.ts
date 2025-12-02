@@ -1,4 +1,4 @@
-import type { ColorRGBA } from "@digital-logic-sim/render-engine";
+import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../entity-id-service";
 import { BaseEntity } from "./entity";
 import type { Pin } from "./pin";
@@ -8,7 +8,7 @@ export type WireSpec = {
 	endPinId: string;
 };
 
-export type WireRenderSpec = { color: ColorRGBA; controlPoints: Float32Array };
+export type WireRenderSpec = { color: ColorRGBA; controlPoints: Position[] };
 
 export class Wire extends BaseEntity<"wire"> {
 	public spec: WireSpec;

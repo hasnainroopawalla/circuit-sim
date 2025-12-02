@@ -7,13 +7,13 @@ import type { CompositeChip } from "./composite-chip";
 export type ChipType = "io" | "atomic" | "composite";
 export type Chip = IOChip | AtomicChip | CompositeChip;
 
+export type IOChipType = "input" | "output";
+export type IOChip = InputChip | OutputChip;
+
 export type ChipRenderSpec = {
 	position: Position;
 	color: ColorRGBA;
 };
-
-export type IOChipType = "input" | "output";
-export type IOChip = InputChip | OutputChip;
 
 type BaseChipSpec<TChipType extends ChipType> = {
 	chipType: TChipType;

@@ -23,19 +23,11 @@ export class WiringTool extends Tool {
 	}
 
 	public getRenderables(): Renderable[] {
-		// render ghost wire
-		const controlPoints = new Float32Array(2 * this.controlPoints.length);
-		for (let i = 0; i < this.controlPoints.length; ++i) {
-			controlPoints.set(
-				[this.controlPoints[i].x, this.controlPoints[i].y],
-				i * 2,
-			);
-		}
 		return [
 			{
 				type: "wire",
 				color: { r: 1, g: 1, b: 0, a: 1 },
-				controlPoints,
+				controlPoints: this.controlPoints,
 			},
 		];
 	}
@@ -46,28 +38,20 @@ export class WiringTool extends Tool {
 		mousePosition: MousePosition,
 		hoveredEntity: Entity | null,
 	): void {
-		// Add control point
+		// add control point
 		if (!hoveredEntity) {
 			this.controlPoints.push(mousePosition.world);
 			return;
 		}
 
-		// Wiring tool only deactivates if an end pin is clicked
+		// wiring tool only deactivates if an end pin is clicked
 		if (hoveredEntity.entityType !== "pin") {
 			return;
 		}
 
-		// TODO @abhishek: Wire should use Position[]
+		// append the end pin position to the control points
 		this.controlPoints.push(MeshUtils.getPinPosition(hoveredEntity));
-		const controlPoints = new Float32Array(2 * this.controlPoints.length);
-		for (let i = 0; i < this.controlPoints.length; ++i) {
-			controlPoints.set(
-				[this.controlPoints[i].x, this.controlPoints[i].y],
-				i * 2,
-			);
-		}
 
-		console.log("wiring tool - deactivating");
 		this.sim.wireManager.spawnWire(
 			{
 				startPinId: this.startPin.id,
@@ -75,7 +59,7 @@ export class WiringTool extends Tool {
 			},
 			{
 				color: { r: 0, g: 1, b: 0, a: 1 },
-				controlPoints: controlPoints,
+				controlPoints: this.controlPoints,
 			} /* renderSpec */,
 		);
 		this.deactivate();

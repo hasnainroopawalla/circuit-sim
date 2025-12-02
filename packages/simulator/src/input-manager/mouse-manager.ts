@@ -15,16 +15,20 @@ export class MouseManager {
 
 	private mousePosition: Position;
 
-	private timeoutId: NodeJS.Timeout | undefined;
+	private timeoutId: number | undefined;
 
 	private mouseButtonState: InputManagerState<MouseButtonType> =
-		MouseButton.reduce(
-			(accumulator, entityType) => ({
-				...accumulator,
-				[entityType]: { pollCount: 0, isDown: false, subscribers: new Set() },
-			}),
-			{},
-		) as InputManagerState<MouseButtonType>;
+		MouseButton.reduce<InputManagerState<MouseButtonType>>(
+			(acc, entityType) => {
+				acc[entityType] = {
+					pollCount: 0,
+					isDown: false,
+					subscribers: new Set(),
+				};
+				return acc;
+			},
+			{} as InputManagerState<MouseButtonType>,
+		);
 
 	private scrollSubscriberMap: Record<
 		MouseScrollType,

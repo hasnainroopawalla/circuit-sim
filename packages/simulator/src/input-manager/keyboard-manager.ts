@@ -9,13 +9,17 @@ import {
 
 export class KeyboardManager {
 	private keyboardButtonState: InputManagerState<KeyboardButtonType> =
-		KeyboardButton.reduce(
-			(accumulator, entityType) => ({
-				...accumulator,
-				[entityType]: { pollCount: 0, isDown: false, subscribers: new Set() },
-			}),
-			{},
-		) as InputManagerState<KeyboardButtonType>;
+		KeyboardButton.reduce<InputManagerState<KeyboardButtonType>>(
+			(acc, entityType) => {
+				acc[entityType] = {
+					pollCount: 0,
+					isDown: false,
+					subscribers: new Set(),
+				};
+				return acc;
+			},
+			{} as InputManagerState<KeyboardButtonType>,
+		);
 
 	private abortController: AbortController;
 

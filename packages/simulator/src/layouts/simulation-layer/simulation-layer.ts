@@ -70,7 +70,6 @@ export class SimulationLayer extends BaseLayer {
 			hoveredEntity.chipType === "io" &&
 			hoveredEntity.ioChipType === "input"
 		) {
-			console.log("TOGGE");
 			hoveredEntity.toggle();
 			return true;
 		}

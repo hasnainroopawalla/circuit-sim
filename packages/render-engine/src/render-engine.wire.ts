@@ -23,17 +23,20 @@ export class WireRenderer {
 			renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize,
 		);
 
-		const offset = wireData.reduce((offset, element) => {
-			for (let i = 1; i < element.controlPoints.length / 2; ++i) {
-				const start = element.controlPoints.subarray(2 * (i - 1), 2 * i);
-				lineVertexData.set(start, offset + 4 * (i - 1));
+		const offset = this.getWireControlPoints(wireData).reduce(
+			(offset, controlPoints) => {
+				for (let i = 1; i < controlPoints.length / 2; ++i) {
+					const start = controlPoints.subarray(2 * (i - 1), 2 * i);
+					lineVertexData.set(start, offset + 4 * (i - 1));
 
-				const end = element.controlPoints.subarray(2 * i, 2 * (i + 1));
-				lineVertexData.set(end, offset + 4 * i - 2);
-			}
+					const end = controlPoints.subarray(2 * i, 2 * (i + 1));
+					lineVertexData.set(end, offset + 4 * i - 2);
+				}
 
-			return offset + 2 * element.controlPoints.length - 4;
-		}, 0 /* initial value */);
+				return offset + 2 * controlPoints.length - 4;
+			},
+			0 /* initial value */,
+		);
 
 		this.renderEngine.view.device.queue.writeBuffer(
 			this.renderEngine.view.bufferManager.vertexBuffers[0],
@@ -86,5 +89,19 @@ export class WireRenderer {
 		);
 		passEncoder.draw(wireVertexCount, 1, 0, 0);
 		passEncoder.end();
+	}
+
+	private getWireControlPoints(wireData: WireRenderable[]): Float32Array[] {
+		return wireData.map((wire) => {
+			const controlPoints = new Float32Array(2 * wire.controlPoints.length);
+			for (let i = 0; i < wire.controlPoints.length; ++i) {
+				controlPoints.set(
+					[wire.controlPoints[i].x, wire.controlPoints[i].y],
+					i * 2,
+				);
+			}
+
+			return controlPoints;
+		});
 	}
 }
