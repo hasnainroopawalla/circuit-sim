@@ -28,18 +28,34 @@ export class SimulationLayer extends BaseLayer {
 				type: "chip",
 				color: chip.renderSpec.color,
 				position: chip.renderSpec.position,
+				dimensions: chip.renderSpec.dimensions,
 				label: chip.spec.name,
-				inputPins: chip.inputPins.map((pin) => ({ value: pin.currentValue })),
-				outputPins: chip.outputPins.map((pin) => ({ value: pin.currentValue })),
+				// inputPins: chip.inputPins.map((pin) => ({ value: pin.currentValue })),
+				// outputPins: chip.outputPins.map((pin) => ({ value: pin.currentValue })),
+				inputPins: chip.inputPins.map((pin) => ({
+					type: "pin",
+					value: pin.currentValue,
+					position: pin.getPosition(),
+					color: pin.getColor(),
+				})),
+				outputPins: chip.outputPins.map((pin) => ({
+					type: "pin",
+					value: pin.currentValue,
+					position: pin.getPosition(),
+					color: pin.getColor(),
+				})),
 			}),
 		);
 
 		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
-			(wire) => ({
-				type: "wire",
-				color: wire.renderSpec.color,
-				controlPoints: wire.renderSpec.controlPoints,
-			}),
+			(wire) => {
+				// console.log(wire.endPin.po)
+				return {
+					type: "wire",
+					color: wire.renderSpec.color,
+					controlPoints: wire.renderSpec.controlPoints,
+				};
+			},
 		);
 
 		// TODO: [optimize] new object created each frame
@@ -118,6 +134,7 @@ export class SimulationLayer extends BaseLayer {
 		hoveredEntity: Entity | null,
 		mousePosition: MousePosition,
 	): boolean {
+		console.log(hoveredEntity);
 		if (!hoveredEntity) {
 			return false;
 		}

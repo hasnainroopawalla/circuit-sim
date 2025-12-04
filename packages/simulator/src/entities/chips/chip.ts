@@ -1,4 +1,8 @@
-import type { Position } from "@digital-logic-sim/render-engine";
+import {
+	renderEngineConfig,
+	type Position,
+	type RectDimensions,
+} from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
@@ -9,6 +13,10 @@ import type {
 	ChipType,
 	Chip,
 } from "./chip.interface";
+
+const chipConfig = {
+	aspectRatio: 1.5,
+};
 
 type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
 
@@ -33,11 +41,15 @@ export abstract class BaseChip<
 
 		this.chipType = chipSpec.chipType;
 
-		this.spec = chipSpec;
-		this.renderSpec = renderSpec;
-
 		this.inputPins = this.createPins(chipSpec.inputPins, "in", chipId);
 		this.outputPins = this.createPins(chipSpec.outputPins, "out", chipId);
+
+		this.spec = chipSpec;
+		this.renderSpec = {
+			color: renderSpec.color,
+			position: renderSpec.position,
+			dimensions: this.getDimensions(),
+		};
 	}
 
 	public getPin(pinType: PinType, index: number): Pin | undefined {
@@ -83,13 +95,114 @@ export abstract class BaseChip<
 					spec: pinSpec,
 					id: entityIdService.generatePinId(chipId, idx, pinType),
 					pinType,
+					pinIdx: idx,
 					chip: this as Chip,
 				}),
 		);
+	}
+
+	public getPinOffset(pinType: PinType): Position {
+		const [numInputPins, numOutputPins] = [
+			this.spec.inputPins.length,
+			this.spec.outputPins.length,
+		];
+
+		const [height, width] = [
+			this.renderSpec.dimensions.height,
+			this.renderSpec.dimensions.width,
+		];
+
+		const maxPins = Math.max(numInputPins, numOutputPins);
+
+		switch (pinType) {
+			case "in":
+				return {
+					x: this.renderSpec.position.x + width,
+					y:
+						this.renderSpec.position.y +
+						height -
+						renderEngineConfig.pinSize *
+							(2 + (3 * (maxPins - numInputPins)) / 2),
+				};
+			case "out":
+				return {
+					x: this.renderSpec.position.x - width,
+					y:
+						this.renderSpec.position.y +
+						height -
+						renderEngineConfig.pinSize *
+							(2 + (3 * (maxPins - numOutputPins)) / 2),
+				};
+		}
+	}
+
+	public getPinPosition(pinIdx: number, pinType: PinType): Position {
+		const [numInputPins, numOutputPins] = [
+			this.spec.inputPins.length,
+			this.spec.outputPins.length,
+		];
+
+		const [height, width] = [
+			this.renderSpec.dimensions.height,
+			this.renderSpec.dimensions.width,
+		];
+
+		const maxPins = Math.max(numInputPins, numOutputPins);
+
+		switch (pinType) {
+			case "in": {
+				const pinOffset = {
+					x: this.renderSpec.position.x + width,
+					y:
+						this.renderSpec.position.y +
+						height -
+						renderEngineConfig.pinSize *
+							(2 + (3 * (maxPins - numInputPins)) / 2),
+				};
+
+				return {
+					x: pinOffset.x,
+					y: pinOffset.y - renderEngineConfig.pinSize * 3 * pinIdx,
+				};
+			}
+			case "out": {
+				const pinOffset = {
+					x: this.renderSpec.position.x - width,
+					y:
+						this.renderSpec.position.y +
+						height -
+						renderEngineConfig.pinSize *
+							(2 + (3 * (maxPins - numOutputPins)) / 2),
+				};
+
+				return {
+					x: pinOffset.x,
+					y: pinOffset.y - renderEngineConfig.pinSize * (3 * pinIdx),
+				};
+			}
+		}
 	}
 
 	/**
 	 * Returns true if any pin's nextValue has changed.
 	 */
 	public abstract execute(): boolean;
+
+	private getDimensions(): RectDimensions {
+		const [numInputPins, numOutputPins] = [
+			this.spec.inputPins.length,
+			this.spec.outputPins.length,
+		];
+
+		const maxPins = Math.max(numInputPins, numOutputPins);
+
+		const height =
+			(maxPins * chipConfig.aspectRatio + 0.5) * renderEngineConfig.pinSize;
+		const width = chipConfig.aspectRatio * height;
+
+		return {
+			height,
+			width,
+		};
+	}
 }

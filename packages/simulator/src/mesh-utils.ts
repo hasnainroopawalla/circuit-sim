@@ -6,6 +6,7 @@ import type { Pin } from "./entities/pin";
 import type { Entity } from "./entities/entity";
 import type { Chip } from "./entities/chips";
 
+// TODO: Fix this
 export const MeshUtils = {
 	getHoveredEntity: (
 		mouseWorldPosition: Position,

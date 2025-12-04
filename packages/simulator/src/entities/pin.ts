@@ -1,3 +1,4 @@
+import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
 import type { Chip } from "./chips";
 import { BaseEntity } from "./entity";
 
@@ -11,6 +12,7 @@ export class Pin extends BaseEntity<"pin"> {
 	public spec: PinSpec;
 
 	public pinType: PinType;
+	public pinIdx: number;
 
 	public chip: Chip;
 
@@ -22,6 +24,7 @@ export class Pin extends BaseEntity<"pin"> {
 		id: string;
 		chip: Chip;
 		pinType: PinType;
+		pinIdx: number; // TODO: required?
 	}) {
 		super({
 			id: args.id,
@@ -29,9 +32,12 @@ export class Pin extends BaseEntity<"pin"> {
 		});
 
 		this.spec = args.spec;
+		// this.renderSpec =
+
 		this.chip = args.chip;
 
 		this.pinType = args.pinType;
+		this.pinIdx = args.pinIdx;
 
 		this.currentValue = false;
 		this.nextValue = false;
@@ -45,5 +51,16 @@ export class Pin extends BaseEntity<"pin"> {
 		return false;
 	}
 
-	public execute(): void {}
+	public getPosition(): Position {
+		return this.chip.getPinPosition(this.pinIdx, this.pinType);
+	}
+
+	public getColor(): ColorRGBA {
+		return {
+			r: Number(!this.currentValue),
+			g: Number(this.currentValue),
+			b: 0.0,
+			a: 1.0,
+		};
+	}
 }

@@ -248,7 +248,7 @@ export class RenderEngine {
 			colorAttachments: [
 				{
 					view: this.renderTargetView,
-					clearValue: { r: 0, g: 0.5, b: 0.5, a: 1.0 },
+					clearValue: { r: 0.25, g: 0.25, b: 0.25, a: 1.0 },
 					loadOp: "clear",
 					storeOp: "store",
 				},

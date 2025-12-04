@@ -1,8 +1,13 @@
-type RenderableType = "chip" | "wire";
+type RenderableType = "chip" | "wire" | "pin";
 
 export type Position = {
 	x: number;
 	y: number;
+};
+
+export type RectDimensions = {
+	height: number;
+	width: number;
 };
 
 export type ColorRGBA = {
@@ -17,11 +22,15 @@ type BaseRenderable<TRenderable extends RenderableType> = {
 	color: ColorRGBA;
 };
 
-type PinRenderable = { value: boolean };
+export type PinRenderable = BaseRenderable<"pin"> & {
+	value: boolean;
+	position: Position;
+};
 
 export type ChipRenderable = BaseRenderable<"chip"> & {
 	label: string;
 	position: Position;
+	dimensions: RectDimensions;
 	inputPins: PinRenderable[];
 	outputPins: PinRenderable[];
 };

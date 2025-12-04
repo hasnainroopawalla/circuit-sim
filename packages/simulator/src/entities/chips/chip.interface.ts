@@ -1,4 +1,8 @@
-import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
+import type {
+	ColorRGBA,
+	Position,
+	RectDimensions,
+} from "@digital-logic-sim/render-engine";
 import type { PinSpec } from "../pin";
 import type { AtomicChip } from "./atomic-chip";
 import type { InputChip, OutputChip } from "./io-chip";
@@ -12,6 +16,7 @@ export type IOChip = InputChip | OutputChip;
 
 export type ChipRenderSpec = {
 	position: Position;
+	dimensions: RectDimensions;
 	color: ColorRGBA;
 };
 
