@@ -1,3 +1,4 @@
+import type { Position } from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
@@ -67,10 +68,9 @@ export abstract class BaseChip<
 		);
 	}
 
-	/**
-	 * Returns true if any pin's nextValue has changed.
-	 */
-	public abstract execute(): boolean;
+	public setPosition(position: Position): void {
+		this.renderSpec.position = position;
+	}
 
 	private createPins(
 		pinSpec: PinSpec[],
@@ -87,4 +87,9 @@ export abstract class BaseChip<
 				}),
 		);
 	}
+
+	/**
+	 * Returns true if any pin's nextValue has changed.
+	 */
+	public abstract execute(): boolean;
 }

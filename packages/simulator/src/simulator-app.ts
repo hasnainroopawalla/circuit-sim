@@ -122,6 +122,18 @@ export class SimulatorApp {
 			},
 		);
 
+		this.inputManager.onMouseButtonEvent(
+			"leftMouseButton",
+			"press",
+			(event, nature) => {
+				this.layoutManager.onMouseButtonEvent(
+					event,
+					nature,
+					this.getMousePosition(),
+				);
+			},
+		);
+
 		(
 			[
 				{ event: "w", nature: "press" },

@@ -52,26 +52,17 @@ export class SimulationLayer extends BaseLayer {
 		mousePosition: MousePosition,
 		hoveredEntity: Entity | null,
 	): boolean {
-		console.log("Hovered Entity", hoveredEntity);
-
-		if (!hoveredEntity) {
-			return false;
-		}
-
-		if (hoveredEntity.entityType === "pin") {
-			this.sim.emit("wire.spawn", {
-				startPin: hoveredEntity,
-			});
-			return true;
-		}
-
-		if (
-			hoveredEntity.entityType === "chip" &&
-			hoveredEntity.chipType === "io" &&
-			hoveredEntity.ioChipType === "input"
-		) {
-			hoveredEntity.toggle();
-			return true;
+		switch (event) {
+			case "leftMouseButton":
+				switch (nature) {
+					case "click":
+						return this.handleLeftMouseButtonClick(hoveredEntity);
+					case "press":
+						return this.handleLeftMouseButtonPress(
+							hoveredEntity,
+							mousePosition,
+						);
+				}
 		}
 
 		return false;
@@ -97,5 +88,49 @@ export class SimulationLayer extends BaseLayer {
 		nature: ButtonEvent,
 	): boolean {
 		return this.camera.onKeyboardEvent(event, nature);
+	}
+
+	private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
+
+		if (hoveredEntity.entityType === "pin") {
+			this.sim.emit("wire.spawn", {
+				startPin: hoveredEntity,
+			});
+			return true;
+		}
+
+		if (
+			hoveredEntity.entityType === "chip" &&
+			hoveredEntity.chipType === "io" &&
+			hoveredEntity.ioChipType === "input"
+		) {
+			hoveredEntity.toggle();
+			return true;
+		}
+
+		return false;
+	}
+
+	private handleLeftMouseButtonPress(
+		hoveredEntity: Entity | null,
+		mousePosition: MousePosition,
+	): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
+
+		if (
+			hoveredEntity.entityType === "chip" &&
+			hoveredEntity.chipType !== "io"
+		) {
+			// TODO: consider moving to a dedicated tool to render ghost
+			hoveredEntity.setPosition(mousePosition.world);
+			return true;
+		}
+
+		return false;
 	}
 }
