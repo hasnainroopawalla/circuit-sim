@@ -13,6 +13,7 @@ import type {
 	ChipType,
 	Chip,
 } from "./chip.interface";
+import { ChipUtils } from "./chip.utils";
 
 const chipConfig = {
 	aspectRatio: 1.5,
@@ -137,50 +138,14 @@ export abstract class BaseChip<
 	}
 
 	public getPinPosition(pinIdx: number, pinType: PinType): Position {
-		const [numInputPins, numOutputPins] = [
-			this.spec.inputPins.length,
-			this.spec.outputPins.length,
-		];
+		const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(this);
 
-		const [height, width] = [
-			this.renderSpec.dimensions.height,
-			this.renderSpec.dimensions.width,
-		];
+		const pinOffset = pinType === "in" ? inputPinOffset : outputPinOffset;
 
-		const maxPins = Math.max(numInputPins, numOutputPins);
-
-		switch (pinType) {
-			case "in": {
-				const pinOffset = {
-					x: this.renderSpec.position.x + width,
-					y:
-						this.renderSpec.position.y +
-						height -
-						renderEngineConfig.pinSize *
-							(2 + (3 * (maxPins - numInputPins)) / 2),
-				};
-
-				return {
-					x: pinOffset.x,
-					y: pinOffset.y - renderEngineConfig.pinSize * 3 * pinIdx,
-				};
-			}
-			case "out": {
-				const pinOffset = {
-					x: this.renderSpec.position.x - width,
-					y:
-						this.renderSpec.position.y +
-						height -
-						renderEngineConfig.pinSize *
-							(2 + (3 * (maxPins - numOutputPins)) / 2),
-				};
-
-				return {
-					x: pinOffset.x,
-					y: pinOffset.y - renderEngineConfig.pinSize * (3 * pinIdx),
-				};
-			}
-		}
+		return {
+			x: pinOffset.x,
+			y: pinOffset.y - renderEngineConfig.pinSize * 3 * pinIdx,
+		};
 	}
 
 	/**

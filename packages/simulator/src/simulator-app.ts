@@ -77,7 +77,7 @@ export class SimulatorApp {
 		this.inputManager.update(deltaTime);
 		this.camera.update(deltaTime);
 
-		this.layoutManager.hoveredEntity = MeshUtils.getHoveredEntity(
+		this.layoutManager.hoveredEntity = MeshUtils.getHoveredChipEntity(
 			this.getMousePosition().world,
 			this.sim.chipManager.chips,
 		);
