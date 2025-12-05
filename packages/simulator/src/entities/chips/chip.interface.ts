@@ -15,9 +15,12 @@ export type IOChipType = "input" | "output";
 export type IOChip = InputChip | OutputChip;
 
 export type ChipRenderSpec = {
+	color: ColorRGBA;
+};
+
+export type ChipRenderState = {
 	position: Position;
 	dimensions: RectDimensions;
-	color: ColorRGBA;
 };
 
 type BaseChipSpec<TChipType extends ChipType> = {
@@ -32,13 +35,18 @@ type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {
 };
 
 export type InputChipSpec = BaseIOChipSpec<"input"> & {
-	ChipClass: new (spec: InputChipSpec, renderSpec: ChipRenderSpec) => InputChip;
+	ChipClass: new (
+		spec: InputChipSpec,
+		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
+	) => InputChip;
 };
 
 export type OutputChipSpec = BaseIOChipSpec<"output"> & {
 	ChipClass: new (
 		spec: OutputChipSpec,
 		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
 	) => OutputChip;
 };
 
@@ -48,6 +56,7 @@ export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 	ChipClass: new (
 		chipSpec: AtomicChipSpec,
 		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
 	) => AtomicChip;
 };
 

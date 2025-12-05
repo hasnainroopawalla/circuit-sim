@@ -14,17 +14,17 @@ export const MeshUtils = {
 		for (let i = 0; i < chips.length; ++i) {
 			const chip = chips[i];
 			const [height, width] = [
-				chip.renderSpec.dimensions.height,
-				chip.renderSpec.dimensions.width,
+				chip.renderState.dimensions.height,
+				chip.renderState.dimensions.width,
 			];
 
 			const isMouseOverChip =
 				mouseWorldPosition.x >
-					chip.renderSpec.position.x - width - renderEngineConfig.pinSize &&
+					chip.renderState.position.x - width - renderEngineConfig.pinSize &&
 				mouseWorldPosition.x <
-					chip.renderSpec.position.x + width + renderEngineConfig.pinSize &&
-				mouseWorldPosition.y > chip.renderSpec.position.y - height &&
-				mouseWorldPosition.y < chip.renderSpec.position.y + height;
+					chip.renderState.position.x + width + renderEngineConfig.pinSize &&
+				mouseWorldPosition.y > chip.renderState.position.y - height &&
+				mouseWorldPosition.y < chip.renderState.position.y + height;
 
 			if (!isMouseOverChip) {
 				continue;
@@ -45,7 +45,7 @@ export const MeshUtils = {
 
 		const boundingRadiusSq = 2 * renderEngineConfig.pinSize ** 2;
 
-		const isInputSide = mouseWorldPosition.x > chip.renderSpec.position.x;
+		const isInputSide = mouseWorldPosition.x > chip.renderState.position.x;
 
 		const pins = isInputSide ? chip.inputPins : chip.outputPins;
 		const offset = isInputSide ? inputPinOffset : outputPinOffset;

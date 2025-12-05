@@ -37,8 +37,8 @@ export class SpawnChipTool extends Tool {
 			this.chipSpec,
 			{
 				color: { r: 0, g: 1, b: 1, a: 1 },
-				position: mousePosition.world,
 			} /* renderSpec */,
+			mousePosition.world,
 		);
 		this.deactivate();
 	}

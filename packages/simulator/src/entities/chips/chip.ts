@@ -12,6 +12,7 @@ import type {
 	ChipRenderSpec,
 	ChipType,
 	Chip,
+	ChipRenderState,
 } from "./chip.interface";
 import { ChipUtils } from "./chip.utils";
 
@@ -26,13 +27,18 @@ export abstract class BaseChip<
 > extends BaseEntity<"chip"> {
 	public spec: ChipSpecOf<TChipType>;
 	public renderSpec: ChipRenderSpec;
+	public renderState: ChipRenderState;
 
 	public inputPins: Pin[];
 	public outputPins: Pin[];
 
 	public chipType: TChipType;
 
-	constructor(chipSpec: ChipSpecOf<TChipType>, renderSpec: ChipRenderSpec) {
+	constructor(
+		chipSpec: ChipSpecOf<TChipType>,
+		renderSpec: ChipRenderSpec,
+		initalPosition: Position,
+	) {
 		const chipId = entityIdService.generateId();
 
 		super({
@@ -46,9 +52,9 @@ export abstract class BaseChip<
 		this.outputPins = this.createPins(chipSpec.outputPins, "out", chipId);
 
 		this.spec = chipSpec;
-		this.renderSpec = {
-			color: renderSpec.color,
-			position: renderSpec.position,
+		this.renderSpec = renderSpec;
+		this.renderState = {
+			position: initalPosition,
 			dimensions: this.getDimensions(),
 		};
 	}
@@ -82,7 +88,7 @@ export abstract class BaseChip<
 	}
 
 	public setPosition(position: Position): void {
-		this.renderSpec.position = position;
+		this.renderState.position = position;
 	}
 
 	private createPins(
@@ -109,8 +115,8 @@ export abstract class BaseChip<
 		];
 
 		const [height, width] = [
-			this.renderSpec.dimensions.height,
-			this.renderSpec.dimensions.width,
+			this.renderState.dimensions.height,
+			this.renderState.dimensions.width,
 		];
 
 		const maxPins = Math.max(numInputPins, numOutputPins);
@@ -118,18 +124,18 @@ export abstract class BaseChip<
 		switch (pinType) {
 			case "in":
 				return {
-					x: this.renderSpec.position.x + width,
+					x: this.renderState.position.x + width,
 					y:
-						this.renderSpec.position.y +
+						this.renderState.position.y +
 						height -
 						renderEngineConfig.pinSize *
 							(2 + (3 * (maxPins - numInputPins)) / 2),
 				};
 			case "out":
 				return {
-					x: this.renderSpec.position.x - width,
+					x: this.renderState.position.x - width,
 					y:
-						this.renderSpec.position.y +
+						this.renderState.position.y +
 						height -
 						renderEngineConfig.pinSize *
 							(2 + (3 * (maxPins - numOutputPins)) / 2),

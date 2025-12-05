@@ -27,8 +27,8 @@ export class SimulationLayer extends BaseLayer {
 			(chip) => ({
 				type: "chip",
 				color: chip.renderSpec.color,
-				position: chip.renderSpec.position,
-				dimensions: chip.renderSpec.dimensions,
+				position: chip.renderState.position,
+				dimensions: chip.renderState.dimensions,
 				label: chip.spec.name,
 				inputPins: chip.inputPins.map((pin) => ({
 					type: "pin",
@@ -131,7 +131,6 @@ export class SimulationLayer extends BaseLayer {
 		hoveredEntity: Entity | null,
 		mousePosition: MousePosition,
 	): boolean {
-		console.log(hoveredEntity);
 		if (!hoveredEntity) {
 			return false;
 		}

@@ -1,3 +1,4 @@
+import type { Position } from "@digital-logic-sim/render-engine";
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
@@ -21,8 +22,9 @@ export abstract class BaseIOChip<
 	constructor(
 		ioChipSpec: IOChipSpecOf<TIOChipType>,
 		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
 	) {
-		super(ioChipSpec, renderSpec);
+		super(ioChipSpec, renderSpec, initialPosition);
 
 		this.ioChipType = ioChipSpec.ioChipType;
 	}
@@ -35,8 +37,12 @@ export abstract class BaseIOChip<
 export class InputChip extends BaseIOChip<"input"> {
 	private nextValue = false;
 
-	constructor(chipSpec: InputChipSpec, renderSpec: ChipRenderSpec) {
-		super(chipSpec, renderSpec);
+	constructor(
+		chipSpec: InputChipSpec,
+		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
+	) {
+		super(chipSpec, renderSpec, initialPosition);
 	}
 
 	public toggle(): void {
@@ -56,8 +62,12 @@ export class InputChip extends BaseIOChip<"input"> {
 }
 
 export class OutputChip extends BaseIOChip<"output"> {
-	constructor(chipSpec: OutputChipSpec, renderSpec: ChipRenderSpec) {
-		super(chipSpec, renderSpec);
+	constructor(
+		chipSpec: OutputChipSpec,
+		renderSpec: ChipRenderSpec,
+		initialPosition: Position,
+	) {
+		super(chipSpec, renderSpec, initialPosition);
 	}
 
 	public execute(): boolean {
