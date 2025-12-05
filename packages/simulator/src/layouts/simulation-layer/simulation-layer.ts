@@ -30,8 +30,6 @@ export class SimulationLayer extends BaseLayer {
 				position: chip.renderSpec.position,
 				dimensions: chip.renderSpec.dimensions,
 				label: chip.spec.name,
-				// inputPins: chip.inputPins.map((pin) => ({ value: pin.currentValue })),
-				// outputPins: chip.outputPins.map((pin) => ({ value: pin.currentValue })),
 				inputPins: chip.inputPins.map((pin) => ({
 					type: "pin",
 					value: pin.currentValue,
@@ -49,11 +47,10 @@ export class SimulationLayer extends BaseLayer {
 
 		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
 			(wire) => {
-				// console.log(wire.endPin.po)
 				return {
 					type: "wire",
 					color: wire.renderSpec.color,
-					controlPoints: wire.renderSpec.controlPoints,
+					path: wire.getPath(),
 				};
 			},
 		);

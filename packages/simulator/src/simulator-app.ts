@@ -102,49 +102,20 @@ export class SimulatorApp {
 	}
 
 	private registerInputManagerSubscriptions(): void {
-		this.inputManager.onMouseScrollEvent("scrollUp", (event) =>
-			this.layoutManager.onMouseScrollEvent(event),
-		);
+		this.inputManager.onMouseScrollEvent((event) => {
+			this.layoutManager.onMouseScrollEvent(event);
+		});
 
-		this.inputManager.onMouseScrollEvent("scrollDown", (event) =>
-			this.layoutManager.onMouseScrollEvent(event),
-		);
-
-		this.inputManager.onMouseButtonEvent(
-			"leftMouseButton",
-			"click",
-			(event, nature) => {
-				this.layoutManager.onMouseButtonEvent(
-					event,
-					nature,
-					this.getMousePosition(),
-				);
-			},
-		);
-
-		this.inputManager.onMouseButtonEvent(
-			"leftMouseButton",
-			"press",
-			(event, nature) => {
-				this.layoutManager.onMouseButtonEvent(
-					event,
-					nature,
-					this.getMousePosition(),
-				);
-			},
-		);
-
-		(
-			[
-				{ event: "w", nature: "press" },
-				{ event: "a", nature: "press" },
-				{ event: "s", nature: "press" },
-				{ event: "d", nature: "press" },
-			] as const
-		).forEach(({ event, nature }) => {
-			this.inputManager.onKeyboardEvent(event, nature, (event, nature) =>
-				this.layoutManager.onKeyboardEvent(event, nature),
+		this.inputManager.onMouseButtonEvent((event, nature) => {
+			this.layoutManager.onMouseButtonEvent(
+				event,
+				nature,
+				this.getMousePosition(),
 			);
+		});
+
+		this.inputManager.onKeyboardEvent((event, nature) => {
+			this.layoutManager.onKeyboardEvent(event, nature);
 		});
 	}
 

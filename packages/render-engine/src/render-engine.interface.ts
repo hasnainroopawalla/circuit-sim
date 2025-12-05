@@ -36,7 +36,7 @@ export type ChipRenderable = BaseRenderable<"chip"> & {
 };
 
 export type WireRenderable = BaseRenderable<"wire"> & {
-	controlPoints: Position[];
+	path: Position[];
 };
 
 export type Renderable = ChipRenderable | WireRenderable;

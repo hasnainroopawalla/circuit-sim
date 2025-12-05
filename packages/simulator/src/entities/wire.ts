@@ -34,4 +34,12 @@ export class Wire extends BaseEntity<"wire"> {
 		this.startPin = args.startPin;
 		this.endPin = args.endPin;
 	}
+
+	public getPath(): WireRenderSpec["controlPoints"] {
+		return [
+			this.startPin.getPosition(),
+			...this.renderSpec.controlPoints,
+			this.endPin.getPosition(),
+		];
+	}
 }

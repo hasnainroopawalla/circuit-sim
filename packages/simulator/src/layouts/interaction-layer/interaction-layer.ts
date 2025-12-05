@@ -38,15 +38,12 @@ export class InteractionLayer extends BaseLayer {
 			return false;
 		}
 
-		switch (event) {
-			case "leftMouseButton":
-				this.toolManager.onMouseButtonEvent(
-					event,
-					nature,
-					mousePosition,
-					hoveredEntity,
-				);
-		}
+		this.toolManager.onMouseButtonEvent(
+			event,
+			nature,
+			mousePosition,
+			hoveredEntity,
+		);
 
 		return true;
 	}

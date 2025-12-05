@@ -4,7 +4,6 @@ import type { ButtonEvent, MouseButtonType } from "../../../input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";
-import { MeshUtils } from "../../../mesh-utils";
 
 type WiringToolArgs = ToolArgs & {
 	startPin: Pin;
@@ -19,7 +18,7 @@ export class WiringTool extends Tool {
 		super(args);
 
 		this.startPin = args.startPin;
-		this.controlPoints = [MeshUtils.getPinPosition(args.startPin)];
+		this.controlPoints = [];
 	}
 
 	public getRenderables(): Renderable[] {
@@ -27,7 +26,7 @@ export class WiringTool extends Tool {
 			{
 				type: "wire",
 				color: { r: 1, g: 1, b: 0, a: 1 },
-				controlPoints: this.controlPoints,
+				path: [this.startPin.getPosition(), ...this.controlPoints],
 			},
 		];
 	}
@@ -37,6 +36,24 @@ export class WiringTool extends Tool {
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
 		hoveredEntity: Entity | null,
+	): void {
+		switch (event) {
+			case "leftMouseButton":
+				switch (nature) {
+					case "click":
+						this.handleLeftMouseButtonClick(hoveredEntity, mousePosition);
+						break;
+				}
+		}
+	}
+
+	public onPointerMove(event: PointerEvent): void {
+		//TODO: add subscription in input manager
+	}
+
+	private handleLeftMouseButtonClick(
+		hoveredEntity: Entity | null,
+		mousePosition: MousePosition,
 	): void {
 		// add control point
 		if (!hoveredEntity) {
@@ -49,9 +66,6 @@ export class WiringTool extends Tool {
 			return;
 		}
 
-		// append the end pin position to the control points
-		this.controlPoints.push(MeshUtils.getPinPosition(hoveredEntity));
-
 		this.sim.wireManager.spawnWire(
 			{
 				startPinId: this.startPin.id,
@@ -63,9 +77,5 @@ export class WiringTool extends Tool {
 			} /* renderSpec */,
 		);
 		this.deactivate();
-	}
-
-	public onPointerMove(event: PointerEvent): void {
-		//TODO: add subscription in input manager
 	}
 }

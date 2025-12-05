@@ -38,18 +38,29 @@ export class InputManager {
 	}
 
 	public onMouseButtonEvent(
-		event: MouseButtonType,
-		nature: ButtonEvent,
 		callback: InputEventTopic<MouseButtonType>["callback"],
 	): void {
-		this.mouseManager.onButtonHandler(event, nature, callback);
+		(
+			[
+				{ event: "leftMouseButton", nature: "click" },
+				{ event: "leftMouseButton", nature: "press" },
+			] as const
+		).forEach(({ event, nature }) => {
+			this.mouseManager.onButtonHandler(event, nature, callback)
+		});
 	}
 
 	public onMouseScrollEvent(
-		event: MouseScrollType,
 		callback: InputEventTopic<MouseScrollType>["callback"],
 	): void {
-		this.mouseManager.onScrollHandler(event, callback);
+		(
+			[
+				{ event: "scrollUp" },
+				{ event: "scrollDown"},
+			] as const
+		).forEach(({ event }) => {
+			this.mouseManager.onScrollHandler(event, callback);
+		});
 	}
 
 	public onMouseMoveEvent(callback: MouseMoveEventCallback): void {
@@ -57,10 +68,17 @@ export class InputManager {
 	}
 
 	public onKeyboardEvent(
-		event: KeyboardButtonType,
-		nature: ButtonEvent,
 		callback: InputEventTopic<KeyboardButtonType>["callback"],
 	): void {
-		this.keyboardManager.onButtonHandler(event, nature, callback);
+		(
+			[
+				{ event: "w", nature: "press" },
+				{ event: "a", nature: "press" },
+				{ event: "s", nature: "press" },
+				{ event: "d", nature: "press" },
+			] as const
+		).forEach(({ event, nature }) => {
+			this.keyboardManager.onButtonHandler(event, nature, callback);
+		});
 	}
 }

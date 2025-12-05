@@ -24,16 +24,16 @@ export class WireRenderer {
 		);
 
 		const offset = this.getWireControlPoints(wireData).reduce(
-			(offset, controlPoints) => {
-				for (let i = 1; i < controlPoints.length / 2; ++i) {
-					const start = controlPoints.subarray(2 * (i - 1), 2 * i);
+			(offset, path) => {
+				for (let i = 1; i < path.length / 2; ++i) {
+					const start = path.subarray(2 * (i - 1), 2 * i);
 					lineVertexData.set(start, offset + 4 * (i - 1));
 
-					const end = controlPoints.subarray(2 * i, 2 * (i + 1));
+					const end = path.subarray(2 * i, 2 * (i + 1));
 					lineVertexData.set(end, offset + 4 * i - 2);
 				}
 
-				return offset + 2 * controlPoints.length - 4;
+				return offset + 2 * path.length - 4;
 			},
 			0 /* initial value */,
 		);
@@ -93,15 +93,12 @@ export class WireRenderer {
 
 	private getWireControlPoints(wireData: WireRenderable[]): Float32Array[] {
 		return wireData.map((wire) => {
-			const controlPoints = new Float32Array(2 * wire.controlPoints.length);
-			for (let i = 0; i < wire.controlPoints.length; ++i) {
-				controlPoints.set(
-					[wire.controlPoints[i].x, wire.controlPoints[i].y],
-					i * 2,
-				);
+			const path = new Float32Array(2 * wire.path.length);
+			for (let i = 0; i < wire.path.length; ++i) {
+				path.set([wire.path[i].x, wire.path[i].y], i * 2);
 			}
 
-			return controlPoints;
+			return path;
 		});
 	}
 }
