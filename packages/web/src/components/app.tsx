@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SimulatorCanvas } from "./canvas";
+import { SimulatorCanvas, SimulatorOverlayView } from "./simulator-canvas";
 import { Toolbar } from "./toolbar";
 import { StartSimulatorAction } from "./start-simulator-action";
 import type { SimulatorApp } from "@digital-logic-sim/simulator";
@@ -18,15 +18,18 @@ export const App: React.FC = () => {
 	return (
 		<>
 			<SimulatorCanvas canvasRef={canvasRef} onCanvasReady={setCanvas} />
+
 			{canvas && !simulatorApp && (
 				<StartSimulatorAction
 					canvas={canvas}
 					onSimulatorAppStart={setSimulatorApp}
 				/>
 			)}
+
 			{simulatorApp && (
 				<SimulatorAppProvider simulatorApp={simulatorApp}>
 					<Toolbar />
+					<SimulatorOverlayView />
 				</SimulatorAppProvider>
 			)}
 		</>

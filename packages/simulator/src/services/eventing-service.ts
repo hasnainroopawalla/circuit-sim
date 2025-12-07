@@ -1,10 +1,20 @@
-import type { ChipSpec, InputChip } from "../entities/chips";
+import type { Position } from "@digital-logic-sim/render-engine";
+import type { ChipSpec } from "../entities/chips";
 import type { Pin } from "../entities/pin";
 
 export type IEvents = {
 	"chip.spawn": ChipSpec;
 	"wire.spawn": { startPin: Pin };
 	"chip.save": undefined;
+
+	"camera.pan": undefined;
+	"overlay.update": {
+		chipLabels: {
+			id: string;
+			text: string;
+			position: Position;
+		}[];
+	};
 };
 
 export type Unsubscribe = () => void;

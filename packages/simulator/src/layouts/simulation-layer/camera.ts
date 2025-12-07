@@ -4,6 +4,8 @@ import type {
 } from "@digital-logic-sim/render-engine";
 import { mat4, vec3, vec4, type Vec3Arg } from "wgpu-matrix";
 import type { KeyboardButtonType, ButtonEvent } from "../../input-manager";
+import type { Simulator } from "../../simulator";
+import { Chip } from "../../entities/chips";
 
 type VelocityDelta = [number, number, number];
 
@@ -22,9 +24,12 @@ const cameraConfig = {
 
 type CameraArgs = {
 	canvas: HTMLCanvasElement;
+	sim: Simulator;
 };
 
 export class Camera {
+	private sim: Simulator;
+
 	private eye: Float32Array;
 
 	private screenDimensions: {
@@ -35,6 +40,8 @@ export class Camera {
 	private inputVelocity: Float32Array;
 
 	constructor(args: CameraArgs) {
+		this.sim = args.sim;
+
 		this.eye = new Float32Array([0, 0, -5]);
 		this.inputVelocity = new Float32Array([0, 0, 0]);
 
@@ -133,7 +140,7 @@ export class Camera {
 
 	public onKeyboardEvent(
 		event: KeyboardButtonType,
-		nature: ButtonEvent,
+		_nature: ButtonEvent,
 	): boolean {
 		const velocityDelta = cameraConfig.keyToVelocityDeltaMap.get(event);
 
@@ -142,6 +149,9 @@ export class Camera {
 		}
 
 		this.setVelocity(velocityDelta);
+
+		this.sim.emit("camera.pan", undefined);
+
 		return true;
 	}
 
@@ -158,6 +168,31 @@ export class Camera {
 			default:
 				return false;
 		}
+	}
+
+	public computeScreenSpacePosition(chip: Chip): Position {
+		const { width: screenWidth, height: screenHeight } = this.screenDimensions;
+
+		const { x: chipWorldX, y: chipWorldY } = chip.renderState.position;
+
+		// 1. Transform world → clip space
+		const clip = mat4.multiply(
+			this.getViewProjectionMatrix(),
+			vec4.set(chipWorldX, chipWorldY, 0, 1),
+		);
+
+		// 2. Perspective divide (clip → NDC)
+		const ndcX = clip[0] / clip[3];
+		const ndcY = clip[1] / clip[3];
+
+		// 3. NDC → screen space
+		const screenX = (ndcX * 0.5 + 0.5) * screenWidth;
+		const screenY = (-ndcY * 0.5 + 0.5) * screenHeight;
+
+		return {
+			x: screenX,
+			y: screenY,
+		};
 	}
 
 	private setVelocity(velocityDelta: Vec3Arg): void {

@@ -1,7 +1,5 @@
 import * as React from "react";
 
-const CANVAS_ID = "simulator-canvas"; // TODO: move to config
-
 type SimulatorCanvasProps = {
 	onCanvasReady: (canvas: HTMLCanvasElement) => void;
 	canvasRef: React.RefObject<HTMLCanvasElement | null>;
@@ -19,9 +17,9 @@ export const SimulatorCanvas = ({
 
 	return (
 		<canvas
-			className="h-full w-full"
-			id={CANVAS_ID}
+			id="simulator-canvas"
 			ref={canvasRef}
+			className="absolute inset-0 w-full h-full"
 			tabIndex={0} // required for focus
 		/>
 	);

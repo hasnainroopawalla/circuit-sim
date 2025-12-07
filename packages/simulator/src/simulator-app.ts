@@ -37,7 +37,7 @@ export class SimulatorApp {
 
 		this.sim = new Simulator();
 
-		this.camera = new Camera({ canvas: args.canvas });
+		this.camera = new Camera({ canvas: args.canvas, sim: this.sim });
 
 		this.layoutManager = new LayoutManager({
 			sim: this.sim,
@@ -51,6 +51,7 @@ export class SimulatorApp {
 		});
 
 		this.registerInputManagerSubscriptions();
+		this.registerOverlayUpdateEvents();
 	}
 
 	public async start(): Promise<void> {
@@ -116,6 +117,17 @@ export class SimulatorApp {
 
 		this.inputManager.onKeyboardEvent((event, nature) => {
 			this.layoutManager.onKeyboardEvent(event, nature);
+		});
+	}
+
+	private registerOverlayUpdateEvents(): void {
+		this.sim.on("camera.pan", () => {
+			const chipLabels = this.sim.chipManager.chips.map((chip) => ({
+				id: chip.id,
+				text: chip.spec.name,
+				position: this.camera.computeScreenSpacePosition(chip),
+			}));
+			this.sim.emit("overlay.update", { chipLabels });
 		});
 	}
 

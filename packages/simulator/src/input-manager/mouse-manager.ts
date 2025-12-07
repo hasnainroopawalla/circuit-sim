@@ -136,7 +136,7 @@ export class MouseManager {
 				break;
 
 			case "press":
-				this.mouseButtonState[mouseButton].pollCount > 5 &&
+				this.mouseButtonState[mouseButton].pollCount > 2 &&
 					topic.callback(mouseButton, topic.nature);
 				break;
 		}

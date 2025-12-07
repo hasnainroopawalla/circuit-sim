@@ -1,11 +1,13 @@
 import * as React from "react";
 import { render } from "@testing-library/react";
-import { Canvas } from "../src/components/canvas";
+import { SimulatorCanvas } from "../src/components/simulator-canvas";
 
 describe("Canvas component", () => {
 	it("renders a canvas element", () => {
 		const ref = React.createRef<HTMLCanvasElement>();
-		const { container } = render(<Canvas canvasRef={ref} />);
+		const { container } = render(
+			<SimulatorCanvas canvasRef={ref} onCanvasReady={jest.fn()} />,
+		);
 
 		const canvas = container.querySelector("canvas");
 		expect(canvas).toBeInTheDocument();
@@ -14,7 +16,7 @@ describe("Canvas component", () => {
 
 	it("assigns the ref to the canvas element", () => {
 		const ref = React.createRef<HTMLCanvasElement>();
-		render(<Canvas canvasRef={ref} />);
+		render(<SimulatorCanvas canvasRef={ref} onCanvasReady={jest.fn()} />);
 
 		expect(ref.current).toBeInstanceOf(HTMLCanvasElement);
 	});
