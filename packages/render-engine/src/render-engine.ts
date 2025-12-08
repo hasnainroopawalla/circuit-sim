@@ -12,6 +12,7 @@ import { renderEngineConfig } from "./render-engine.config";
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
 import LineShader from "./shaders/line.wgsl?raw";
+import NewLineShader from "./shaders/newLine.wgsl?raw";
 import GridShader from "./shaders/gridShader.wgsl?raw";
 
 // renderers
@@ -188,8 +189,10 @@ export class RenderEngine {
 
 		this.bufferManager.createVertexBuffer();
 		this.bufferManager.createModelSBO();
+		this.bufferManager.createModelSBO();
 
 		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[0]); // TODO: hardcoded to 0?
+		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[1]); // TODO: hardcoded to 1?
 
 		this.pipelineManager.addPipeline({
 			pipelineType: PipelineType.GenericShader,
@@ -206,12 +209,14 @@ export class RenderEngine {
 
 		this.pipelineManager.addPipeline({
 			pipelineType: PipelineType.LineShader,
-			shader: LineShader,
-			bindGroupLayouts: [this.bindGroupManager.cameraBindGroupLayout],
+			shader: NewLineShader,
+			bindGroupLayouts: [
+				this.bindGroupManager.cameraBindGroupLayout,
+				this.bindGroupManager.modelBindGroupLayout],
 			depthTesting: true,
-			vertexLayout: vertexLayout,
+			vertexLayout: undefined,
 			blend: blendState,
-			topology: "line-list",
+			topology: "triangle-list",
 		});
 
 		this.pipelineManager.addPipeline({

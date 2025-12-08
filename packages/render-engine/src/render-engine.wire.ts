@@ -2,6 +2,7 @@ import { PipelineType } from "./pipeline-manager";
 import type { WireRenderable } from "./render-engine.interface";
 import { renderEngineConfig } from "./render-engine.config";
 import type { RenderEngine } from "./render-engine";
+import { mat4, vec3, vec4 } from "wgpu-matrix";
 
 export class WireRenderer {
 	private renderEngine: RenderEngine;
@@ -14,43 +15,85 @@ export class WireRenderer {
 		commandEncoder: GPUCommandEncoder,
 		wires: WireRenderable[],
 	): void {
-		const wireVertexCount = this.uploadWireRenderData(wires);
-		this.wireRenderPass(commandEncoder, wireVertexCount);
+		const wireCount = this.uploadWireRenderData(wires);
+		this.wireRenderPass(commandEncoder, wireCount);
 	}
 
+	//private uploadWireRenderData(wireData: WireRenderable[]): number {
+	//	const lineVertexData = new Float32Array(
+	//		renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize,
+	//	);
+
+	//	const offset = this.getWireControlPoints(wireData).reduce(
+	//		(offset, path) => {
+	//			for (let i = 1; i < path.length / 2; ++i) {
+	//				const start = path.subarray(2 * (i - 1), 2 * i);
+	//				lineVertexData.set(start, offset + 4 * (i - 1));
+
+	//				const end = path.subarray(2 * i, 2 * (i + 1));
+	//				lineVertexData.set(end, offset + 4 * i - 2);
+	//			}
+
+	//			return offset + 2 * path.length - 4;
+	//		},
+	//		0 /* initial value */,
+	//	);
+
+	//	this.renderEngine.view.device.queue.writeBuffer(
+	//		this.renderEngine.view.bufferManager.vertexBuffers[0],
+	//		0 /* bufferOffset */,
+	//		lineVertexData,
+	//		0 /* dataOffset */,
+	//		offset * Float32Array.BYTES_PER_ELEMENT,
+	//	);
+	//	return offset / 2; /* number of wire vertrices */
+	//}
+
 	private uploadWireRenderData(wireData: WireRenderable[]): number {
-		const lineVertexData = new Float32Array(
-			renderEngineConfig.chunkSize * renderEngineConfig.lineDataFloatSize,
+		const lineModelData = new Float32Array(
+			renderEngineConfig.chunkSize * renderEngineConfig.modelFloatSize,
 		);
 
-		const offset = this.getWireControlPoints(wireData).reduce(
-			(offset, path) => {
-				for (let i = 1; i < path.length / 2; ++i) {
-					const start = path.subarray(2 * (i - 1), 2 * i);
-					lineVertexData.set(start, offset + 4 * (i - 1));
-
-					const end = path.subarray(2 * i, 2 * (i + 1));
-					lineVertexData.set(end, offset + 4 * i - 2);
+		const offset = wireData.reduce(
+			(offset, wire) => {
+				for (let i = 1; i < wire.path.length; ++i) {
+					const start = wire.path[(i - 1)];
+					const end = wire.path[i];
+					const wireLength = Math.sqrt(Math.pow((end.x-start.x),2)+Math.pow(end.y-start.y,2));
+					const scaleMat = mat4.scaling(vec3.create(wireLength/2, renderEngineConfig.lineThickness,1));	
+					const lineCenter = vec3.create((end.x+start.x)/2,(end.y+start.y)/2,0);
+					const translateMat = mat4.translation(lineCenter);
+					const colour = vec4.create(1.0,0.0,0.0,1.0); //TODO: Read colour value from wireRenderable
+					let lineAngle =Math.PI/2;
+					if(end.x!=start.x){
+						lineAngle = Math.atan((end.y-start.y)/(end.x-start.x));
+					}				
+					const rotationMat = mat4.rotationZ(lineAngle);
+					let modelMatrix = mat4.multiply(rotationMat,scaleMat);
+					modelMatrix = mat4.multiply(translateMat,modelMatrix);
+					const localOffset = (i-1)*renderEngineConfig.modelFloatSize;
+					lineModelData.set(modelMatrix, offset+localOffset);
+					lineModelData.set(colour, offset+localOffset+renderEngineConfig.matrixFloatSize);
 				}
 
-				return offset + 2 * path.length - 4;
+				return offset + (renderEngineConfig.modelFloatSize*wire.path.length);
 			},
 			0 /* initial value */,
 		);
 
 		this.renderEngine.view.device.queue.writeBuffer(
-			this.renderEngine.view.bufferManager.vertexBuffers[0],
+			this.renderEngine.view.bufferManager.modelSBOs[1],
 			0 /* bufferOffset */,
-			lineVertexData,
+			lineModelData,
 			0 /* dataOffset */,
 			offset * Float32Array.BYTES_PER_ELEMENT,
 		);
-		return offset / 2; /* number of wire vertrices */
+		return offset / renderEngineConfig.modelFloatSize; /* number of wire instances */
 	}
 
 	private wireRenderPass(
 		commandEncoder: GPUCommandEncoder,
-		wireVertexCount: number,
+		wireCount: number,
 	): void {
 		const passEncoder = commandEncoder.beginRenderPass({
 			colorAttachments: [
@@ -83,11 +126,11 @@ export class WireRenderer {
 			0,
 			this.renderEngine.view.bindGroupManager.cameraBindGroup,
 		);
-		passEncoder.setVertexBuffer(
-			0,
-			this.renderEngine.view.bufferManager.vertexBuffers[0],
+		passEncoder.setBindGroup(
+			1,
+			this.renderEngine.view.bindGroupManager.modelBindGroups[1],
 		);
-		passEncoder.draw(wireVertexCount, 1, 0, 0);
+		passEncoder.draw(6, wireCount, 0, 0);
 		passEncoder.end();
 	}
 
