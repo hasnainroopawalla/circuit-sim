@@ -213,7 +213,7 @@ export class RenderEngine {
 			bindGroupLayouts: [
 				this.bindGroupManager.cameraBindGroupLayout,
 				this.bindGroupManager.modelBindGroupLayout],
-			depthTesting: true,
+			depthTesting: false,
 			vertexLayout: undefined,
 			blend: blendState,
 			topology: "triangle-list",
