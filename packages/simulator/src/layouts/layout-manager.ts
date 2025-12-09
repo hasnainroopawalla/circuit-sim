@@ -7,7 +7,7 @@ import type {
 	ButtonEvent,
 	MouseScrollType,
 	KeyboardButtonType,
-} from "../input-manager";
+} from "../managers/input-manager";
 import type { MousePosition } from "../types";
 import type { Entity } from "../entities/entity";
 

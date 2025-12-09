@@ -110,6 +110,9 @@ export class RenderEngine {
 		this.wireRenderer.render(commandEncoder, wires);
 
 		this.device.queue.submit([commandEncoder.finish()]);
+		// const t0 = performance.now();
+		// await this.device.queue.onSubmittedWorkDone();
+		// console.log("GPU time:", performance.now() - t0);
 	}
 
 	public async onResize(width: number, height: number): Promise<void> {
@@ -162,13 +165,6 @@ export class RenderEngine {
 			this.bufferManager.createCameraBuffer(),
 		);
 
-		const vertexLayout: GPUVertexBufferLayout[] = [
-			{
-				arrayStride: 2 * 4,
-				attributes: [{ shaderLocation: 0, offset: 0, format: "float32x2" }],
-			},
-		];
-
 		this.depthTexture = this.device.createTexture({
 			size: [
 				this.gpuCanvasContext.canvas.width,
@@ -212,7 +208,8 @@ export class RenderEngine {
 			shader: NewLineShader,
 			bindGroupLayouts: [
 				this.bindGroupManager.cameraBindGroupLayout,
-				this.bindGroupManager.modelBindGroupLayout],
+				this.bindGroupManager.modelBindGroupLayout,
+			],
 			depthTesting: false,
 			vertexLayout: undefined,
 			blend: blendState,

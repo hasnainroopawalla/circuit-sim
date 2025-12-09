@@ -1,11 +1,11 @@
 import * as React from "react";
 
-export const useEffectOnce = (callback: () => () => void) => {
+export const useEffectOnce = (callback: () => () => void, predicate = true) => {
 	const hasRun = React.useRef(false);
 	const dispose = React.useRef(() => {});
 
 	React.useEffect(() => {
-		if (hasRun.current) {
+		if (hasRun.current && predicate) {
 			return;
 		}
 
@@ -13,7 +13,7 @@ export const useEffectOnce = (callback: () => () => void) => {
 		hasRun.current = true;
 
 		return () => dispose.current();
-	}, [callback]);
+	}, [callback, predicate]);
 };
 
 export const useStateRef = <T,>(initial: T) => {

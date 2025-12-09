@@ -9,7 +9,7 @@ import {
 	mouseButtonMap,
 	MouseButton,
 } from "./input-manager.interface";
-import { ObjectKeys } from "../utils";
+import { ObjectKeys } from "../../utils";
 
 export class MouseManager {
 	private scrollDirection: "up" | "down" | null;
@@ -170,8 +170,8 @@ export class MouseManager {
 		if (!this.isMouseEventAllowed(event)) {
 			return;
 		}
-		this.mouseButtonState[mouseButtonMap[event.button]].isDown = false;
 		this.mouseButtonState[mouseButtonMap[event.button]].pollCount = 0;
+		this.mouseButtonState[mouseButtonMap[event.button]].isDown = false;
 	}
 
 	private isMouseEventAllowed(event: MouseEvent): boolean {

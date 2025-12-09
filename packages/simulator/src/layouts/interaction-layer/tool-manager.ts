@@ -1,7 +1,10 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { SpawnChipTool, WiringTool, type Tool } from "./tools";
 import type { Simulator } from "../../simulator";
-import type { ButtonEvent, MouseButtonType } from "../../input-manager";
+import type {
+	ButtonEvent,
+	MouseButtonType,
+} from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 

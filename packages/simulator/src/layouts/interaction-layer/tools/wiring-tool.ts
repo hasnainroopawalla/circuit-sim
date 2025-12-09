@@ -1,6 +1,9 @@
 import type { Position, Renderable } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import type { ButtonEvent, MouseButtonType } from "../../../input-manager";
+import type {
+	ButtonEvent,
+	MouseButtonType,
+} from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";

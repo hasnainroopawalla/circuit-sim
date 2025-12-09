@@ -1,7 +1,6 @@
 import type { Position } from "@digital-logic-sim/render-engine";
 import type {
 	MouseButtonType,
-	ButtonEvent,
 	MouseScrollType,
 	KeyboardButtonType,
 	InputEventTopic,
@@ -46,21 +45,18 @@ export class InputManager {
 				{ event: "leftMouseButton", nature: "press" },
 			] as const
 		).forEach(({ event, nature }) => {
-			this.mouseManager.onButtonHandler(event, nature, callback)
+			this.mouseManager.onButtonHandler(event, nature, callback);
 		});
 	}
 
 	public onMouseScrollEvent(
 		callback: InputEventTopic<MouseScrollType>["callback"],
 	): void {
-		(
-			[
-				{ event: "scrollUp" },
-				{ event: "scrollDown"},
-			] as const
-		).forEach(({ event }) => {
-			this.mouseManager.onScrollHandler(event, callback);
-		});
+		([{ event: "scrollUp" }, { event: "scrollDown" }] as const).forEach(
+			({ event }) => {
+				this.mouseManager.onScrollHandler(event, callback);
+			},
+		);
 	}
 
 	public onMouseMoveEvent(callback: MouseMoveEventCallback): void {

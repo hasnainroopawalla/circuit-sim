@@ -1,11 +1,15 @@
 import { RenderEngine } from "@digital-logic-sim/render-engine";
 import { Simulator } from "./simulator";
-import { LayoutManager } from "./layouts/layout-manager";
 import { Camera } from "./layouts/simulation-layer";
 import { Clock } from "./clock";
-import { InputManager } from "./input-manager";
+
 import { MeshUtils } from "./mesh-utils";
 import type { MousePosition } from "./types";
+
+// managers
+import { LayoutManager } from "./layouts/layout-manager";
+import { OverlayManager } from "./managers/overlay-manager";
+import { InputManager } from "./managers/input-manager";
 
 type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
@@ -19,8 +23,9 @@ export class SimulatorApp {
 
 	private layoutManager: LayoutManager;
 	private inputManager: InputManager;
+	public overlayManager: OverlayManager;
 
-	private camera: Camera;
+	public camera: Camera; // TODO should not be public
 
 	private animationId: number | null = null;
 
@@ -46,12 +51,16 @@ export class SimulatorApp {
 			screenWidth: args.canvas.width,
 		});
 
+		this.overlayManager = new OverlayManager({
+			sim: this.sim,
+			camera: this.camera,
+		});
+
 		this.renderEngineInitPromise = this.renderEngine.initialize().then(() => {
 			this.registerCanvasResizeObserver(args.canvas);
 		});
 
 		this.registerInputManagerSubscriptions();
-		this.registerOverlayUpdateEvents();
 	}
 
 	public async start(): Promise<void> {
@@ -76,7 +85,10 @@ export class SimulatorApp {
 		this.sim.update();
 
 		this.inputManager.update(deltaTime);
+
 		this.camera.update(deltaTime);
+
+		this.overlayManager.update();
 
 		this.layoutManager.hoveredEntity = MeshUtils.getHoveredChipEntity(
 			this.getMousePosition().world,
@@ -117,17 +129,6 @@ export class SimulatorApp {
 
 		this.inputManager.onKeyboardEvent((event, nature) => {
 			this.layoutManager.onKeyboardEvent(event, nature);
-		});
-	}
-
-	private registerOverlayUpdateEvents(): void {
-		this.sim.on("camera.pan", () => {
-			const chipLabels = this.sim.chipManager.chips.map((chip) => ({
-				id: chip.id,
-				text: chip.spec.name,
-				position: this.camera.computeScreenSpacePosition(chip),
-			}));
-			this.sim.emit("overlay.update", { chipLabels });
 		});
 	}
 

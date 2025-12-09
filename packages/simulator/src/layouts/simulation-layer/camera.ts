@@ -3,9 +3,11 @@ import type {
 	Position,
 } from "@digital-logic-sim/render-engine";
 import { mat4, vec3, vec4, type Vec3Arg } from "wgpu-matrix";
-import type { KeyboardButtonType, ButtonEvent } from "../../input-manager";
+import type {
+	KeyboardButtonType,
+	ButtonEvent,
+} from "../../managers/input-manager";
 import type { Simulator } from "../../simulator";
-import { Chip } from "../../entities/chips";
 
 type VelocityDelta = [number, number, number];
 
@@ -150,8 +152,6 @@ export class Camera {
 
 		this.setVelocity(velocityDelta);
 
-		this.sim.emit("camera.pan", undefined);
-
 		return true;
 	}
 
@@ -170,10 +170,10 @@ export class Camera {
 		}
 	}
 
-	public computeScreenSpacePosition(chip: Chip): Position {
+	public computeScreenSpacePosition(chipWorldPosition: Position): Position {
 		const { width: screenWidth, height: screenHeight } = this.screenDimensions;
 
-		const { x: chipWorldX, y: chipWorldY } = chip.renderState.position;
+		const { x: chipWorldX, y: chipWorldY } = chipWorldPosition;
 
 		// 1. Transform world → clip space
 		const clip = mat4.multiply(

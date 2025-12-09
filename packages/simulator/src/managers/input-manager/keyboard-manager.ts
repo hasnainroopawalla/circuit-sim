@@ -1,4 +1,4 @@
-import { ObjectKeys } from "../utils";
+import { ObjectKeys } from "../../utils";
 import {
 	type ButtonEvent,
 	type InputEventTopic,
@@ -82,8 +82,10 @@ export class KeyboardManager {
 		if (!this.isKeyEventAllowed(event)) {
 			return;
 		}
-		this.keyboardButtonState[event.key as KeyboardButtonType].pollCount = 0;
-		this.keyboardButtonState[event.key as KeyboardButtonType].isDown = true;
+		if (!this.keyboardButtonState[event.key as KeyboardButtonType].isDown) {
+			this.keyboardButtonState[event.key as KeyboardButtonType].pollCount = 0;
+			this.keyboardButtonState[event.key as KeyboardButtonType].isDown = true;
+		}
 	}
 
 	private keyUpEventHandler(event: KeyboardEvent): void {

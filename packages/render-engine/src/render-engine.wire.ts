@@ -54,32 +54,40 @@ export class WireRenderer {
 			renderEngineConfig.chunkSize * renderEngineConfig.modelFloatSize,
 		);
 
-		const offset = wireData.reduce(
-			(offset, wire) => {
-				for (let i = 1; i < wire.path.length; ++i) {
-					const start = wire.path[(i - 1)];
-					const end = wire.path[i];
-					const wireLength = Math.sqrt(Math.pow((end.x-start.x),2)+Math.pow(end.y-start.y,2));
-					const scaleMat = mat4.scaling(vec3.create(wireLength/2, renderEngineConfig.lineThickness,1));	
-					const lineCenter = vec3.create((end.x+start.x)/2,(end.y+start.y)/2,0);
-					const translateMat = mat4.translation(lineCenter);
-					const colour = vec4.create(1.0,0.0,0.0,1.0); //TODO: Read colour value from wireRenderable
-					let lineAngle =Math.PI/2;
-					if(end.x!=start.x){
-						lineAngle = Math.atan((end.y-start.y)/(end.x-start.x));
-					}				
-					const rotationMat = mat4.rotationZ(lineAngle);
-					let modelMatrix = mat4.multiply(rotationMat,scaleMat);
-					modelMatrix = mat4.multiply(translateMat,modelMatrix);
-					const localOffset = (i-1)*renderEngineConfig.modelFloatSize;
-					lineModelData.set(modelMatrix, offset+localOffset);
-					lineModelData.set(colour, offset+localOffset+renderEngineConfig.matrixFloatSize);
+		const offset = wireData.reduce((offset, wire) => {
+			for (let i = 1; i < wire.path.length; ++i) {
+				const start = wire.path[i - 1];
+				const end = wire.path[i];
+				const wireLength = Math.sqrt(
+					Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2),
+				);
+				const scaleMat = mat4.scaling(
+					vec3.create(wireLength / 2, renderEngineConfig.lineThickness, 1),
+				);
+				const lineCenter = vec3.create(
+					(end.x + start.x) / 2,
+					(end.y + start.y) / 2,
+					0,
+				);
+				const translateMat = mat4.translation(lineCenter);
+				const colour = vec4.create(1.0, 0.0, 0.0, 1.0); //TODO: Read colour value from wireRenderable
+				let lineAngle = Math.PI / 2;
+				if (end.x !== start.x) {
+					lineAngle = Math.atan((end.y - start.y) / (end.x - start.x));
 				}
+				const rotationMat = mat4.rotationZ(lineAngle);
+				let modelMatrix = mat4.multiply(rotationMat, scaleMat);
+				modelMatrix = mat4.multiply(translateMat, modelMatrix);
+				const localOffset = (i - 1) * renderEngineConfig.modelFloatSize;
+				lineModelData.set(modelMatrix, offset + localOffset);
+				lineModelData.set(
+					colour,
+					offset + localOffset + renderEngineConfig.matrixFloatSize,
+				);
+			}
 
-				return offset + (renderEngineConfig.modelFloatSize*wire.path.length);
-			},
-			0 /* initial value */,
-		);
+			return offset + renderEngineConfig.modelFloatSize * wire.path.length;
+		}, 0 /* initial value */);
 
 		this.renderEngine.view.device.queue.writeBuffer(
 			this.renderEngine.view.bufferManager.modelSBOs[1],
@@ -88,7 +96,9 @@ export class WireRenderer {
 			0 /* dataOffset */,
 			offset * Float32Array.BYTES_PER_ELEMENT,
 		);
-		return offset / renderEngineConfig.modelFloatSize; /* number of wire instances */
+		return (
+			offset / renderEngineConfig.modelFloatSize
+		); /* number of wire instances */
 	}
 
 	private wireRenderPass(
