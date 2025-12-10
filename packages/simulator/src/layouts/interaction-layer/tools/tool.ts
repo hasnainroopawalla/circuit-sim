@@ -6,8 +6,13 @@ import type {
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
+import type { MousePositionService } from "../../../services/mouse-position-service";
 
-export type ToolArgs = { sim: Simulator; deactivate: () => void };
+export type ToolArgs = {
+	sim: Simulator;
+	deactivate: () => void;
+	mousePositionService: MousePositionService;
+};
 
 export abstract class Tool {
 	protected readonly sim: ToolArgs["sim"];

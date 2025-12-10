@@ -1,6 +1,5 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
-import type { Camera } from "./camera";
 import type {
 	ButtonEvent,
 	KeyboardButtonType,
@@ -10,6 +9,7 @@ import type {
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 import { LayoutUtils } from "../layout.utils";
+import type { Camera } from "../../camera";
 
 type SimulationLayerArgs = BaseLayerArgs & {
 	camera: Camera;

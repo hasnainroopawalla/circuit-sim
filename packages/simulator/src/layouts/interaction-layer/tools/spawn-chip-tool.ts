@@ -18,9 +18,8 @@ type SpawnChipToolArgs = ToolArgs & {
 };
 
 export class SpawnChipTool extends Tool {
-	private readonly chipSpec: ChipSpec;
+	private chipSpec: ChipSpec;
 
-	// TODO: ghost chip not required for right-click based spawn
 	private ghostChip: GhostChip;
 
 	constructor(args: SpawnChipToolArgs) {
@@ -29,7 +28,7 @@ export class SpawnChipTool extends Tool {
 		this.chipSpec = args.chipSpec;
 		this.ghostChip = new GhostChip(args.chipSpec, {
 			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
-			position: { x: 10, y: 10 },
+			position: args.mousePositionService.getMousePosition().world,
 		});
 	}
 
@@ -38,7 +37,7 @@ export class SpawnChipTool extends Tool {
 			return [];
 		}
 
-		return [this.createGhostRenderable()];
+		return [this.createGhostChipRenderable()];
 	}
 
 	public onMouseButtonEvent(
@@ -58,12 +57,13 @@ export class SpawnChipTool extends Tool {
 
 	public onMouseMoveEvent(
 		mousePosition: MousePosition,
-		hoveredEntity: Entity | null,
+		_hoveredEntity: Entity | null,
 	): void {
+		console.log(mousePosition.world)
 		this.ghostChip.setPosition(mousePosition.world);
 	}
 
-	private createGhostRenderable(): ChipRenderable {
+	private createGhostChipRenderable(): ChipRenderable {
 		const createPinRenderable = (
 			numPins: number,
 			pinType: PinType,

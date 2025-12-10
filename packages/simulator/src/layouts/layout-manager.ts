@@ -1,6 +1,6 @@
 import { InteractionLayer } from "./interaction-layer";
 import type { BaseLayer, BaseLayerArgs } from "./base-layer";
-import { type Camera, SimulationLayer } from "./simulation-layer";
+import { SimulationLayer } from "./simulation-layer";
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import type {
 	MouseButtonType,
@@ -10,9 +10,12 @@ import type {
 } from "../managers/input-manager";
 import type { MousePosition } from "../types";
 import type { Entity } from "../entities/entity";
+import type { Camera } from "../camera";
+import type { MousePositionService } from "../services/mouse-position-service";
 
 type LayoutManagerArgs = BaseLayerArgs & {
 	camera: Camera;
+	mousePositionService: MousePositionService;
 	screenWidth: number;
 	screenHeight: number;
 };
@@ -26,7 +29,10 @@ export class LayoutManager {
 
 		this.layers = [
 			// layer 1
-			new InteractionLayer(args),
+			new InteractionLayer({
+				...args,
+				mousePositionService: args.mousePositionService,
+			}),
 			// layer 0
 			new SimulationLayer({
 				...args,

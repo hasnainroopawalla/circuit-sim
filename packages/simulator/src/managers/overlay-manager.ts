@@ -1,4 +1,4 @@
-import type { Camera } from "../layouts/simulation-layer";
+import type { Camera } from "../camera";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 

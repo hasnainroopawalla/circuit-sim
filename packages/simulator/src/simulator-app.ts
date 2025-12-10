@@ -1,15 +1,16 @@
 import { RenderEngine } from "@digital-logic-sim/render-engine";
 import { Simulator } from "./simulator";
-import { Camera } from "./layouts/simulation-layer";
 import { Clock } from "./clock";
-
+import { Camera } from "./camera";
 import { MeshUtils } from "./mesh-utils";
-import type { MousePosition } from "./types";
 
 // managers
 import { LayoutManager } from "./layouts/layout-manager";
 import { OverlayManager } from "./managers/overlay-manager";
 import { InputManager } from "./managers/input-manager";
+
+// services
+import { MousePositionService } from "./services/mouse-position-service";
 
 type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
@@ -25,7 +26,9 @@ export class SimulatorApp {
 	private inputManager: InputManager;
 	public overlayManager: OverlayManager;
 
-	public camera: Camera; // TODO should not be public
+	public mousePositionService: MousePositionService;
+
+	private camera: Camera;
 
 	private animationId: number | null = null;
 
@@ -44,9 +47,16 @@ export class SimulatorApp {
 
 		this.camera = new Camera({ canvas: args.canvas, sim: this.sim });
 
+		this.mousePositionService = new MousePositionService({
+			sim: this.sim,
+			camera: this.camera,
+			inputManager: this.inputManager,
+		});
+
 		this.layoutManager = new LayoutManager({
 			sim: this.sim,
 			camera: this.camera,
+			mousePositionService: this.mousePositionService,
 			screenHeight: args.canvas.height,
 			screenWidth: args.canvas.width,
 		});
@@ -91,7 +101,7 @@ export class SimulatorApp {
 		this.overlayManager.update();
 
 		this.layoutManager.hoveredEntity = MeshUtils.getHoveredChipEntity(
-			this.getMousePosition().world,
+			this.mousePositionService.getMousePosition().world,
 			this.sim.chipManager.chips,
 		);
 
@@ -123,12 +133,14 @@ export class SimulatorApp {
 			this.layoutManager.onMouseButtonEvent(
 				event,
 				nature,
-				this.getMousePosition(),
+				this.mousePositionService.getMousePosition(),
 			);
 		});
 
 		this.inputManager.onMouseMoveEvent(() => {
-			this.layoutManager.onMouseMoveEvent(this.getMousePosition());
+			this.layoutManager.onMouseMoveEvent(
+				this.mousePositionService.getMousePosition(),
+			);
 		});
 
 		this.inputManager.onKeyboardEvent((event, nature) => {
@@ -143,14 +155,5 @@ export class SimulatorApp {
 			await this.renderEngine.onResize(width, height);
 			this.camera.onResize(width, height);
 		});
-	}
-
-	private getMousePosition(): MousePosition {
-		const screenSpaceMousePosition = this.inputManager.getMousePosition();
-
-		return {
-			screen: screenSpaceMousePosition,
-			world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
-		};
 	}
 }

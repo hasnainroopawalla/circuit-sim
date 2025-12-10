@@ -58,7 +58,7 @@ export class ChipLayoutFactory implements ChipLayout {
 		}
 	}
 
-	public getPinPosition(pinIdx: number, pinType: PinType) {
+	public getPinPosition(pinIdx: number, pinType: PinType): Position {
 		const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
 			this.chip.spec,
 			this.chip.renderState.position,

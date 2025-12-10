@@ -9,12 +9,18 @@ import type {
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
+import type { MousePositionService } from "../../services/mouse-position-service";
+
+type InteractionLayerArgs = BaseLayerArgs & {
+	mousePositionService: MousePositionService;
+};
 
 export class InteractionLayer extends BaseLayer {
 	private readonly toolManager: ToolManager;
 
-	constructor(args: BaseLayerArgs) {
+	constructor(args: InteractionLayerArgs) {
 		super(args);
+
 		this.toolManager = new ToolManager(args);
 	}
 
