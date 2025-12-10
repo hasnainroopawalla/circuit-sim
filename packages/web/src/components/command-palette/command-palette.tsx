@@ -41,8 +41,8 @@ export const CommandPalette = (props: CommandPaletteProps) => {
 	}
 
 	return (
-		<div className="fixed inset-0 z-50 flex items-start justify-center bg-black/60 backdrop-blur-sm pt-24">
-			<div className="w-full max-w-md rounded-xl bg-neutral-900/80 backdrop-blur-xl shadow-2xl ring-1 ring-white/10">
+		<div className="fixed inset-0 z-50 flex items-start justify-center bg-black/20 backdrop-blur-sm pt-24">
+			<div className="w-full max-w-md rounded-xl bg-neutral-900/80 backdrop-blur-xl shadow-md ring-1 ring-white/10">
 				<input
 					autoFocus
 					value={query}
