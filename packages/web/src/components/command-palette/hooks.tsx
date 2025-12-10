@@ -2,22 +2,22 @@ import * as React from "react";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import type { CommandPaletteProps, Command } from "./command-palette";
 
-export const useShortcut = ({ open, setIsOpen }: CommandPaletteProps) => {
+export const useShortcut = ({ onClose }: CommandPaletteProps) => {
 	React.useEffect(() => {
 		const handler = (e: KeyboardEvent) => {
-			if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-				e.preventDefault();
-				setIsOpen(!open);
-			}
+			// if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+			// 	e.preventDefault();
+			// 	setIsOpen(!open);
+			// }
 			if (e.key === "Escape") {
-				setIsOpen(false);
+				onClose();
 			}
 		};
 
 		window.addEventListener("keydown", handler);
 
 		return () => window.removeEventListener("keydown", handler);
-	}, [open, setIsOpen]);
+	}, [onClose]);
 };
 
 export const useCommands = (): Command[] => {

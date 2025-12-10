@@ -7,6 +7,7 @@ import { Tool, type ToolArgs } from "./tool";
 import { type ChipSpec, GhostChip } from "../../../entities/chips";
 import type {
 	ButtonEvent,
+	KeyboardButtonType,
 	MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
@@ -28,7 +29,7 @@ export class SpawnChipTool extends Tool {
 		this.chipSpec = args.chipSpec;
 		this.ghostChip = new GhostChip(args.chipSpec, {
 			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
-			position: args.mousePositionService.getMousePosition().world,
+			position: {x: 0, y: 1.5},
 		});
 	}
 
@@ -59,8 +60,18 @@ export class SpawnChipTool extends Tool {
 		mousePosition: MousePosition,
 		_hoveredEntity: Entity | null,
 	): void {
-		console.log(mousePosition.world)
 		this.ghostChip.setPosition(mousePosition.world);
+	}
+
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		_nature: ButtonEvent,
+	): void {
+		switch(event){
+			case "Escape":
+				this.deactivate();
+				break
+		}
 	}
 
 	private createGhostChipRenderable(): ChipRenderable {

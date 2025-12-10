@@ -3,6 +3,7 @@ import type { Simulator } from "../../../simulator";
 import type {
 	MouseButtonType,
 	ButtonEvent,
+	KeyboardButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
@@ -22,6 +23,11 @@ export abstract class Tool {
 		this.sim = args.sim;
 		this.deactivate = args.deactivate;
 	}
+
+	public abstract onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): void;
 
 	public abstract getRenderables(): Renderable[];
 

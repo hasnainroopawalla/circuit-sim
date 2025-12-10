@@ -3,6 +3,7 @@ import { SpawnChipTool, WiringTool, type Tool } from "./tools";
 import type { Simulator } from "../../simulator";
 import type {
 	ButtonEvent,
+	KeyboardButtonType,
 	MouseButtonType,
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
@@ -57,6 +58,13 @@ export class ToolManager {
 		return !!this.activeTool?.onMouseMoveEvent(mousePosition, hoveredEntity);
 	}
 
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean {
+		return !!this.activeTool?.onKeyboardEvent(event, nature);
+	}
+
 	private setActiveTool<
 		T extends Tool,
 		Args extends {
@@ -71,8 +79,6 @@ export class ToolManager {
 		if (this.activeTool) {
 			return;
 		}
-
-		console.log(args);
 
 		this.activeTool = new Tool({
 			...args,

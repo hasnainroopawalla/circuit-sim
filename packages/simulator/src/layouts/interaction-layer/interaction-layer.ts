@@ -69,6 +69,6 @@ export class InteractionLayer extends BaseLayer {
 		event: KeyboardButtonType,
 		nature: ButtonEvent,
 	): boolean {
-		return false;
+		return this.toolManager.onKeyboardEvent(event, nature);
 	}
 }

@@ -8,21 +8,21 @@ export type Command = {
 };
 
 export type CommandPaletteProps = {
-	open: boolean;
-	setIsOpen: (open: boolean) => void;
+	isOpen: boolean;
+	onClose: () => void;
 };
 
 export const CommandPalette = (props: CommandPaletteProps) => {
-	const { open, setIsOpen } = props;
+	const { isOpen, onClose } = props;
 
 	const [query, setQuery] = React.useState("");
 
 	// clear the search field before rendering
 	React.useEffect(() => {
-		if (open) {
+		if (isOpen) {
 			setQuery("");
 		}
-	}, [open]);
+	}, [isOpen]);
 
 	useShortcut(props);
 
@@ -36,7 +36,7 @@ export const CommandPalette = (props: CommandPaletteProps) => {
 		[query, commands],
 	);
 
-	if (!open) {
+	if (!isOpen) {
 		return null;
 	}
 
@@ -59,11 +59,7 @@ export const CommandPalette = (props: CommandPaletteProps) => {
 					)}
 
 					{filtered.map((command) => (
-						<CommandItem
-							key={command.id}
-							command={command}
-							onClick={() => setIsOpen(false)}
-						/>
+						<CommandItem key={command.id} command={command} onClick={onClose} />
 					))}
 				</ul>
 			</div>

@@ -18,6 +18,11 @@ export const App: React.FC = () => {
 
 	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = React.useState(false);
 
+	const onCloseCommandPalette = React.useCallback(() => {
+		setIsCommandPaletteOpen(false);
+		canvasRef.current?.focus();
+	}, [canvasRef]);
+
 	return (
 		<>
 			<SimulatorCanvas canvasRef={canvasRef} onCanvasReady={setCanvas} />
@@ -36,8 +41,8 @@ export const App: React.FC = () => {
 						onSettingsButtonClick={() => {}}
 					/>
 					<CommandPalette
-						open={isCommandPaletteOpen}
-						setIsOpen={setIsCommandPaletteOpen}
+						isOpen={isCommandPaletteOpen}
+						onClose={onCloseCommandPalette}
 					/>
 					<SimulatorOverlayView />
 				</SimulatorAppProvider>

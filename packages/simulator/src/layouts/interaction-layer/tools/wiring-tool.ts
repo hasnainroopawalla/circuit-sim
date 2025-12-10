@@ -2,6 +2,7 @@ import type { Position, Renderable } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import type {
 	ButtonEvent,
+	KeyboardButtonType,
 	MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
@@ -51,6 +52,17 @@ export class WiringTool extends Tool {
 	}
 
 	public onMouseMoveEvent(mousePosition: MousePosition): void {}
+
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		_nature: ButtonEvent,
+	): void {
+		switch (event) {
+			case "Escape":
+				this.deactivate();
+				break;
+		}
+	}
 
 	private handleLeftMouseButtonClick(
 		hoveredEntity: Entity | null,

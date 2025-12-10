@@ -72,6 +72,7 @@ export class InputManager {
 				{ event: "a", nature: "press" },
 				{ event: "s", nature: "press" },
 				{ event: "d", nature: "press" },
+				{ event: "Escape", nature: "press" },
 			] as const
 		).forEach(({ event, nature }) => {
 			this.keyboardManager.onButtonHandler(event, nature, callback);

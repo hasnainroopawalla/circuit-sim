@@ -18,7 +18,7 @@ export type InputManagerState<TInputType extends InputType> = Record<
 	}
 >;
 
-export const KeyboardButton = ["w", "a", "s", "d", "g"] as const;
+export const KeyboardButton = ["w", "a", "s", "d", "g", "Escape"] as const;
 export type KeyboardButtonType = ArrayToUnion<typeof KeyboardButton>;
 
 export const MouseButton = [
