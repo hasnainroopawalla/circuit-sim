@@ -20,7 +20,10 @@ export abstract class Tool {
 
 	public abstract getRenderables(): Renderable[];
 
-	public abstract onPointerMove(event: PointerEvent): void;
+	public abstract onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): void;
 
 	public abstract onMouseButtonEvent(
 		event: MouseButtonType,

@@ -50,9 +50,7 @@ export class WiringTool extends Tool {
 		}
 	}
 
-	public onPointerMove(event: PointerEvent): void {
-		//TODO: add subscription in input manager
-	}
+	public onMouseMoveEvent(mousePosition: MousePosition): void {}
 
 	private handleLeftMouseButtonClick(
 		hoveredEntity: Entity | null,
@@ -77,7 +75,7 @@ export class WiringTool extends Tool {
 			{
 				color: { r: 0, g: 1, b: 0, a: 1 },
 				controlPoints: this.controlPoints,
-			} /* renderSpec */,
+			} /* init params */,
 		);
 		this.deactivate();
 	}

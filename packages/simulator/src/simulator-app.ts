@@ -127,6 +127,10 @@ export class SimulatorApp {
 			);
 		});
 
+		this.inputManager.onMouseMoveEvent(() => {
+			this.layoutManager.onMouseMoveEvent(this.getMousePosition());
+		});
+
 		this.inputManager.onKeyboardEvent((event, nature) => {
 			this.layoutManager.onKeyboardEvent(event, nature);
 		});

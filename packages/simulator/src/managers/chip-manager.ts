@@ -1,8 +1,7 @@
-import type { Position } from "@digital-logic-sim/render-engine";
 import {
 	type Chip,
 	type ChipSpec,
-	type ChipRenderSpec,
+	type ChipInitParams,
 	type IOChipSpec,
 	type IOChip,
 	CompositeChip,
@@ -32,22 +31,18 @@ export class ChipManager extends BaseManager {
 		return didAnyChange(this.chips, (chip) => chip.commitPinValues());
 	}
 
-	public spawnChip(
-		chipSpec: ChipSpec,
-		renderSpec: ChipRenderSpec,
-		initialPosition: Position,
-	): void {
+	public spawnChip(chipSpec: ChipSpec, chipInitParams: ChipInitParams): void {
 		let chip: Chip;
 
 		switch (chipSpec.chipType) {
 			case "io":
-				chip = this.createIOChip(chipSpec, renderSpec, initialPosition);
+				chip = this.createIOChip(chipSpec, chipInitParams);
 				break;
 			case "atomic":
-				chip = new chipSpec.ChipClass(chipSpec, renderSpec, initialPosition);
+				chip = new chipSpec.ChipClass(chipSpec, chipInitParams);
 				break;
 			case "composite":
-				chip = new CompositeChip(chipSpec, renderSpec, initialPosition);
+				chip = new CompositeChip(chipSpec, chipInitParams);
 				break;
 		}
 
@@ -60,14 +55,13 @@ export class ChipManager extends BaseManager {
 
 	private createIOChip(
 		chipSpec: IOChipSpec,
-		renderSpec: ChipRenderSpec,
-		initialPosition: Position,
+		chipInitParams: ChipInitParams,
 	): IOChip {
 		switch (chipSpec.ioChipType) {
 			case "input":
-				return new chipSpec.ChipClass(chipSpec, renderSpec, initialPosition);
+				return new chipSpec.ChipClass(chipSpec, chipInitParams);
 			case "output":
-				return new chipSpec.ChipClass(chipSpec, renderSpec, initialPosition);
+				return new chipSpec.ChipClass(chipSpec, chipInitParams);
 		}
 	}
 }

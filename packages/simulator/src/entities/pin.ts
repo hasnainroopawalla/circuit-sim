@@ -32,7 +32,6 @@ export class Pin extends BaseEntity<"pin"> {
 		});
 
 		this.spec = args.spec;
-		// this.renderSpec =
 
 		this.chip = args.chip;
 
@@ -52,7 +51,12 @@ export class Pin extends BaseEntity<"pin"> {
 	}
 
 	public getPosition(): Position {
-		return this.chip.getPinPosition(this.pinIdx, this.pinType);
+		// TODO: This can just be a util?
+		return this.chip.layout.getPinPosition(
+			this.pinIdx,
+			this.pinType,
+			this.chip.renderState.position,
+		);
 	}
 
 	public getColor(): ColorRGBA {

@@ -8,18 +8,21 @@ export type WireSpec = {
 	endPinId: string;
 };
 
-export type WireRenderSpec = { color: ColorRGBA; controlPoints: Position[] };
+export type WireInitParams = { color: ColorRGBA; controlPoints: Position[] };
+
+type WireRenderState = WireInitParams;
 
 export class Wire extends BaseEntity<"wire"> {
 	public spec: WireSpec;
-	public renderSpec: WireRenderSpec;
+
+	public renderState: WireRenderState;
 
 	public startPin: Pin;
 	public endPin: Pin;
 
 	constructor(args: {
 		spec: WireSpec;
-		renderSpec: WireRenderSpec;
+		wireInitParams: WireInitParams;
 		startPin: Pin;
 		endPin: Pin;
 	}) {
@@ -29,16 +32,20 @@ export class Wire extends BaseEntity<"wire"> {
 		});
 
 		this.spec = args.spec;
-		this.renderSpec = args.renderSpec;
+
+		this.renderState = {
+			color: args.wireInitParams.color,
+			controlPoints: args.wireInitParams.controlPoints,
+		};
 
 		this.startPin = args.startPin;
 		this.endPin = args.endPin;
 	}
 
-	public getPath(): WireRenderSpec["controlPoints"] {
+	public getPath(): WireInitParams["controlPoints"] {
 		return [
 			this.startPin.getPosition(),
-			...this.renderSpec.controlPoints,
+			...this.renderState.controlPoints,
 			this.endPin.getPosition(),
 		];
 	}

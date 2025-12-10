@@ -22,7 +22,10 @@ export abstract class BaseLayer {
 
 	public abstract getRenderables(): Renderable[];
 
-	public abstract onPointerMove(event: PointerEvent): boolean;
+	public abstract onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean;
 
 	public abstract onMouseButtonEvent(
 		event: MouseButtonType,

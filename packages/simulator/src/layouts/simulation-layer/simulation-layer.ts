@@ -9,6 +9,7 @@ import type {
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
+import { LayoutUtils } from "../layout.utils";
 
 type SimulationLayerArgs = BaseLayerArgs & {
 	camera: Camera;
@@ -24,32 +25,14 @@ export class SimulationLayer extends BaseLayer {
 
 	public getRenderables(): Renderable[] {
 		const chipRenderables: Renderable[] = this.sim.chipManager.chips.map(
-			(chip) => ({
-				type: "chip",
-				color: chip.renderSpec.color,
-				position: chip.renderState.position,
-				dimensions: chip.renderState.dimensions,
-				label: chip.spec.name,
-				inputPins: chip.inputPins.map((pin) => ({
-					type: "pin",
-					value: pin.currentValue,
-					position: pin.getPosition(),
-					color: pin.getColor(),
-				})),
-				outputPins: chip.outputPins.map((pin) => ({
-					type: "pin",
-					value: pin.currentValue,
-					position: pin.getPosition(),
-					color: pin.getColor(),
-				})),
-			}),
+			(chip) => LayoutUtils.chipToRenderable(chip),
 		);
 
 		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
 			(wire) => {
 				return {
 					type: "wire",
-					color: wire.renderSpec.color,
+					color: wire.renderState.color,
 					path: wire.getPath(),
 				};
 			},
@@ -92,7 +75,7 @@ export class SimulationLayer extends BaseLayer {
 		}
 	}
 
-	public onPointerMove(event: PointerEvent): boolean {
+	public onMouseMoveEvent(_mousePosition: MousePosition): boolean {
 		return false;
 	}
 

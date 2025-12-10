@@ -47,8 +47,11 @@ export class ToolManager {
 		);
 	}
 
-	public onPointerMove(event: PointerEvent): boolean {
-		return !!this.activeTool?.onPointerMove(event);
+	public onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean {
+		return !!this.activeTool?.onMouseMoveEvent(mousePosition, hoveredEntity);
 	}
 
 	private setActiveTool<

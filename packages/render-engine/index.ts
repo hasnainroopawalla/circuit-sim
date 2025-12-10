@@ -1,3 +1,3 @@
 export { RenderEngine } from "./src/render-engine"
-export type { Renderable, CameraProjectionData, ColorRGBA, Position, RectDimensions } from "./src/render-engine.interface";
+export type { Renderable, ChipRenderable, PinRenderable, CameraProjectionData, ColorRGBA, Position, RectDimensions } from "./src/render-engine.interface";
 export { renderEngineConfig } from "./src/render-engine.config"

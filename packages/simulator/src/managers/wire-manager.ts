@@ -1,5 +1,5 @@
 import type { Pin, PinType } from "../entities/pin";
-import { Wire, type WireRenderSpec, type WireSpec } from "../entities/wire";
+import { Wire, type WireInitParams, type WireSpec } from "../entities/wire";
 import { entityIdService } from "../entity-id-service";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
@@ -25,7 +25,7 @@ export class WireManager extends BaseManager {
 		});
 	}
 
-	public spawnWire(wireSpec: WireSpec, renderSpec: WireRenderSpec): void {
+	public spawnWire(wireSpec: WireSpec, wireInitParams: WireInitParams): void {
 		const startPin = this.getPin(wireSpec.startPinId);
 		const endPin = this.getPin(wireSpec.endPinId);
 
@@ -33,7 +33,7 @@ export class WireManager extends BaseManager {
 			throw new Error("SpawnWire error: start/end pin does not exist");
 		}
 
-		const wire = new Wire({ spec: wireSpec, renderSpec, startPin, endPin });
+		const wire = new Wire({ spec: wireSpec, wireInitParams, startPin, endPin });
 
 		this.wires.push(wire);
 	}

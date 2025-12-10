@@ -1,33 +1,36 @@
-import { renderEngineConfig } from "@digital-logic-sim/render-engine";
-import type { Chip } from "./chip.interface";
+import {
+	type Position,
+	type RectDimensions,
+	renderEngineConfig,
+} from "@digital-logic-sim/render-engine";
+import type { ChipSpec } from "./chip.interface";
 
 export const ChipUtils = {
-	getPinOffsets: (chip: Pick<Chip, "renderSpec" | "spec" | "renderState">) => {
+	getPinOffsets: (
+		chipSpec: ChipSpec,
+		position: Position,
+		dimensions: RectDimensions,
+	) => {
 		const [numInputPins, numOutputPins] = [
-			chip.spec.inputPins.length,
-			chip.spec.outputPins.length,
-		];
-
-		const [height, width] = [
-			chip.renderState.dimensions.height,
-			chip.renderState.dimensions.width,
+			chipSpec.inputPins.length,
+			chipSpec.outputPins.length,
 		];
 
 		const maxPins = Math.max(numInputPins, numOutputPins);
 
 		return {
 			inputPinOffset: {
-				x: chip.renderState.position.x + width,
+				x: position.x + dimensions.width,
 				y:
-					chip.renderState.position.y +
-					height -
+					position.y +
+					dimensions.height -
 					renderEngineConfig.pinSize * (2 + (3 * (maxPins - numInputPins)) / 2),
 			},
 			outputPinOffset: {
-				x: chip.renderState.position.x - width,
+				x: position.x - dimensions.width,
 				y:
-					chip.renderState.position.y +
-					height -
+					position.y +
+					dimensions.height -
 					renderEngineConfig.pinSize *
 						(2 + (3 * (maxPins - numOutputPins)) / 2),
 			},

@@ -1,11 +1,17 @@
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import type {
+	ChipRenderable,
+	Renderable,
+	PinRenderable,
+} from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import type { ChipSpec } from "../../../entities/chips";
+import { type ChipSpec, GhostChip } from "../../../entities/chips";
 import type {
 	ButtonEvent,
 	MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
+import type { Entity } from "../../../entities/entity";
+import type { PinType } from "../../../entities/pin";
 
 type SpawnChipToolArgs = ToolArgs & {
 	chipSpec: ChipSpec;
@@ -15,12 +21,16 @@ export class SpawnChipTool extends Tool {
 	private readonly chipSpec: ChipSpec;
 
 	// TODO: ghost chip not required for right-click based spawn
-	private readonly ghostChip: Renderable | null = null;
+	private ghostChip: GhostChip;
 
 	constructor(args: SpawnChipToolArgs) {
 		super(args);
 
 		this.chipSpec = args.chipSpec;
+		this.ghostChip = new GhostChip(args.chipSpec, {
+			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
+			position: { x: 10, y: 10 },
+		});
 	}
 
 	public getRenderables(): Renderable[] {
@@ -28,7 +38,7 @@ export class SpawnChipTool extends Tool {
 			return [];
 		}
 
-		return [this.ghostChip];
+		return [this.createGhostRenderable()];
 	}
 
 	public onMouseButtonEvent(
@@ -40,13 +50,43 @@ export class SpawnChipTool extends Tool {
 			this.chipSpec,
 			{
 				color: { r: 0, g: 0, b: 0.5, a: 1 },
-			} /* renderSpec */,
-			mousePosition.world,
+				position: mousePosition.world,
+			} /* init params */,
 		);
 		this.deactivate();
 	}
 
-	public onPointerMove(event: PointerEvent): void {
-		// TODO: update ghost chip position
+	public onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): void {
+		this.ghostChip.setPosition(mousePosition.world);
+	}
+
+	private createGhostRenderable(): ChipRenderable {
+		const createPinRenderable = (
+			numPins: number,
+			pinType: PinType,
+		): PinRenderable[] =>
+			Array.from({ length: numPins }, (_, idx) => ({
+				type: "pin",
+				value: false,
+				position: this.ghostChip.layout.getPinPosition(
+					idx,
+					pinType,
+					this.ghostChip.renderState.position,
+				),
+				color: { r: 0.59, g: 0.59, b: 0.59, a: 0.7 },
+			}));
+
+		return {
+			type: "chip",
+			color: this.ghostChip.renderState.color,
+			position: this.ghostChip.renderState.position,
+			dimensions: this.ghostChip.layout.dimensions,
+			label: this.chipSpec.name,
+			inputPins: createPinRenderable(this.chipSpec.inputPins.length, "in"),
+			outputPins: createPinRenderable(this.chipSpec.outputPins.length, "out"),
+		};
 	}
 }

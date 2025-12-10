@@ -1,24 +1,15 @@
-import type { Position } from "@digital-logic-sim/render-engine";
 import { BaseChip } from "./chip";
-import type { AtomicChipSpec, ChipRenderSpec } from "./chip.interface";
+import type { AtomicChipSpec, ChipInitParams } from "./chip.interface";
 
 export abstract class AtomicChip extends BaseChip<"atomic"> {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		renderSpec: ChipRenderSpec,
-		initialPosition: Position,
-	) {
-		super(chipSpec, renderSpec, initialPosition);
+	constructor(chipSpec: AtomicChipSpec, chipInitParams: ChipInitParams) {
+		super(chipSpec, chipInitParams);
 	}
 }
 
 export class AndChip extends AtomicChip {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		renderSpec: ChipRenderSpec,
-		initialPosition: Position,
-	) {
-		super(chipSpec, renderSpec, initialPosition);
+	constructor(chipSpec: AtomicChipSpec, chipInitParams: ChipInitParams) {
+		super(chipSpec, chipInitParams);
 	}
 
 	public execute(): boolean {
@@ -29,12 +20,8 @@ export class AndChip extends AtomicChip {
 }
 
 export class NotChip extends AtomicChip {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		renderSpec: ChipRenderSpec,
-		initialPosition: Position,
-	) {
-		super(chipSpec, renderSpec, initialPosition);
+	constructor(chipSpec: AtomicChipSpec, chipInitParams: ChipInitParams) {
+		super(chipSpec, chipInitParams);
 	}
 
 	public execute(): boolean {

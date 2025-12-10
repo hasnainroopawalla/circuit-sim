@@ -48,8 +48,11 @@ export class InteractionLayer extends BaseLayer {
 		return true;
 	}
 
-	public onPointerMove(event: PointerEvent): boolean {
-		return this.toolManager.onPointerMove(event);
+	public onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean {
+		return this.toolManager.onMouseMoveEvent(mousePosition, hoveredEntity);
 	}
 
 	public onMouseScrollEvent(event: MouseScrollType): boolean {

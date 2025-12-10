@@ -54,6 +54,12 @@ export class LayoutManager {
 		);
 	}
 
+	public onMouseMoveEvent(mousePosition: MousePosition): void {
+		this.layers.some((layer) =>
+			layer.onMouseMoveEvent(mousePosition, this._hoveredEntity),
+		);
+	}
+
 	public onMouseScrollEvent(event: MouseScrollType): void {
 		this.layers.some((layer) => layer.onMouseScrollEvent(event));
 	}
