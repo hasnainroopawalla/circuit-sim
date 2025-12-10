@@ -5,6 +5,7 @@ import { StartSimulatorAction } from "./start-simulator-action";
 import type { SimulatorApp } from "@digital-logic-sim/simulator";
 import { SimulatorAppProvider } from "../contexts/simulator-app-context";
 import { useStateRef } from "../utils";
+import { CommandPalette } from "./command-palette";
 
 export const App: React.FC = () => {
 	const [simulatorApp, setSimulatorApp] = React.useState<SimulatorApp | null>(
@@ -14,6 +15,8 @@ export const App: React.FC = () => {
 	const [canvas, setCanvas, canvasRef] = useStateRef<HTMLCanvasElement | null>(
 		null,
 	);
+
+	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = React.useState(false);
 
 	return (
 		<>
@@ -28,7 +31,14 @@ export const App: React.FC = () => {
 
 			{simulatorApp && (
 				<SimulatorAppProvider simulatorApp={simulatorApp}>
-					<Toolbar />
+					<Toolbar
+						onMenuButtonClick={() => setIsCommandPaletteOpen(true)}
+						onSettingsButtonClick={() => {}}
+					/>
+					<CommandPalette
+						open={isCommandPaletteOpen}
+						setIsOpen={setIsCommandPaletteOpen}
+					/>
 					<SimulatorOverlayView />
 				</SimulatorAppProvider>
 			)}

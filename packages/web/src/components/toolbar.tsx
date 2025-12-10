@@ -1,43 +1,36 @@
-import * as React from "react";
-import { useSimulatorApp } from "../contexts/simulator-app-context";
-import type { ChipSpec, SimulatorApp } from "@digital-logic-sim/simulator";
+import type * as React from "react";
 
-export const Toolbar: React.FC = () => {
-	const simulatorApp = useSimulatorApp();
+type FloatingBarProps = {
+	onMenuButtonClick: () => void;
+	onSettingsButtonClick: () => void;
+};
 
+export const Toolbar = ({
+	onMenuButtonClick,
+	onSettingsButtonClick,
+}: FloatingBarProps) => {
 	return (
-		<div className="absolute bottom-0 left-0 m-1 flex flex-row gap-2">
-			{simulatorApp.sim.chipLibraryService.getAll().map((chipSpec) => (
-				<ToolbarItem
-					key={chipSpec.name}
-					chipSpec={chipSpec}
-					simulatorApp={simulatorApp}
-				/>
-			))}
+		<div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
+			<div className="flex items-center gap-1 rounded-xl bg-black/40 px-2 py-2 backdrop-blur-md shadow-lg">
+				<ToolbarItem text="Menu" onClick={onMenuButtonClick} />
+				<ToolbarItem text="Settings" onClick={onSettingsButtonClick} />
+			</div>
 		</div>
 	);
 };
 
 type ToolbarItemProps = {
-	chipSpec: ChipSpec;
-	simulatorApp: Pick<SimulatorApp, "sim">;
+	text: string;
+	onClick: () => void;
 };
 
-const ToolbarItem: React.FC<ToolbarItemProps> = ({
-	chipSpec,
-	simulatorApp,
-}) => {
-	const onClick = React.useCallback(
-		(e: React.MouseEvent<HTMLDivElement>) => {
-			e.preventDefault();
-			simulatorApp.sim.emit("chip.spawn", chipSpec);
-		},
-		[simulatorApp, chipSpec],
-	);
-
+const ToolbarItem: React.FC<ToolbarItemProps> = ({ text, onClick }) => {
 	return (
-		<div className="bg-amber-500 p-0.5" onMouseDown={onClick}>
-			{chipSpec.name}
-		</div>
+		<button
+			onClick={onClick}
+			className="cursor-pointer rounded-md px-4 py-1.5 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"
+		>
+			{text}
+		</button>
 	);
 };

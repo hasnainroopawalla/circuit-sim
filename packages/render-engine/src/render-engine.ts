@@ -11,7 +11,6 @@ import { renderEngineConfig } from "./render-engine.config";
 
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
-import LineShader from "./shaders/line.wgsl?raw";
 import NewLineShader from "./shaders/newLine.wgsl?raw";
 import GridShader from "./shaders/gridShader.wgsl?raw";
 
