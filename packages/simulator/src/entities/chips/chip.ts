@@ -45,9 +45,9 @@ export abstract class BaseChip<
 			position: chipInitParams.position,
 		};
 
-		this.layout = ChipLayoutFactory.create(chipSpec);
-
 		this.spec = chipSpec;
+
+		this.layout = new ChipLayoutFactory(this);
 	}
 
 	public getPin(pinType: PinType, index: number): Pin | undefined {

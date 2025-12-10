@@ -68,14 +68,10 @@ export class SpawnChipTool extends Tool {
 			numPins: number,
 			pinType: PinType,
 		): PinRenderable[] =>
-			Array.from({ length: numPins }, (_, idx) => ({
+			Array.from({ length: numPins }, (_, pinIdx) => ({
 				type: "pin",
 				value: false,
-				position: this.ghostChip.layout.getPinPosition(
-					idx,
-					pinType,
-					this.ghostChip.renderState.position,
-				),
+				position: this.ghostChip.layout.getPinPosition(pinIdx, pinType),
 				color: { r: 0.59, g: 0.59, b: 0.59, a: 0.7 },
 			}));
 

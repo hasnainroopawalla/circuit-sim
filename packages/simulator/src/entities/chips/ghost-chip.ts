@@ -7,12 +7,15 @@ import type {
 } from "./chip.interface";
 
 export class GhostChip {
+	public spec: ChipSpec;
 	public layout: ChipLayout;
 	public renderState: ChipRenderState;
 
 	constructor(chipSpec: ChipSpec, chipInitParams: ChipInitParams) {
-		this.layout = ChipLayoutFactory.create(chipSpec);
+		this.spec = chipSpec;
 		this.renderState = chipInitParams;
+
+		this.layout = new ChipLayoutFactory(this);
 	}
 
 	public setPosition(position: Position): void {
