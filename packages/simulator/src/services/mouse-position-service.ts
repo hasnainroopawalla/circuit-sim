@@ -24,7 +24,7 @@ export class MousePositionService extends BaseService {
 
 		return {
 			screen: screenSpaceMousePosition,
-			world: this.camera.getMouseWorldPosition(screenSpaceMousePosition),
+			world: this.camera.toWorldPosition(screenSpaceMousePosition),
 		};
 	}
 }

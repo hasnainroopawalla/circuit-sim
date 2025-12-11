@@ -11,9 +11,7 @@ import type { Entity } from "../../entities/entity";
 import { LayoutUtils } from "../layout.utils";
 import type { Camera } from "../../camera";
 
-type SimulationLayerArgs = BaseLayerArgs & {
-	camera: Camera;
-};
+type SimulationLayerArgs = BaseLayerArgs;
 
 export class SimulationLayer extends BaseLayer {
 	private camera: Camera;

@@ -9,18 +9,24 @@ import type {
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 import type { MousePositionService } from "../../services/mouse-position-service";
+import type { Camera } from "../../camera";
+
+type ToolManagerArgs = {
+	sim: Simulator;
+	camera: Camera;
+	mousePositionService: MousePositionService;
+};
 
 export class ToolManager {
 	private sim: Simulator;
+	private camera: Camera;
 	private mousePositionService: MousePositionService;
 
 	private activeTool: Tool | null = null;
 
-	constructor(args: {
-		sim: Simulator;
-		mousePositionService: MousePositionService;
-	}) {
+	constructor(args: ToolManagerArgs) {
 		this.sim = args.sim;
+		this.camera = args.camera;
 		this.mousePositionService = args.mousePositionService;
 
 		this.registerSubscriptions();
@@ -69,12 +75,13 @@ export class ToolManager {
 		T extends Tool,
 		Args extends {
 			sim: Simulator;
+			camera: Camera;
 			deactivate: () => void;
 			mousePositionService: MousePositionService;
 		},
 	>(
 		Tool: new (args: Args) => T,
-		args: Omit<Args, "sim" | "deactivate" | "mousePositionService">,
+		args: Omit<Args, "sim" | "deactivate" | "mousePositionService" | "camera">,
 	): void {
 		if (this.activeTool) {
 			return;
@@ -84,6 +91,7 @@ export class ToolManager {
 			...args,
 			mousePositionService: this.mousePositionService,
 			sim: this.sim,
+			camera: this.camera,
 			deactivate: () => this.clearActiveTool(),
 		} as Args);
 	}

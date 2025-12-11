@@ -31,7 +31,7 @@ export class Camera {
 
 	private eye: Float32Array;
 
-	private screenDimensions: {
+	public screenDimensions: {
 		height: number;
 		width: number;
 	};
@@ -103,12 +103,12 @@ export class Camera {
 		return mat4.inverse(viewProjectionMatrix ?? this.getViewProjectionMatrix());
 	}
 
-	public getMouseWorldPosition(screenSpaceMousePosition: Position): Position {
+	public toWorldPosition(screenSpacePosition: Position): Position {
 		const { height: screenHeight, width: screenWidth } = this.screenDimensions;
 
 		const normalizedPosition = {
-			x: (2 * (screenSpaceMousePosition.x - screenWidth / 2)) / screenWidth,
-			y: (2 * (-screenSpaceMousePosition.y + screenHeight / 2)) / screenHeight,
+			x: (2 * (screenSpacePosition.x - screenWidth / 2)) / screenWidth,
+			y: (2 * (-screenSpacePosition.y + screenHeight / 2)) / screenHeight,
 		};
 		const worldPosition = mat4.multiply(
 			this.getViewProjectionInvMatrix(),
@@ -130,6 +130,31 @@ export class Camera {
 		return {
 			x: zScale * dir[0] + normWorldPosition[0],
 			y: zScale * dir[1] + normWorldPosition[1],
+		};
+	}
+
+	public toScreenSpacePosition(chipWorldPosition: Position): Position {
+		const { width: screenWidth, height: screenHeight } = this.screenDimensions;
+
+		const { x: chipWorldX, y: chipWorldY } = chipWorldPosition;
+
+		// 1. Transform world → clip space
+		const clip = mat4.multiply(
+			this.getViewProjectionMatrix(),
+			vec4.set(chipWorldX, chipWorldY, 0, 1),
+		);
+
+		// 2. Perspective divide (clip → NDC)
+		const ndcX = clip[0] / clip[3];
+		const ndcY = clip[1] / clip[3];
+
+		// 3. NDC → screen space
+		const screenX = (ndcX * 0.5 + 0.5) * screenWidth;
+		const screenY = (-ndcY * 0.5 + 0.5) * screenHeight;
+
+		return {
+			x: screenX,
+			y: screenY,
 		};
 	}
 
@@ -165,31 +190,6 @@ export class Camera {
 			default:
 				return false;
 		}
-	}
-
-	public toScreenSpacePosition(chipWorldPosition: Position): Position {
-		const { width: screenWidth, height: screenHeight } = this.screenDimensions;
-
-		const { x: chipWorldX, y: chipWorldY } = chipWorldPosition;
-
-		// 1. Transform world → clip space
-		const clip = mat4.multiply(
-			this.getViewProjectionMatrix(),
-			vec4.set(chipWorldX, chipWorldY, 0, 1),
-		);
-
-		// 2. Perspective divide (clip → NDC)
-		const ndcX = clip[0] / clip[3];
-		const ndcY = clip[1] / clip[3];
-
-		// 3. NDC → screen space
-		const screenX = (ndcX * 0.5 + 0.5) * screenWidth;
-		const screenY = (-ndcY * 0.5 + 0.5) * screenHeight;
-
-		return {
-			x: screenX,
-			y: screenY,
-		};
 	}
 
 	private setVelocity(velocityDelta: Vec3Arg): void {

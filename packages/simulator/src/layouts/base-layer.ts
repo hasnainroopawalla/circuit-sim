@@ -8,9 +8,11 @@ import type {
 } from "../managers/input-manager";
 import type { MousePosition } from "../types";
 import type { Entity } from "../entities/entity";
+import type { Camera } from "../camera";
 
 export type BaseLayerArgs = {
 	sim: Simulator;
+	camera: Camera;
 };
 
 export abstract class BaseLayer {
