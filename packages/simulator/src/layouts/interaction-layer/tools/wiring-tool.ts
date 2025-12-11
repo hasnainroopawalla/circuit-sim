@@ -18,10 +18,13 @@ export class WiringTool extends Tool {
 
 	private controlPoints: Position[];
 
+	private currentMousePosition: Position;
+
 	constructor(args: WiringToolArgs) {
 		super(args);
 
 		this.startPin = args.startPin;
+		this.currentMousePosition = args.startPin.getPosition();
 		this.controlPoints = [];
 	}
 
@@ -30,7 +33,11 @@ export class WiringTool extends Tool {
 			{
 				type: "wire",
 				color: { r: 1, g: 1, b: 0, a: 1 },
-				path: [this.startPin.getPosition(), ...this.controlPoints],
+				path: [
+					this.startPin.getPosition(),
+					...this.controlPoints,
+					this.currentMousePosition,
+				],
 			},
 		];
 	}
@@ -51,7 +58,9 @@ export class WiringTool extends Tool {
 		}
 	}
 
-	public onMouseMoveEvent(mousePosition: MousePosition): void {}
+	public onMouseMoveEvent(mousePosition: MousePosition): void {
+		this.currentMousePosition = mousePosition.world;
+	}
 
 	public onKeyboardEvent(
 		event: KeyboardButtonType,
