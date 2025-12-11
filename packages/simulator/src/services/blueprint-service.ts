@@ -15,9 +15,6 @@ export class BlueprintService extends BaseService {
 	private saveChipAsBlueprint(): void {
 		console.log("SAVING");
 		this.sim.chipManager.chips.forEach((chip) => {
-			if (chip.spec.type !== "io") {
-				return;
-			}
 			console.log(
 				"CHIP:",
 				chip.spec.name,

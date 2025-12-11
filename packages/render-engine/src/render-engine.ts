@@ -8,6 +8,7 @@ import type {
 	CameraProjectionData,
 } from "./render-engine.interface";
 import { renderEngineConfig } from "./render-engine.config";
+import { initWebGpu } from "./webgpu";
 
 // shaders
 import Shader from "./shaders/shader.wgsl?raw";
@@ -53,12 +54,7 @@ export class RenderEngine {
 		}
 
 		try {
-			const adapter = await navigator.gpu.requestAdapter();
-			if (!adapter) {
-				throw new Error("No appropriate GPUAdapter found");
-			}
-
-			this.device = await adapter.requestDevice();
+			this.device = await initWebGpu();
 
 			console.log("Device created!");
 

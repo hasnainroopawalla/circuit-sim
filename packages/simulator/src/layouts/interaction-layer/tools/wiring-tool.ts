@@ -16,9 +16,9 @@ type WiringToolArgs = ToolArgs & {
 export class WiringTool extends Tool {
 	private startPin: Pin;
 
-	private controlPoints: Position[];
-
 	private currentMousePosition: Position;
+
+	private controlPoints: Position[];
 
 	constructor(args: WiringToolArgs) {
 		super(args);

@@ -1,6 +1,7 @@
 import {
 	type ChipSpec,
 	AndChip,
+	OrChip,
 	NotChip,
 	InputChip,
 	OutputChip,
@@ -8,7 +9,7 @@ import {
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
-export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
+const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 	{
 		name: "INPUT",
 		chipType: "io",
@@ -31,6 +32,13 @@ export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
 		inputPins: [{ name: "and in 0" }, { name: "and in 1" }],
 		outputPins: [{ name: "and out 0" }],
 		ChipClass: AndChip,
+	},
+	{
+		name: "OR",
+		chipType: "atomic",
+		inputPins: [{ name: "or in 0" }, { name: "or in 1" }],
+		outputPins: [{ name: "or out 0" }],
+		ChipClass: OrChip,
 	},
 	{
 		name: "NOT",
