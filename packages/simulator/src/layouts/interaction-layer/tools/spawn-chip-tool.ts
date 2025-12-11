@@ -47,16 +47,18 @@ export class SpawnChipTool extends Tool {
 	public onMouseButtonEvent(
 		event: MouseButtonType,
 		nature: ButtonEvent,
-		mousePosition: MousePosition,
+		_mousePosition: MousePosition,
 	): void {
-		this.sim.chipManager.spawnChip(
-			this.chipSpec,
-			{
-				color: { r: 0, g: 0, b: 0.5, a: 1 },
-				position: mousePosition.world,
-			} /* init params */,
-		);
-		this.deactivate();
+		switch (event) {
+			case "leftMouseButton": {
+				switch (nature) {
+					case "click": {
+						this.handleLeftMouseButtonClick();
+						break;
+					}
+				}
+			}
+		}
 	}
 
 	public onMouseMoveEvent(
@@ -98,5 +100,16 @@ export class SpawnChipTool extends Tool {
 			inputPins: createPinRenderable(this.chipSpec.inputPins.length, "in"),
 			outputPins: createPinRenderable(this.chipSpec.outputPins.length, "out"),
 		};
+	}
+
+	private handleLeftMouseButtonClick(): void {
+		this.sim.chipManager.spawnChip(
+			this.chipSpec,
+			{
+				color: { r: 0, g: 0, b: 0.5, a: 1 },
+				position: this.ghostChip.renderState.position,
+			} /* init params */,
+		);
+		this.deactivate();
 	}
 }
