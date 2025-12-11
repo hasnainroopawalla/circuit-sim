@@ -39,6 +39,8 @@ export const App: React.FC = () => {
 					<Toolbar
 						onMenuButtonClick={() => setIsCommandPaletteOpen(true)}
 						onSettingsButtonClick={() => {}}
+						onNewChipClick={() => {}}
+						onSaveChipClick={() => {}}
 					/>
 					<CommandPalette
 						isOpen={isCommandPaletteOpen}

@@ -57,13 +57,12 @@ export class SimulatorApp {
 			sim: this.sim,
 			camera: this.camera,
 			mousePositionService: this.mousePositionService,
-			screenHeight: args.canvas.height,
-			screenWidth: args.canvas.width,
 		});
 
 		this.overlayManager = new OverlayManager({
 			sim: this.sim,
 			camera: this.camera,
+			canvas: args.canvas,
 		});
 
 		this.renderEngineInitPromise = this.renderEngine.initialize().then(() => {

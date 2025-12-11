@@ -30,7 +30,7 @@ export const MeshUtils = {
 				continue;
 			}
 
-			const pin = MeshUtils.getPinUnderMouse(chip, mouseWorldPosition);
+			const pin = getPinUnderMouse(chip, mouseWorldPosition);
 
 			if (pin) {
 				return pin;
@@ -40,30 +40,34 @@ export const MeshUtils = {
 		}
 		return null;
 	},
-	getPinUnderMouse: (chip: Chip, mouseWorldPosition: Position): Pin | null => {
-		const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
-			chip.spec,
-			chip.renderState.position,
-			chip.layout.dimensions,
-		);
-
-		const boundingRadiusSq = 2 * renderEngineConfig.pinSize ** 2;
-
-		const isInputSide = mouseWorldPosition.x > chip.renderState.position.x;
-
-		const pins = isInputSide ? chip.inputPins : chip.outputPins;
-		const offset = isInputSide ? inputPinOffset : outputPinOffset;
-
-		for (let i = 0; i < pins.length; ++i) {
-			const dx = mouseWorldPosition.x - offset.x;
-			const dy =
-				mouseWorldPosition.y - (offset.y - 3 * renderEngineConfig.pinSize * i);
-
-			if (dx ** 2 + dy ** 2 <= boundingRadiusSq) {
-				return pins[i];
-			}
-		}
-
-		return null;
-	},
 };
+
+function getPinUnderMouse(
+	chip: Chip,
+	mouseWorldPosition: Position,
+): Pin | null {
+	const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
+		chip.spec,
+		chip.renderState.position,
+		chip.layout.dimensions,
+	);
+
+	const boundingRadiusSq = 2 * renderEngineConfig.pinSize ** 2;
+
+	const isInputSide = mouseWorldPosition.x > chip.renderState.position.x;
+
+	const pins = isInputSide ? chip.inputPins : chip.outputPins;
+	const offset = isInputSide ? inputPinOffset : outputPinOffset;
+
+	for (let i = 0; i < pins.length; ++i) {
+		const dx = mouseWorldPosition.x - offset.x;
+		const dy =
+			mouseWorldPosition.y - (offset.y - 3 * renderEngineConfig.pinSize * i);
+
+		if (dx ** 2 + dy ** 2 <= boundingRadiusSq) {
+			return pins[i];
+		}
+	}
+
+	return null;
+}

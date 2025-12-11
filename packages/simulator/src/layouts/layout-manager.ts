@@ -16,8 +16,6 @@ import type { MousePositionService } from "../services/mouse-position-service";
 type LayoutManagerArgs = BaseLayerArgs & {
 	camera: Camera;
 	mousePositionService: MousePositionService;
-	screenWidth: number;
-	screenHeight: number;
 };
 
 export class LayoutManager {

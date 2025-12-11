@@ -31,3 +31,20 @@ export const useStateRef = <T,>(initial: T) => {
 
 	return [state, set, ref] as const;
 };
+
+export const useOnClickOutside = (
+	divRef: React.RefObject<HTMLDivElement | null>,
+	onClickOutside: () => void,
+) => {
+	React.useEffect(() => {
+		function handleClick(e: MouseEvent) {
+			if (!divRef.current) return;
+			if (!divRef.current.contains(e.target as Node)) {
+				onClickOutside();
+			}
+		}
+		document.addEventListener("mousedown", handleClick);
+
+		return () => document.removeEventListener("mousedown", handleClick);
+	}, [divRef, onClickOutside]);
+};

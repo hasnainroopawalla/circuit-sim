@@ -167,7 +167,7 @@ export class Camera {
 		}
 	}
 
-	public computeScreenSpacePosition(chipWorldPosition: Position): Position {
+	public toScreenSpacePosition(chipWorldPosition: Position): Position {
 		const { width: screenWidth, height: screenHeight } = this.screenDimensions;
 
 		const { x: chipWorldX, y: chipWorldY } = chipWorldPosition;
