@@ -44,21 +44,16 @@ struct FSInput{
 fn gridAA(fragPos : vec2f, scale : f32, lineThickness : f32) -> vec4f{
     const divisions = 8;
     var coord = fragPos * scale * divisions;
-    var dist = abs(fract(coord));
+    var dist = abs(2*fract(coord-vec2f(0.5,0.5))-1.0);
     var norm = fwidth(coord);
-    norm = clamp(norm, vec2f(0.0, 0.0), vec2f(lineThickness / 2, lineThickness / 2));
-    //var norm = vec2f(abs(dpdx(coord.y)), abs(dpdy(coord.x)));
-    //var deriv = vec2f(fwidth(coord.x), fwidth(coord.y));
-    //var drawWidth = vec2f(clamp(lineThickness, norm.x, 0.5), clamp(lineThickness, norm.y, 0.5));
-    norm *= 2.5;
-    var grid = smoothstep(lineThickness - norm, lineThickness + norm, dist);
+    var drawWidth = vec2f(clamp(lineThickness, norm.x, 0.5), clamp(lineThickness, norm.y, 0.5));
+    norm *= 1.5;
+    var lineThickness2 = vec2f(lineThickness, lineThickness);
+    var grid = smoothstep(drawWidth+norm, drawWidth-norm, dist);
 
-    //var lineWidth = grid.x * grid.y;
-    //var lineWidth = mix(grid.x, lineThickness, );
-    var grid2 = 1.0 - clamp(grid, vec2f(0.0, 0.0), vec2f(1.0, 1.0));
-    //grid2 *= saturate(lineThickness / drawWidth);
-    grid2 = mix(grid2, vec2f(lineThickness, lineThickness), saturate(2.0 * norm - 1.0));
-    var alpha = mix(grid2.x, 1.0, grid2.y);
+    //grid *= saturate(lineThickness / drawWidth);
+    //grid = mix(grid, lineThickness2, saturate(2.0 * norm - 1.0));
+    var alpha = mix(grid.x, 1.0, grid.y);
     if(alpha < 0.0001)
     {
         return vec4f(0.0, 0.0, 0.0, 0.0);
@@ -72,11 +67,11 @@ fn fs_main(input : FSInput) -> @location(0) vec4 < f32> {
     var zScale = -input.PosNear.z / (input.PosFar.z - input.PosNear.z);
     var worldPos = input.PosNear.xy + zScale * (input.PosFar.xy - input.PosNear.xy);
     var screenPos = viewProj[0]*vec4(worldPos.xy, 0, 1.0);
-    var zoomLevel = abs(screenPos.z) / 4;
+    var zoomLevel = abs(screenPos.w) / 4;
     var zoom = pow(2, floor(zoomLevel));
-    //r lineThickness1 = mix(0.005, 0.01, fract(zoomLevel));
-    //r lineThickness2 = mix(0.01, 0.005, fract(zoomLevel));
-    //r out = mix(gridAA(worldPos, 1 / zoom, lineThickness2), gridAA(worldPos, 1 / (2 * zoom), lineThickness1), fract(zoomLevel));
-    var out = gridAA(worldPos, 1 / zoom, 0.02);
+    //var lineThickness1 = mix(0.01, 0.02, fract(zoomLevel));
+    //var lineThickness2 = mix(0.02, 0.01, fract(zoomLevel));
+    //var out = mix(gridAA(worldPos, 1 / zoom, 0.02), gridAA(worldPos, 1 / (2 * zoom), 0.02), fract(zoomLevel));
+    var out = gridAA(worldPos,1/zoom, 0.02);
     return out;
 }
