@@ -13,7 +13,7 @@ export class AndChip extends AtomicChip {
 	}
 
 	public execute(): boolean {
-		return super.setOutputPins([
+		return this.setOutputPins([
 			this.inputPins[0].currentValue && this.inputPins[1].currentValue,
 		]);
 	}
@@ -25,7 +25,7 @@ export class OrChip extends AtomicChip {
 	}
 
 	public execute(): boolean {
-		return super.setOutputPins([
+		return this.setOutputPins([
 			this.inputPins[0].currentValue || this.inputPins[1].currentValue,
 		]);
 	}
@@ -37,6 +37,6 @@ export class NotChip extends AtomicChip {
 	}
 
 	public execute(): boolean {
-		return super.setOutputPins([!this.inputPins[0].currentValue]);
+		return this.setOutputPins([!this.inputPins[0].currentValue]);
 	}
 }

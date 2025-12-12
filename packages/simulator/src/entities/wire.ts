@@ -10,7 +10,7 @@ export type WireSpec = {
 
 export type WireInitParams = { color: ColorRGBA; controlPoints: Position[] };
 
-type WireRenderState = WireInitParams;
+export type WireRenderState = WireInitParams;
 
 export class Wire extends BaseEntity<"wire"> {
 	public spec: WireSpec;

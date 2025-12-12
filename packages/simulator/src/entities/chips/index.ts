@@ -12,4 +12,5 @@ export type {
 	IOChipSpec,
 	IOChip,
 	ChipType,
+	ChipRenderState,
 } from "./chip.interface";

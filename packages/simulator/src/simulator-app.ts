@@ -75,6 +75,7 @@ export class SimulatorApp {
 	public async start(): Promise<void> {
 		if (!this.animationId) {
 			await this.renderEngineInitPromise;
+			this.setupNandGate(); // TODO: remove
 			this.loop();
 		}
 	}
@@ -154,5 +155,99 @@ export class SimulatorApp {
 			await this.renderEngine.onResize(width, height);
 			this.camera.onResize(width, height);
 		});
+	}
+
+	public setupNandGate(): void {
+		const andChipSpec = this.sim.chipLibraryService.getChipSpecByName("AND");
+		const notChipSpec = this.sim.chipLibraryService.getChipSpecByName("NOT");
+
+		const inputChipSpec =
+			this.sim.chipLibraryService.getChipSpecByName("INPUT");
+		const outputChipSpec =
+			this.sim.chipLibraryService.getChipSpecByName("OUTPUT");
+
+		if (!inputChipSpec || !outputChipSpec || !andChipSpec || !notChipSpec) {
+			return;
+		}
+
+		// INPUT 0
+		this.sim.chipManager.spawnChip(inputChipSpec, {
+			color: { r: 1, g: 1, b: 1, a: 1 },
+			position: { x: 1.6, y: 1.3 },
+		});
+
+		// INPUT 1
+		this.sim.chipManager.spawnChip(inputChipSpec, {
+			color: { r: 1, g: 1, b: 1, a: 1 },
+			position: { x: 1.6, y: 0.8 },
+		});
+
+		// AND
+		this.sim.chipManager.spawnChip(andChipSpec, {
+			color: { r: 1, g: 1, b: 1, a: 1 },
+			position: { x: 0.3, y: 1 },
+		});
+
+		// NOT
+		this.sim.chipManager.spawnChip(notChipSpec, {
+			color: { r: 1, g: 1, b: 1, a: 1 },
+			position: { x: -1, y: 1 },
+		});
+
+		// OUTPUT 0
+		this.sim.chipManager.spawnChip(outputChipSpec, {
+			color: { r: 1, g: 1, b: 1, a: 1 },
+			position: { x: -2, y: 1 },
+		});
+
+		// input 0 to AND in 0
+		this.sim.wireManager.spawnWire(
+			{
+				startPinId: "0.out.0",
+				endPinId: "2.in.0",
+			},
+			{
+				color: { r: 1, g: 1, b: 1, a: 1 },
+				controlPoints: [],
+			},
+		);
+
+		// input 1 to AND in 1
+		this.sim.wireManager.spawnWire(
+			{
+				startPinId: "1.out.0",
+				endPinId: "2.in.1",
+			},
+			{
+				color: { r: 1, g: 1, b: 1, a: 1 },
+				controlPoints: [],
+			},
+		);
+
+		// AND out to NOT in
+		this.sim.wireManager.spawnWire(
+			{
+				startPinId: "2.out.0",
+				endPinId: "3.in.0",
+			},
+			{
+				color: { r: 1, g: 1, b: 1, a: 1 },
+				controlPoints: [],
+			},
+		);
+
+		// NOT out to output
+		this.sim.wireManager.spawnWire(
+			{
+				startPinId: "3.out.0",
+				endPinId: "4.in.0",
+			},
+			{
+				color: { r: 1, g: 1, b: 1, a: 1 },
+				controlPoints: [],
+			},
+		);
+
+		this.sim.emit("chip.save", undefined);
 	}
 }
