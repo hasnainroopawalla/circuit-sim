@@ -47,9 +47,8 @@ export class ChipManager extends BaseManager {
 		}
 
 		this.chips.push(chip);
-		this.sim.emit("entity.spawned", {
-			entityId: chip.id,
-			entityName: chip.spec.name,
+		this.sim.emit("entity.spawn.finish", {
+			entity: { id: chip.id, name: chip.spec.name },
 		});
 	}
 

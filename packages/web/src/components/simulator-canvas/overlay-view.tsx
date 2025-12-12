@@ -13,15 +13,18 @@ export const SimulatorOverlayView: React.FC = () => {
 	const [labels, setLabels] = React.useState<Label[]>([]);
 
 	React.useEffect(() => {
-		const unsubscribe = simulatorApp.sim.on("entity.spawned", (labelData) => {
-			setLabels((prev) => [
-				...prev,
-				{
-					id: labelData.entityId,
-					text: labelData.entityName,
-				},
-			]);
-		});
+		const unsubscribe = simulatorApp.sim.on(
+			"entity.spawn.finish",
+			({ entity }) => {
+				setLabels((prev) => [
+					...prev,
+					{
+						id: entity.id,
+						text: entity.name,
+					},
+				]);
+			},
+		);
 
 		return () => unsubscribe();
 	}, [simulatorApp]);

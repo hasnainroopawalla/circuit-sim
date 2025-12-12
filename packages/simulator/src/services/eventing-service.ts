@@ -4,12 +4,14 @@ import type { Pin } from "../entities/pin";
 export type IEvents = {
 	"chip.save": undefined;
 
-	"wire.spawn": { startPin: Pin };
-	"chip.spawn": { chipSpec: ChipSpec };
+	"wire.spawn.start": { startPin: Pin };
+	"chip.spawn.start": { chipSpec: ChipSpec };
 
-	"entity.spawned": {
-		entityId: string;
-		entityName: string;
+	"entity.spawn.finish": {
+		entity: {
+			id: string;
+			name: string;
+		};
 	};
 };
 

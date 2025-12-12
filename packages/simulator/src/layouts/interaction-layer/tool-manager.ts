@@ -97,11 +97,11 @@ export class ToolManager {
 	}
 
 	private registerSubscriptions(): void {
-		this.sim.on("chip.spawn", ({ chipSpec }) =>
+		this.sim.on("chip.spawn.start", ({ chipSpec }) =>
 			this.setActiveTool(SpawnChipTool, { chipSpec }),
 		);
 
-		this.sim.on("wire.spawn", ({ startPin }) =>
+		this.sim.on("wire.spawn.start", ({ startPin }) =>
 			this.setActiveTool(WiringTool, { startPin }),
 		);
 	}

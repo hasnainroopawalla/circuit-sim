@@ -90,7 +90,7 @@ export class SimulationLayer extends BaseLayer {
 		}
 
 		if (hoveredEntity.entityType === "pin") {
-			this.sim.emit("wire.spawn", {
+			this.sim.emit("wire.spawn.start", {
 				startPin: hoveredEntity,
 			});
 			return true;
