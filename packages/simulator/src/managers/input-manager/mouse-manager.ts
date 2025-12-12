@@ -1,4 +1,4 @@
-import type { Position } from "@digital-logic-sim/render-engine";
+import type { Position } from "@digital-logic-sim/shared-types";
 import {
 	type MouseButtonType,
 	type MouseScrollType,
@@ -182,11 +182,15 @@ export class MouseManager {
 		const signal = this.abortController.signal;
 
 		canvas.addEventListener("wheel", (e) => this.setScrolling(e), { signal });
-		canvas.addEventListener(
-			"mousemove",
+
+		// `document` listener is intentionally added here to ensure pointer movements
+		// are captured even if a UI menu is overlapping the canvas
+		document.addEventListener(
+			"pointermove",
 			(e) => this.setMousePosition(e, canvas),
 			{ signal },
 		);
+
 		canvas.addEventListener("mousedown", (e) => this.mouseDownEventHandler(e), {
 			signal,
 		});

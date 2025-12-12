@@ -16,6 +16,7 @@ type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
 export class SimulatorApp {
 	public sim: Simulator;
+	public overlayManager: OverlayManager;
 
 	private clock: Clock;
 
@@ -24,9 +25,8 @@ export class SimulatorApp {
 
 	private layoutManager: LayoutManager;
 	private inputManager: InputManager;
-	public overlayManager: OverlayManager;
 
-	public mousePositionService: MousePositionService;
+	private mousePositionService: MousePositionService;
 
 	private camera: Camera;
 

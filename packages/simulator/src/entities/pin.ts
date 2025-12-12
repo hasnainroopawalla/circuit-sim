@@ -1,4 +1,4 @@
-import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
+import type { Position, ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Chip } from "./chips";
 import { BaseEntity } from "./entity";
 

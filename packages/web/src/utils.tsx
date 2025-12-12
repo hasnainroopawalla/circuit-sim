@@ -1,4 +1,5 @@
 import * as React from "react";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 export const useEffectOnce = (callback: () => () => void, predicate = true) => {
 	const hasRun = React.useRef(false);
@@ -47,4 +48,28 @@ export const useOnClickOutside = (
 
 		return () => document.removeEventListener("mousedown", handleClick);
 	}, [divRef, onClickOutside]);
+};
+
+/**
+ * Returns the current mouse position in the document.
+ */
+export const useGetMousePosition = (): (() => Position) => {
+	const positionRef = React.useRef<Position>({ x: 0, y: 0 });
+
+	const getMousePosition = React.useCallback(() => positionRef.current, []);
+
+	React.useEffect(() => {
+		const handler = (e: MouseEvent) => {
+			positionRef.current = {
+				x: e.clientX,
+				y: e.clientY,
+			};
+		};
+
+		document.addEventListener("mousemove", handler);
+
+		return () => document.removeEventListener("mousemove", handler);
+	}, []);
+
+	return getMousePosition;
 };

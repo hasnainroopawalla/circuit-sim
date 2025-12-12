@@ -1,4 +1,4 @@
-import type { Position } from "@digital-logic-sim/render-engine";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 export type ButtonEvent = "click" | "press" | "release";
 

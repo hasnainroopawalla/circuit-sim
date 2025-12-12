@@ -29,10 +29,7 @@ export class SpawnChipTool extends Tool {
 		this.chipSpec = args.chipSpec;
 		this.ghostChip = new GhostChip(args.chipSpec, {
 			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
-			position: this.camera.toWorldPosition({
-				x: this.camera.screenDimensions.width / 2,
-				y: this.camera.screenDimensions.height / 4,
-			}),
+			position: args.mousePositionService.getMousePosition().world,
 		});
 	}
 

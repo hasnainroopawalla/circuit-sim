@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@digital-logic-sim/simulator": "workspace:^1.0.0",
+    "@digital-logic-sim/shared-types": "workspace:^1.0.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.16"

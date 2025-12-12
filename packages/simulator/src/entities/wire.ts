@@ -1,4 +1,4 @@
-import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
+import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import { entityIdService } from "../entity-id-service";
 import { BaseEntity } from "./entity";
 import type { Pin } from "./pin";

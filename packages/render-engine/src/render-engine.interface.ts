@@ -1,21 +1,10 @@
+import type {
+	ColorRGBA,
+	Position,
+	RectDimensions,
+} from "@digital-logic-sim/shared-types";
+
 type RenderableType = "chip" | "wire" | "pin";
-
-export type Position = {
-	x: number;
-	y: number;
-};
-
-export type RectDimensions = {
-	height: number;
-	width: number;
-};
-
-export type ColorRGBA = {
-	r: number;
-	g: number;
-	b: number;
-	a: number;
-};
 
 type BaseRenderable<TRenderable extends RenderableType> = {
 	type: TRenderable;

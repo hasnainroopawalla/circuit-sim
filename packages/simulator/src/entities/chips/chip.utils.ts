@@ -1,9 +1,6 @@
-import {
-	type Position,
-	type RectDimensions,
-	renderEngineConfig,
-} from "@digital-logic-sim/render-engine";
+import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { ChipSpec } from "./chip.interface";
+import type { Position, RectDimensions } from "@digital-logic-sim/shared-types";
 
 export const ChipUtils = {
 	getPinOffsets: (

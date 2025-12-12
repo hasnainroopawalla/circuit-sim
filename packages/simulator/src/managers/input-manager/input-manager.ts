@@ -1,4 +1,4 @@
-import type { Position } from "@digital-logic-sim/render-engine";
+import type { Position } from "@digital-logic-sim/shared-types";
 import type {
 	MouseButtonType,
 	MouseScrollType,

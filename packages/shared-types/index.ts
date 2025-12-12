@@ -1,0 +1,1 @@
+export type { ColorRGBA, Position, RectDimensions } from "./src/shared-types";

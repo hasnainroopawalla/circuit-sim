@@ -12,7 +12,7 @@
   "packageManager": "pnpm@10.20.0",
   "dependencies": {
     "@digital-logic-sim/render-engine": "workspace:^1.0.0",
-    "@digital-logic-sim/shared-utils": "workspace:^1.0.0",
+    "@digital-logic-sim/shared-types": "workspace:^1.0.0",
     "wgpu-matrix": "^3.4.0"
   }
 }

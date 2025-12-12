@@ -1,8 +1,8 @@
-import type { ColorRGBA, Position } from "@digital-logic-sim/render-engine";
 import type { PinSpec } from "../pin";
 import type { AtomicChip } from "./atomic-chip";
 import type { InputChip, OutputChip } from "./io-chip";
 import type { CompositeChip } from "./composite-chip";
+import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 
 export type ChipType = "io" | "atomic" | "composite";
 export type Chip = IOChip | AtomicChip | CompositeChip;

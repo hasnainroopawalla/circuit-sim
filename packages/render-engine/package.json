@@ -14,7 +14,7 @@
     "@webgpu/types": "^0.1.66"
   },
   "dependencies": {
-    "@digital-logic-sim/shared-utils": "workspace:^1.0.0",
+    "@digital-logic-sim/shared-types": "workspace:^1.0.0",
     "wgpu-matrix": "^3.4.0"
   }
 }

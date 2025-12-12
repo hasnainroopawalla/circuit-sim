@@ -1,4 +1,4 @@
-import type { Position, Renderable } from "@digital-logic-sim/render-engine";
+import type { Renderable } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import type {
 	ButtonEvent,
@@ -8,6 +8,7 @@ import type {
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 type WiringToolArgs = ToolArgs & {
 	startPin: Pin;

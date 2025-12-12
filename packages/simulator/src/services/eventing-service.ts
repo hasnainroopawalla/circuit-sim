@@ -5,7 +5,7 @@ export type IEvents = {
 	"chip.save": undefined;
 
 	"wire.spawn": { startPin: Pin };
-	"chip.spawn": ChipSpec;
+	"chip.spawn": { chipSpec: ChipSpec };
 
 	"entity.spawned": {
 		entityId: string;

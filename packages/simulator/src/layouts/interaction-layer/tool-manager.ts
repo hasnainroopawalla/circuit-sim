@@ -97,7 +97,7 @@ export class ToolManager {
 	}
 
 	private registerSubscriptions(): void {
-		this.sim.on("chip.spawn", (chipSpec) =>
+		this.sim.on("chip.spawn", ({ chipSpec }) =>
 			this.setActiveTool(SpawnChipTool, { chipSpec }),
 		);
 

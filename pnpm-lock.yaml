@@ -23,9 +23,9 @@ importers:
 
   packages/render-engine:
     dependencies:
-      '@digital-logic-sim/shared-utils':
+      '@digital-logic-sim/shared-types':
         specifier: workspace:^1.0.0
-        version: link:../shared-utils
+        version: link:../shared-types
       wgpu-matrix:
         specifier: ^3.4.0
         version: 3.4.0
@@ -34,26 +34,25 @@ importers:
         specifier: ^0.1.66
         version: 0.1.66
 
-  packages/shared-utils:
-    dependencies:
-      wgpu-matrix:
-        specifier: ^3.4.0
-        version: 3.4.0
+  packages/shared-types: {}
 
   packages/simulator:
     dependencies:
       '@digital-logic-sim/render-engine':
         specifier: workspace:^1.0.0
         version: link:../render-engine
-      '@digital-logic-sim/shared-utils':
+      '@digital-logic-sim/shared-types':
         specifier: workspace:^1.0.0
-        version: link:../shared-utils
+        version: link:../shared-types
       wgpu-matrix:
         specifier: ^3.4.0
         version: 3.4.0
 
   packages/web:
     dependencies:
+      '@digital-logic-sim/shared-types':
+        specifier: workspace:^1.0.0
+        version: link:../shared-types
       '@digital-logic-sim/simulator':
         specifier: workspace:^1.0.0
         version: link:../simulator

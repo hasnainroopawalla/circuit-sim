@@ -1,4 +1,3 @@
-import type { Position } from "@digital-logic-sim/render-engine";
 import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
@@ -11,6 +10,7 @@ import type {
 	ChipRenderState,
 } from "./chip.interface";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
 

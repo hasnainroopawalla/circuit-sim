@@ -1,10 +1,8 @@
-import type {
-	CameraProjectionData,
-	Position,
-} from "@digital-logic-sim/render-engine";
+import type { CameraProjectionData } from "@digital-logic-sim/render-engine";
 import { mat4, vec3, vec4, type Vec3Arg } from "wgpu-matrix";
 import type { KeyboardButtonType, ButtonEvent } from "./managers/input-manager";
 import type { Simulator } from "./simulator";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 type VelocityDelta = [number, number, number];
 
