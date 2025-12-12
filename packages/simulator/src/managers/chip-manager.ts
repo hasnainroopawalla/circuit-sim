@@ -60,11 +60,12 @@ export class ChipManager extends BaseManager {
 	): IOChip {
 		switch (chipSpec.ioChipType) {
 			case "input": {
-				const InputChipClass = this.sim.chipLibraryService.getInputChipSpec();
+				const InputChipClass = this.sim.chipLibraryService.getInputChipClass();
 				return new InputChipClass(chipSpec, chipInitParams);
 			}
 			case "output": {
-				const OutputChipClass = this.sim.chipLibraryService.getOutputChipSpec();
+				const OutputChipClass =
+					this.sim.chipLibraryService.getOutputChipClass();
 				return new OutputChipClass(chipSpec, chipInitParams);
 			}
 		}
@@ -74,7 +75,7 @@ export class ChipManager extends BaseManager {
 		chipSpec: AtomicChipSpec,
 		chipInitParams: ChipInitParams,
 	): AtomicChip {
-		const AtomicChipClass = this.sim.chipLibraryService.getAtomicChipSpec(
+		const AtomicChipClass = this.sim.chipLibraryService.getAtomicChipClass(
 			chipSpec.atomicChipType,
 		);
 		return new AtomicChipClass(chipSpec, chipInitParams);

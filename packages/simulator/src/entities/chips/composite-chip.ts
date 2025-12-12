@@ -7,6 +7,7 @@ export class CompositeChip extends BaseChip<"composite"> {
 	}
 
 	public execute(): boolean {
+		console.log("execute", this);
 		return false;
 	}
 }

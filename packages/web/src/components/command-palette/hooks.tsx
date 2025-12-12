@@ -29,9 +29,10 @@ export const useCommands = (): Command[] => {
 			simulatorApp.sim.chipLibraryService.getAll().map((chipSpec) => ({
 				id: chipSpec.name,
 				label: `Spawn: ${chipSpec.name}`,
-				action: () => simulatorApp.sim.emit("chip.spawn.start", {
-					chipSpec
-				}),
+				action: () =>
+					simulatorApp.sim.emit("chip.spawn.start", {
+						chipSpec,
+					}),
 			})),
 		[simulatorApp],
 	);

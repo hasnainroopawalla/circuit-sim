@@ -172,31 +172,31 @@ export class SimulatorApp {
 
 		// INPUT 0
 		this.sim.chipManager.spawnChip(inputChipSpec, {
-			color: { r: 1, g: 1, b: 1, a: 1 },
+			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 1.6, y: 1.3 },
 		});
 
 		// INPUT 1
 		this.sim.chipManager.spawnChip(inputChipSpec, {
-			color: { r: 1, g: 1, b: 1, a: 1 },
+			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 1.6, y: 0.8 },
 		});
 
 		// AND
 		this.sim.chipManager.spawnChip(andChipSpec, {
-			color: { r: 1, g: 1, b: 1, a: 1 },
+			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 0.3, y: 1 },
 		});
 
 		// NOT
 		this.sim.chipManager.spawnChip(notChipSpec, {
-			color: { r: 1, g: 1, b: 1, a: 1 },
+			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: -1, y: 1 },
 		});
 
 		// OUTPUT 0
 		this.sim.chipManager.spawnChip(outputChipSpec, {
-			color: { r: 1, g: 1, b: 1, a: 1 },
+			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: -2, y: 1 },
 		});
 
@@ -207,7 +207,7 @@ export class SimulatorApp {
 				endPinId: "2.in.0",
 			},
 			{
-				color: { r: 1, g: 1, b: 1, a: 1 },
+				color: { r: 0, g: 0, b: 0, a: 1 },
 				controlPoints: [],
 			},
 		);
@@ -219,7 +219,7 @@ export class SimulatorApp {
 				endPinId: "2.in.1",
 			},
 			{
-				color: { r: 1, g: 1, b: 1, a: 1 },
+				color: { r: 0, g: 0, b: 0, a: 1 },
 				controlPoints: [],
 			},
 		);
@@ -231,7 +231,7 @@ export class SimulatorApp {
 				endPinId: "3.in.0",
 			},
 			{
-				color: { r: 1, g: 1, b: 1, a: 1 },
+				color: { r: 0, g: 0, b: 0, a: 1 },
 				controlPoints: [],
 			},
 		);
@@ -243,11 +243,22 @@ export class SimulatorApp {
 				endPinId: "4.in.0",
 			},
 			{
-				color: { r: 1, g: 1, b: 1, a: 1 },
+				color: { r: 0, g: 0, b: 0, a: 1 },
 				controlPoints: [],
 			},
 		);
 
 		this.sim.emit("chip.save", undefined);
+
+		const nandSpec = this.sim.chipLibraryService.getChipSpecByName("NAND");
+
+		if (!nandSpec) {
+			return;
+		}
+
+		this.sim.chipManager.spawnChip(nandSpec, {
+			color: { r: 0, g: 0, b: 0, a: 1 },
+			position: { x: 0.3, y: 0.1 },
+		});
 	}
 }

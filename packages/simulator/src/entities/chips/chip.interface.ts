@@ -3,6 +3,7 @@ import type { AtomicChip } from "./atomic-chip";
 import type { InputChip, OutputChip } from "./io-chip";
 import type { CompositeChip } from "./composite-chip";
 import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
+import type { Blueprint } from "../../services/blueprint-service";
 
 export type AtomicChipType = "AND" | "OR" | "NOT";
 
@@ -38,6 +39,8 @@ export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 	atomicChipType: AtomicChipType;
 };
 
-export type CompositeChipSpec = BaseChipSpec<"composite">;
+export type CompositeChipSpec = BaseChipSpec<"composite"> & {
+	blueprint: Blueprint;
+};
 
 export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;

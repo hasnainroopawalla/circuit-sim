@@ -40,10 +40,12 @@ export const App: React.FC = () => {
 						onMenuButtonClick={() => setIsCommandPaletteOpen(true)}
 						onSettingsButtonClick={() => {}}
 					/>
-					<CommandPalette
-						isOpen={isCommandPaletteOpen}
-						onClose={onCloseCommandPalette}
-					/>
+					{isCommandPaletteOpen && (
+						<CommandPalette
+							isOpen={isCommandPaletteOpen}
+							onClose={onCloseCommandPalette}
+						/>
+					)}
 					<SimulatorOverlayView />
 				</SimulatorAppProvider>
 			)}

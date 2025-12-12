@@ -44,15 +44,15 @@ export class ChipLibraryService extends BaseService {
 		);
 	}
 
-	public getAtomicChipSpec(atomicChipName: AtomicChipType): AtomicChipClass {
+	public getAtomicChipClass(atomicChipName: AtomicChipType): AtomicChipClass {
 		return ATOMIC_CHIPS_MAP[atomicChipName];
 	}
 
-	public getInputChipSpec(): IOChipClass<"input"> {
+	public getInputChipClass(): IOChipClass<"input"> {
 		return InputChip;
 	}
 
-	public getOutputChipSpec(): IOChipClass<"output"> {
+	public getOutputChipClass(): IOChipClass<"output"> {
 		return OutputChip;
 	}
 }
