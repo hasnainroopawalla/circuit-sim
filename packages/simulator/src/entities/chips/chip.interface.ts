@@ -4,6 +4,8 @@ import type { InputChip, OutputChip } from "./io-chip";
 import type { CompositeChip } from "./composite-chip";
 import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 
+export type AtomicChipType = "AND" | "OR" | "NOT";
+
 export type ChipType = "io" | "atomic" | "composite";
 export type Chip = IOChip | AtomicChip | CompositeChip;
 
@@ -28,27 +30,12 @@ type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {
 	ioChipType: TIOChipType;
 };
 
-export type InputChipSpec = BaseIOChipSpec<"input"> & {
-	ChipClass: new (
-		spec: InputChipSpec,
-		chipInitParams: ChipInitParams,
-	) => InputChip;
-};
-
-export type OutputChipSpec = BaseIOChipSpec<"output"> & {
-	ChipClass: new (
-		spec: OutputChipSpec,
-		chipInitParams: ChipInitParams,
-	) => OutputChip;
-};
-
+export type InputChipSpec = BaseIOChipSpec<"input">;
+export type OutputChipSpec = BaseIOChipSpec<"output">;
 export type IOChipSpec = InputChipSpec | OutputChipSpec;
 
 export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
-	ChipClass: new (
-		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
-	) => AtomicChip;
+	atomicChipType: AtomicChipType;
 };
 
 export type CompositeChipSpec = BaseChipSpec<"composite">;

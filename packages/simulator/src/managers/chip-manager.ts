@@ -4,6 +4,8 @@ import {
 	type ChipInitParams,
 	type IOChipSpec,
 	type IOChip,
+	type AtomicChipSpec,
+	type AtomicChip,
 	CompositeChip,
 } from "../entities/chips";
 import type { Simulator } from "../simulator";
@@ -39,7 +41,7 @@ export class ChipManager extends BaseManager {
 				chip = this.createIOChip(chipSpec, chipInitParams);
 				break;
 			case "atomic":
-				chip = new chipSpec.ChipClass(chipSpec, chipInitParams);
+				chip = this.createAtomicChip(chipSpec, chipInitParams);
 				break;
 			case "composite":
 				chip = new CompositeChip(chipSpec, chipInitParams);
@@ -57,10 +59,24 @@ export class ChipManager extends BaseManager {
 		chipInitParams: ChipInitParams,
 	): IOChip {
 		switch (chipSpec.ioChipType) {
-			case "input":
-				return new chipSpec.ChipClass(chipSpec, chipInitParams);
-			case "output":
-				return new chipSpec.ChipClass(chipSpec, chipInitParams);
+			case "input": {
+				const InputChipClass = this.sim.chipLibraryService.getInputChipSpec();
+				return new InputChipClass(chipSpec, chipInitParams);
+			}
+			case "output": {
+				const OutputChipClass = this.sim.chipLibraryService.getOutputChipSpec();
+				return new OutputChipClass(chipSpec, chipInitParams);
+			}
 		}
+	}
+
+	private createAtomicChip(
+		chipSpec: AtomicChipSpec,
+		chipInitParams: ChipInitParams,
+	): AtomicChip {
+		const AtomicChipClass = this.sim.chipLibraryService.getAtomicChipSpec(
+			chipSpec.atomicChipType,
+		);
+		return new AtomicChipClass(chipSpec, chipInitParams);
 	}
 }
