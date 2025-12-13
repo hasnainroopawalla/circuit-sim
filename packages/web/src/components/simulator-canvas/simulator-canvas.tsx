@@ -15,12 +15,20 @@ export const SimulatorCanvas = ({
 		}
 	}, [canvasRef.current, onCanvasReady]);
 
+	const handleContextMenu = React.useCallback(
+		(e: React.MouseEvent<HTMLCanvasElement>) => {
+			e.preventDefault();
+		},
+		[],
+	);
+
 	return (
 		<canvas
 			id="simulator-canvas"
 			ref={canvasRef}
 			className="absolute inset-0 w-full h-full"
 			tabIndex={0} // required for focus
+			onContextMenu={handleContextMenu}
 		/>
 	);
 };

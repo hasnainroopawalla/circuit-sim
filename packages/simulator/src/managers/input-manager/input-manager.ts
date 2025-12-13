@@ -43,6 +43,7 @@ export class InputManager {
 			[
 				{ event: "leftMouseButton", nature: "click" },
 				{ event: "leftMouseButton", nature: "press" },
+				{ event: "rightMouseButton", nature: "click" },
 			] as const
 		).forEach(({ event, nature }) => {
 			this.mouseManager.onButtonHandler(event, nature, callback);

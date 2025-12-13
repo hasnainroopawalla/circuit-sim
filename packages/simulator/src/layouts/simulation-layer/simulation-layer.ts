@@ -10,6 +10,8 @@ import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 import { LayoutUtils } from "../layout.utils";
 import type { Camera } from "../../camera";
+import { AtomicChip, CompositeChip } from "../../entities/chips";
+import { EntityUtils } from "../../entities/utils";
 
 type SimulationLayerArgs = BaseLayerArgs;
 
@@ -57,6 +59,15 @@ export class SimulationLayer extends BaseLayer {
 							mousePosition,
 						);
 				}
+				break;
+			case "rightMouseButton":
+				switch (nature) {
+					case "click":
+						return this.handleRightMouseButtonClick(
+							hoveredEntity,
+							mousePosition,
+						);
+				}
 		}
 
 		return false;
@@ -89,18 +100,14 @@ export class SimulationLayer extends BaseLayer {
 			return false;
 		}
 
-		if (hoveredEntity.entityType === "pin") {
+		if (EntityUtils.isPin(hoveredEntity)) {
 			this.sim.emit("wire.spawn.start", {
 				startPin: hoveredEntity,
 			});
 			return true;
 		}
 
-		if (
-			hoveredEntity.entityType === "chip" &&
-			hoveredEntity.chipType === "io" &&
-			hoveredEntity.ioChipType === "input"
-		) {
+		if (EntityUtils.isInputChip(hoveredEntity)) {
 			hoveredEntity.toggle();
 			return true;
 		}
@@ -116,13 +123,27 @@ export class SimulationLayer extends BaseLayer {
 			return false;
 		}
 
-		if (
-			hoveredEntity.entityType === "chip" &&
-			hoveredEntity.chipType !== "io"
-		) {
+		if (EntityUtils.isChip(hoveredEntity)) {
 			// TODO: consider moving to a dedicated tool to render ghost
 			hoveredEntity.setPosition(mousePosition.world);
 			return true;
+		}
+
+		return false;
+	}
+
+	private handleRightMouseButtonClick(
+		hoveredEntity: Entity | null,
+		mousePosition: MousePosition,
+	): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
+
+		if (EntityUtils.isCompositeChip(hoveredEntity)) {
+			alert(
+				`View chip clicked at: ${mousePosition.screen.x}, ${mousePosition.screen.y}`,
+			);
 		}
 
 		return false;
