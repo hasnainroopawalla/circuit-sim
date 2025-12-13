@@ -1,4 +1,3 @@
-import { entityIdService } from "../../entity-id-service";
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
 import { Pin, type PinSpec, type PinType } from "../pin";
@@ -8,6 +7,7 @@ import type {
 	ChipType,
 	Chip,
 	ChipRenderState,
+	ChipSpawnOptions,
 } from "./chip.interface";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
 import type { Position } from "@digital-logic-sim/shared-types";
@@ -23,22 +23,27 @@ export abstract class BaseChip<
 	public inputPins: Pin[];
 	public outputPins: Pin[];
 
+	public parentCompositeId?: string;
+
 	public chipType: TChipType;
 
 	public layout: ChipLayout;
 
-	constructor(chipSpec: ChipSpecOf<TChipType>, chipInitParams: ChipInitParams) {
-		const chipId = entityIdService.generateId();
-
+	constructor(
+		chipSpec: ChipSpecOf<TChipType>,
+		chipInitParams: ChipInitParams,
+		opts?: ChipSpawnOptions,
+	) {
 		super({
-			id: chipId,
 			entityType: "chip",
 		});
 
 		this.chipType = chipSpec.chipType;
 
-		this.inputPins = this.createPins(chipSpec.inputPins, "in", chipId);
-		this.outputPins = this.createPins(chipSpec.outputPins, "out", chipId);
+		this.inputPins = this.createPins(chipSpec.inputPins, "in");
+		this.outputPins = this.createPins(chipSpec.outputPins, "out");
+
+		this.parentCompositeId = opts?.parentCompositeId;
 
 		this.renderState = {
 			color: chipInitParams.color,
@@ -82,16 +87,11 @@ export abstract class BaseChip<
 		this.renderState.position = position;
 	}
 
-	private createPins(
-		pinSpec: PinSpec[],
-		pinType: PinType,
-		chipId: string,
-	): Pin[] {
+	private createPins(pinSpec: PinSpec[], pinType: PinType): Pin[] {
 		return pinSpec.map(
 			(pinSpec, idx) =>
 				new Pin({
 					spec: pinSpec,
-					id: entityIdService.generatePinId(chipId, idx, pinType),
 					pinType,
 					pinIdx: idx,
 					chip: this as Chip,

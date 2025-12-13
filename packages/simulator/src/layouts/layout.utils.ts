@@ -1,8 +1,8 @@
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import type { ChipRenderable } from "@digital-logic-sim/render-engine";
 import type { Chip } from "../entities/chips";
 
 export const LayoutUtils = {
-	chipToRenderable: (chip: Chip): Renderable => ({
+	chipToRenderable: (chip: Chip): ChipRenderable => ({
 		type: "chip",
 		color: chip.renderState.color,
 		position: chip.renderState.position,

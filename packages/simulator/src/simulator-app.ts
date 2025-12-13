@@ -11,6 +11,7 @@ import { InputManager } from "./managers/input-manager";
 
 // services
 import { MousePositionService } from "./services/mouse-position-service";
+import { CompositeChipSpec } from "./entities/chips";
 
 type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
@@ -250,13 +251,11 @@ export class SimulatorApp {
 
 		this.sim.emit("chip.save", undefined);
 
-		const nandSpec = this.sim.chipLibraryService.getChipSpecByName("NAND");
+		const nandSpec = this.sim.chipLibraryService.getChipSpecByName(
+			"NAND",
+		) as CompositeChipSpec;
 
-		if (!nandSpec) {
-			return;
-		}
-
-		this.sim.chipManager.spawnChip(nandSpec, {
+		this.sim.chipManager.spawnCompositeChip(nandSpec, {
 			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 0.3, y: 0.1 },
 		});

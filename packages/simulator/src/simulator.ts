@@ -7,6 +7,7 @@ import { ChipManager } from "./managers/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
 import { BlueprintService } from "./services/blueprint-service";
+import { PinManager } from "./managers/pin-manager";
 
 const simulatorConfig = {
 	maxIterations: 1000,
@@ -20,6 +21,7 @@ export class Simulator {
 
 	// managers
 	public chipManager: ChipManager;
+	public pinManager: PinManager;
 	public wireManager: WireManager;
 
 	constructor() {
@@ -30,6 +32,7 @@ export class Simulator {
 
 		// managers
 		this.chipManager = new ChipManager(this);
+		this.pinManager = new PinManager(this);
 		this.wireManager = new WireManager(this);
 	}
 

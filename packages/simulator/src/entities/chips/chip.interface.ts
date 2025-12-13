@@ -20,6 +20,10 @@ export type ChipInitParams = {
 
 export type ChipRenderState = ChipInitParams;
 
+export type ChipSpawnOptions = {
+	parentCompositeId?: string;
+};
+
 type BaseChipSpec<TChipType extends ChipType> = {
 	chipType: TChipType;
 	name: string;

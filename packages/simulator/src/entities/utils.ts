@@ -35,6 +35,6 @@ export const EntityUtils = {
 	},
 
 	isCompositeChip: (entity: Entity): entity is CompositeChip => {
-		return EntityUtils.isChip(entity) && entity.chipType === "atomic";
+		return EntityUtils.isChip(entity) && entity.chipType === "composite";
 	},
 };

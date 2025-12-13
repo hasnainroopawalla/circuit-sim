@@ -1,13 +1,20 @@
 import { BaseChip } from "./chip";
-import type { ChipInitParams, CompositeChipSpec } from "./chip.interface";
+import type {
+	ChipInitParams,
+	ChipSpawnOptions,
+	CompositeChipSpec,
+} from "./chip.interface";
 
 export class CompositeChip extends BaseChip<"composite"> {
-	constructor(chipSpec: CompositeChipSpec, chipInitParams: ChipInitParams) {
-		super(chipSpec, chipInitParams);
+	constructor(
+		chipSpec: CompositeChipSpec,
+		chipInitParams: ChipInitParams,
+		opts?: ChipSpawnOptions,
+	) {
+		super(chipSpec, chipInitParams, opts);
 	}
 
 	public execute(): boolean {
-		console.log("execute", this);
 		return false;
 	}
 }

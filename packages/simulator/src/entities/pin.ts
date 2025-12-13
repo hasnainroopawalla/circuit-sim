@@ -21,13 +21,11 @@ export class Pin extends BaseEntity<"pin"> {
 
 	constructor(args: {
 		spec: PinSpec;
-		id: string;
 		chip: Chip;
 		pinType: PinType;
-		pinIdx: number; // TODO: required?
+		pinIdx: number;
 	}) {
 		super({
-			id: args.id,
 			entityType: "pin",
 		});
 

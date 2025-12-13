@@ -1,5 +1,4 @@
 import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
-import { entityIdService } from "../entity-id-service";
 import { BaseEntity } from "./entity";
 import type { Pin } from "./pin";
 
@@ -27,7 +26,6 @@ export class Wire extends BaseEntity<"wire"> {
 		endPin: Pin;
 	}) {
 		super({
-			id: entityIdService.generateId(),
 			entityType: "wire",
 		});
 

@@ -35,6 +35,9 @@ export class WireManager extends BaseManager {
 
 		const wire = new Wire({ spec: wireSpec, wireInitParams, startPin, endPin });
 
+		const wireId = entityIdService.generateId();
+		wire.setId(wireId);
+
 		this.wires.push(wire);
 	}
 

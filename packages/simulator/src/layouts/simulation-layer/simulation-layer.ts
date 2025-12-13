@@ -1,4 +1,7 @@
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import type {
+	ChipRenderable,
+	Renderable,
+} from "@digital-logic-sim/render-engine";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
 import type {
 	ButtonEvent,
@@ -10,7 +13,6 @@ import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 import { LayoutUtils } from "../layout.utils";
 import type { Camera } from "../../camera";
-import { AtomicChip, CompositeChip } from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
 
 type SimulationLayerArgs = BaseLayerArgs;
@@ -24,9 +26,14 @@ export class SimulationLayer extends BaseLayer {
 	}
 
 	public getRenderables(): Renderable[] {
-		const chipRenderables: Renderable[] = this.sim.chipManager.chips.map(
-			(chip) => LayoutUtils.chipToRenderable(chip),
-		);
+		const chipRenderables = this.sim.chipManager.chips.reduce((acc, chip) => {
+			// TODO: improve the logic to show chips only if parent composite is open in "View mode"
+			if (chip.parentCompositeId) {
+				return acc;
+			}
+			acc.push(LayoutUtils.chipToRenderable(chip));
+			return acc;
+		}, [] as ChipRenderable[]);
 
 		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
 			(wire) => {

@@ -12,21 +12,25 @@ import {
 	type OutputChip,
 	type OutputChipSpec,
 	type ChipSpec,
+	type ChipSpawnOptions,
 } from "../../entities/chips";
 
 export type AtomicChipClass = new (
 	chipSpec: AtomicChipSpec,
 	chipInitParams: ChipInitParams,
+	opts?: ChipSpawnOptions,
 ) => AtomicChip;
 
 export type IOChipClass<T extends IOChipType> = T extends "input"
 	? new (
 			spec: InputChipSpec,
 			params: ChipInitParams,
+			opts?: ChipSpawnOptions,
 		) => InputChip
 	: new (
 			spec: OutputChipSpec,
 			params: ChipInitParams,
+			opts?: ChipSpawnOptions,
 		) => OutputChip;
 
 const IO_CHIPS: ChipSpec[] = [

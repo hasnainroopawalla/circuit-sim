@@ -7,11 +7,14 @@ type EntityType = "chip" | "pin" | "wire";
 export type Entity = Chip | Wire | Pin;
 
 export abstract class BaseEntity<T extends EntityType> {
-	public readonly id: string;
-	public readonly entityType: T;
+	public id!: string;
+	public entityType: T;
 
-	protected constructor(args: { id: string; entityType: T }) {
-		this.id = args.id;
+	protected constructor(args: { entityType: T }) {
 		this.entityType = args.entityType;
+	}
+
+	public setId(id: string) {
+		this.id = id;
 	}
 }
