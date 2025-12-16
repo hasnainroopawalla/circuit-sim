@@ -173,44 +173,37 @@ export class SimulatorApp {
 		// const notChipSpec = this.sim.chipLibraryService.getChipSpecByName(
 		// 	"NOT",
 		// ) as AtomicChipSpec;
-
 		// const inputChipSpec = this.sim.chipLibraryService.getChipSpecByName(
 		// 	"INPUT",
 		// ) as InputChipSpec;
 		// const outputChipSpec = this.sim.chipLibraryService.getChipSpecByName(
 		// 	"OUTPUT",
 		// ) as OutputChipSpec;
-
 		// // INPUT 0
 		// const inputChip0 = this.sim.chipManager.spawnChip(inputChipSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: 1.6, y: 1.3 },
 		// });
-
 		// // INPUT 1
 		// const inputChip1 = this.sim.chipManager.spawnChip(inputChipSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: 1.6, y: 0.8 },
 		// });
-
 		// // AND
 		// const andChip = this.sim.chipManager.spawnChip(andChipSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: 0.3, y: 1 },
 		// });
-
 		// // NOT
 		// const notChip = this.sim.chipManager.spawnChip(notChipSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: -1, y: 1 },
 		// });
-
 		// // OUTPUT 0
 		// const outputChip = this.sim.chipManager.spawnChip(outputChipSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: -2, y: 1 },
 		// });
-
 		// // input 0 to AND in 0
 		// this.sim.wireManager.spawnWire(
 		// 	{
@@ -222,7 +215,6 @@ export class SimulatorApp {
 		// 		controlPoints: [],
 		// 	},
 		// );
-
 		// // input 1 to AND in 1
 		// this.sim.wireManager.spawnWire(
 		// 	{
@@ -234,7 +226,6 @@ export class SimulatorApp {
 		// 		controlPoints: [],
 		// 	},
 		// );
-
 		// // AND out to NOT in
 		// this.sim.wireManager.spawnWire(
 		// 	{
@@ -246,7 +237,6 @@ export class SimulatorApp {
 		// 		controlPoints: [],
 		// 	},
 		// );
-
 		// // NOT out to output
 		// this.sim.wireManager.spawnWire(
 		// 	{
@@ -258,13 +248,10 @@ export class SimulatorApp {
 		// 		controlPoints: [],
 		// 	},
 		// );
-
 		// this.sim.emit("chip.save", undefined);
-
 		// const nandSpec = this.sim.chipLibraryService.getChipSpecByName(
 		// 	"NAND",
 		// ) as CompositeChipSpec;
-
 		// this.sim.chipManager.spawnChip(nandSpec, {
 		// 	color: { r: 0, g: 0, b: 0, a: 1 },
 		// 	position: { x: 0.3, y: 0.1 },

@@ -1,69 +1,79 @@
-import {
-	type ChipSpec,
-	type AtomicChipType,
-	type InputChipSpec,
-	type OutputChipSpec,
-	InputChip,
-	OutputChip,
+import type {
+	AtomicChipType,
+	CompositeChipSpec,
+	IOChipType,
 } from "../../entities/chips";
-import type { Simulator } from "../../simulator";
-import { BaseService } from "../base-service";
 import {
-	type AtomicChipClass,
-	type IOChipClass,
-	PRIMITIVE_CHIP_SPECS,
-	ATOMIC_CHIPS_MAP,
-	IO_CHIP_SPECS,
-} from "./chip-library";
+	type AtomicChipFactory,
+	type IOChipFactory,
+	BuiltinChipRegistry,
+} from "./builtin-registry";
+import {
+	type CompositeChipFactory,
+	type CompositeChipName,
+	CompositeChipRegistry,
+} from "./composite-registry";
 
-export class ChipLibraryService extends BaseService {
-	protected readonly chipSpecs: ChipSpec[];
+type ChipRegistryMap = {
+	atomic: {
+		definition: { name: AtomicChipType };
+		resolved: AtomicChipFactory;
+	};
 
-	constructor(sim: Simulator) {
-		super(sim);
-		this.chipSpecs = PRIMITIVE_CHIP_SPECS;
+	io: {
+		definition: { name: IOChipType };
+		resolved: IOChipFactory;
+	};
+
+	composite: {
+		definition: { name: CompositeChipName };
+		resolved: CompositeChipFactory;
+	};
+};
+
+// TODO: is the best way to represent a skeleton?
+export type ChipMetadata = {
+	numInputPins: number;
+	numOutputPins: number;
+};
+
+export type ChipDefinition = {
+	[K in keyof ChipRegistryMap]: {
+		kind: K;
+	} & ChipRegistryMap[K]["definition"];
+}[keyof ChipRegistryMap];
+
+export type ChipFactory =
+	| AtomicChipFactory
+	| IOChipFactory
+	| CompositeChipFactory;
+
+export class ChipLibraryService {
+	private builtin = new BuiltinChipRegistry();
+	private composite = new CompositeChipRegistry();
+
+	constructor() {}
+
+	public register(spec: CompositeChipSpec): void {
+		this.composite.register(spec);
 	}
 
-	public add(chipSpec: ChipSpec): void {
-		// check if duplicate chip spec name
-		if (
-			this.chipSpecs.some(
-				(libraryChipSpec) => libraryChipSpec.name === chipSpec.name,
-			)
-		) {
-			return;
+	public getAllDefinitions(): ChipDefinition[] {
+		return [
+			...this.builtin.getDefinitions(),
+			...this.composite.getDefinitions(),
+		];
+	}
+
+	public resolve<T extends ChipDefinition>(
+		chipRef: T,
+	): ChipRegistryMap[T["kind"]]["resolved"] {
+		switch (chipRef.kind) {
+			case "atomic":
+			case "io":
+				return this.builtin.resolve(chipRef.kind, chipRef.name);
+			case "composite":
+				return this.composite.resolve(chipRef.name);
 		}
-
-		this.chipSpecs.push(chipSpec);
-	}
-
-	public getAll(): ChipSpec[] {
-		return this.chipSpecs;
-	}
-
-	public getChipSpecByName(chipSpecName: string): ChipSpec | undefined {
-		return this.chipSpecs.find(
-			(libraryChipSpec) => libraryChipSpec.name === chipSpecName,
-		);
-	}
-
-	public getAtomicChipClass(atomicChipName: AtomicChipType): AtomicChipClass {
-		return ATOMIC_CHIPS_MAP[atomicChipName];
-	}
-
-	public getInputChipClass(): IOChipClass<"input"> {
-		return InputChip;
-	}
-
-	public getOutputChipClass(): IOChipClass<"output"> {
-		return OutputChip;
-	}
-
-	public getInputChipSpec(): InputChipSpec {
-		return IO_CHIP_SPECS[0] as InputChipSpec;
-	}
-
-	public getOutputChipSpec(): OutputChipSpec {
-		return IO_CHIP_SPECS[1] as OutputChipSpec;
 	}
 }

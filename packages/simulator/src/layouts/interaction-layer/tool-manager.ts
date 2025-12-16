@@ -97,9 +97,10 @@ export class ToolManager {
 	}
 
 	private registerSubscriptions(): void {
-		this.sim.on("chip.spawn.start", ({ chipSpec }) =>
-			this.setActiveTool(SpawnChipTool, { chipSpec }),
-		);
+		this.sim.on("chip.spawn.start", ({ chipDefinition }) => {
+			const chipFactory = this.sim.chipLibraryService.resolve(chipDefinition);
+			this.setActiveTool(SpawnChipTool, { chipFactory });
+		});
 
 		this.sim.on("wire.spawn.start", ({ startPin }) =>
 			this.setActiveTool(WiringTool, { startPin }),

@@ -1,16 +1,16 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
-import type { ChipSpec } from "./chip.interface";
 import type { Position, RectDimensions } from "@digital-logic-sim/shared-types";
+import type { ChipMetadata } from "../../services/chip-library-service";
 
 export const ChipUtils = {
 	getPinOffsets: (
-		chipSpec: ChipSpec,
+		chipMetadata: ChipMetadata,
 		position: Position,
 		dimensions: RectDimensions,
 	) => {
 		const [numInputPins, numOutputPins] = [
-			chipSpec.inputPins.length,
-			chipSpec.outputPins.length,
+			chipMetadata.numInputPins,
+			chipMetadata.numOutputPins,
 		];
 
 		const maxPins = Math.max(numInputPins, numOutputPins);

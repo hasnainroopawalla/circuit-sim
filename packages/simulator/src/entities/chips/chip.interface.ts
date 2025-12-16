@@ -19,8 +19,7 @@ export type ChipSpawnOptions = {
 	parentCompositeId?: string;
 };
 
-type BaseChipInitParams<TChipType extends ChipType> = {
-	chipType: TChipType;
+export type ChipInitParams = {
 	color: ColorRGBA;
 	position: Position;
 };
@@ -50,13 +49,17 @@ export type CompositeChipSpec = BaseChipSpec<"composite"> & {
 
 export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
 
-export type IOChipInitParams = BaseChipInitParams<"io"> & {
+// export type IOChipInitParams = BaseChipInitParams<"io"> & {
+// 	externalPinName: string;
+// };
+// export type AtomicChipInitParams = BaseChipInitParams<"atomic">;
+// export type CompositeChipInitParams = BaseChipInitParams<"composite">;
+
+// export type ChipInitParams =
+// 	| AtomicChipInitParams
+// 	| IOChipInitParams
+// 	| CompositeChipInitParams;
+
+export type IOChipInitParams = ChipInitParams & {
 	externalPinName: string;
 };
-export type AtomicChipInitParams = BaseChipInitParams<"atomic">;
-export type CompositeChipInitParams = BaseChipInitParams<"composite">;
-
-export type ChipInitParams =
-	| AtomicChipInitParams
-	| IOChipInitParams
-	| CompositeChipInitParams;

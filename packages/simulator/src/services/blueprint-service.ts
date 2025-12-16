@@ -58,12 +58,12 @@ export class BlueprintService extends BaseService {
 	public loadBlueprint(blueprintString: string): void {
 		const blueprint = JSON.parse(blueprintString) as Blueprint;
 
-		this.sim.chipLibraryService.add({
+		this.sim.chipLibraryService.register({
 			name: "NAND",
 			chipType: "composite",
-			blueprint,
 			inputPins: [{ name: "NAND in 0" }, { name: "NAND in 1" }],
 			outputPins: [{ name: "NAND out 0" }],
+			blueprint,
 		});
 
 		console.log("service", blueprint);
@@ -158,7 +158,7 @@ export class BlueprintService extends BaseService {
 
 		console.log("blueprint", JSON.stringify(blueprint));
 
-		this.sim.chipLibraryService.add({
+		this.sim.chipLibraryService.register({
 			name: "NAND",
 			chipType: "composite",
 			inputPins: [{ name: "in0" }, { name: "in1" }],

@@ -1,11 +1,11 @@
-import type { ChipSpec } from "../entities/chips";
 import type { Pin } from "../entities/pin";
+import type { ChipDefinition } from "./chip-library-service";
 
 export type IEvents = {
 	"chip.save": undefined;
 
 	"wire.spawn.start": { startPin: Pin };
-	"chip.spawn.start": { chipSpec: ChipSpec };
+	"chip.spawn.start": { chipDefinition: ChipDefinition };
 
 	"entity.spawn.finish": {
 		entity: {

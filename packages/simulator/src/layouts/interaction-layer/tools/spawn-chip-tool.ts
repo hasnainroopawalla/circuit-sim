@@ -4,7 +4,7 @@ import type {
 	PinRenderable,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import { type ChipSpec, GhostChip } from "../../../entities/chips";
+import { GhostChip } from "../../../entities/chips";
 import type {
 	ButtonEvent,
 	KeyboardButtonType,
@@ -13,21 +13,22 @@ import type {
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { PinType } from "../../../entities/pin";
+import type { ChipFactory } from "../../../services/chip-library-service";
 
 type SpawnChipToolArgs = ToolArgs & {
-	chipSpec: ChipSpec;
+	chipFactory: ChipFactory;
 };
 
 export class SpawnChipTool extends Tool {
-	private chipSpec: ChipSpec;
+	private chipFactory: ChipFactory;
 
 	private ghostChip: GhostChip;
 
 	constructor(args: SpawnChipToolArgs) {
 		super(args);
 
-		this.chipSpec = args.chipSpec;
-		this.ghostChip = new GhostChip(args.chipSpec, {
+		this.chipFactory = args.chipFactory;
+		this.ghostChip = new GhostChip(args.chipFactory.descriptor, {
 			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
 			position: args.mousePositionService.getMousePosition().world,
 		});
@@ -93,9 +94,15 @@ export class SpawnChipTool extends Tool {
 			color: this.ghostChip.renderState.color,
 			position: this.ghostChip.renderState.position,
 			dimensions: this.ghostChip.layout.dimensions,
-			label: this.chipSpec.name,
-			inputPins: createPinRenderable(this.chipSpec.inputPins.length, "in"),
-			outputPins: createPinRenderable(this.chipSpec.outputPins.length, "out"),
+			label: "",
+			inputPins: createPinRenderable(
+				this.chipFactory.descriptor.numInputPins,
+				"in",
+			),
+			outputPins: createPinRenderable(
+				this.chipFactory.descriptor.numOutputPins,
+				"out",
+			),
 		};
 	}
 
@@ -104,7 +111,7 @@ export class SpawnChipTool extends Tool {
 		const chipPosition = this.ghostChip.renderState.position;
 
 		this.sim.chipManager.spawnChip(
-			this.chipSpec,
+			this.chipFactory,
 			{
 				color: chipColor,
 				position: chipPosition,

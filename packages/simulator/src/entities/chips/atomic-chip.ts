@@ -1,14 +1,14 @@
 import { BaseChip } from "./chip";
 import type {
 	AtomicChipSpec,
-	AtomicChipInitParams,
+	ChipInitParams,
 	ChipSpawnOptions,
 } from "./chip.interface";
 
 export abstract class AtomicChip extends BaseChip<"atomic"> {
 	constructor(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: AtomicChipInitParams,
+		chipInitParams: ChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
@@ -16,12 +16,16 @@ export abstract class AtomicChip extends BaseChip<"atomic"> {
 }
 
 export class AndChip extends AtomicChip {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		chipInitParams: AtomicChipInitParams,
-		opts?: ChipSpawnOptions,
-	) {
-		super(chipSpec, chipInitParams, opts);
+	static readonly spec: AtomicChipSpec = {
+		name: "AND",
+		atomicChipType: "AND",
+		chipType: "atomic",
+		inputPins: [{ name: "in0" }, { name: "in1" }],
+		outputPins: [{ name: "out0" }],
+	};
+
+	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+		super(AndChip.spec, chipInitParams, opts);
 	}
 
 	public execute(): boolean {
@@ -32,12 +36,16 @@ export class AndChip extends AtomicChip {
 }
 
 export class OrChip extends AtomicChip {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		chipInitParams: AtomicChipInitParams,
-		opts?: ChipSpawnOptions,
-	) {
-		super(chipSpec, chipInitParams, opts);
+	static readonly spec: AtomicChipSpec = {
+		name: "OR",
+		atomicChipType: "OR",
+		chipType: "atomic",
+		inputPins: [{ name: "in0" }, { name: "in1" }],
+		outputPins: [{ name: "out0" }],
+	};
+
+	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+		super(OrChip.spec, chipInitParams, opts);
 	}
 
 	public execute(): boolean {
@@ -48,12 +56,16 @@ export class OrChip extends AtomicChip {
 }
 
 export class NotChip extends AtomicChip {
-	constructor(
-		chipSpec: AtomicChipSpec,
-		chipInitParams: AtomicChipInitParams,
-		opts?: ChipSpawnOptions,
-	) {
-		super(chipSpec, chipInitParams, opts);
+	static readonly spec: AtomicChipSpec = {
+		name: "NOT",
+		atomicChipType: "NOT",
+		chipType: "atomic",
+		inputPins: [{ name: "in0" }],
+		outputPins: [{ name: "out0" }],
+	};
+
+	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+		super(NotChip.spec, chipInitParams, opts);
 	}
 
 	public execute(): boolean {

@@ -27,7 +27,7 @@ export class Simulator {
 	constructor() {
 		// services
 		this.eventingService = new EventingService();
-		this.chipLibraryService = new ChipLibraryService(this);
+		this.chipLibraryService = new ChipLibraryService();
 		this.blueprintService = new BlueprintService(this);
 
 		// managers

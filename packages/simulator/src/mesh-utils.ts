@@ -45,7 +45,10 @@ function getPinUnderMouse(
 	mouseWorldPosition: Position,
 ): Pin | null {
 	const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
-		chip.spec,
+		{
+			numInputPins: chip.spec.inputPins.length,
+			numOutputPins: chip.spec.outputPins.length,
+		},
 		chip.renderState.position,
 		chip.layout.dimensions,
 	);

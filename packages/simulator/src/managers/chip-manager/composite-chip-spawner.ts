@@ -50,8 +50,14 @@ export class CompositeChipSpawner {
 		internalChipMap: InternalChipMap,
 	): void {
 		compositeChip.spec.blueprint.chips.forEach((internalChipBlueprint) => {
+			// TODO: fix this
+			const chipFactory = this.chipLibraryService.resolve({
+				kind: "atomic",
+				name: internalChipBlueprint.spec.name,
+			});
+
 			const internalChip = this.chipManager.spawnChip(
-				internalChipBlueprint.spec,
+				chipFactory,
 				internalChipBlueprint.renderState,
 				{
 					parentCompositeId: compositeChip.id,
@@ -74,16 +80,15 @@ export class CompositeChipSpawner {
 				? compositeChip.spec.blueprint.inputMappings
 				: compositeChip.spec.blueprint.outputMappings;
 
-		const ioChipSpec =
-			ioChipType === "input"
-				? this.chipLibraryService.getInputChipSpec()
-				: this.chipLibraryService.getOutputChipSpec();
+		const ioChipFactory = this.chipLibraryService.resolve({
+			kind: "io",
+			name: ioChipType,
+		});
 
 		chipMappings.forEach((mapping) => {
 			const ioChip = this.chipManager.spawnChip(
-				ioChipSpec,
+				ioChipFactory,
 				{
-					chipType: "io",
 					color: { r: 1, g: 1, b: 1, a: 1 },
 					position: { x: 10, y: 10 },
 					externalPinName: mapping.externalPin,

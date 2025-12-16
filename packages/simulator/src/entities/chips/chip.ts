@@ -52,7 +52,10 @@ export abstract class BaseChip<
 
 		this.spec = chipSpec;
 
-		this.layout = new ChipLayoutFactory(this);
+		this.layout = new ChipLayoutFactory(this.renderState, {
+			numInputPins: this.spec.inputPins.length,
+			numOutputPins: this.spec.outputPins.length,
+		});
 	}
 
 	public getPin(name: string): Pin | undefined {

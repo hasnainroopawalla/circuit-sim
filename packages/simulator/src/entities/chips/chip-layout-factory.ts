@@ -1,8 +1,9 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { PinType } from "../pin";
-import type { Chip, ChipSpec } from "./chip.interface";
+import type { Chip } from "./chip.interface";
 import { ChipUtils } from "./chip.utils";
 import type { RectDimensions, Position } from "@digital-logic-sim/shared-types";
+import type { ChipMetadata } from "../../services/chip-library-service";
 
 const chipLayoutConfig = {
 	aspectRatio: 1.5,
@@ -17,19 +18,22 @@ export interface ChipLayout {
 export class ChipLayoutFactory implements ChipLayout {
 	public dimensions: RectDimensions;
 
-	constructor(private readonly chip: Pick<Chip, "spec" | "renderState">) {
-		this.dimensions = computeChipDimensions(chip.spec);
+	constructor(
+		private readonly chipRenderState: Chip["renderState"],
+		private readonly chipMetadata: ChipMetadata,
+	) {
+		this.dimensions = computeChipDimensions(chipMetadata);
 	}
 
 	public getPinOffset(pinType: PinType) {
 		const [numInputPins, numOutputPins] = [
-			this.chip.spec.inputPins.length,
-			this.chip.spec.outputPins.length,
+			this.chipMetadata.numInputPins,
+			this.chipMetadata.numOutputPins,
 		];
 
 		const [height, width] = [this.dimensions.height, this.dimensions.width];
 
-		const { x: chipX, y: chipY } = this.chip.renderState.position;
+		const { x: chipX, y: chipY } = this.chipRenderState.position;
 
 		const maxPins = Math.max(numInputPins, numOutputPins);
 
@@ -57,8 +61,8 @@ export class ChipLayoutFactory implements ChipLayout {
 
 	public getPinPosition(pinIdx: number, pinType: PinType): Position {
 		const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
-			this.chip.spec,
-			this.chip.renderState.position,
+			this.chipMetadata,
+			this.chipRenderState.position,
 			this.dimensions,
 		);
 
@@ -71,10 +75,10 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 }
 
-const computeChipDimensions = (chipSpec: ChipSpec): RectDimensions => {
+const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimensions => {
 	const [numInputPins, numOutputPins] = [
-		chipSpec.inputPins.length,
-		chipSpec.outputPins.length,
+		chipMetadata.numInputPins,
+		chipMetadata.numOutputPins,
 	];
 
 	const maxPins = Math.max(numInputPins, numOutputPins);

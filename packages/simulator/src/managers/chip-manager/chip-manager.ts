@@ -1,34 +1,48 @@
 import {
 	type Chip,
-	type ChipSpec,
 	type ChipInitParams,
-	type IOChipSpec,
 	type IOChip,
-	type AtomicChipSpec,
 	type AtomicChip,
-	type CompositeChipSpec,
 	type ChipSpawnOptions,
-	type AtomicChipInitParams,
-	type CompositeChipInitParams,
-	type InputChip,
-	type OutputChip,
 	type IOChipType,
+	type IOChipInitParams,
 	CompositeChip,
 } from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
 import { entityIdService } from "../../entity-id-service";
+import type {
+	AtomicChipFactory,
+	IOChipFactory,
+} from "../../services/chip-library-service/builtin-registry";
+import type {
+	ChipFactory,
+	CompositeChipFactory,
+} from "../../services/chip-library-service";
 import type { Simulator } from "../../simulator";
 import { didAnyChange } from "../../utils";
 import { BaseManager } from "../base-manager";
 import { CompositeChipSpawner } from "./composite-chip-spawner";
 
-type ChipFromSpec<T extends ChipSpec> = T extends IOChipSpec
-	? T["ioChipType"] extends "input"
-		? InputChip
-		: OutputChip
-	: T extends AtomicChipSpec
-		? AtomicChip
-		: T extends CompositeChipSpec
+// type ChipFromChipRef<TChipRef extends ChipDefinition> =
+// 	TChipRef["kind"] extends "io"
+// 		? TChipRef["name"] extends "input"
+// 			? InputChip
+// 			: OutputChip
+// 		: TChipRef["kind"] extends "atomic"
+// 			? AtomicChip
+// 			: TChipRef["kind"] extends "composite"
+// 				? CompositeChip
+// 				: never;
+
+type ChipInitFromFactory<T extends ChipFactory> = T extends IOChipFactory
+	? IOChipInitParams
+	: ChipInitParams;
+
+type ChipFromFactory<T extends ChipFactory> = T extends AtomicChipFactory
+	? AtomicChip
+	: T extends IOChipFactory
+		? IOChip
+		: T extends CompositeChipFactory
 			? CompositeChip
 			: never;
 
@@ -60,12 +74,12 @@ export class ChipManager extends BaseManager {
 		return didAnyChange(this.chips, (chip) => chip.commitPinValues());
 	}
 
-	public spawnChip<TSpec extends ChipSpec>(
-		chipSpec: TSpec,
-		chipInitParams: ChipInitParams,
+	public spawnChip<T extends ChipFactory>(
+		chipFactory: T,
+		chipInitParams: ChipInitFromFactory<T>,
 		opts?: ChipSpawnOptions,
-	): ChipFromSpec<TSpec> {
-		const chip = this.createChip(chipSpec, chipInitParams, opts);
+	): ChipFromFactory<T> {
+		const chip = this.createChip(chipFactory, chipInitParams, opts);
 
 		const chipId = entityIdService.generateId();
 		chip.setId(chipId);
@@ -89,84 +103,61 @@ export class ChipManager extends BaseManager {
 		return chip;
 	}
 
-	private createChip<TSpec extends ChipSpec>(
-		chipSpec: TSpec,
-		chipInitParams: ChipInitParams,
+	private createChip<T extends ChipFactory>(
+		chipFactory: T,
+		chipInitParams: ChipInitFromFactory<T>,
 		opts?: ChipSpawnOptions,
-	): ChipFromSpec<TSpec> {
-		switch (chipSpec.chipType) {
+	): ChipFromFactory<T> {
+		switch (chipFactory.kind) {
 			case "io":
 				return this.createIOChip(
-					chipSpec,
+					chipFactory,
 					chipInitParams,
 					opts,
-				) as ChipFromSpec<TSpec>;
+				) as ChipFromFactory<T>;
 			case "atomic":
 				return this.createAtomicChip(
-					chipSpec,
-					chipInitParams as AtomicChipInitParams,
+					chipFactory,
+					chipInitParams,
 					opts,
-				) as ChipFromSpec<TSpec>;
+				) as ChipFromFactory<T>;
 			case "composite":
 				return this.createCompositeChip(
-					chipSpec,
-					chipInitParams as CompositeChipInitParams,
+					chipFactory,
+					chipInitParams,
 					opts,
-				) as ChipFromSpec<TSpec>;
+				) as ChipFromFactory<T>;
 		}
 	}
 
 	private createIOChip(
-		chipSpec: IOChipSpec,
+		chipFactory: IOChipFactory,
 		chipInitParams: ChipInitParams,
 		opts?: ChipSpawnOptions,
 	): IOChip {
-		switch (chipSpec.ioChipType) {
-			case "input": {
-				const InputChipClass = this.sim.chipLibraryService.getInputChipClass();
-				return new InputChipClass(
-					chipSpec,
-					{
-						...chipInitParams,
-						chipType: "io",
-						externalPinName: this.getExternalPinName("input"),
-					},
-					opts,
-				);
-			}
-			case "output": {
-				const OutputChipClass =
-					this.sim.chipLibraryService.getOutputChipClass();
-				return new OutputChipClass(
-					chipSpec,
-					{
-						...chipInitParams,
-						chipType: "io",
-						externalPinName: this.getExternalPinName("output"),
-					},
-					opts,
-				);
-			}
-		}
+		return new chipFactory.ChipClass(
+			{
+				...chipInitParams,
+				externalPinName: this.getExternalPinName(chipFactory.ioChipType),
+			},
+			opts,
+		);
 	}
 
 	private createAtomicChip(
-		chipSpec: AtomicChipSpec,
-		chipInitParams: AtomicChipInitParams,
+		chipFactory: AtomicChipFactory,
+		chipInitParams: ChipInitParams,
 		opts?: ChipSpawnOptions,
 	): AtomicChip {
-		const AtomicChipClass = this.sim.chipLibraryService.getAtomicChipClass(
-			chipSpec.atomicChipType,
-		);
-		return new AtomicChipClass(chipSpec, chipInitParams, opts);
+		return new chipFactory.ChipClass(chipInitParams, opts);
 	}
 
 	private createCompositeChip(
-		chipSpec: CompositeChipSpec,
-		chipInitParams: CompositeChipInitParams,
+		chipFactory: CompositeChipFactory,
+		chipInitParams: ChipInitParams,
 		opts?: ChipSpawnOptions,
 	): CompositeChip {
-		return new CompositeChip(chipSpec, chipInitParams, opts);
+		return new CompositeChip(chipFactory.spec, chipInitParams, opts);
 	}
 
 	private spawnPinsForChip(chip: Chip): void {

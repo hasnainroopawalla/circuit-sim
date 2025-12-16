@@ -26,14 +26,16 @@ export const useCommands = (): Command[] => {
 	// TODO: Split based on commands (spawn, delete, etc.)
 	const commands = React.useMemo(
 		() =>
-			simulatorApp.sim.chipLibraryService.getAll().map((chipSpec) => ({
-				id: chipSpec.name,
-				label: `Spawn: ${chipSpec.name}`,
-				action: () =>
-					simulatorApp.sim.emit("chip.spawn.start", {
-						chipSpec,
-					}),
-			})),
+			simulatorApp.sim.chipLibraryService
+				.getAllDefinitions()
+				.map((chipDefinition) => ({
+					id: chipDefinition.name,
+					label: `Spawn: ${chipDefinition.name}`,
+					action: () =>
+						simulatorApp.sim.emit("chip.spawn.start", {
+							chipDefinition,
+						}),
+				})),
 		[simulatorApp],
 	);
 

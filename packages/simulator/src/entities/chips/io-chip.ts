@@ -1,11 +1,11 @@
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
-	IOChipInitParams,
 	ChipSpawnOptions,
-	InputChipSpec,
+	IOChipInitParams,
 	IOChipSpec,
 	IOChipType,
+	InputChipSpec,
 	OutputChipSpec,
 } from "./chip.interface";
 
@@ -37,14 +37,18 @@ export abstract class BaseIOChip<
 }
 
 export class InputChip extends BaseIOChip<"input"> {
+	static readonly spec: InputChipSpec = {
+		name: "INPUT",
+		chipType: "io" as const,
+		ioChipType: "input" as const,
+		inputPins: [],
+		outputPins: [{ name: "in0" }],
+	};
+
 	private nextValue = false;
 
-	constructor(
-		chipSpec: InputChipSpec,
-		chipInitParams: IOChipInitParams,
-		opts?: ChipSpawnOptions,
-	) {
-		super(chipSpec, chipInitParams, opts);
+	constructor(chipInitParams: IOChipInitParams, opts?: ChipSpawnOptions) {
+		super(InputChip.spec, chipInitParams, opts);
 	}
 
 	public toggle(): void {
@@ -68,12 +72,16 @@ export class InputChip extends BaseIOChip<"input"> {
 }
 
 export class OutputChip extends BaseIOChip<"output"> {
-	constructor(
-		chipSpec: OutputChipSpec,
-		chipInitParams: IOChipInitParams,
-		opts?: ChipSpawnOptions,
-	) {
-		super(chipSpec, chipInitParams, opts);
+	static readonly spec: OutputChipSpec = {
+		name: "OUTPUT",
+		chipType: "io" as const,
+		ioChipType: "output" as const,
+		inputPins: [{ name: "out0" }],
+		outputPins: [],
+	};
+
+	constructor(chipInitParams: IOChipInitParams, opts?: ChipSpawnOptions) {
+		super(OutputChip.spec, chipInitParams, opts);
 	}
 
 	public execute(): boolean {
