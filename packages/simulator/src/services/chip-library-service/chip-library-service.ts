@@ -16,31 +16,26 @@ import {
 
 type ChipRegistryMap = {
 	atomic: {
-		definition: { name: AtomicChipType };
+		name: AtomicChipType;
 		resolved: AtomicChipFactory;
 	};
 
 	io: {
-		definition: { name: IOChipType };
+		name: IOChipType;
 		resolved: IOChipFactory;
 	};
 
 	composite: {
-		definition: { name: CompositeChipName };
+		name: CompositeChipName;
 		resolved: CompositeChipFactory;
 	};
-};
-
-// TODO: is the best way to represent a skeleton?
-export type ChipMetadata = {
-	numInputPins: number;
-	numOutputPins: number;
 };
 
 export type ChipDefinition = {
 	[K in keyof ChipRegistryMap]: {
 		kind: K;
-	} & ChipRegistryMap[K]["definition"];
+		name: ChipRegistryMap[K]["name"];
+	};
 }[keyof ChipRegistryMap];
 
 export type ChipFactory =
@@ -49,10 +44,13 @@ export type ChipFactory =
 	| CompositeChipFactory;
 
 export class ChipLibraryService {
-	private builtin = new BuiltinChipRegistry();
-	private composite = new CompositeChipRegistry();
+	private builtin: BuiltinChipRegistry;
+	private composite: CompositeChipRegistry;
 
-	constructor() {}
+	constructor() {
+		this.builtin = new BuiltinChipRegistry();
+		this.composite = new CompositeChipRegistry();
+	}
 
 	public register(spec: CompositeChipSpec): void {
 		this.composite.register(spec);
@@ -66,14 +64,14 @@ export class ChipLibraryService {
 	}
 
 	public resolve<T extends ChipDefinition>(
-		chipRef: T,
+		definition: T,
 	): ChipRegistryMap[T["kind"]]["resolved"] {
-		switch (chipRef.kind) {
+		switch (definition.kind) {
 			case "atomic":
 			case "io":
-				return this.builtin.resolve(chipRef.kind, chipRef.name);
+				return this.builtin.resolve(definition.kind, definition.name);
 			case "composite":
-				return this.composite.resolve(chipRef.name);
+				return this.composite.resolve(definition.name);
 		}
 	}
 }

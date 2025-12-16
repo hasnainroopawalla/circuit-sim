@@ -16,6 +16,7 @@ import type {
 } from "../../services/chip-library-service/builtin-registry";
 import type {
 	ChipFactory,
+	ChipFromFactory,
 	CompositeChipFactory,
 } from "../../services/chip-library-service";
 import type { Simulator } from "../../simulator";
@@ -23,28 +24,9 @@ import { didAnyChange } from "../../utils";
 import { BaseManager } from "../base-manager";
 import { CompositeChipSpawner } from "./composite-chip-spawner";
 
-// type ChipFromChipRef<TChipRef extends ChipDefinition> =
-// 	TChipRef["kind"] extends "io"
-// 		? TChipRef["name"] extends "input"
-// 			? InputChip
-// 			: OutputChip
-// 		: TChipRef["kind"] extends "atomic"
-// 			? AtomicChip
-// 			: TChipRef["kind"] extends "composite"
-// 				? CompositeChip
-// 				: never;
-
-type ChipInitFromFactory<T extends ChipFactory> = T extends IOChipFactory
+type ChipInitParamsFromFactory<T extends ChipFactory> = T extends IOChipFactory
 	? IOChipInitParams
 	: ChipInitParams;
-
-type ChipFromFactory<T extends ChipFactory> = T extends AtomicChipFactory
-	? AtomicChip
-	: T extends IOChipFactory
-		? IOChip
-		: T extends CompositeChipFactory
-			? CompositeChip
-			: never;
 
 export class ChipManager extends BaseManager {
 	public readonly chips: Chip[];
@@ -76,7 +58,7 @@ export class ChipManager extends BaseManager {
 
 	public spawnChip<T extends ChipFactory>(
 		chipFactory: T,
-		chipInitParams: ChipInitFromFactory<T>,
+		chipInitParams: ChipInitParamsFromFactory<T>,
 		opts?: ChipSpawnOptions,
 	): ChipFromFactory<T> {
 		const chip = this.createChip(chipFactory, chipInitParams, opts);
@@ -105,7 +87,7 @@ export class ChipManager extends BaseManager {
 
 	private createChip<T extends ChipFactory>(
 		chipFactory: T,
-		chipInitParams: ChipInitFromFactory<T>,
+		chipInitParams: ChipInitParamsFromFactory<T>,
 		opts?: ChipSpawnOptions,
 	): ChipFromFactory<T> {
 		switch (chipFactory.kind) {
@@ -135,10 +117,13 @@ export class ChipManager extends BaseManager {
 		chipInitParams: ChipInitParams,
 		opts?: ChipSpawnOptions,
 	): IOChip {
+		chipFactory;
 		return new chipFactory.ChipClass(
 			{
 				...chipInitParams,
-				externalPinName: this.getExternalPinName(chipFactory.ioChipType),
+				externalPinName: this.getExternalPinName(
+					chipFactory.ChipClass.spec.ioChipType,
+				),
 			},
 			opts,
 		);

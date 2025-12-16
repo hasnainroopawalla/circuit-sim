@@ -8,7 +8,7 @@
     "build": "pnpm --filter @digital-logic-sim/web build",
     "test:unit": "pnpm -r run test",
     "test": "pnpm -r test",
-    "lint": "biome check",
+    "lint": "biome check && tsc --noEmit",
     "lint:fix": "biome check --fix . && biome format --write ."
   },
   "keywords": [],

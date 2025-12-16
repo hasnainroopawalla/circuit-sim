@@ -11,19 +11,20 @@ import {
 	type AtomicChipType,
 	type IOChipInitParams,
 	type ChipInitParams,
+	type IOChipSpec,
+	type AtomicChipSpec,
 } from "../../entities/chips";
-import type { ChipMetadata, ChipDefinition } from "./chip-library-service";
+import type { ChipDefinition } from "./chip-library-service";
 
-// TODO: update to represent `spec` is a static class attr.
-type AtomicChipClass = new (
+type AtomicChipClass = (new (
 	chipInitParams: ChipInitParams,
 	opts?: ChipSpawnOptions,
-) => AtomicChip;
+) => AtomicChip) & { spec: AtomicChipSpec };
 
-type IOChipClass = new (
+type IOChipClass = (new (
 	chipInitParams: IOChipInitParams,
 	opts?: ChipSpawnOptions,
-) => IOChip;
+) => IOChip) & { spec: IOChipSpec };
 
 const BUILTIN_ATOMIC_CHIPS: Record<AtomicChipType, AtomicChipClass> = {
 	AND: AndChip,
@@ -39,29 +40,24 @@ const BUILTIN_IO_CHIPS: Record<IOChipType, IOChipClass> = {
 export type AtomicChipFactory = {
 	kind: "atomic";
 	ChipClass: AtomicChipClass;
-	descriptor: ChipMetadata;
 };
 
 export type IOChipFactory = {
 	kind: "io";
-	ioChipType: IOChipType;
 	ChipClass: IOChipClass;
-	descriptor: ChipMetadata;
 };
 
 export class BuiltinChipRegistry {
 	public getDefinitions(): ChipDefinition[] {
-		const ioChipDefinitions = Object.entries(BUILTIN_IO_CHIPS).map(
-			([chipName, chip]) => ({
-				kind: "io" as const,
-				name: chipName as IOChipType,
-			}),
-		);
+		const ioChipDefinitions = Object.values(BUILTIN_IO_CHIPS).map((chip) => ({
+			kind: "io" as const,
+			name: chip.spec.name as IOChipType,
+		}));
 
-		const atomicChipDefinitions = Object.entries(BUILTIN_ATOMIC_CHIPS).map(
-			([chipName, chip]) => ({
+		const atomicChipDefinitions = Object.values(BUILTIN_ATOMIC_CHIPS).map(
+			(chip) => ({
 				kind: "atomic" as const,
-				name: chipName as AtomicChipType,
+				name: chip.spec.name as AtomicChipType,
 			}),
 		);
 
@@ -79,10 +75,6 @@ export class BuiltinChipRegistry {
 				return {
 					kind: "atomic",
 					ChipClass: atomicChipClass,
-					descriptor: {
-						numInputPins: atomicChipClass.spec.inputPins.length,
-						numOutputPins: atomicChipClass.spec.outputPins.length,
-					},
 				};
 			}
 			case "io": {
@@ -90,12 +82,7 @@ export class BuiltinChipRegistry {
 
 				return {
 					kind: "io",
-					ioChipType: "input", // TODO: dont hardcode
 					ChipClass: ioChipClass,
-					descriptor: {
-						numInputPins: ioChipClass.spec.inputPins.length,
-						numOutputPins: ioChipClass.spec.outputPins.length,
-					},
 				};
 			}
 		}

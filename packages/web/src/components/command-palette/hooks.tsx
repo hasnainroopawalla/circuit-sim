@@ -31,10 +31,11 @@ export const useCommands = (): Command[] => {
 				.map((chipDefinition) => ({
 					id: chipDefinition.name,
 					label: `Spawn: ${chipDefinition.name}`,
-					action: () =>
+					action: () => {
 						simulatorApp.sim.emit("chip.spawn.start", {
 							chipDefinition,
-						}),
+						});
+					},
 				})),
 		[simulatorApp],
 	);

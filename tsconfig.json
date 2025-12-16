@@ -12,6 +12,5 @@
     "sourceMap": true,
     "jsx": "react-jsx",
     "moduleResolution": "node",
-    "types": ["node"]
   }
 }

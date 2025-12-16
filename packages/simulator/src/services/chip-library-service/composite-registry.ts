@@ -1,12 +1,11 @@
 import type { CompositeChipSpec } from "../../entities/chips";
-import type { ChipMetadata, ChipDefinition } from "./chip-library-service";
+import type { ChipDefinition } from "./chip-library-service";
 
 export type CompositeChipName = string;
 
 export type CompositeChipFactory = {
 	kind: "composite";
 	spec: CompositeChipSpec;
-	descriptor: ChipMetadata;
 };
 
 export class CompositeChipRegistry {
@@ -25,16 +24,14 @@ export class CompositeChipRegistry {
 
 	public resolve(name: CompositeChipName): CompositeChipFactory {
 		const spec = this.registry.get(name);
+
 		if (!spec) {
 			throw new Error(`Composite chip "${name}" not found`);
 		}
+
 		return {
 			kind: "composite",
 			spec,
-			descriptor: {
-				numInputPins: spec.inputPins.length,
-				numOutputPins: spec.outputPins.length,
-			},
 		};
 	}
 }

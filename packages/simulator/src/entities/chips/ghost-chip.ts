@@ -1,18 +1,24 @@
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
-import type { ChipInitParams, ChipRenderState } from "./chip.interface";
-import type { ChipMetadata } from "../../services/chip-library-service";
+import type {
+	ChipInitParams,
+	ChipRenderState,
+	ChipSpec,
+} from "./chip.interface";
 import type { Position } from "@digital-logic-sim/shared-types";
 
 export class GhostChip {
-	public descriptor: ChipMetadata;
+	public spec: ChipSpec;
 	public layout: ChipLayout;
 	public renderState: ChipRenderState;
 
-	constructor(descriptor: ChipMetadata, chipInitParams: ChipInitParams) {
-		this.descriptor = descriptor;
+	constructor(spec: ChipSpec, chipInitParams: ChipInitParams) {
+		this.spec = spec;
 		this.renderState = chipInitParams;
 
-		this.layout = new ChipLayoutFactory(this.renderState, this.descriptor);
+		this.layout = new ChipLayoutFactory(this.renderState, {
+			numInputPins: this.spec.inputPins.length,
+			numOutputPins: this.spec.outputPins.length,
+		});
 	}
 
 	public setPosition(position: Position): void {

@@ -26,13 +26,13 @@ export type ChipInitParams = {
 
 type BaseChipSpec<TChipType extends ChipType> = {
 	chipType: TChipType;
-	name: string;
 	inputPins: PinSpec[];
 	outputPins: PinSpec[];
 };
 
 type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {
 	ioChipType: TIOChipType;
+	name: IOChipType;
 };
 
 export type InputChipSpec = BaseIOChipSpec<"input">;
@@ -41,24 +41,15 @@ export type IOChipSpec = InputChipSpec | OutputChipSpec;
 
 export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
 	atomicChipType: AtomicChipType;
+	name: AtomicChipType;
 };
 
 export type CompositeChipSpec = BaseChipSpec<"composite"> & {
+	name: string;
 	blueprint: Blueprint;
 };
 
 export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
-
-// export type IOChipInitParams = BaseChipInitParams<"io"> & {
-// 	externalPinName: string;
-// };
-// export type AtomicChipInitParams = BaseChipInitParams<"atomic">;
-// export type CompositeChipInitParams = BaseChipInitParams<"composite">;
-
-// export type ChipInitParams =
-// 	| AtomicChipInitParams
-// 	| IOChipInitParams
-// 	| CompositeChipInitParams;
 
 export type IOChipInitParams = ChipInitParams & {
 	externalPinName: string;

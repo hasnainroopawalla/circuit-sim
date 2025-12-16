@@ -38,7 +38,7 @@ export abstract class BaseIOChip<
 
 export class InputChip extends BaseIOChip<"input"> {
 	static readonly spec: InputChipSpec = {
-		name: "INPUT",
+		name: "input",
 		chipType: "io" as const,
 		ioChipType: "input" as const,
 		inputPins: [],
@@ -73,7 +73,7 @@ export class InputChip extends BaseIOChip<"input"> {
 
 export class OutputChip extends BaseIOChip<"output"> {
 	static readonly spec: OutputChipSpec = {
-		name: "OUTPUT",
+		name: "output",
 		chipType: "io" as const,
 		ioChipType: "output" as const,
 		inputPins: [{ name: "out0" }],

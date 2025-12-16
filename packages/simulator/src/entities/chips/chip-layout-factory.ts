@@ -1,9 +1,8 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { PinType } from "../pin";
 import type { Chip } from "./chip.interface";
-import { ChipUtils } from "./chip.utils";
+import { type ChipMetadata, ChipUtils } from "./chip.utils";
 import type { RectDimensions, Position } from "@digital-logic-sim/shared-types";
-import type { ChipMetadata } from "../../services/chip-library-service";
 
 const chipLayoutConfig = {
 	aspectRatio: 1.5,

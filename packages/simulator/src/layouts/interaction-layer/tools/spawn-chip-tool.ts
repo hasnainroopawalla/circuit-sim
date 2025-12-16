@@ -4,7 +4,7 @@ import type {
 	PinRenderable,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import { GhostChip } from "../../../entities/chips";
+import { type ChipSpec, GhostChip } from "../../../entities/chips";
 import type {
 	ButtonEvent,
 	KeyboardButtonType,
@@ -13,7 +13,10 @@ import type {
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { PinType } from "../../../entities/pin";
-import type { ChipFactory } from "../../../services/chip-library-service";
+import {
+	ChipLibraryUtils,
+	type ChipFactory,
+} from "../../../services/chip-library-service";
 
 type SpawnChipToolArgs = ToolArgs & {
 	chipFactory: ChipFactory;
@@ -21,14 +24,17 @@ type SpawnChipToolArgs = ToolArgs & {
 
 export class SpawnChipTool extends Tool {
 	private chipFactory: ChipFactory;
+	private chipSpec: ChipSpec;
 
 	private ghostChip: GhostChip;
 
 	constructor(args: SpawnChipToolArgs) {
 		super(args);
 
+		this.chipSpec = ChipLibraryUtils.getChipSpec(args.chipFactory);
+
 		this.chipFactory = args.chipFactory;
-		this.ghostChip = new GhostChip(args.chipFactory.descriptor, {
+		this.ghostChip = new GhostChip(this.chipSpec, {
 			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
 			position: args.mousePositionService.getMousePosition().world,
 		});
@@ -95,14 +101,8 @@ export class SpawnChipTool extends Tool {
 			position: this.ghostChip.renderState.position,
 			dimensions: this.ghostChip.layout.dimensions,
 			label: "",
-			inputPins: createPinRenderable(
-				this.chipFactory.descriptor.numInputPins,
-				"in",
-			),
-			outputPins: createPinRenderable(
-				this.chipFactory.descriptor.numOutputPins,
-				"out",
-			),
+			inputPins: createPinRenderable(this.chipSpec.inputPins.length, "in"),
+			outputPins: createPinRenderable(this.chipSpec.outputPins.length, "out"),
 		};
 	}
 
