@@ -1,7 +1,7 @@
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
-	ChipInitParams,
+	IOChipInitParams,
 	ChipSpawnOptions,
 	InputChipSpec,
 	IOChipSpec,
@@ -18,15 +18,17 @@ export abstract class BaseIOChip<
 	TIOChipType extends IOChipType,
 > extends BaseChip<"io"> {
 	public ioChipType: TIOChipType;
+	public externalPinName: string;
 
 	constructor(
 		ioChipSpec: IOChipSpecOf<TIOChipType>,
-		chipInitParams: ChipInitParams,
+		chipInitParams: IOChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(ioChipSpec, chipInitParams, opts);
 
 		this.ioChipType = ioChipSpec.ioChipType;
+		this.externalPinName = chipInitParams.externalPinName;
 	}
 
 	public getPin(): Pin {
@@ -39,7 +41,7 @@ export class InputChip extends BaseIOChip<"input"> {
 
 	constructor(
 		chipSpec: InputChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: IOChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
@@ -47,6 +49,10 @@ export class InputChip extends BaseIOChip<"input"> {
 
 	public toggle(): void {
 		this.nextValue = !this.getPin().currentValue;
+	}
+
+	public setValue(value: boolean): void {
+		this.nextValue = value;
 	}
 
 	public execute(): boolean {
@@ -64,7 +70,7 @@ export class InputChip extends BaseIOChip<"input"> {
 export class OutputChip extends BaseIOChip<"output"> {
 	constructor(
 		chipSpec: OutputChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: IOChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);

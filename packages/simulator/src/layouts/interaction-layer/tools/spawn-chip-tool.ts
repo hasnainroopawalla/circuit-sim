@@ -103,26 +103,13 @@ export class SpawnChipTool extends Tool {
 		const chipColor = { r: 0, g: 0, b: 0.5, a: 1 };
 		const chipPosition = this.ghostChip.renderState.position;
 
-		switch (this.chipSpec.chipType) {
-			case "composite":
-				this.sim.chipManager.spawnCompositeChip(
-					this.chipSpec,
-					{
-						color: chipColor,
-						position: chipPosition,
-					} /* init params */,
-				);
-				break;
-			case "io":
-			case "atomic":
-				this.sim.chipManager.spawnChip(
-					this.chipSpec,
-					{
-						color: chipColor,
-						position: chipPosition,
-					} /* init params */,
-				);
-		}
+		this.sim.chipManager.spawnChip(
+			this.chipSpec,
+			{
+				color: chipColor,
+				position: chipPosition,
+			} /* init params */,
+		);
 
 		this.deactivate();
 	}

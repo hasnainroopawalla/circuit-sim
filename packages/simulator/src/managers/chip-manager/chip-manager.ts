@@ -8,15 +8,24 @@ import {
 	type AtomicChip,
 	type CompositeChipSpec,
 	type ChipSpawnOptions,
+	type AtomicChipInitParams,
+	type CompositeChipInitParams,
+	type InputChip,
+	type OutputChip,
+	type IOChipType,
 	CompositeChip,
-} from "../entities/chips";
-import { entityIdService } from "../entity-id-service";
-import type { Simulator } from "../simulator";
-import { didAnyChange } from "../utils";
-import { BaseManager } from "./base-manager";
+} from "../../entities/chips";
+import { EntityUtils } from "../../entities/utils";
+import { entityIdService } from "../../entity-id-service";
+import type { Simulator } from "../../simulator";
+import { didAnyChange } from "../../utils";
+import { BaseManager } from "../base-manager";
+import { CompositeChipSpawner } from "./composite-chip-spawner";
 
 type ChipFromSpec<T extends ChipSpec> = T extends IOChipSpec
-	? IOChip
+	? T["ioChipType"] extends "input"
+		? InputChip
+		: OutputChip
 	: T extends AtomicChipSpec
 		? AtomicChip
 		: T extends CompositeChipSpec
@@ -26,9 +35,16 @@ type ChipFromSpec<T extends ChipSpec> = T extends IOChipSpec
 export class ChipManager extends BaseManager {
 	public readonly chips: Chip[];
 
+	private compositeChipSpawner: CompositeChipSpawner;
+
 	constructor(sim: Simulator) {
 		super(sim);
 
+		this.compositeChipSpawner = new CompositeChipSpawner(
+			this,
+			this.sim.wireManager,
+			this.sim.chipLibraryService,
+		);
 		this.chips = [];
 	}
 
@@ -58,6 +74,10 @@ export class ChipManager extends BaseManager {
 
 		this.chips.push(chip);
 
+		if (chip.chipType === "composite") {
+			this.compositeChipSpawner.spawn(chip);
+		}
+
 		// for inner chips that are within a composite chip,
 		// we dont need to trigger an overlay update to render labels.
 		if (!opts?.parentCompositeId) {
@@ -67,26 +87,6 @@ export class ChipManager extends BaseManager {
 		}
 
 		return chip;
-	}
-
-	public spawnCompositeChip(
-		chipSpec: CompositeChipSpec,
-		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
-	): CompositeChip {
-		const compositeChip = this.spawnChip(chipSpec, chipInitParams, opts);
-
-		chipSpec.blueprint.chips.forEach((chip) => {
-			this.spawnChip(chip.spec, chip.renderState, {
-				parentCompositeId: compositeChip.id,
-			});
-		});
-
-		chipSpec.blueprint.wires.forEach((wire) => {
-			this.sim.wireManager.spawnWire(wire.spec, wire.renderState);
-		});
-
-		return compositeChip;
 	}
 
 	private createChip<TSpec extends ChipSpec>(
@@ -104,13 +104,13 @@ export class ChipManager extends BaseManager {
 			case "atomic":
 				return this.createAtomicChip(
 					chipSpec,
-					chipInitParams,
+					chipInitParams as AtomicChipInitParams,
 					opts,
 				) as ChipFromSpec<TSpec>;
 			case "composite":
 				return this.createCompositeChip(
 					chipSpec,
-					chipInitParams,
+					chipInitParams as CompositeChipInitParams,
 					opts,
 				) as ChipFromSpec<TSpec>;
 		}
@@ -124,19 +124,35 @@ export class ChipManager extends BaseManager {
 		switch (chipSpec.ioChipType) {
 			case "input": {
 				const InputChipClass = this.sim.chipLibraryService.getInputChipClass();
-				return new InputChipClass(chipSpec, chipInitParams, opts);
+				return new InputChipClass(
+					chipSpec,
+					{
+						...chipInitParams,
+						chipType: "io",
+						externalPinName: this.getExternalPinName("input"),
+					},
+					opts,
+				);
 			}
 			case "output": {
 				const OutputChipClass =
 					this.sim.chipLibraryService.getOutputChipClass();
-				return new OutputChipClass(chipSpec, chipInitParams, opts);
+				return new OutputChipClass(
+					chipSpec,
+					{
+						...chipInitParams,
+						chipType: "io",
+						externalPinName: this.getExternalPinName("output"),
+					},
+					opts,
+				);
 			}
 		}
 	}
 
 	private createAtomicChip(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: AtomicChipInitParams,
 		opts?: ChipSpawnOptions,
 	): AtomicChip {
 		const AtomicChipClass = this.sim.chipLibraryService.getAtomicChipClass(
@@ -147,7 +163,7 @@ export class ChipManager extends BaseManager {
 
 	private createCompositeChip(
 		chipSpec: CompositeChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: CompositeChipInitParams,
 		opts?: ChipSpawnOptions,
 	): CompositeChip {
 		return new CompositeChip(chipSpec, chipInitParams, opts);
@@ -157,5 +173,15 @@ export class ChipManager extends BaseManager {
 		[...chip.inputPins, ...chip.outputPins].forEach((pin) => {
 			this.sim.pinManager.spawnPin(pin, chip.id);
 		});
+	}
+
+	private getExternalPinName(ioChipType: IOChipType): string {
+		const chipCount = this.sim.chipManager.chips.filter((chip) =>
+			ioChipType === "input"
+				? EntityUtils.isInputChip(chip)
+				: EntityUtils.isOutputChip(chip),
+		).length;
+
+		return `${ioChipType === "input" ? "IN" : "OUT"} ${chipCount}`;
 	}
 }

@@ -11,7 +11,12 @@ import { InputManager } from "./managers/input-manager";
 
 // services
 import { MousePositionService } from "./services/mouse-position-service";
-import { CompositeChipSpec } from "./entities/chips";
+import {
+	AtomicChipSpec,
+	CompositeChipSpec,
+	InputChipSpec,
+	OutputChipSpec,
+} from "./entities/chips";
 
 type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
@@ -159,105 +164,110 @@ export class SimulatorApp {
 	}
 
 	public setupNandGate(): void {
-		const andChipSpec = this.sim.chipLibraryService.getChipSpecByName("AND");
-		const notChipSpec = this.sim.chipLibraryService.getChipSpecByName("NOT");
-
-		const inputChipSpec =
-			this.sim.chipLibraryService.getChipSpecByName("INPUT");
-		const outputChipSpec =
-			this.sim.chipLibraryService.getChipSpecByName("OUTPUT");
-
-		if (!inputChipSpec || !outputChipSpec || !andChipSpec || !notChipSpec) {
-			return;
-		}
-
-		// INPUT 0
-		this.sim.chipManager.spawnChip(inputChipSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: 1.6, y: 1.3 },
-		});
-
-		// INPUT 1
-		this.sim.chipManager.spawnChip(inputChipSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: 1.6, y: 0.8 },
-		});
-
-		// AND
-		this.sim.chipManager.spawnChip(andChipSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: 0.3, y: 1 },
-		});
-
-		// NOT
-		this.sim.chipManager.spawnChip(notChipSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: -1, y: 1 },
-		});
-
-		// OUTPUT 0
-		this.sim.chipManager.spawnChip(outputChipSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: -2, y: 1 },
-		});
-
-		// input 0 to AND in 0
-		this.sim.wireManager.spawnWire(
-			{
-				startPinId: "0.out.0",
-				endPinId: "2.in.0",
-			},
-			{
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				controlPoints: [],
-			},
+		this.sim.blueprintService.loadBlueprint(
+			`{"chips":[{"id":"2","spec":{"name":"AND","atomicChipType":"AND","chipType":"atomic","inputPins":[{"name":"in0"},{"name":"in1"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":0.3,"y":1}},"inputPins":[{"id":"2.in.0","name":"in0"},{"id":"2.in.1","name":"in1"}],"outputPins":[{"id":"2.out.0","name":"out0"}]},{"id":"3","spec":{"name":"NOT","atomicChipType":"NOT","chipType":"atomic","inputPins":[{"name":"in0"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":-1,"y":1}},"inputPins":[{"id":"3.in.0","name":"in0"}],"outputPins":[{"id":"3.out.0","name":"out0"}]}],"wires":[{"spec":{"start":{"chipId":"2","pinName":"out0"},"end":{"chipId":"3","pinName":"in0"}},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"controlPoints":[]}}],"inputMappings":[{"externalPin":"IN0","internalChipId":"2","internalPinName":"in0"},{"externalPin":"IN1","internalChipId":"2","internalPinName":"in1"}],"outputMappings":[{"externalPin":"OUT4","internalChipId":"3","internalPinName":"out0"}]}`,
 		);
+		// const andChipSpec = this.sim.chipLibraryService.getChipSpecByName(
+		// 	"AND",
+		// ) as AtomicChipSpec;
+		// const notChipSpec = this.sim.chipLibraryService.getChipSpecByName(
+		// 	"NOT",
+		// ) as AtomicChipSpec;
 
-		// input 1 to AND in 1
-		this.sim.wireManager.spawnWire(
-			{
-				startPinId: "1.out.0",
-				endPinId: "2.in.1",
-			},
-			{
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				controlPoints: [],
-			},
-		);
+		// const inputChipSpec = this.sim.chipLibraryService.getChipSpecByName(
+		// 	"INPUT",
+		// ) as InputChipSpec;
+		// const outputChipSpec = this.sim.chipLibraryService.getChipSpecByName(
+		// 	"OUTPUT",
+		// ) as OutputChipSpec;
 
-		// AND out to NOT in
-		this.sim.wireManager.spawnWire(
-			{
-				startPinId: "2.out.0",
-				endPinId: "3.in.0",
-			},
-			{
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				controlPoints: [],
-			},
-		);
+		// // INPUT 0
+		// const inputChip0 = this.sim.chipManager.spawnChip(inputChipSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: 1.6, y: 1.3 },
+		// });
 
-		// NOT out to output
-		this.sim.wireManager.spawnWire(
-			{
-				startPinId: "3.out.0",
-				endPinId: "4.in.0",
-			},
-			{
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				controlPoints: [],
-			},
-		);
+		// // INPUT 1
+		// const inputChip1 = this.sim.chipManager.spawnChip(inputChipSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: 1.6, y: 0.8 },
+		// });
 
-		this.sim.emit("chip.save", undefined);
+		// // AND
+		// const andChip = this.sim.chipManager.spawnChip(andChipSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: 0.3, y: 1 },
+		// });
 
-		const nandSpec = this.sim.chipLibraryService.getChipSpecByName(
-			"NAND",
-		) as CompositeChipSpec;
+		// // NOT
+		// const notChip = this.sim.chipManager.spawnChip(notChipSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: -1, y: 1 },
+		// });
 
-		this.sim.chipManager.spawnCompositeChip(nandSpec, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
-			position: { x: 0.3, y: 0.1 },
-		});
+		// // OUTPUT 0
+		// const outputChip = this.sim.chipManager.spawnChip(outputChipSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: -2, y: 1 },
+		// });
+
+		// // input 0 to AND in 0
+		// this.sim.wireManager.spawnWire(
+		// 	{
+		// 		startPin: inputChip0.getPin(),
+		// 		endPin: andChip.getPin("in0")!,
+		// 	},
+		// 	{
+		// 		color: { r: 0, g: 0, b: 0, a: 1 },
+		// 		controlPoints: [],
+		// 	},
+		// );
+
+		// // input 1 to AND in 1
+		// this.sim.wireManager.spawnWire(
+		// 	{
+		// 		startPin: inputChip1.getPin(),
+		// 		endPin: andChip.getPin("in1")!,
+		// 	},
+		// 	{
+		// 		color: { r: 0, g: 0, b: 0, a: 1 },
+		// 		controlPoints: [],
+		// 	},
+		// );
+
+		// // AND out to NOT in
+		// this.sim.wireManager.spawnWire(
+		// 	{
+		// 		startPin: andChip.getPin("out0")!,
+		// 		endPin: notChip.getPin("in0")!,
+		// 	},
+		// 	{
+		// 		color: { r: 0, g: 0, b: 0, a: 1 },
+		// 		controlPoints: [],
+		// 	},
+		// );
+
+		// // NOT out to output
+		// this.sim.wireManager.spawnWire(
+		// 	{
+		// 		startPin: notChip.getPin("out0")!,
+		// 		endPin: outputChip.getPin(),
+		// 	},
+		// 	{
+		// 		color: { r: 0, g: 0, b: 0, a: 1 },
+		// 		controlPoints: [],
+		// 	},
+		// );
+
+		// this.sim.emit("chip.save", undefined);
+
+		// const nandSpec = this.sim.chipLibraryService.getChipSpecByName(
+		// 	"NAND",
+		// ) as CompositeChipSpec;
+
+		// this.sim.chipManager.spawnChip(nandSpec, {
+		// 	color: { r: 0, g: 0, b: 0, a: 1 },
+		// 	position: { x: 0.3, y: 0.1 },
+		// });
 	}
 }

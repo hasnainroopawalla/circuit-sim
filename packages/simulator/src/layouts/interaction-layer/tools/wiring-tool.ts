@@ -91,9 +91,9 @@ export class WiringTool extends Tool {
 
 		this.sim.wireManager.spawnWire(
 			{
-				startPinId: this.startPin.id,
-				endPinId: hoveredEntity.id,
-			},
+				startPin: this.startPin,
+				endPin: hoveredEntity,
+			} /* wire connection */,
 			{
 				color: { r: 0, g: 1, b: 0, a: 1 },
 				controlPoints: this.controlPoints,

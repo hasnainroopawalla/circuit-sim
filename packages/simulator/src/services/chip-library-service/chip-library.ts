@@ -5,7 +5,6 @@ import {
 	type AtomicChip,
 	type AtomicChipSpec,
 	type AtomicChipType,
-	type ChipInitParams,
 	type InputChip,
 	type InputChipSpec,
 	type IOChipType,
@@ -13,68 +12,74 @@ import {
 	type OutputChipSpec,
 	type ChipSpec,
 	type ChipSpawnOptions,
+	type IOChipInitParams,
+	type AtomicChipInitParams,
 } from "../../entities/chips";
 
 export type AtomicChipClass = new (
 	chipSpec: AtomicChipSpec,
-	chipInitParams: ChipInitParams,
+	chipInitParams: AtomicChipInitParams,
 	opts?: ChipSpawnOptions,
 ) => AtomicChip;
 
 export type IOChipClass<T extends IOChipType> = T extends "input"
 	? new (
 			spec: InputChipSpec,
-			params: ChipInitParams,
+			params: IOChipInitParams,
 			opts?: ChipSpawnOptions,
 		) => InputChip
 	: new (
 			spec: OutputChipSpec,
-			params: ChipInitParams,
+			params: IOChipInitParams,
 			opts?: ChipSpawnOptions,
 		) => OutputChip;
 
-const IO_CHIPS: ChipSpec[] = [
+// TODO: dont export
+export const IO_CHIP_SPECS: ChipSpec[] = [
 	{
 		name: "INPUT",
 		chipType: "io",
 		ioChipType: "input",
 		inputPins: [],
-		outputPins: [{ name: "out 0" }],
+		outputPins: [{ name: "in0" }],
 	},
 	{
 		name: "OUTPUT",
 		chipType: "io",
 		ioChipType: "output",
-		inputPins: [{ name: "in 0" }],
+		inputPins: [{ name: "out0" }],
 		outputPins: [],
 	},
 ];
 
-const ATOMIC_CHIPS: ChipSpec[] = [
+const ATOMIC_CHIP_SPECS: ChipSpec[] = [
 	{
 		name: "AND",
 		atomicChipType: "AND",
 		chipType: "atomic",
-		inputPins: [{ name: "and in 0" }, { name: "and in 1" }],
-		outputPins: [{ name: "and out 0" }],
+		inputPins: [{ name: "in0" }, { name: "in1" }],
+		outputPins: [{ name: "out0" }],
 	},
 	{
 		name: "OR",
 		atomicChipType: "OR",
 		chipType: "atomic",
-		inputPins: [{ name: "or in 0" }, { name: "or in 1" }],
-		outputPins: [{ name: "or out 0" }],
+		inputPins: [{ name: "in0" }, { name: "in1" }],
+		outputPins: [{ name: "out0" }],
 	},
 	{
 		name: "NOT",
 		atomicChipType: "NOT",
 		chipType: "atomic",
-		inputPins: [{ name: "not in 0" }],
-		outputPins: [{ name: "not out 0" }],
+		inputPins: [{ name: "in0" }],
+		outputPins: [{ name: "out0" }],
 	},
 ];
 
-export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [...IO_CHIPS, ...ATOMIC_CHIPS];
+export const PRIMITIVE_CHIP_SPECS: ChipSpec[] = [
+	...IO_CHIP_SPECS,
+	...ATOMIC_CHIP_SPECS,
+];
 
 export const ATOMIC_CHIPS_MAP: Record<AtomicChipType, AtomicChipClass> = {
 	AND: AndChip,

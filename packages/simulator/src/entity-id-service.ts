@@ -27,13 +27,11 @@ class EntityIdService {
 		return `${chipId}.${pinType}.${chipPinIndex}`;
 	}
 
-	public parsePinId(pinId: string): {
-		chipId: string;
-		pinType: PinType;
-		chipPinId: string;
-	} {
+	public parsePinId(
+		pinId: string,
+	): [chipId: string, pinType: PinType, chipPinId: string] {
 		const [chipId, pinType, chipPinId] = pinId.split(".");
-		return { chipId, pinType: pinType as PinType, chipPinId };
+		return [chipId, pinType as PinType, chipPinId];
 	}
 
 	private generate(args: string[]): string {

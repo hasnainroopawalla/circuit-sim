@@ -3,7 +3,7 @@ import {
 	type IEvents,
 	type Unsubscribe,
 } from "./services/eventing-service";
-import { ChipManager } from "./managers/chip-manager";
+import { ChipManager } from "./managers/chip-manager/chip-manager";
 import { ChipLibraryService } from "./services/chip-library-service";
 import { WireManager } from "./managers/wire-manager";
 import { BlueprintService } from "./services/blueprint-service";
@@ -31,9 +31,9 @@ export class Simulator {
 		this.blueprintService = new BlueprintService(this);
 
 		// managers
+		this.wireManager = new WireManager(this);
 		this.chipManager = new ChipManager(this);
 		this.pinManager = new PinManager(this);
-		this.wireManager = new WireManager(this);
 	}
 
 	public on<K extends keyof IEvents>(

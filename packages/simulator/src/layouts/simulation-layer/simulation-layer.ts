@@ -26,11 +26,13 @@ export class SimulationLayer extends BaseLayer {
 	}
 
 	public getRenderables(): Renderable[] {
+		// console.log(this.sim.chipManager.chips);
+		// console.log(this.sim.wireManager.wires);
 		const chipRenderables = this.sim.chipManager.chips.reduce((acc, chip) => {
 			// TODO: improve the logic to show chips only if parent composite is open in "View mode"
-			if (chip.parentCompositeId) {
-				return acc;
-			}
+			// if (chip.parentCompositeId) {
+			// 	return acc;
+			// }
 			acc.push(LayoutUtils.chipToRenderable(chip));
 			return acc;
 		}, [] as ChipRenderable[]);
@@ -130,7 +132,10 @@ export class SimulationLayer extends BaseLayer {
 			return false;
 		}
 
-		if (EntityUtils.isChip(hoveredEntity)) {
+		if (
+			EntityUtils.isChip(hoveredEntity) &&
+			!EntityUtils.isIOChip(hoveredEntity)
+		) {
 			// TODO: consider moving to a dedicated tool to render ghost
 			hoveredEntity.setPosition(mousePosition.world);
 			return true;

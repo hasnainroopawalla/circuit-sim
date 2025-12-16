@@ -1,14 +1,14 @@
 import { BaseChip } from "./chip";
 import type {
 	AtomicChipSpec,
-	ChipInitParams,
+	AtomicChipInitParams,
 	ChipSpawnOptions,
 } from "./chip.interface";
 
 export abstract class AtomicChip extends BaseChip<"atomic"> {
 	constructor(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: AtomicChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
@@ -18,7 +18,7 @@ export abstract class AtomicChip extends BaseChip<"atomic"> {
 export class AndChip extends AtomicChip {
 	constructor(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: AtomicChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
@@ -34,7 +34,7 @@ export class AndChip extends AtomicChip {
 export class OrChip extends AtomicChip {
 	constructor(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: AtomicChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
@@ -50,7 +50,7 @@ export class OrChip extends AtomicChip {
 export class NotChip extends AtomicChip {
 	constructor(
 		chipSpec: AtomicChipSpec,
-		chipInitParams: ChipInitParams,
+		chipInitParams: AtomicChipInitParams,
 		opts?: ChipSpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);

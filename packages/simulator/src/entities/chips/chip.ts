@@ -55,9 +55,10 @@ export abstract class BaseChip<
 		this.layout = new ChipLayoutFactory(this);
 	}
 
-	public getPin(pinType: PinType, index: number): Pin | undefined {
-		const pins = pinType === "in" ? this.inputPins : this.outputPins;
-		return pins[index];
+	public getPin(name: string): Pin | undefined {
+		return [...this.inputPins, ...this.outputPins].find(
+			(pin) => pin.spec.name === name,
+		);
 	}
 
 	/**

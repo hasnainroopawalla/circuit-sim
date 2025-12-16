@@ -59,7 +59,7 @@ export class WireRenderer {
 				const start = wire.path[i - 1];
 				const end = wire.path[i];
 				const wireLength = Math.sqrt(
-					Math.pow(end.x - start.x, 2) + Math.pow(end.y - start.y, 2),
+					(end.x - start.x) ** 2 + (end.y - start.y) ** 2,
 				);
 				const scaleMat = mat4.scaling(
 					vec3.create(wireLength / 2, renderEngineConfig.lineThickness, 1),

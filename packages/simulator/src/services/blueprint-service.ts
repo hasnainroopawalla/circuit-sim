@@ -1,11 +1,21 @@
 import type { Chip, ChipRenderState, ChipSpec } from "../entities/chips";
-import type { Wire, WireRenderState, WireSpec } from "../entities/wire";
+import { EntityUtils } from "../entities/utils";
+import type { Wire, WireRenderState } from "../entities/wire";
 import type { Simulator } from "../simulator";
 import { BaseService } from "./base-service";
 
 export type Blueprint = {
 	chips: BlueprintChip[];
 	wires: BlueprintWire[];
+
+	inputMappings: BlueprintPinMapping[];
+	outputMappings: BlueprintPinMapping[];
+};
+
+export type BlueprintPinMapping = {
+	externalPin: string;
+	internalChipId: string;
+	internalPinName: string;
 };
 
 type BlueprintPin = {
@@ -14,14 +24,23 @@ type BlueprintPin = {
 };
 
 type BlueprintChip = {
+	id: string;
 	spec: ChipSpec;
 	renderState: ChipRenderState;
 	inputPins: BlueprintPin[];
 	outputPins: BlueprintPin[];
 };
 
-type BlueprintWire = {
-	spec: WireSpec;
+type BlueprintWireConnection = {
+	chipId: string;
+	pinName: string;
+};
+
+export type BlueprintWire = {
+	spec: {
+		start: BlueprintWireConnection;
+		end: BlueprintWireConnection;
+	};
 	renderState: WireRenderState;
 };
 
@@ -36,13 +55,8 @@ export class BlueprintService extends BaseService {
 		this.sim.on("chip.save", () => this.saveBlueprint());
 	}
 
-	public loadBlueprint(blueprint: Blueprint): void {}
-
-	private saveBlueprint(): Blueprint {
-		const blueprint: Blueprint = {
-			chips: this.sim.chipManager.chips.map((chip) => this.serializeChip(chip)),
-			wires: this.sim.wireManager.wires.map((wire) => this.serializeWire(wire)),
-		};
+	public loadBlueprint(blueprintString: string): void {
+		const blueprint = JSON.parse(blueprintString) as Blueprint;
 
 		this.sim.chipLibraryService.add({
 			name: "NAND",
@@ -52,7 +66,105 @@ export class BlueprintService extends BaseService {
 			outputPins: [{ name: "NAND out 0" }],
 		});
 
-		console.log("blueprint", blueprint);
+		console.log("service", blueprint);
+	}
+
+	private saveBlueprint(): Blueprint {
+		// TODO: Reduce
+		const chips = this.sim.chipManager.chips.reduce((acc, chip) => {
+			if (EntityUtils.isIOChip(chip)) {
+				return acc;
+			}
+			acc.push(this.serializeChip(chip));
+			return acc;
+		}, [] as BlueprintChip[]);
+
+		const inputMappings = this.sim.chipManager.chips.reduce((acc, chip) => {
+			if (!EntityUtils.isInputChip(chip)) {
+				return acc;
+			}
+
+			const outgoingWire = this.sim.wireManager.wires.find(
+				(wire) => wire.startPin.id === chip.getPin().id,
+			);
+
+			if (!outgoingWire) {
+				throw new Error("No out going wire");
+			}
+
+			const targetChip = chips.find(
+				(c) => c.id === outgoingWire.endPin.chip.id,
+			);
+
+			if (!targetChip) {
+				throw new Error("Input connected to non-internal chip");
+			}
+
+			acc.push({
+				externalPin: chip.externalPinName,
+				internalChipId: targetChip.id,
+				internalPinName: outgoingWire.endPin.spec.name,
+			});
+			return acc;
+		}, [] as BlueprintPinMapping[]);
+
+		const outputMappings = this.sim.chipManager.chips.reduce((acc, chip) => {
+			if (!EntityUtils.isOutputChip(chip)) {
+				return acc;
+			}
+
+			const outgoingWire = this.sim.wireManager.wires.find(
+				(wire) => wire.endPin.id === chip.getPin().id,
+			);
+
+			if (!outgoingWire) {
+				throw new Error("No out going wire");
+			}
+
+			const targetChip = chips.find(
+				(c) => c.id === outgoingWire.startPin.chip.id,
+			);
+
+			if (!targetChip) {
+				throw new Error("Output connected to non-internal chip");
+			}
+
+			acc.push({
+				externalPin: chip.externalPinName,
+				internalChipId: targetChip.id,
+				internalPinName: outgoingWire.startPin.spec.name,
+			});
+			return acc;
+		}, [] as BlueprintPinMapping[]);
+
+		const wires = this.sim.wireManager.wires.reduce((acc, wire) => {
+			// omit wires that are connected to composite IO chips
+			if (
+				EntityUtils.isIOChip(wire.startPin.chip) ||
+				EntityUtils.isIOChip(wire.endPin.chip)
+			) {
+				return acc;
+			}
+			acc.push(this.serializeWire(wire));
+			return acc;
+		}, [] as BlueprintWire[]);
+
+		const blueprint: Blueprint = {
+			chips,
+			wires,
+			inputMappings,
+			outputMappings,
+		};
+
+		console.log("blueprint", JSON.stringify(blueprint));
+
+		this.sim.chipLibraryService.add({
+			name: "NAND",
+			chipType: "composite",
+			inputPins: [{ name: "in0" }, { name: "in1" }],
+			outputPins: [{ name: "out0" }],
+			blueprint,
+		});
 
 		return blueprint;
 	}
@@ -60,13 +172,14 @@ export class BlueprintService extends BaseService {
 	private serializeChip(chip: Chip): BlueprintChip {
 		// atomic chip
 		return {
+			id: chip.id,
 			spec: chip.spec,
 			renderState: chip.renderState,
 			inputPins: chip.inputPins.map((pin) => ({
 				id: pin.id,
 				name: pin.spec.name,
 			})),
-			outputPins: chip.inputPins.map((pin) => ({
+			outputPins: chip.outputPins.map((pin) => ({
 				id: pin.id,
 				name: pin.spec.name,
 			})),
@@ -75,7 +188,16 @@ export class BlueprintService extends BaseService {
 
 	private serializeWire(wire: Wire): BlueprintWire {
 		return {
-			spec: wire.spec,
+			spec: {
+				start: {
+					chipId: wire.startPin.chip.id,
+					pinName: wire.startPin.spec.name,
+				},
+				end: {
+					chipId: wire.endPin.chip.id,
+					pinName: wire.endPin.spec.name,
+				},
+			},
 			renderState: wire.renderState,
 		};
 	}
