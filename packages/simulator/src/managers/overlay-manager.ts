@@ -30,7 +30,7 @@ export class OverlayManager extends BaseManager {
 	}
 
 	public update(): void {
-		for (const chip of this.sim.chipManager.chips) {
+		for (const chip of this.sim.chipManager.getBoardChips()) {
 			const element = this.elements.get(chip.id);
 
 			if (!element) {

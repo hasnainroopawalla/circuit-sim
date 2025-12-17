@@ -6,7 +6,7 @@ import {
 	OutputChip,
 	type IOChip,
 	type AtomicChip,
-	type ChipSpawnOptions,
+	type EntitySpawnOptions,
 	type IOChipType,
 	type AtomicChipType,
 	type IOChipInitParams,
@@ -18,12 +18,12 @@ import type { ChipDefinition } from "./chip-library-service";
 
 type AtomicChipClass = (new (
 	chipInitParams: ChipInitParams,
-	opts?: ChipSpawnOptions,
+	opts?: EntitySpawnOptions,
 ) => AtomicChip) & { spec: AtomicChipSpec };
 
 type IOChipClass = (new (
 	chipInitParams: IOChipInitParams,
-	opts?: ChipSpawnOptions,
+	opts?: EntitySpawnOptions,
 ) => IOChip) & { spec: IOChipSpec };
 
 const BUILTIN_ATOMIC_CHIPS: Record<AtomicChipType, AtomicChipClass> = {

@@ -15,7 +15,7 @@ export type IOChip = InputChip | OutputChip;
 
 export type ChipRenderState = ChipInitParams;
 
-export type ChipSpawnOptions = {
+export type EntitySpawnOptions = {
 	parentCompositeId?: string;
 };
 

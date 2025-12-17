@@ -3,7 +3,7 @@ import {
 	type ChipInitParams,
 	type IOChip,
 	type AtomicChip,
-	type ChipSpawnOptions,
+	type EntitySpawnOptions,
 	type IOChipType,
 	type IOChipInitParams,
 	CompositeChip,
@@ -29,7 +29,7 @@ type ChipInitParamsFromFactory<T extends ChipFactory> = T extends IOChipFactory
 	: ChipInitParams;
 
 export class ChipManager extends BaseManager {
-	public readonly chips: Chip[];
+	private chips: Chip[];
 
 	private compositeChipSpawner: CompositeChipSpawner;
 
@@ -56,10 +56,23 @@ export class ChipManager extends BaseManager {
 		return didAnyChange(this.chips, (chip) => chip.commitPinValues());
 	}
 
+	/**
+	 * Returns a list of chips that are currently on the board (not internal to composite chips).
+	 */
+	public getBoardChips(): Chip[] {
+		return this.chips.filter((chip) => !chip.parentCompositeId);
+	}
+
+	public getInternalChips(parentCompositeId: string): Chip[] {
+		return this.chips.filter(
+			(chip) => chip.parentCompositeId === parentCompositeId,
+		);
+	}
+
 	public spawnChip<T extends ChipFactory>(
 		chipFactory: T,
 		chipInitParams: ChipInitParamsFromFactory<T>,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		const chip = this.createChip(chipFactory, chipInitParams, opts);
 
@@ -88,7 +101,7 @@ export class ChipManager extends BaseManager {
 	private createChip<T extends ChipFactory>(
 		chipFactory: T,
 		chipInitParams: ChipInitParamsFromFactory<T>,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		switch (chipFactory.kind) {
 			case "io":
@@ -115,7 +128,7 @@ export class ChipManager extends BaseManager {
 	private createIOChip(
 		chipFactory: IOChipFactory,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	): IOChip {
 		chipFactory;
 		return new chipFactory.ChipClass(
@@ -132,7 +145,7 @@ export class ChipManager extends BaseManager {
 	private createAtomicChip(
 		chipFactory: AtomicChipFactory,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	): AtomicChip {
 		return new chipFactory.ChipClass(chipInitParams, opts);
 	}
@@ -140,7 +153,7 @@ export class ChipManager extends BaseManager {
 	private createCompositeChip(
 		chipFactory: CompositeChipFactory,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	): CompositeChip {
 		return new CompositeChip(chipFactory.spec, chipInitParams, opts);
 	}
@@ -152,11 +165,13 @@ export class ChipManager extends BaseManager {
 	}
 
 	private getExternalPinName(ioChipType: IOChipType): string {
-		const chipCount = this.sim.chipManager.chips.filter((chip) =>
-			ioChipType === "input"
-				? EntityUtils.isInputChip(chip)
-				: EntityUtils.isOutputChip(chip),
-		).length;
+		const chipCount = this.sim.chipManager
+			.getBoardChips()
+			.filter((chip) =>
+				ioChipType === "input"
+					? EntityUtils.isInputChip(chip)
+					: EntityUtils.isOutputChip(chip),
+			).length;
 
 		return `${ioChipType === "input" ? "IN" : "OUT"} ${chipCount}`;
 	}

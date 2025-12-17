@@ -1,3 +1,4 @@
+import { EntitySpawnOptions } from "../entities/chips";
 import {
 	Wire,
 	type WireInitParams,
@@ -9,12 +10,25 @@ import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
 
 export class WireManager extends BaseManager {
-	public readonly wires: Wire[];
+	private wires: Wire[];
 
 	constructor(sim: Simulator) {
 		super(sim);
 
 		this.wires = [];
+	}
+
+	/**
+	 * Returns a list of chips that are currently on the board (not internal to composite chips).
+	 */
+	public getBoardWires(): Wire[] {
+		return this.wires.filter((wire) => !wire.parentCompositeId);
+	}
+
+	public getInternalWires(parentCompositeId: string): Wire[] {
+		return this.wires.filter(
+			(wire) => wire.parentCompositeId === parentCompositeId,
+		);
 	}
 
 	public propagateWires(): boolean {
@@ -31,8 +45,9 @@ export class WireManager extends BaseManager {
 	public spawnWire(
 		wireConnection: WireConnection,
 		wireInitParams: WireInitParams,
+		opts?: EntitySpawnOptions,
 	): void {
-		const wire = new Wire({ wireConnection, wireInitParams });
+		const wire = new Wire({ wireConnection, wireInitParams, opts });
 
 		const wireId = entityIdService.generateId();
 		wire.setId(wireId);

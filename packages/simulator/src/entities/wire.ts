@@ -1,6 +1,7 @@
 import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import { BaseEntity } from "./entity";
 import type { Pin } from "./pin";
+import type { EntitySpawnOptions } from "./chips";
 
 export type WireConnection = { startPin: Pin; endPin: Pin };
 
@@ -14,9 +15,12 @@ export class Wire extends BaseEntity<"wire"> {
 	public startPin: Pin;
 	public endPin: Pin;
 
+	public parentCompositeId: string;
+
 	constructor(args: {
 		wireConnection: WireConnection;
 		wireInitParams: WireInitParams;
+		opts?: EntitySpawnOptions;
 	}) {
 		super({
 			entityType: "wire",
@@ -24,6 +28,8 @@ export class Wire extends BaseEntity<"wire"> {
 
 		this.startPin = args.wireConnection.startPin;
 		this.endPin = args.wireConnection.endPin;
+
+		this.parentCompositeId = args.opts?.parentCompositeId || "";
 
 		this.renderState = {
 			color: args.wireInitParams.color,

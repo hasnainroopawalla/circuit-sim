@@ -7,7 +7,7 @@ import type {
 	ChipType,
 	Chip,
 	ChipRenderState,
-	ChipSpawnOptions,
+	EntitySpawnOptions,
 } from "./chip.interface";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
 import type { Position } from "@digital-logic-sim/shared-types";
@@ -23,7 +23,7 @@ export abstract class BaseChip<
 	public inputPins: Pin[];
 	public outputPins: Pin[];
 
-	public parentCompositeId?: string;
+	public parentCompositeId: string;
 
 	public chipType: TChipType;
 
@@ -32,7 +32,7 @@ export abstract class BaseChip<
 	constructor(
 		chipSpec: ChipSpecOf<TChipType>,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	) {
 		super({
 			entityType: "chip",
@@ -43,7 +43,7 @@ export abstract class BaseChip<
 		this.inputPins = this.createPins(chipSpec.inputPins, "in");
 		this.outputPins = this.createPins(chipSpec.outputPins, "out");
 
-		this.parentCompositeId = opts?.parentCompositeId;
+		this.parentCompositeId = opts?.parentCompositeId || "";
 
 		this.renderState = {
 			color: chipInitParams.color,

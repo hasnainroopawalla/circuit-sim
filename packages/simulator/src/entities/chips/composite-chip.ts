@@ -2,7 +2,7 @@ import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
 	ChipInitParams,
-	ChipSpawnOptions,
+	EntitySpawnOptions,
 	CompositeChipSpec,
 	IOChipType,
 } from "./chip.interface";
@@ -20,7 +20,7 @@ export class CompositeChip extends BaseChip<"composite"> {
 	constructor(
 		chipSpec: CompositeChipSpec,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
 	}

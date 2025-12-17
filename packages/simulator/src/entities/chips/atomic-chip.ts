@@ -2,14 +2,14 @@ import { BaseChip } from "./chip";
 import type {
 	AtomicChipSpec,
 	ChipInitParams,
-	ChipSpawnOptions,
+	EntitySpawnOptions,
 } from "./chip.interface";
 
 export abstract class AtomicChip extends BaseChip<"atomic"> {
 	constructor(
 		chipSpec: AtomicChipSpec,
 		chipInitParams: ChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	) {
 		super(chipSpec, chipInitParams, opts);
 	}
@@ -24,7 +24,7 @@ export class AndChip extends AtomicChip {
 		outputPins: [{ name: "out0" }],
 	};
 
-	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
 		super(AndChip.spec, chipInitParams, opts);
 	}
 
@@ -44,7 +44,7 @@ export class OrChip extends AtomicChip {
 		outputPins: [{ name: "out0" }],
 	};
 
-	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
 		super(OrChip.spec, chipInitParams, opts);
 	}
 
@@ -64,7 +64,7 @@ export class NotChip extends AtomicChip {
 		outputPins: [{ name: "out0" }],
 	};
 
-	constructor(chipInitParams: ChipInitParams, opts?: ChipSpawnOptions) {
+	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
 		super(NotChip.spec, chipInitParams, opts);
 	}
 

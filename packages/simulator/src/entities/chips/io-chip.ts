@@ -1,7 +1,7 @@
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
-	ChipSpawnOptions,
+	EntitySpawnOptions,
 	IOChipInitParams,
 	IOChipSpec,
 	IOChipType,
@@ -23,7 +23,7 @@ export abstract class BaseIOChip<
 	constructor(
 		ioChipSpec: IOChipSpecOf<TIOChipType>,
 		chipInitParams: IOChipInitParams,
-		opts?: ChipSpawnOptions,
+		opts?: EntitySpawnOptions,
 	) {
 		super(ioChipSpec, chipInitParams, opts);
 
@@ -47,7 +47,7 @@ export class InputChip extends BaseIOChip<"input"> {
 
 	private nextValue = false;
 
-	constructor(chipInitParams: IOChipInitParams, opts?: ChipSpawnOptions) {
+	constructor(chipInitParams: IOChipInitParams, opts?: EntitySpawnOptions) {
 		super(InputChip.spec, chipInitParams, opts);
 	}
 
@@ -80,7 +80,7 @@ export class OutputChip extends BaseIOChip<"output"> {
 		outputPins: [],
 	};
 
-	constructor(chipInitParams: IOChipInitParams, opts?: ChipSpawnOptions) {
+	constructor(chipInitParams: IOChipInitParams, opts?: EntitySpawnOptions) {
 		super(OutputChip.spec, chipInitParams, opts);
 	}
 

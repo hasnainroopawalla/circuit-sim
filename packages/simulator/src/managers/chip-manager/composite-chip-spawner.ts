@@ -120,10 +120,14 @@ export class CompositeChipSpawner {
 						};
 
 			// spawn wires
-			this.wireManager.spawnWire(wireConnection, {
-				color: { r: 1, g: 1, b: 1, a: 1 },
-				controlPoints: [],
-			});
+			this.wireManager.spawnWire(
+				wireConnection,
+				{
+					color: { r: 1, g: 1, b: 1, a: 1 },
+					controlPoints: [],
+				},
+				{ parentCompositeId: compositeChip.id },
+			);
 
 			runtimeMappings.push({
 				internalChip: ioChip,
@@ -161,6 +165,7 @@ export class CompositeChipSpawner {
 					endPin,
 				},
 				wire.renderState,
+				{ parentCompositeId: compositeChip.id },
 			);
 		});
 	}

@@ -108,7 +108,7 @@ export class SimulatorApp {
 
 		this.layoutManager.hoveredEntity = MeshUtils.getHoveredChipEntity(
 			this.mousePositionService.getMousePosition().world,
-			this.sim.chipManager.chips,
+			this.sim.chipManager.getBoardChips(),
 		);
 
 		this.renderEngine.render(

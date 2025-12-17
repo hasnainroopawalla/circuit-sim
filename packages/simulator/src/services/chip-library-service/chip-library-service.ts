@@ -63,9 +63,9 @@ export class ChipLibraryService {
 		];
 	}
 
-	public resolve<T extends ChipDefinition>(
-		definition: T,
-	): ChipRegistryMap[T["kind"]]["resolved"] {
+	public resolve<TDef extends ChipDefinition>(
+		definition: TDef,
+	): ChipRegistryMap[TDef["kind"]]["resolved"] {
 		switch (definition.kind) {
 			case "atomic":
 			case "io":

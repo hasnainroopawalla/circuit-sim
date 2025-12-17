@@ -26,26 +26,19 @@ export class SimulationLayer extends BaseLayer {
 	}
 
 	public getRenderables(): Renderable[] {
-		// console.log(this.sim.chipManager.chips);
-		// console.log(this.sim.wireManager.wires);
-		const chipRenderables = this.sim.chipManager.chips.reduce((acc, chip) => {
-			// TODO: improve the logic to show chips only if parent composite is open in "View mode"
-			// if (chip.parentCompositeId) {
-			// 	return acc;
-			// }
-			acc.push(LayoutUtils.chipToRenderable(chip));
-			return acc;
-		}, [] as ChipRenderable[]);
+		const chipRenderables = this.sim.chipManager
+			.getBoardChips()
+			.map((chip) => LayoutUtils.chipToRenderable(chip));
 
-		const wireRenderables: Renderable[] = this.sim.wireManager.wires.map(
-			(wire) => {
+		const wireRenderables: Renderable[] = this.sim.wireManager
+			.getBoardWires()
+			.map((wire) => {
 				return {
 					type: "wire",
 					color: wire.renderState.color,
 					path: wire.getPath(),
 				};
-			},
-		);
+			});
 
 		// TODO: [optimize] new object created each frame
 		return [...chipRenderables, ...wireRenderables];
