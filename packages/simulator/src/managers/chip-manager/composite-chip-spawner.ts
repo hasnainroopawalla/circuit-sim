@@ -2,7 +2,10 @@ import type { Chip, CompositeChip, IOChipType } from "../../entities/chips";
 import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
-import type { ChipLibraryService } from "../../services/chip-library-service";
+import type {
+	ChipDefinition,
+	ChipLibraryService,
+} from "../../services/chip-library-service";
 import type { WireManager } from "../wire-manager";
 import type { ChipManager } from "./chip-manager";
 
@@ -49,22 +52,21 @@ export class CompositeChipSpawner {
 		compositeChip: CompositeChip,
 		internalChipMap: InternalChipMap,
 	): void {
-		compositeChip.spec.blueprint.chips.forEach((internalChipBlueprint) => {
-			// TODO: fix this
+		compositeChip.spec.blueprint.chips.forEach((chipBlueprint) => {
 			const chipFactory = this.chipLibraryService.resolve({
-				kind: "atomic",
-				name: internalChipBlueprint.spec.name,
-			});
+				kind: chipBlueprint.spec.chipType,
+				name: chipBlueprint.spec.name,
+			} as ChipDefinition);
 
 			const internalChip = this.chipManager.spawnChip(
 				chipFactory,
-				internalChipBlueprint.renderState,
+				chipBlueprint.renderState,
 				{
 					parentCompositeId: compositeChip.id,
 				},
 			);
 
-			internalChipMap.set(internalChipBlueprint.id, internalChip);
+			internalChipMap.set(chipBlueprint.id, internalChip);
 		});
 	}
 

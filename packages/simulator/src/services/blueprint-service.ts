@@ -1,4 +1,9 @@
-import type { Chip, ChipRenderState, ChipSpec } from "../entities/chips";
+import type {
+	Chip,
+	ChipRenderState,
+	ChipSpec,
+	IOChip,
+} from "../entities/chips";
 import { EntityUtils } from "../entities/utils";
 import type { Wire, WireRenderState } from "../entities/wire";
 import type { Simulator } from "../simulator";
@@ -12,7 +17,7 @@ export type Blueprint = {
 	outputMappings: BlueprintPinMapping[];
 };
 
-export type BlueprintPinMapping = {
+type BlueprintPinMapping = {
 	externalPin: string;
 	internalChipId: string;
 	internalPinName: string;
@@ -36,7 +41,7 @@ type BlueprintWireConnection = {
 	pinName: string;
 };
 
-export type BlueprintWire = {
+type BlueprintWire = {
 	spec: {
 		start: BlueprintWireConnection;
 		end: BlueprintWireConnection;
@@ -52,10 +57,10 @@ export class BlueprintService extends BaseService {
 	}
 
 	private init(): void {
-		this.sim.on("chip.save", () => this.saveBlueprint());
+		this.sim.on("chip.save", () => this.saveChipAsBlueprint());
 	}
 
-	public loadBlueprint(blueprintString: string): void {
+	public importBlueprint(blueprintString: string): void {
 		const blueprint = JSON.parse(blueprintString) as Blueprint;
 
 		this.sim.chipLibraryService.register({
@@ -69,73 +74,14 @@ export class BlueprintService extends BaseService {
 		console.log("service", blueprint);
 	}
 
-	private saveBlueprint(): Blueprint {
-		// TODO: Reduce
-		const chips = this.sim.chipManager.chips.reduce((acc, chip) => {
+	private saveChipAsBlueprint(): Blueprint {
+		const blueprintChips = this.sim.chipManager.chips.reduce((acc, chip) => {
 			if (EntityUtils.isIOChip(chip)) {
 				return acc;
 			}
 			acc.push(this.serializeChip(chip));
 			return acc;
 		}, [] as BlueprintChip[]);
-
-		const inputMappings = this.sim.chipManager.chips.reduce((acc, chip) => {
-			if (!EntityUtils.isInputChip(chip)) {
-				return acc;
-			}
-
-			const outgoingWire = this.sim.wireManager.wires.find(
-				(wire) => wire.startPin.id === chip.getPin().id,
-			);
-
-			if (!outgoingWire) {
-				throw new Error("No out going wire");
-			}
-
-			const targetChip = chips.find(
-				(c) => c.id === outgoingWire.endPin.chip.id,
-			);
-
-			if (!targetChip) {
-				throw new Error("Input connected to non-internal chip");
-			}
-
-			acc.push({
-				externalPin: chip.externalPinName,
-				internalChipId: targetChip.id,
-				internalPinName: outgoingWire.endPin.spec.name,
-			});
-			return acc;
-		}, [] as BlueprintPinMapping[]);
-
-		const outputMappings = this.sim.chipManager.chips.reduce((acc, chip) => {
-			if (!EntityUtils.isOutputChip(chip)) {
-				return acc;
-			}
-
-			const outgoingWire = this.sim.wireManager.wires.find(
-				(wire) => wire.endPin.id === chip.getPin().id,
-			);
-
-			if (!outgoingWire) {
-				throw new Error("No out going wire");
-			}
-
-			const targetChip = chips.find(
-				(c) => c.id === outgoingWire.startPin.chip.id,
-			);
-
-			if (!targetChip) {
-				throw new Error("Output connected to non-internal chip");
-			}
-
-			acc.push({
-				externalPin: chip.externalPinName,
-				internalChipId: targetChip.id,
-				internalPinName: outgoingWire.startPin.spec.name,
-			});
-			return acc;
-		}, [] as BlueprintPinMapping[]);
 
 		const wires = this.sim.wireManager.wires.reduce((acc, wire) => {
 			// omit wires that are connected to composite IO chips
@@ -149,14 +95,15 @@ export class BlueprintService extends BaseService {
 			return acc;
 		}, [] as BlueprintWire[]);
 
+		const { inputMappings, outputMappings } =
+			this.createIOPinMappings(blueprintChips);
+
 		const blueprint: Blueprint = {
-			chips,
+			chips: blueprintChips,
 			wires,
 			inputMappings,
 			outputMappings,
 		};
-
-		console.log("blueprint", JSON.stringify(blueprint));
 
 		this.sim.chipLibraryService.register({
 			name: "NAND",
@@ -165,6 +112,8 @@ export class BlueprintService extends BaseService {
 			outputPins: [{ name: "out0" }],
 			blueprint,
 		});
+
+		console.log("blueprint", JSON.stringify(blueprint));
 
 		return blueprint;
 	}
@@ -199,6 +148,67 @@ export class BlueprintService extends BaseService {
 				},
 			},
 			renderState: wire.renderState,
+		};
+	}
+
+	private createIOPinMappings(blueprintChips: BlueprintChip[]): {
+		inputMappings: BlueprintPinMapping[];
+		outputMappings: BlueprintPinMapping[];
+	} {
+		const inputMappings: BlueprintPinMapping[] = [];
+		const outputMappings: BlueprintPinMapping[] = [];
+
+		this.sim.chipManager.chips.forEach((chip) => {
+			if (EntityUtils.isInputChip(chip)) {
+				inputMappings.push(this.getIOBlueprintPinMapping(chip, blueprintChips));
+			}
+
+			if (EntityUtils.isOutputChip(chip)) {
+				outputMappings.push(
+					this.getIOBlueprintPinMapping(chip, blueprintChips),
+				);
+			}
+		});
+
+		return { inputMappings, outputMappings };
+	}
+
+	private getIOBlueprintPinMapping(
+		ioChip: IOChip,
+		blueprintChips: BlueprintChip[],
+	): BlueprintPinMapping {
+		const ioWire = this.sim.wireManager.wires.find((wire) => {
+			const wirePinId =
+				ioChip.ioChipType === "input"
+					? // outgoing from input chip
+						wire.startPin.id
+					: // incoming into output chip
+						wire.endPin.id;
+
+			return wirePinId === ioChip.getPin().id;
+		});
+
+		if (!ioWire) {
+			throw new Error("IO wire does not exist");
+		}
+
+		const targetChip = blueprintChips.find((chip) => {
+			const wirePinId =
+				ioChip.ioChipType === "input"
+					? ioWire.endPin.chip.id
+					: ioWire.startPin.chip.id;
+
+			return chip.id === wirePinId;
+		});
+
+		if (!targetChip) {
+			throw new Error("Input connected to non-internal chip");
+		}
+
+		return {
+			externalPin: ioChip.externalPinName,
+			internalChipId: targetChip.id,
+			internalPinName: ioWire.endPin.spec.name,
 		};
 	}
 }

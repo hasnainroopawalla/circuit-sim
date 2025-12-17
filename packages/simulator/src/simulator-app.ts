@@ -164,7 +164,7 @@ export class SimulatorApp {
 	}
 
 	public setupNandGate(): void {
-		this.sim.blueprintService.loadBlueprint(
+		this.sim.blueprintService.importBlueprint(
 			`{"chips":[{"id":"2","spec":{"name":"AND","atomicChipType":"AND","chipType":"atomic","inputPins":[{"name":"in0"},{"name":"in1"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":0.3,"y":1}},"inputPins":[{"id":"2.in.0","name":"in0"},{"id":"2.in.1","name":"in1"}],"outputPins":[{"id":"2.out.0","name":"out0"}]},{"id":"3","spec":{"name":"NOT","atomicChipType":"NOT","chipType":"atomic","inputPins":[{"name":"in0"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":-1,"y":1}},"inputPins":[{"id":"3.in.0","name":"in0"}],"outputPins":[{"id":"3.out.0","name":"out0"}]}],"wires":[{"spec":{"start":{"chipId":"2","pinName":"out0"},"end":{"chipId":"3","pinName":"in0"}},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"controlPoints":[]}}],"inputMappings":[{"externalPin":"IN0","internalChipId":"2","internalPinName":"in0"},{"externalPin":"IN1","internalChipId":"2","internalPinName":"in1"}],"outputMappings":[{"externalPin":"OUT4","internalChipId":"3","internalPinName":"out0"}]}`,
 		);
 		// const andChipSpec = this.sim.chipLibraryService.getChipSpecByName(
