@@ -1,4 +1,4 @@
-import { EntitySpawnOptions } from "../entities/chips";
+import type { EntitySpawnOptions } from "../entities/chips";
 import {
 	Wire,
 	type WireInitParams,
@@ -53,5 +53,15 @@ export class WireManager extends BaseManager {
 		wire.setId(wireId);
 
 		this.wires.push(wire);
+	}
+
+	public getWire(startPinId: string, endPinId: string): Wire | undefined {
+		return this.getBoardWires().find(
+			(wire) => wire.startPin.id === startPinId && wire.endPin.id === endPinId,
+		);
+	}
+
+	public getOutgoingWiresFromPin(pinId: string): Wire[] {
+		return this.getBoardWires().filter((wire) => wire.startPin.id === pinId);
 	}
 }
