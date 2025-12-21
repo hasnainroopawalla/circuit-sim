@@ -104,12 +104,14 @@ export class SimulatorApp {
 
 		this.camera.update(deltaTime);
 
-		this.overlayManager.update();
-
-		this.layoutManager.hoveredEntity = MeshUtils.getHoveredChipEntity(
+		const hoveredEntity = MeshUtils.getHoveredChipEntity(
 			this.mousePositionService.getMousePosition().world,
 			this.sim.chipManager.getBoardChips(),
 		);
+
+		this.overlayManager.update(hoveredEntity);
+
+		this.layoutManager.update(hoveredEntity);
 
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),

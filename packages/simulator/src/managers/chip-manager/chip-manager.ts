@@ -90,8 +90,13 @@ export class ChipManager extends BaseManager {
 		// for inner chips that are within a composite chip,
 		// we dont need to trigger an overlay update to render labels.
 		if (!opts?.parentCompositeId) {
-			this.sim.emit("entity.spawn.finish", {
-				entity: { id: chip.id, name: chip.spec.name },
+			this.sim.emit("chip.spawn.finish", {
+				chipId: chip.id,
+				chipName: chip.spec.name,
+				pins: [...chip.inputPins, ...chip.outputPins].map((pin) => ({
+					id: pin.id,
+					name: pin.spec.name,
+				})),
 			});
 		}
 

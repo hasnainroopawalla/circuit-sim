@@ -7,11 +7,10 @@ export type IEvents = {
 	"wire.spawn.start": { startPin: Pin };
 	"chip.spawn.start": { chipDefinition: ChipDefinition };
 
-	"entity.spawn.finish": {
-		entity: {
-			id: string;
-			name: string;
-		};
+	"chip.spawn.finish": {
+		chipId: string;
+		chipName: string;
+		pins: { id: string; name: string }[];
 	};
 };
 

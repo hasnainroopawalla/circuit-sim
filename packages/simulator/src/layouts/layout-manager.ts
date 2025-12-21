@@ -20,10 +20,10 @@ type LayoutManagerArgs = BaseLayerArgs & {
 
 export class LayoutManager {
 	private readonly layers: BaseLayer[];
-	private _hoveredEntity: Entity | null;
+	private hoveredEntity: Entity | null;
 
 	constructor(args: LayoutManagerArgs) {
-		this._hoveredEntity = null;
+		this.hoveredEntity = null;
 
 		this.layers = [
 			// layer 1
@@ -43,6 +43,10 @@ export class LayoutManager {
 		return this.layers.flatMap((layer) => layer.getRenderables());
 	}
 
+	public update(hoveredEntity: Entity | null): void {
+		this.hoveredEntity = hoveredEntity;
+	}
+
 	public onMouseButtonEvent(
 		event: MouseButtonType,
 		nature: ButtonEvent,
@@ -53,14 +57,14 @@ export class LayoutManager {
 				event,
 				nature,
 				mousePosition,
-				this._hoveredEntity,
+				this.hoveredEntity,
 			),
 		);
 	}
 
 	public onMouseMoveEvent(mousePosition: MousePosition): void {
 		this.layers.some((layer) =>
-			layer.onMouseMoveEvent(mousePosition, this._hoveredEntity),
+			layer.onMouseMoveEvent(mousePosition, this.hoveredEntity),
 		);
 	}
 
@@ -72,11 +76,11 @@ export class LayoutManager {
 		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
 	}
 
-	public get hoveredEntity(): Entity | null {
-		return this._hoveredEntity;
-	}
+	// public get hoveredEntity(): Entity | null {
+	// 	return this._hoveredEntity;
+	// }
 
-	public set hoveredEntity(value: Entity | null) {
-		this._hoveredEntity = value;
-	}
+	// public set hoveredEntity(value: Entity | null) {
+	// 	this._hoveredEntity = value;
+	// }
 }

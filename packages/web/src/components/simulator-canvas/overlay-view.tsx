@@ -1,10 +1,12 @@
 import * as React from "react";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import { useEffectOnce } from "../../utils";
+import type { OverlayElementKind } from "@digital-logic-sim/simulator";
 
 type Label = {
 	id: string;
 	text: string;
+	kind: OverlayElementKind;
 };
 
 export const SimulatorOverlayView: React.FC = () => {
@@ -14,15 +16,24 @@ export const SimulatorOverlayView: React.FC = () => {
 
 	React.useEffect(() => {
 		const unsubscribe = simulatorApp.sim.on(
-			"entity.spawn.finish",
-			({ entity }) => {
-				setLabels((prev) => [
-					...prev,
-					{
-						id: entity.id,
-						text: entity.name,
-					},
-				]);
+			"chip.spawn.finish",
+			({ chipId, chipName, pins }) => {
+				setLabels((prev) => {
+					const newLabels = [
+						{
+							id: chipId,
+							text: chipName,
+							kind: "static" as const,
+						},
+						...pins.map((pin) => ({
+							id: pin.id,
+							text: pin.name,
+							kind: "hover" as const,
+						})),
+					];
+
+					return [...prev, ...newLabels];
+				});
 			},
 		);
 
@@ -35,13 +46,18 @@ export const SimulatorOverlayView: React.FC = () => {
 			className="absolute inset-0 pointer-events-none"
 		>
 			{labels.map((label) => (
-				<OverlayLabel key={label.id} id={label.id} text={label.text} />
+				<OverlayLabel
+					key={label.id}
+					id={label.id}
+					text={label.text}
+					kind={label.kind}
+				/>
 			))}
 		</div>
 	);
 };
 
-export const OverlayLabel: React.FC<Label> = ({ id, text }) => {
+export const OverlayLabel: React.FC<Label> = ({ id, text, kind }) => {
 	const simulatorApp = useSimulatorApp();
 
 	const labelRef = React.useRef<HTMLDivElement>(null);
@@ -51,10 +67,10 @@ export const OverlayLabel: React.FC<Label> = ({ id, text }) => {
 			return () => {};
 		}
 
-		simulatorApp.overlayManager.registerLabel(id, labelRef.current);
+		simulatorApp.overlayManager.registerLabel(id, labelRef.current, kind);
 
 		return () => {
-			// simulatorApp.overlayManager.unregisterLabel(id);
+			// simulatorApp.overlayManager.unregisterLabel(id, kind);
 		};
 	}, !!labelRef /* register the ref only after it has mounted */);
 
