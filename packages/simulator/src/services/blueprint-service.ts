@@ -60,18 +60,17 @@ export class BlueprintService extends BaseService {
 		this.sim.on("chip.save", () => this.saveChipAsBlueprint("Hello"));
 	}
 
-	public importBlueprint(blueprintString: string): void {
+	public importBlueprint(name: string, blueprintString: string): void {
 		const blueprint = JSON.parse(blueprintString) as Blueprint;
+		console.log("service", blueprint);
 
 		this.sim.chipLibraryService.register({
-			name: String(Math.random())[5],
+			name,
 			chipType: "composite",
 			inputPins: [{ name: "NAND in 0" }, { name: "NAND in 1" }],
 			outputPins: [{ name: "NAND out 0" }],
 			blueprint,
 		});
-
-		console.log("service", blueprint);
 	}
 
 	private saveChipAsBlueprint(blueprintName: string): Blueprint {
@@ -84,20 +83,21 @@ export class BlueprintService extends BaseService {
 				return acc;
 			}, [] as BlueprintChip[]);
 
-		const internalWires = this.sim.wireManager.getBoardWires().reduce((acc, wire) => {
-			// omit wires that are connected to composite IO chips
-			if (
-				EntityUtils.isIOChip(wire.startPin.chip) ||
-				EntityUtils.isIOChip(wire.endPin.chip)
-			) {
+		const internalWires = this.sim.wireManager
+			.getBoardWires()
+			.reduce((acc, wire) => {
+				// omit wires that are connected to composite IO chips
+				if (
+					EntityUtils.isIOChip(wire.startPin.chip) ||
+					EntityUtils.isIOChip(wire.endPin.chip)
+				) {
+					return acc;
+				}
+				acc.push(this.serializeWire(wire));
 				return acc;
-			}
-			acc.push(this.serializeWire(wire));
-			return acc;
-		}, [] as BlueprintWire[]);
+			}, [] as BlueprintWire[]);
 
-		const { inputMappings, outputMappings } =
-			this.createIOPinMappings();
+		const { inputMappings, outputMappings } = this.createIOPinMappings();
 
 		const blueprint: Blueprint = {
 			chips: internalChips,
@@ -169,9 +169,7 @@ export class BlueprintService extends BaseService {
 			}
 
 			if (EntityUtils.isOutputChip(chip)) {
-				outputMappings.push(
-					this.getIOBlueprintPinMapping(chip),
-				);
+				outputMappings.push(this.getIOBlueprintPinMapping(chip));
 			}
 		});
 
@@ -180,12 +178,12 @@ export class BlueprintService extends BaseService {
 
 	// TODO: this method should work for 1:n input wires and n:1 output wires
 	// TODO: (currently it only works for 1:1)
-	private getIOBlueprintPinMapping(
-		ioChip: IOChip,
-	): BlueprintPinMapping {
+	private getIOBlueprintPinMapping(ioChip: IOChip): BlueprintPinMapping {
 		const ioPin = ioChip.getPin();
 
-		const connectedWires = this.sim.wireManager.getOutgoingWiresFromPin(ioPin.id);
+		const connectedWires = this.sim.wireManager.getOutgoingWiresFromPin(
+			ioPin.id,
+		);
 
 		if (connectedWires.length <= 0) {
 			throw new Error("IO pin has no connected wires");
@@ -193,12 +191,13 @@ export class BlueprintService extends BaseService {
 
 		const wire = connectedWires[0];
 
-		const internalChip = (ioChip.ioChipType === "input" ? wire.endPin : wire.startPin).chip
+		const internalChip = (
+			ioChip.ioChipType === "input" ? wire.endPin : wire.startPin
+		).chip;
 
 		if (!internalChip || EntityUtils.isIOChip(internalChip)) {
 			throw new Error("IO pin not connected to a non-IO chip");
 		}
-		
 
 		return {
 			externalPin: ioChip.externalPinName,

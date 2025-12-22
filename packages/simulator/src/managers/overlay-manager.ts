@@ -77,6 +77,11 @@ export class OverlayManager extends BaseManager {
 				return;
 			}
 
+			screenSpacePosition.x =
+				hoveredEntity.pinType === "in"
+					? screenSpacePosition.x - 35
+					: screenSpacePosition.x + 40;
+
 			this.showElement(element, screenSpacePosition);
 		}
 	}

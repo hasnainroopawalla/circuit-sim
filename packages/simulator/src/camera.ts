@@ -1,7 +1,6 @@
 import type { CameraProjectionData } from "@digital-logic-sim/render-engine";
 import { mat4, vec3, vec4, type Vec3Arg } from "wgpu-matrix";
 import type { KeyboardButtonType, ButtonEvent } from "./managers/input-manager";
-import type { Simulator } from "./simulator";
 import type { Position } from "@digital-logic-sim/shared-types";
 
 type VelocityDelta = [number, number, number];
@@ -21,12 +20,9 @@ const cameraConfig = {
 
 type CameraArgs = {
 	canvas: HTMLCanvasElement;
-	sim: Simulator;
 };
 
 export class Camera {
-	private sim: Simulator;
-
 	private eye: Float32Array;
 
 	public screenDimensions: {
@@ -37,8 +33,6 @@ export class Camera {
 	private inputVelocity: Float32Array;
 
 	constructor(args: CameraArgs) {
-		this.sim = args.sim;
-
 		this.eye = new Float32Array([0, 0, -5]);
 		this.inputVelocity = new Float32Array([0, 0, 0]);
 

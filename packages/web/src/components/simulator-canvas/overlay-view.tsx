@@ -80,7 +80,30 @@ export const OverlayLabel: React.FC<Label> = ({ id, text, kind }) => {
 			ref={labelRef}
 			className="absolute -translate-x-1/2 -translate-y-1/2 text-white text-sm font-medium select-none"
 		>
-			{text}
+			{getLabelElement(text, kind)}
 		</div>
 	);
+};
+
+const ChipName: React.FC<{ name: string }> = ({ name }) => {
+	return <span>{name}</span>;
+};
+
+const PinName: React.FC<{ name: string }> = ({ name }) => {
+	return (
+		<span className="bg-black/80 py-1 px-2 backdrop-blur-md shadow-lg">
+			{name}
+		</span>
+	);
+};
+
+// TODO: improve this method to correctly select which component to render
+// switching on `kind` is incorrect
+const getLabelElement = (text: string, kind: OverlayElementKind) => {
+	switch (kind) {
+		case "hover":
+			return <PinName name={text} />;
+		case "static":
+			return <ChipName name={text} />;
+	}
 };
