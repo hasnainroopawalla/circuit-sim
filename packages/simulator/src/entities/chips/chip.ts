@@ -92,6 +92,7 @@ export abstract class BaseChip<
 	}
 
 	private createPins(pinSpec: PinSpec[], pinType: PinType): Pin[] {
+		// TODO: enforce that pin.spec.name should be unique across a chip
 		return pinSpec.map(
 			(pinSpec, idx) =>
 				new Pin({

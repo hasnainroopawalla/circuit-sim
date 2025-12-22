@@ -42,7 +42,7 @@ export class InputChip extends BaseIOChip<"input"> {
 		chipType: "io" as const,
 		ioChipType: "input" as const,
 		inputPins: [],
-		outputPins: [{ name: "IN" }],
+		outputPins: [{ name: "in" }],
 	};
 
 	private nextValue = false;
@@ -76,7 +76,7 @@ export class OutputChip extends BaseIOChip<"output"> {
 		name: "output",
 		chipType: "io" as const,
 		ioChipType: "output" as const,
-		inputPins: [{ name: "OUT" }],
+		inputPins: [{ name: "out" }],
 		outputPins: [],
 	};
 

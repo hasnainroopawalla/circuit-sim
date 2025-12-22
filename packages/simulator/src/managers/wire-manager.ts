@@ -61,7 +61,11 @@ export class WireManager extends BaseManager {
 		);
 	}
 
-	public getOutgoingWiresFromPin(pinId: string): Wire[] {
+	public getOutgoingWires(pinId: string): Wire[] {
 		return this.getBoardWires().filter((wire) => wire.startPin.id === pinId);
+	}
+
+	public getIncomingWires(pinId: string): Wire[] {
+		return this.getBoardWires().filter((wire) => wire.endPin.id === pinId);
 	}
 }
