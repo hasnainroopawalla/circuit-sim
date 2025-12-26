@@ -52,5 +52,5 @@ export type CompositeChipSpec = BaseChipSpec<"composite"> & {
 export type ChipSpec = IOChipSpec | AtomicChipSpec | CompositeChipSpec;
 
 export type IOChipInitParams = ChipInitParams & {
-	externalPinName: string;
+	externalPinLabel: string;
 };

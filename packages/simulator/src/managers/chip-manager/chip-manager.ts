@@ -87,7 +87,7 @@ export class ChipManager extends BaseManager {
 			this.compositeChipSpawner.spawn(chip);
 		}
 
-		// for inner chips that are within a composite chip,
+		// for inner chips that are within a composite chip,ƒ
 		// we dont need to trigger an overlay update to render labels.
 		if (!opts?.parentCompositeId) {
 			this.sim.emit("chip.spawn.finish", {
@@ -95,7 +95,7 @@ export class ChipManager extends BaseManager {
 				chipName: chip.spec.name,
 				pins: [...chip.inputPins, ...chip.outputPins].map((pin) => ({
 					id: pin.id,
-					name: pin.spec.label ?? pin.spec.name,
+					name: pin.spec.name,
 				})),
 			});
 		}
@@ -112,7 +112,7 @@ export class ChipManager extends BaseManager {
 			case "io":
 				return this.createIOChip(
 					chipFactory,
-					chipInitParams,
+					chipInitParams as IOChipInitParams,
 					opts,
 				) as ChipFromFactory<T>;
 			case "atomic":
@@ -132,16 +132,15 @@ export class ChipManager extends BaseManager {
 
 	private createIOChip(
 		chipFactory: IOChipFactory,
-		chipInitParams: ChipInitParams,
+		chipInitParams: IOChipInitParams,
 		opts?: EntitySpawnOptions,
 	): IOChip {
-		chipFactory;
 		return new chipFactory.ChipClass(
 			{
 				...chipInitParams,
-				externalPinName: this.getExternalPinName(
-					chipFactory.ChipClass.spec.ioChipType,
-				),
+				externalPinLabel:
+					chipInitParams.externalPinLabel ??
+					this.getExternalPinLabel(chipFactory.ChipClass.spec.ioChipType),
 			},
 			opts,
 		);
@@ -169,7 +168,7 @@ export class ChipManager extends BaseManager {
 		});
 	}
 
-	private getExternalPinName(ioChipType: IOChipType): string {
+	private getExternalPinLabel(ioChipType: IOChipType): string {
 		const chipCount = this.sim.chipManager
 			.getBoardChips()
 			.filter((chip) =>

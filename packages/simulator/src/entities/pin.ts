@@ -6,7 +6,6 @@ export type PinType = "in" | "out";
 
 export type PinSpec = {
 	name: string;
-	label?: string;
 };
 
 export class Pin extends BaseEntity<"pin"> {

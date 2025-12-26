@@ -2,6 +2,7 @@ import type { Chip, CompositeChip, IOChipType } from "../../entities/chips";
 import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
+import { BlueprintUtils } from "../../services/blueprint-service";
 import type {
 	ChipDefinition,
 	ChipLibraryService,
@@ -52,6 +53,33 @@ export class CompositeChipSpawner {
 		compositeChip: CompositeChip,
 		internalChipMap: InternalChipMap,
 	): void {
+		const blueprint = BlueprintUtils.getRootBlueprint(
+			compositeChip.spec.blueprint,
+		);
+
+		blueprint.chips.forEach((chipBlueprint) => {
+			console.log(chipBlueprint.spec.chipType);
+			// const chipFactory = this.chipLibraryService.resolve({
+			// 	kind: chipBlueprint.spec.chipType,
+			// 	name: chipBlueprint.spec.name,
+			// } as ChipDefinition);
+
+			// const internalChip = this.chipManager.spawnChip(
+			// 	chipFactory,
+			// 	chipBlueprint.renderState,
+			// 	{
+			// 		parentCompositeId: compositeChip.id,
+			// 	},
+			// );
+
+			// internalChipMap.set(chipBlueprint.id, internalChip);
+		});
+	}
+
+	private spawnInternalChips1(
+		compositeChip: CompositeChip,
+		internalChipMap: InternalChipMap,
+	): void {
 		compositeChip.spec.blueprint.chips.forEach((chipBlueprint) => {
 			const chipFactory = this.chipLibraryService.resolve({
 				kind: chipBlueprint.spec.chipType,
@@ -93,7 +121,7 @@ export class CompositeChipSpawner {
 				{
 					color: { r: 1, g: 1, b: 1, a: 1 },
 					position: { x: 10, y: 10 },
-					externalPinName: mapping.externalPin,
+					externalPinLabel: mapping.externalPin,
 				},
 				{ parentCompositeId: compositeChip.id },
 			);

@@ -80,7 +80,7 @@ export class OverlayManager extends BaseManager {
 			screenSpacePosition.x =
 				hoveredEntity.pinType === "in"
 					? screenSpacePosition.x - 35
-					: screenSpacePosition.x + 40;
+					: screenSpacePosition.x + 32;
 
 			this.showElement(element, screenSpacePosition);
 		}

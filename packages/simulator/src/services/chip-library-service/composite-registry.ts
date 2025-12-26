@@ -1,4 +1,5 @@
 import type { CompositeChipSpec } from "../../entities/chips";
+import { BlueprintUtils, type Blueprint } from "../blueprint-service";
 import type { ChipDefinition } from "./chip-library-service";
 
 export type CompositeChipName = string;
@@ -11,8 +12,18 @@ export type CompositeChipFactory = {
 export class CompositeChipRegistry {
 	private registry = new Map<CompositeChipName, CompositeChipSpec>();
 
-	public register(spec: CompositeChipSpec): void {
-		this.registry.set(spec.name, spec);
+	public register(blueprint: Blueprint): void {
+		const chipName = blueprint.root;
+
+		const { inputPins, outputPins } = BlueprintUtils.getIOPinSpecs(blueprint);
+
+		this.registry.set(chipName, {
+			chipType: "composite",
+			name: chipName,
+			blueprint,
+			inputPins,
+			outputPins,
+		});
 	}
 
 	public getDefinitions(): ChipDefinition[] {

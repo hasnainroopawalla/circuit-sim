@@ -18,7 +18,7 @@ export abstract class BaseIOChip<
 	TIOChipType extends IOChipType,
 > extends BaseChip<"io"> {
 	public ioChipType: TIOChipType;
-	public externalPinName: string;
+	public externalPinLabel: string;
 
 	constructor(
 		ioChipSpec: IOChipSpecOf<TIOChipType>,
@@ -28,7 +28,7 @@ export abstract class BaseIOChip<
 		super(ioChipSpec, chipInitParams, opts);
 
 		this.ioChipType = ioChipSpec.ioChipType;
-		this.externalPinName = chipInitParams.externalPinName;
+		this.externalPinLabel = chipInitParams.externalPinLabel;
 	}
 
 	public getPin(): Pin {

@@ -3,47 +3,51 @@ import type {
 	ChipRenderState,
 	ChipSpec,
 	IOChip,
-} from "../entities/chips";
-import { PinSpec } from "../entities/pin";
-import { EntityUtils } from "../entities/utils";
-import type { Wire, WireRenderState } from "../entities/wire";
-import type { Simulator } from "../simulator";
-import { BaseService } from "./base-service";
+} from "../../entities/chips";
+import type { PinSpec } from "../../entities/pin";
+import { EntityUtils } from "../../entities/utils";
+import type { Wire, WireRenderState } from "../../entities/wire";
+import type { Simulator } from "../../simulator";
+import { BaseService } from "../base-service";
 
 export type Blueprint = {
-	chips: BlueprintChip[];
-	wires: BlueprintWire[];
-
-	inputMappings: BlueprintPinMapping[];
-	outputMappings: BlueprintPinMapping[];
+	root: string;
+	definitions: Record<string, CompositeBlueprint>;
 };
 
-type BlueprintPinMapping = {
-	externalPin: string;
+export type CompositeBlueprint = {
+	chips: ChipBlueprint[];
+	wires: WireBlueprint[];
+
+	inputMappings: Record<string /* externalPinLabel */, BlueprintPinMapping[]>;
+	outputMappings: Record<string /* externalPinLabel */, BlueprintPinMapping[]>;
+};
+
+export type BlueprintPinMapping = {
 	internalChipId: string;
 	internalPinName: string;
 };
 
-type BlueprintPin = Pick<PinSpec, "label" | "name">;
+type PinBlueprint = Pick<PinSpec, "name">;
 
-type BlueprintChip = {
+type ChipBlueprint = {
 	id: string;
 	spec: Pick<ChipSpec, "name" | "chipType"> & {
-		inputPins: BlueprintPin[];
-		outputPins: BlueprintPin[];
+		inputPins: PinBlueprint[];
+		outputPins: PinBlueprint[];
 	};
 	renderState: ChipRenderState;
 };
 
-type BlueprintWireConnection = {
+type WireConnectionBlueprint = {
 	chipId: string;
 	pinName: string;
 };
 
-type BlueprintWire = {
+type WireBlueprint = {
 	spec: {
-		start: BlueprintWireConnection;
-		end: BlueprintWireConnection;
+		start: WireConnectionBlueprint;
+		end: WireConnectionBlueprint;
 	};
 	renderState: WireRenderState;
 };
@@ -59,17 +63,8 @@ export class BlueprintService extends BaseService {
 		this.sim.on("chip.save", () => this.saveChipAsBlueprint("Hello"));
 	}
 
-	public importBlueprint(name: string, blueprintString: string): void {
-		const blueprint = JSON.parse(blueprintString) as Blueprint;
-		console.log("service", blueprint);
-
-		this.sim.chipLibraryService.register({
-			name,
-			chipType: "composite",
-			inputPins: [{ name: "NAND in 0" }, { name: "NAND in 1" }],
-			outputPins: [{ name: "NAND out 0" }],
-			blueprint,
-		});
+	public loadBlueprint(blueprint: Blueprint): void {
+		this.sim.chipLibraryService.register(blueprint);
 	}
 
 	private saveChipAsBlueprint(blueprintName: string): Blueprint {
@@ -80,7 +75,7 @@ export class BlueprintService extends BaseService {
 					acc.push(this.serializeChip(chip, idx.toString()));
 				}
 				return acc;
-			}, [] as BlueprintChip[]);
+			}, [] as ChipBlueprint[]);
 
 		const internalWires = this.sim.wireManager
 			.getBoardWires()
@@ -94,7 +89,7 @@ export class BlueprintService extends BaseService {
 				}
 				acc.push(this.serializeWire(wire));
 				return acc;
-			}, [] as BlueprintWire[]);
+			}, [] as WireBlueprint[]);
 
 		const { inputMappings, outputMappings } = this.createIOPinMappings();
 
@@ -105,20 +100,12 @@ export class BlueprintService extends BaseService {
 			outputMappings,
 		};
 
-		this.sim.chipLibraryService.register({
-			name: blueprintName,
-			chipType: "composite",
-			inputPins: [{ name: "in0" }, { name: "in1" }],
-			outputPins: [{ name: "out0" }],
-			blueprint,
-		});
-
 		console.log("blueprint", JSON.stringify(blueprint));
 
 		return blueprint;
 	}
 
-	private serializeChip(chip: Chip, blueprintChipId: string): BlueprintChip {
+	private serializeChip(chip: Chip, blueprintChipId: string): ChipBlueprint {
 		// atomic chip
 		return {
 			id: blueprintChipId,
@@ -127,18 +114,16 @@ export class BlueprintService extends BaseService {
 				name: chip.spec.name,
 				inputPins: chip.inputPins.map((pin) => ({
 					name: pin.spec.name,
-					label: pin.spec.label,
 				})),
 				outputPins: chip.outputPins.map((pin) => ({
 					name: pin.spec.name,
-					label: pin.spec.label,
 				})),
 			},
 			renderState: chip.renderState,
 		};
 	}
 
-	private serializeWire(wire: Wire): BlueprintWire {
+	private serializeWire(wire: Wire): WireBlueprint {
 		return {
 			spec: {
 				start: {
@@ -203,7 +188,7 @@ export class BlueprintService extends BaseService {
 		}
 
 		return {
-			externalPin: ioChip.externalPinName,
+			externalPin: ioChip.externalPinLabel,
 			internalChipId: internalChip.id,
 			internalPinName:
 				ioChip.ioChipType === "input"

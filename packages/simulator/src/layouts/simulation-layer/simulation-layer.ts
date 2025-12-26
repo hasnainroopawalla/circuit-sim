@@ -1,7 +1,4 @@
-import type {
-	ChipRenderable,
-	Renderable,
-} from "@digital-logic-sim/render-engine";
+import type { Renderable } from "@digital-logic-sim/render-engine";
 import { BaseLayer, type BaseLayerArgs } from "../base-layer";
 import type {
 	ButtonEvent,
