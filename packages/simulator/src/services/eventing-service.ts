@@ -2,7 +2,8 @@ import type { Pin } from "../entities/pin";
 import type { ChipDefinition } from "./chip-library-service";
 
 export type IEvents = {
-	"chip.save": undefined;
+	"sim.save-chip": undefined;
+	"sim.reset": undefined;
 
 	"wire.spawn.start": { startPin: Pin };
 	"chip.spawn.start": { chipDefinition: ChipDefinition };

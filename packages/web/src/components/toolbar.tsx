@@ -14,7 +14,7 @@ export const Toolbar = ({
 	return (
 		<div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
 			<div className="flex items-center gap-1 rounded-xl bg-black/40 px-2 py-2 backdrop-blur-md shadow-lg relative">
-				<ProjectToolbarItem onNewChipClick={() => {}} />
+				<ProjectToolbarItem />
 				<ToolbarItem text="Actions" onClick={onMenuButtonClick} />
 				<ToolbarItem text="Settings" onClick={onSettingsButtonClick} />
 			</div>
@@ -38,13 +38,7 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({ text, onClick }) => {
 	);
 };
 
-type ProjectToolbarItemProps = {
-	onNewChipClick: () => void;
-};
-
-const ProjectToolbarItem: React.FC<ProjectToolbarItemProps> = ({
-	onNewChipClick,
-}) => {
+const ProjectToolbarItem: React.FC = () => {
 	const simulatorApp = useSimulatorApp();
 
 	const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
@@ -52,8 +46,13 @@ const ProjectToolbarItem: React.FC<ProjectToolbarItemProps> = ({
 
 	useOnClickOutside(divRef, () => setIsPopoverOpen(false));
 
-	const onSaveChipClick = React.useCallback(() => {
-		simulatorApp.sim.emit("chip.save", undefined);
+	const triggerSaveChip = React.useCallback(() => {
+		simulatorApp.sim.emit("sim.save-chip", undefined);
+		setIsPopoverOpen(false);
+	}, [simulatorApp]);
+
+	const triggerNewChip = React.useCallback(() => {
+		simulatorApp.sim.emit("sim.reset", undefined);
 		setIsPopoverOpen(false);
 	}, [simulatorApp]);
 
@@ -63,14 +62,8 @@ const ProjectToolbarItem: React.FC<ProjectToolbarItemProps> = ({
 
 			{isPopoverOpen && (
 				<div className="absolute bottom-full left-1/2 mb-2 min-w-max -translate-x-1/2 rounded-lg bg-neutral-900/70 backdrop-blur-xl shadow-lg ring-1 ring-white/10 py-2 flex flex-col">
-					<PopoverItem
-						text="New Chip"
-						onClick={() => {
-							setIsPopoverOpen(false);
-							onNewChipClick();
-						}}
-					/>
-					<PopoverItem text="Save Chip" onClick={onSaveChipClick} />
+					<PopoverItem text="Save Chip" onClick={triggerSaveChip} />
+					<PopoverItem text="Reset" onClick={triggerNewChip} />
 				</div>
 			)}
 		</div>

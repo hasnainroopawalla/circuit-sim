@@ -42,6 +42,10 @@ export class WireManager extends BaseManager {
 		});
 	}
 
+	public reset(): void {
+		this.wires = [];
+	}
+
 	public spawnWire(
 		wireConnection: WireConnection,
 		wireInitParams: WireInitParams,

@@ -1,13 +1,17 @@
+// managers
+import { ChipManager } from "./managers/chip-manager/chip-manager";
+import { WireManager } from "./managers/wire-manager";
+import { PinManager } from "./managers/pin-manager";
+
+// services
+import { ChipLibraryService } from "./services/chip-library-service";
+import { BlueprintService } from "./services/blueprint-service";
+import { ResetService } from "./services/reset-service";
 import {
 	EventingService,
 	type IEvents,
 	type Unsubscribe,
 } from "./services/eventing-service";
-import { ChipManager } from "./managers/chip-manager/chip-manager";
-import { ChipLibraryService } from "./services/chip-library-service";
-import { WireManager } from "./managers/wire-manager";
-import { BlueprintService } from "./services/blueprint-service";
-import { PinManager } from "./managers/pin-manager";
 
 const simulatorConfig = {
 	maxIterations: 1000,
@@ -18,6 +22,7 @@ export class Simulator {
 	public eventingService: EventingService;
 	public chipLibraryService: ChipLibraryService;
 	public blueprintService: BlueprintService;
+	public resetService: ResetService;
 
 	// managers
 	public chipManager: ChipManager;
@@ -29,6 +34,7 @@ export class Simulator {
 		this.eventingService = new EventingService();
 		this.chipLibraryService = new ChipLibraryService();
 		this.blueprintService = new BlueprintService(this);
+		this.resetService = new ResetService(this);
 
 		// managers
 		this.wireManager = new WireManager(this);

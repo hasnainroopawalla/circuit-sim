@@ -62,6 +62,10 @@ export class ChipManager extends BaseManager {
 		);
 	}
 
+	public reset(): void {
+		this.chips = [];
+	}
+
 	public spawnChip<T extends ChipFactory>(
 		chipFactory: T,
 		chipInitParams: ChipInitParams,

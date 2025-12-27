@@ -2,43 +2,10 @@ import * as React from "react";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import { useEffectOnce } from "../../utils";
 import type { OverlayElementKind } from "@digital-logic-sim/simulator";
-
-type Label = {
-	id: string;
-	text: string;
-	kind: OverlayElementKind;
-};
+import { useOverlayLabels, type Label } from "./hooks";
 
 export const SimulatorOverlayView: React.FC = () => {
-	const simulatorApp = useSimulatorApp();
-
-	const [labels, setLabels] = React.useState<Label[]>([]);
-
-	React.useEffect(() => {
-		const unsubscribe = simulatorApp.sim.on(
-			"chip.spawn.finish",
-			({ chipId, chipName, pins }) => {
-				setLabels((prev) => {
-					const newLabels = [
-						{
-							id: chipId,
-							text: chipName,
-							kind: "static" as const,
-						},
-						...pins.map((pin) => ({
-							id: pin.id,
-							text: pin.name,
-							kind: "hover" as const,
-						})),
-					];
-
-					return [...prev, ...newLabels];
-				});
-			},
-		);
-
-		return () => unsubscribe();
-	}, [simulatorApp]);
+	const labels = useOverlayLabels();
 
 	return (
 		<div

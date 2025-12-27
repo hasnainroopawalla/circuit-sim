@@ -65,6 +65,11 @@ export class OverlayManager extends BaseManager {
 		}
 	}
 
+	public reset(): void {
+		this.staticElements = new Map();
+		this.hoverElements = new Map();
+	}
+
 	private updateHoverElements(hoveredEntity: Entity): void {
 		if (hoveredEntity.entityType === "pin") {
 			const screenSpacePosition = this.camera.toScreenSpacePosition(

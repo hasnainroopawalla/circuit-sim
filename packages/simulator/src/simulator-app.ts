@@ -69,7 +69,7 @@ export class SimulatorApp {
 			this.registerCanvasResizeObserver(args.canvas);
 		});
 
-		this.registerInputManagerSubscriptions();
+		this.registerSubscriptions();
 	}
 
 	public async start(): Promise<void> {
@@ -126,7 +126,10 @@ export class SimulatorApp {
 		observer.observe(canvas);
 	}
 
-	private registerInputManagerSubscriptions(): void {
+	private registerSubscriptions(): void {
+		this.sim.on("sim.reset", () => this.reset());
+
+		// input manager subscriptions
 		this.inputManager.onMouseScrollEvent((event) => {
 			this.layoutManager.onMouseScrollEvent(event);
 		});
@@ -157,6 +160,11 @@ export class SimulatorApp {
 			await this.renderEngine.onResize(width, height);
 			this.camera.onResize(width, height);
 		});
+	}
+
+	private reset(): void {
+		this.overlayManager.reset();
+		this.sim.resetService.resetSimulator();
 	}
 
 	public setupNandGate(): void {
@@ -250,7 +258,7 @@ export class SimulatorApp {
 					controlPoints: [],
 				},
 			);
-			this.sim.emit("chip.save", undefined);
+			this.sim.emit("sim.save-chip", undefined);
 		};
 
 		// generateBlueprint();
