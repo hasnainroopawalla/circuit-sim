@@ -269,7 +269,7 @@ const compositeAndBlueprint = {
 				{
 					id: "5",
 					spec: {
-						chipType: "composite" as const,
+						chipType: "composite",
 						name: "NAND",
 					},
 					renderState: {
@@ -280,7 +280,7 @@ const compositeAndBlueprint = {
 				{
 					id: "6",
 					spec: {
-						chipType: "atomic" as const,
+						chipType: "atomic",
 						name: "NOT",
 					},
 					renderState: {
@@ -312,7 +312,7 @@ const compositeAndBlueprint = {
 				{
 					id: "2",
 					spec: {
-						chipType: "atomic" as const,
+						chipType: "atomic",
 						name: "AND",
 					},
 					renderState: {
@@ -323,7 +323,7 @@ const compositeAndBlueprint = {
 				{
 					id: "3",
 					spec: {
-						chipType: "atomic" as const,
+						chipType: "atomic",
 						name: "NOT",
 					},
 					renderState: {
