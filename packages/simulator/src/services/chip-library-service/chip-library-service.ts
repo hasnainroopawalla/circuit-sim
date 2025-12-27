@@ -53,8 +53,8 @@ export class ChipLibraryService {
 		this.composite = new CompositeChipRegistry();
 	}
 
-	public register(blueprint: Blueprint): void {
-		this.composite.register(blueprint);
+	public register(chipName: string, blueprint: Blueprint): void {
+		this.composite.register(chipName, blueprint);
 	}
 
 	public getAllDefinitions(): ChipDefinition[] {

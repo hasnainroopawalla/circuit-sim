@@ -4,11 +4,8 @@ import {
 	type IOChip,
 	type AtomicChip,
 	type EntitySpawnOptions,
-	type IOChipType,
-	type IOChipInitParams,
 	CompositeChip,
 } from "../../entities/chips";
-import { EntityUtils } from "../../entities/utils";
 import { entityIdService } from "../../entity-id-service";
 import type {
 	AtomicChipFactory,
@@ -23,10 +20,6 @@ import type { Simulator } from "../../simulator";
 import { didAnyChange } from "../../utils";
 import { BaseManager } from "../base-manager";
 import { CompositeChipSpawner } from "./composite-chip-spawner";
-
-type ChipInitParamsFromFactory<T extends ChipFactory> = T extends IOChipFactory
-	? IOChipInitParams
-	: ChipInitParams;
 
 export class ChipManager extends BaseManager {
 	private chips: Chip[];
@@ -71,7 +64,7 @@ export class ChipManager extends BaseManager {
 
 	public spawnChip<T extends ChipFactory>(
 		chipFactory: T,
-		chipInitParams: ChipInitParamsFromFactory<T>,
+		chipInitParams: ChipInitParams,
 		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		const chip = this.createChip(chipFactory, chipInitParams, opts);
@@ -105,14 +98,14 @@ export class ChipManager extends BaseManager {
 
 	private createChip<T extends ChipFactory>(
 		chipFactory: T,
-		chipInitParams: ChipInitParamsFromFactory<T>,
+		chipInitParams: ChipInitParams,
 		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		switch (chipFactory.kind) {
 			case "io":
 				return this.createIOChip(
 					chipFactory,
-					chipInitParams as IOChipInitParams,
+					chipInitParams,
 					opts,
 				) as ChipFromFactory<T>;
 			case "atomic":
@@ -132,18 +125,10 @@ export class ChipManager extends BaseManager {
 
 	private createIOChip(
 		chipFactory: IOChipFactory,
-		chipInitParams: IOChipInitParams,
+		chipInitParams: ChipInitParams,
 		opts?: EntitySpawnOptions,
 	): IOChip {
-		return new chipFactory.ChipClass(
-			{
-				...chipInitParams,
-				externalPinLabel:
-					chipInitParams.externalPinLabel ??
-					this.getExternalPinLabel(chipFactory.ChipClass.spec.ioChipType),
-			},
-			opts,
-		);
+		return new chipFactory.ChipClass(chipInitParams, opts);
 	}
 
 	private createAtomicChip(
@@ -166,17 +151,5 @@ export class ChipManager extends BaseManager {
 		[...chip.inputPins, ...chip.outputPins].forEach((pin) => {
 			this.sim.pinManager.spawnPin(pin, chip.id);
 		});
-	}
-
-	private getExternalPinLabel(ioChipType: IOChipType): string {
-		const chipCount = this.sim.chipManager
-			.getBoardChips()
-			.filter((chip) =>
-				ioChipType === "input"
-					? EntityUtils.isInputChip(chip)
-					: EntityUtils.isOutputChip(chip),
-			).length;
-
-		return `${ioChipType === "input" ? "IN" : "OUT"} ${chipCount}`;
 	}
 }

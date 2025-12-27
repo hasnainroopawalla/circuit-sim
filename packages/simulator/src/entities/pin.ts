@@ -8,8 +8,13 @@ export type PinSpec = {
 	name: string;
 };
 
+type PinRenderState = {
+	label?: string;
+};
+
 export class Pin extends BaseEntity<"pin"> {
 	public spec: PinSpec;
+	public renderState: PinRenderState;
 
 	public pinType: PinType;
 	public pinIdx: number;
@@ -21,6 +26,7 @@ export class Pin extends BaseEntity<"pin"> {
 
 	constructor(args: {
 		spec: PinSpec;
+		renderState: PinRenderState;
 		chip: Chip;
 		pinType: PinType;
 		pinIdx: number;
@@ -30,6 +36,7 @@ export class Pin extends BaseEntity<"pin"> {
 		});
 
 		this.spec = args.spec;
+		this.renderState = args.renderState;
 
 		this.chip = args.chip;
 

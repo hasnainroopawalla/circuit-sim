@@ -185,13 +185,11 @@ export class SimulatorApp {
 			const inputChip0 = this.sim.chipManager.spawnChip(inputChipSpec, {
 				color: { r: 0, g: 0, b: 0, a: 1 },
 				position: { x: 1.6, y: 1.3 },
-				externalPinLabel: "IN", // TODO: is this necessary?
 			});
 			// INPUT 1
 			const inputChip1 = this.sim.chipManager.spawnChip(inputChipSpec, {
 				color: { r: 0, g: 0, b: 0, a: 1 },
 				position: { x: 1.6, y: 0.8 },
-				externalPinLabel: "IN",
 			});
 			// AND
 			const andChip = this.sim.chipManager.spawnChip(andChipSpec, {
@@ -207,7 +205,6 @@ export class SimulatorApp {
 			const outputChip = this.sim.chipManager.spawnChip(outputChipSpec, {
 				color: { r: 0, g: 0, b: 0, a: 1 },
 				position: { x: -2, y: 1 },
-				externalPinLabel: "OUT",
 			});
 			// input 0 to AND in 0
 			this.sim.wireManager.spawnWire(
@@ -258,25 +255,65 @@ export class SimulatorApp {
 
 		// generateBlueprint();
 
-		this.sim.blueprintService.loadBlueprint(
-			nandBlueprint,
-			// `{"chips":[{"id":"2","spec":{"chipType":"atomic","name":"AND","inputPins":[{"name":"in0"},{"name":"in1"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":0.3,"y":1}}},{"id":"3","spec":{"chipType":"atomic","name":"NOT","inputPins":[{"name":"in0"}],"outputPins":[{"name":"out0"}]},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"position":{"x":-1,"y":1}}}],"wires":[{"spec":{"start":{"chipId":"2","pinName":"out0"},"end":{"chipId":"3","pinName":"in0"}},"renderState":{"color":{"r":0,"g":0,"b":0,"a":1},"controlPoints":[]}}],"inputMappings":[{"externalPin":"IN 0","internalChipId":"2","internalPinName":"in0"},{"externalPin":"IN 1","internalChipId":"2","internalPinName":"in1"}],"outputMappings":[{"externalPin":"OUT 0","internalChipId":"3","internalPinName":"out0"}]}`,
-		);
+		// this.sim.blueprintService.loadBlueprint(
+		// 	compositeAndBlueprint,
+		// );
 	}
 }
+const compositeAndBlueprint = {
+	root: "composite-AND",
 
-const nandBlueprint = {
-	root: "NAND",
 	definitions: {
+		"composite-AND": {
+			chips: [
+				{
+					id: "5",
+					spec: {
+						chipType: "composite" as const,
+						name: "NAND",
+					},
+					renderState: {
+						color: { r: 0, g: 0, b: 0, a: 1 },
+						position: { x: 0.3, y: 1 },
+					},
+				},
+				{
+					id: "6",
+					spec: {
+						chipType: "atomic" as const,
+						name: "NOT",
+					},
+					renderState: {
+						color: { r: 0, g: 0, b: 0, a: 1 },
+						position: { x: -1, y: 1 },
+					},
+				},
+			],
+			wires: [
+				{
+					spec: {
+						start: { chipId: "5", pinName: "OUT" },
+						end: { chipId: "6", pinName: "in0" },
+					},
+					renderState: { color: { r: 0, g: 0, b: 0, a: 1 }, controlPoints: [] },
+				},
+			],
+			inputMappings: {
+				"C-AND A": [{ internalChipId: "5", internalPinName: "IN A" }],
+				"C-AND B": [{ internalChipId: "5", internalPinName: "IN B" }],
+			},
+			outputMappings: {
+				"C-AND OUT": [{ internalChipId: "6", internalPinName: "out0" }],
+			},
+		},
+
 		NAND: {
 			chips: [
 				{
 					id: "2",
 					spec: {
-						chipType: "atomic",
+						chipType: "atomic" as const,
 						name: "AND",
-						inputPins: [{ name: "in0" }, { name: "in1" }], // !TODO: not needed
-						outputPins: [{ name: "out0" }],
 					},
 					renderState: {
 						color: { r: 0, g: 0, b: 0, a: 1 },
@@ -286,10 +323,8 @@ const nandBlueprint = {
 				{
 					id: "3",
 					spec: {
-						chipType: "atomic",
+						chipType: "atomic" as const,
 						name: "NOT",
-						inputPins: [{ name: "in0" }],
-						outputPins: [{ name: "out0" }],
 					},
 					renderState: {
 						color: { r: 0, g: 0, b: 0, a: 1 },
@@ -315,51 +350,4 @@ const nandBlueprint = {
 			},
 		},
 	},
-};
-
-const oldBlueprint = {
-	chips: [
-		{
-			id: "2",
-			spec: {
-				chipType: "atomic",
-				name: "AND",
-				inputPins: [{ name: "in0" }, { name: "in1" }],
-				outputPins: [{ name: "out0" }],
-			},
-			renderState: {
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				position: { x: 0.3, y: 1 },
-			},
-		},
-		{
-			id: "3",
-			spec: {
-				chipType: "atomic",
-				name: "NOT",
-				inputPins: [{ name: "in0" }],
-				outputPins: [{ name: "out0" }],
-			},
-			renderState: {
-				color: { r: 0, g: 0, b: 0, a: 1 },
-				position: { x: -1, y: 1 },
-			},
-		},
-	],
-	wires: [
-		{
-			spec: {
-				start: { chipId: "2", pinName: "out0" },
-				end: { chipId: "3", pinName: "in0" },
-			},
-			renderState: { color: { r: 0, g: 0, b: 0, a: 1 }, controlPoints: [] },
-		},
-	],
-	inputMappings: [
-		{ externalPin: "IN 0", internalChipId: "2", internalPinName: "in0" },
-		{ externalPin: "IN 1", internalChipId: "2", internalPinName: "in1" },
-	],
-	outputMappings: [
-		{ externalPin: "OUT 0", internalChipId: "3", internalPinName: "out0" },
-	],
 };

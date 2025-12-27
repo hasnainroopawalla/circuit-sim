@@ -1,56 +1,15 @@
 import type {
-	Chip,
-	ChipRenderState,
-	ChipSpec,
-	IOChip,
-} from "../../entities/chips";
-import type { PinSpec } from "../../entities/pin";
+	BlueprintSet,
+	BlueprintPinMapping,
+	ChipBlueprint,
+	IOMapping,
+	WireBlueprint,
+} from "./blueprint-service.interface";
+import type { Chip, IOChip, IOChipType } from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
-import type { Wire, WireRenderState } from "../../entities/wire";
+import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
 import { BaseService } from "../base-service";
-
-export type Blueprint = {
-	root: string;
-	definitions: Record<string, CompositeBlueprint>;
-};
-
-export type CompositeBlueprint = {
-	chips: ChipBlueprint[];
-	wires: WireBlueprint[];
-
-	inputMappings: Record<string /* externalPinLabel */, BlueprintPinMapping[]>;
-	outputMappings: Record<string /* externalPinLabel */, BlueprintPinMapping[]>;
-};
-
-export type BlueprintPinMapping = {
-	internalChipId: string;
-	internalPinName: string;
-};
-
-type PinBlueprint = Pick<PinSpec, "name">;
-
-type ChipBlueprint = {
-	id: string;
-	spec: Pick<ChipSpec, "name" | "chipType"> & {
-		inputPins: PinBlueprint[];
-		outputPins: PinBlueprint[];
-	};
-	renderState: ChipRenderState;
-};
-
-type WireConnectionBlueprint = {
-	chipId: string;
-	pinName: string;
-};
-
-type WireBlueprint = {
-	spec: {
-		start: WireConnectionBlueprint;
-		end: WireConnectionBlueprint;
-	};
-	renderState: WireRenderState;
-};
 
 export class BlueprintService extends BaseService {
 	constructor(sim: Simulator) {
@@ -60,14 +19,18 @@ export class BlueprintService extends BaseService {
 	}
 
 	private init(): void {
-		this.sim.on("chip.save", () => this.saveChipAsBlueprint("Hello"));
+		this.sim.on("chip.save", () => this.saveBlueprint("Hello"));
 	}
 
-	public loadBlueprint(blueprint: Blueprint): void {
-		this.sim.chipLibraryService.register(blueprint);
+	public loadBlueprint(blueprintSet: BlueprintSet): void {
+		Object.entries(blueprintSet.definitions).forEach(
+			([chipName, blueprint]) => {
+				this.sim.chipLibraryService.register(chipName, blueprint);
+			},
+		);
 	}
 
-	private saveChipAsBlueprint(blueprintName: string): Blueprint {
+	private saveBlueprint(blueprintName: string): void {
 		const internalChips = this.sim.chipManager
 			.getBoardChips()
 			.reduce((acc, chip, idx) => {
@@ -93,31 +56,27 @@ export class BlueprintService extends BaseService {
 
 		const { inputMappings, outputMappings } = this.createIOPinMappings();
 
-		const blueprint: Blueprint = {
+		this.sim.chipLibraryService.register(blueprintName, {
 			chips: internalChips,
 			wires: internalWires,
 			inputMappings,
 			outputMappings,
-		};
+		});
 
-		console.log("blueprint", JSON.stringify(blueprint));
-
-		return blueprint;
+		console.log("blueprint", {
+			chips: internalChips,
+			wires: internalWires,
+			inputMappings,
+			outputMappings,
+		});
 	}
 
 	private serializeChip(chip: Chip, blueprintChipId: string): ChipBlueprint {
-		// atomic chip
 		return {
 			id: blueprintChipId,
 			spec: {
 				chipType: chip.spec.chipType,
 				name: chip.spec.name,
-				inputPins: chip.inputPins.map((pin) => ({
-					name: pin.spec.name,
-				})),
-				outputPins: chip.outputPins.map((pin) => ({
-					name: pin.spec.name,
-				})),
 			},
 			renderState: chip.renderState,
 		};
@@ -144,28 +103,33 @@ export class BlueprintService extends BaseService {
 	 * internal pin represents this external pin of the composite.
 	 */
 	private createIOPinMappings(): {
-		inputMappings: BlueprintPinMapping[];
-		outputMappings: BlueprintPinMapping[];
+		inputMappings: IOMapping;
+		outputMappings: IOMapping;
 	} {
-		const inputMappings: BlueprintPinMapping[] = [];
-		const outputMappings: BlueprintPinMapping[] = [];
+		const inputMappings: IOMapping = {};
+		const outputMappings: IOMapping = {};
 
-		this.sim.chipManager.getBoardChips().forEach((chip) => {
-			if (EntityUtils.isInputChip(chip)) {
-				inputMappings.push(this.getIOBlueprintPinMapping(chip));
+		for (const chip of this.sim.chipManager.getBoardChips()) {
+			if (!EntityUtils.isIOChip(chip)) {
+				continue;
 			}
 
-			if (EntityUtils.isOutputChip(chip)) {
-				outputMappings.push(this.getIOBlueprintPinMapping(chip));
-			}
-		});
+			const mappings =
+				chip.ioChipType === "input" ? inputMappings : outputMappings;
+
+			const externalPinLabel = this.getExternalPinLabel(
+				chip,
+				mappings,
+				chip.ioChipType,
+			);
+
+			mappings[externalPinLabel] = this.getPinMappingsForIOChip(chip);
+		}
 
 		return { inputMappings, outputMappings };
 	}
 
-	// TODO: this method should work for 1:n input wires and n:1 output wires
-	// TODO: (currently it only works for 1:1)
-	private getIOBlueprintPinMapping(ioChip: IOChip): BlueprintPinMapping {
+	private getPinMappingsForIOChip(ioChip: IOChip): BlueprintPinMapping[] {
 		const ioPin = ioChip.getPin();
 
 		const connectedWires =
@@ -177,23 +141,36 @@ export class BlueprintService extends BaseService {
 			throw new Error("IO pin has no connected wires");
 		}
 
-		const wire = connectedWires[0];
+		return connectedWires.map((wire) => {
+			const internalChip = (
+				ioChip.ioChipType === "input" ? wire.endPin : wire.startPin
+			).chip;
 
-		const internalChip = (
-			ioChip.ioChipType === "input" ? wire.endPin : wire.startPin
-		).chip;
+			if (!internalChip || EntityUtils.isIOChip(internalChip)) {
+				throw new Error("IO pin not connected to a non-IO chip");
+			}
 
-		if (!internalChip || EntityUtils.isIOChip(internalChip)) {
-			throw new Error("IO pin not connected to a non-IO chip");
+			return {
+				internalChipId: internalChip.id,
+				internalPinName:
+					ioChip.ioChipType === "input"
+						? wire.endPin.spec.name
+						: wire.startPin.spec.name,
+			};
+		});
+	}
+
+	private getExternalPinLabel(
+		ioChip: IOChip,
+		pinMappings: IOMapping,
+		ioChipType: IOChipType,
+	): string {
+		// prioritize using the pin label that was added by the user
+		const customPinLabel = ioChip.getPin().renderState.label;
+		if (customPinLabel) {
+			return customPinLabel;
 		}
 
-		return {
-			externalPin: ioChip.externalPinLabel,
-			internalChipId: internalChip.id,
-			internalPinName:
-				ioChip.ioChipType === "input"
-					? wire.endPin.spec.name
-					: wire.startPin.spec.name,
-		};
+		return `${ioChipType === "input" ? "IN" : "OUT"} ${Object.keys(pinMappings).length + 1}`;
 	}
 }

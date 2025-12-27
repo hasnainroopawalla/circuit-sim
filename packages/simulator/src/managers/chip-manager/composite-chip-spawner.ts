@@ -2,7 +2,6 @@ import type { Chip, CompositeChip, IOChipType } from "../../entities/chips";
 import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
-import { BlueprintUtils } from "../../services/blueprint-service";
 import type {
 	ChipDefinition,
 	ChipLibraryService,
@@ -53,33 +52,6 @@ export class CompositeChipSpawner {
 		compositeChip: CompositeChip,
 		internalChipMap: InternalChipMap,
 	): void {
-		const blueprint = BlueprintUtils.getRootBlueprint(
-			compositeChip.spec.blueprint,
-		);
-
-		blueprint.chips.forEach((chipBlueprint) => {
-			console.log(chipBlueprint.spec.chipType);
-			// const chipFactory = this.chipLibraryService.resolve({
-			// 	kind: chipBlueprint.spec.chipType,
-			// 	name: chipBlueprint.spec.name,
-			// } as ChipDefinition);
-
-			// const internalChip = this.chipManager.spawnChip(
-			// 	chipFactory,
-			// 	chipBlueprint.renderState,
-			// 	{
-			// 		parentCompositeId: compositeChip.id,
-			// 	},
-			// );
-
-			// internalChipMap.set(chipBlueprint.id, internalChip);
-		});
-	}
-
-	private spawnInternalChips1(
-		compositeChip: CompositeChip,
-		internalChipMap: InternalChipMap,
-	): void {
 		compositeChip.spec.blueprint.chips.forEach((chipBlueprint) => {
 			const chipFactory = this.chipLibraryService.resolve({
 				kind: chipBlueprint.spec.chipType,
@@ -115,52 +87,53 @@ export class CompositeChipSpawner {
 			name: ioChipType,
 		});
 
-		chipMappings.forEach((mapping) => {
+		Object.entries(chipMappings).forEach(([externalPinLabel, mappings]) => {
 			const ioChip = this.chipManager.spawnChip(
 				ioChipFactory,
 				{
 					color: { r: 1, g: 1, b: 1, a: 1 },
 					position: { x: 10, y: 10 },
-					externalPinLabel: mapping.externalPin,
+					// externalPinLabel,
 				},
 				{ parentCompositeId: compositeChip.id },
 			);
 
-			const internalChipPin = this.getInternalChipPin(
-				mapping.internalChipId,
-				mapping.internalPinName,
-				internalChipMap,
-			);
+			mappings.forEach((mapping) => {
+				const internalChipPin = this.getInternalChipPin(
+					mapping.internalChipId,
+					mapping.internalPinName,
+					internalChipMap,
+				);
 
-			if (!internalChipPin) {
-				throw new Error("Internal Chip Pin does not exist");
-			}
+				if (!internalChipPin) {
+					throw new Error("Internal Chip Pin does not exist");
+				}
 
-			const wireConnection: WireConnection =
-				ioChipType === "input"
-					? {
-							startPin: ioChip.getPin(),
-							endPin: internalChipPin,
-						}
-					: {
-							startPin: internalChipPin,
-							endPin: ioChip.getPin(),
-						};
+				const wireConnection: WireConnection =
+					ioChipType === "input"
+						? {
+								startPin: ioChip.getPin(),
+								endPin: internalChipPin,
+							}
+						: {
+								startPin: internalChipPin,
+								endPin: ioChip.getPin(),
+							};
 
-			// spawn wires
-			this.wireManager.spawnWire(
-				wireConnection,
-				{
-					color: { r: 1, g: 1, b: 1, a: 1 },
-					controlPoints: [],
-				},
-				{ parentCompositeId: compositeChip.id },
-			);
+				this.wireManager.spawnWire(
+					wireConnection,
+					{
+						color: { r: 1, g: 1, b: 1, a: 1 },
+						controlPoints: [],
+					},
+					{ parentCompositeId: compositeChip.id },
+				);
 
-			runtimeMappings.push({
-				internalChip: ioChip,
-				internalPin: internalChipPin,
-			} as RuntimePinMapping<TIOChipType>);
+				runtimeMappings.push({
+					internalChip: ioChip,
+					internalPin: internalChipPin,
+				} as RuntimePinMapping<TIOChipType>);
+			});
 		});
 
 		return runtimeMappings;

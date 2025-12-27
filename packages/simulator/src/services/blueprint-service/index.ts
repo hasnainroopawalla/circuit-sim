@@ -1,6 +1,7 @@
-export {
-	BlueprintService,
-	type Blueprint,
-	type BlueprintPinMapping,
-} from "./blueprint-service";
+export { BlueprintService } from "./blueprint-service";
+export type {
+	BlueprintSet,
+	BlueprintPinMapping,
+	Blueprint,
+} from "./blueprint-service.interface";
 export { BlueprintUtils } from "./blueprint.utils";

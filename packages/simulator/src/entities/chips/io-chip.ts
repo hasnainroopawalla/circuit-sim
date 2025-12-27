@@ -2,7 +2,7 @@ import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
 	EntitySpawnOptions,
-	IOChipInitParams,
+	ChipInitParams,
 	IOChipSpec,
 	IOChipType,
 	InputChipSpec,
@@ -18,17 +18,15 @@ export abstract class BaseIOChip<
 	TIOChipType extends IOChipType,
 > extends BaseChip<"io"> {
 	public ioChipType: TIOChipType;
-	public externalPinLabel: string;
 
 	constructor(
 		ioChipSpec: IOChipSpecOf<TIOChipType>,
-		chipInitParams: IOChipInitParams,
+		chipInitParams: ChipInitParams,
 		opts?: EntitySpawnOptions,
 	) {
 		super(ioChipSpec, chipInitParams, opts);
 
 		this.ioChipType = ioChipSpec.ioChipType;
-		this.externalPinLabel = chipInitParams.externalPinLabel;
 	}
 
 	public getPin(): Pin {
@@ -47,7 +45,7 @@ export class InputChip extends BaseIOChip<"input"> {
 
 	private nextValue = false;
 
-	constructor(chipInitParams: IOChipInitParams, opts?: EntitySpawnOptions) {
+	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
 		super(InputChip.spec, chipInitParams, opts);
 	}
 
@@ -80,7 +78,7 @@ export class OutputChip extends BaseIOChip<"output"> {
 		outputPins: [],
 	};
 
-	constructor(chipInitParams: IOChipInitParams, opts?: EntitySpawnOptions) {
+	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
 		super(OutputChip.spec, chipInitParams, opts);
 	}
 

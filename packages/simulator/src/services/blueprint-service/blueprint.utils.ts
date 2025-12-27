@@ -1,8 +1,8 @@
 import type { PinSpec, PinType } from "../../entities/pin";
-import type { Blueprint, CompositeBlueprint } from "./blueprint-service";
+import type { BlueprintSet, Blueprint } from "./blueprint-service.interface";
 
 export const BlueprintUtils = {
-	getRootBlueprint: (blueprint: Blueprint): CompositeBlueprint => {
+	getRootBlueprint: (blueprint: BlueprintSet): Blueprint => {
 		return blueprint.definitions[blueprint.root];
 	},
 
@@ -27,11 +27,7 @@ export const BlueprintUtils = {
 };
 
 function getIOPinSpecs(blueprint: Blueprint, pinType: PinType): PinSpec[] {
-	const rootBlueprint = BlueprintUtils.getRootBlueprint(blueprint);
-
 	return Object.keys(
-		pinType === "in"
-			? rootBlueprint.inputMappings
-			: rootBlueprint.outputMappings,
+		pinType === "in" ? blueprint.inputMappings : blueprint.outputMappings,
 	).map((pinName) => ({ name: pinName }));
 }

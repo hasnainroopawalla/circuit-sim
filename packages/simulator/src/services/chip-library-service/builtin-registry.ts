@@ -9,7 +9,6 @@ import {
 	type EntitySpawnOptions,
 	type IOChipType,
 	type AtomicChipType,
-	type IOChipInitParams,
 	type ChipInitParams,
 	type IOChipSpec,
 	type AtomicChipSpec,
@@ -22,7 +21,7 @@ type AtomicChipClass = (new (
 ) => AtomicChip) & { spec: AtomicChipSpec };
 
 type IOChipClass = (new (
-	chipInitParams: IOChipInitParams,
+	chipInitParams: ChipInitParams,
 	opts?: EntitySpawnOptions,
 ) => IOChip) & { spec: IOChipSpec };
 

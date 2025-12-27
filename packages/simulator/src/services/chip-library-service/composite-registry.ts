@@ -12,9 +12,7 @@ export type CompositeChipFactory = {
 export class CompositeChipRegistry {
 	private registry = new Map<CompositeChipName, CompositeChipSpec>();
 
-	public register(blueprint: Blueprint): void {
-		const chipName = blueprint.root;
-
+	public register(chipName: string, blueprint: Blueprint): void {
 		const { inputPins, outputPins } = BlueprintUtils.getIOPinSpecs(blueprint);
 
 		this.registry.set(chipName, {
