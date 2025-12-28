@@ -263,9 +263,7 @@ export class SimulatorApp {
 
 		// generateBlueprint();
 
-		// this.sim.blueprintService.loadBlueprint(
-		// 	compositeAndBlueprint,
-		// );
+		this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
 	}
 }
 const compositeAndBlueprint = {

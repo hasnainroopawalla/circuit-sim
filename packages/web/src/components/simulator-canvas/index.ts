@@ -1,2 +1,2 @@
 export { SimulatorCanvas } from "./simulator-canvas";
-export { SimulatorOverlayView } from "./overlay-view";
+export { SimulatorOverlayView } from "./overlay-view/overlay-view";

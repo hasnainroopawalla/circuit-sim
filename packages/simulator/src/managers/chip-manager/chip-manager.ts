@@ -93,6 +93,7 @@ export class ChipManager extends BaseManager {
 				pins: [...chip.inputPins, ...chip.outputPins].map((pin) => ({
 					id: pin.id,
 					name: pin.spec.name,
+					pinType: pin.pinType,
 				})),
 			});
 		}
