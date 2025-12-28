@@ -3,7 +3,7 @@ import type {
 	CompositeChipSpec,
 	IOChipType,
 } from "../../entities/chips";
-import { Blueprint } from "../blueprint-service";
+import type { Blueprint } from "../blueprint-service";
 import {
 	type AtomicChipFactory,
 	type IOChipFactory,

@@ -168,7 +168,7 @@ export class SimulatorApp {
 	}
 
 	public setupNandGate(): void {
-		const generateBlueprint = () => {
+		const spawnNand = () => {
 			const andChipSpec = this.sim.chipLibraryService.resolve({
 				kind: "atomic",
 				name: "AND",
@@ -258,12 +258,11 @@ export class SimulatorApp {
 					controlPoints: [],
 				},
 			);
-			this.sim.emit("sim.save-chip", undefined);
 		};
 
-		// generateBlueprint();
+		spawnNand();
 
-		this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
+		// this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
 	}
 }
 const compositeAndBlueprint = {

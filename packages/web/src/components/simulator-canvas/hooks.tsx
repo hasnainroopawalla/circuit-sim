@@ -7,10 +7,13 @@ export type Label = {
 	id: string;
 	text: string;
 	kind: OverlayElementKind;
-} & ({
-	entityType: "chip"
-} | {entityType: "pin",  pinType: PinType});
- 
+} & (
+	| {
+			entityType: "chip";
+	  }
+	| { entityType: "pin"; pinType: PinType }
+);
+
 export const useOverlayLabels = () => {
 	const simulatorApp = useSimulatorApp();
 
@@ -21,7 +24,7 @@ export const useOverlayLabels = () => {
 			"chip.spawn.finish",
 			({ chipId, chipName, pins }) => {
 				setLabels((prev) => {
-					const newLabels:Label[] = [
+					const newLabels: Label[] = [
 						{
 							id: chipId,
 							entityType: "chip" as const,
@@ -33,7 +36,7 @@ export const useOverlayLabels = () => {
 							entityType: "pin" as const,
 							kind: "hover" as const,
 							text: pin.name,
-							pinType: pin.pinType
+							pinType: pin.pinType,
 						})),
 					];
 
