@@ -1,22 +1,20 @@
 import * as React from "react";
 import { useOnClickOutside } from "../utils";
 import { useSimulatorApp } from "../contexts/simulator-app-context";
+import { useDialog } from "./dialog";
 
-type ToolbarProps = {
-	onMenuButtonClick: () => void;
-	onSettingsButtonClick: () => void;
-};
+export const Toolbar: React.FC = () => {
+	const { openDialog } = useDialog();
 
-export const Toolbar = ({
-	onMenuButtonClick,
-	onSettingsButtonClick,
-}: ToolbarProps) => {
 	return (
-		<div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-			<div className="flex items-center gap-1 rounded-xl bg-black/40 px-2 py-2 backdrop-blur-md shadow-lg relative">
+		<div className="fixed z-50 -translate-x-1/2 bottom-6 left-1/2">
+			<div className="relative flex items-center gap-1 px-2 py-2 shadow-lg rounded-xl bg-black/40 backdrop-blur-md">
 				<ProjectToolbarItem />
-				<ToolbarItem text="Actions" onClick={onMenuButtonClick} />
-				<ToolbarItem text="Settings" onClick={onSettingsButtonClick} />
+				<ToolbarItem
+					text="Actions"
+					onClick={() => openDialog({ kind: "commandPalette" })}
+				/>
+				<ToolbarItem text="Settings" onClick={() => {}} />
 			</div>
 		</div>
 	);
@@ -39,6 +37,8 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({ text, onClick }) => {
 };
 
 const ProjectToolbarItem: React.FC = () => {
+	const { openDialog, closeDialog } = useDialog();
+
 	const simulatorApp = useSimulatorApp();
 
 	const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
@@ -46,12 +46,16 @@ const ProjectToolbarItem: React.FC = () => {
 
 	useOnClickOutside(divRef, () => setIsPopoverOpen(false));
 
-	const triggerSaveChip = React.useCallback(() => {
-		simulatorApp.sim.emit("sim.save-chip", undefined);
-		setIsPopoverOpen(false);
-	}, [simulatorApp]);
+	const saveChip = React.useCallback(
+		(chipName: string) => {
+			simulatorApp.sim.emit("sim.save-chip.start", { chipName });
+			setIsPopoverOpen(false);
+			closeDialog();
+		},
+		[simulatorApp, closeDialog],
+	);
 
-	const triggerNewChip = React.useCallback(() => {
+	const resetSimulator = React.useCallback(() => {
 		simulatorApp.sim.emit("sim.reset", undefined);
 		setIsPopoverOpen(false);
 	}, [simulatorApp]);
@@ -61,15 +65,14 @@ const ProjectToolbarItem: React.FC = () => {
 			<ToolbarItem text="Project" onClick={() => setIsPopoverOpen((v) => !v)} />
 
 			{isPopoverOpen && (
-				<div className="absolute bottom-full left-1/2 mb-2 min-w-max -translate-x-1/2 rounded-lg bg-neutral-900/70 backdrop-blur-xl shadow-lg ring-1 ring-white/10 py-2 flex flex-col">
-					<PopoverItem text="Save Chip" onClick={triggerSaveChip} />
-					<PopoverItem text="Reset" onClick={triggerNewChip} />
+				<div className="absolute flex flex-col py-2 mb-2 -translate-x-1/2 rounded-lg shadow-lg bottom-full left-1/2 min-w-max bg-neutral-900/70 backdrop-blur-xl ring-1 ring-white/10">
+					<ToolbarItem
+						text="Save Chip"
+						onClick={() => openDialog({ kind: "saveChip", onSave: saveChip })}
+					/>
+					<ToolbarItem text="Reset" onClick={resetSimulator} />
 				</div>
 			)}
 		</div>
 	);
-};
-
-const PopoverItem: React.FC<ToolbarItemProps> = (props) => {
-	return <ToolbarItem {...props} />;
 };

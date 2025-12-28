@@ -19,7 +19,9 @@ export class BlueprintService extends BaseService {
 	}
 
 	private init(): void {
-		this.sim.on("sim.save-chip", () => this.saveBlueprint("Hello"));
+		this.sim.on("sim.save-chip.start", ({ chipName }) =>
+			this.saveBlueprint(chipName),
+		);
 	}
 
 	public loadBlueprint(blueprintSet: BlueprintSet): void {
@@ -62,6 +64,8 @@ export class BlueprintService extends BaseService {
 			inputMappings,
 			outputMappings,
 		});
+
+		this.sim.emit("sim.save-chip.finish", undefined);
 
 		console.log("blueprint", {
 			chips: internalChips,

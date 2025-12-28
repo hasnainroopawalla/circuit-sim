@@ -129,6 +129,9 @@ export class SimulatorApp {
 	private registerSubscriptions(): void {
 		this.sim.on("sim.reset", () => this.reset());
 
+		// TODO: `sim.save-chip.finish` overlay labels not deleted?
+		// this.sim.on("sim.save-chip.finish", () => this.reset());
+
 		// input manager subscriptions
 		this.inputManager.onMouseScrollEvent((event) => {
 			this.layoutManager.onMouseScrollEvent(event);

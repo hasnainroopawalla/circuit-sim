@@ -1,4 +1,6 @@
 import { createRoot } from "react-dom/client";
-import { App } from "./components";
+import { ContextualApp } from "./components";
 
-createRoot(document.getElementById("root") as HTMLElement).render(<App />);
+createRoot(document.getElementById("root") as HTMLElement).render(
+	<ContextualApp />,
+);

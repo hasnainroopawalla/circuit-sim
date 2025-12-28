@@ -5,9 +5,9 @@ import { StartSimulatorAction } from "./start-simulator-action";
 import type { SimulatorApp } from "@digital-logic-sim/simulator";
 import { SimulatorAppProvider } from "../contexts/simulator-app-context";
 import { useStateRef } from "../utils";
-import { CommandPalette } from "./command-palette";
+import { Dialog, DialogProvider } from "./dialog";
 
-export const App: React.FC = () => {
+const App: React.FC = () => {
 	const [simulatorApp, setSimulatorApp] = React.useState<SimulatorApp | null>(
 		null,
 	);
@@ -15,13 +15,6 @@ export const App: React.FC = () => {
 	const [canvas, setCanvas, canvasRef] = useStateRef<HTMLCanvasElement | null>(
 		null,
 	);
-
-	const [isCommandPaletteOpen, setIsCommandPaletteOpen] = React.useState(false);
-
-	const onCloseCommandPalette = React.useCallback(() => {
-		setIsCommandPaletteOpen(false);
-		canvasRef.current?.focus();
-	}, [canvasRef]);
 
 	return (
 		<>
@@ -36,19 +29,19 @@ export const App: React.FC = () => {
 
 			{simulatorApp && (
 				<SimulatorAppProvider simulatorApp={simulatorApp}>
-					<Toolbar
-						onMenuButtonClick={() => setIsCommandPaletteOpen(true)}
-						onSettingsButtonClick={() => {}}
-					/>
-					{isCommandPaletteOpen && (
-						<CommandPalette
-							isOpen={isCommandPaletteOpen}
-							onClose={onCloseCommandPalette}
-						/>
-					)}
+					<Toolbar />
 					<SimulatorOverlayView />
+					<Dialog />
 				</SimulatorAppProvider>
 			)}
 		</>
+	);
+};
+
+export const ContextualApp: React.FC = () => {
+	return (
+		<DialogProvider>
+			<App />
+		</DialogProvider>
 	);
 };
