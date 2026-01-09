@@ -6,12 +6,7 @@ import type {
 	IOMapping,
 	WireBlueprint,
 } from "./blueprint-service.interface";
-import type {
-	Chip,
-	CompositeChip,
-	IOChip,
-	IOChipType,
-} from "../../entities/chips";
+import type { Chip, IOChip, IOChipType } from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
 import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
@@ -32,25 +27,23 @@ export class BlueprintService extends BaseService {
 
 	public loadBlueprint(blueprint: Blueprint): void {
 		this.sim.chipLibraryService.register(blueprint);
-		// Object.entries(blueprintSet.definitions).forEach(
-		// 	([chipName, blueprint]) => {
-		// 		this.sim.chipLibraryService.register(chipName, blueprint);
-		// 	},
-		// );
 	}
 
 	private saveBlueprint(blueprintName: string): void {
 		const definitions: Blueprint["definitions"] = {};
-		const visitedChips = new Set<string>();
+		const visited = new Set<string>();
 
-		for (const [idx, chip] of this.sim.chipManager.getBoardChips().entries()) {
-			if (EntityUtils.isCompositeChip(chip)) {
-				this.recursiveComposite(chip, definitions, visitedChips);
+		const rootDefinition = this.getBlueprintForBoard();
+		definitions[blueprintName] = rootDefinition;
+		visited.add(blueprintName);
+
+		rootDefinition.chips.forEach((chip) => {
+			if (chip.spec.chipType === "composite") {
+				this.collectCompositeDependencies(chip.spec.name, definitions, visited);
 			}
-		}
+		});
 
-		definitions[blueprintName] = this.getBlueprintForBoard();
-		const blueprint = {
+		const blueprint: Blueprint = {
 			root: blueprintName,
 			definitions,
 		};
@@ -58,33 +51,38 @@ export class BlueprintService extends BaseService {
 		this.sim.chipLibraryService.register(blueprint);
 
 		this.sim.emit("sim.save-chip.finish", undefined);
+		console.log("Saved blueprint:", blueprint);
 	}
 
-	private recursiveComposite(
-		compositeChip: CompositeChip,
-		defintions: Blueprint["definitions"],
-		visitedChips: Set<string>,
+	private collectCompositeDependencies(
+		compositeName: string,
+		definitions: Blueprint["definitions"],
+		visited: Set<string>,
 	) {
-		const blueprintId = compositeChip.spec.name;
+		if (visited.has(compositeName)) return;
+		visited.add(compositeName);
 
-		if (visitedChips.has(blueprintId)) {
-			return;
+		const compositeDefinition = this.sim.blueprintContext.get(compositeName);
+
+		if (!compositeDefinition) {
+			throw new Error("Composite definition does not exist");
 		}
 
-		visitedChips.add(blueprintId);
+		definitions[compositeName] = compositeDefinition;
 
-		const blueprint = this.serializeCompositeChip();
-		defintions[blueprintId] = blueprint;
+		for (const chip of compositeDefinition.chips) {
+			if (chip.spec.chipType === "composite") {
+				this.collectCompositeDependencies(chip.spec.name, definitions, visited);
+			}
+		}
 	}
-
-	private serializeCompositeChip(): CompositeDefinition {}
 
 	private getBlueprintForBoard(): CompositeDefinition {
 		const internalChips = this.sim.chipManager
 			.getBoardChips()
-			.reduce((acc, chip, idx) => {
+			.reduce((acc, chip) => {
 				if (!EntityUtils.isIOChip(chip)) {
-					acc.push(this.serializeChip(chip, idx.toString()));
+					acc.push(this.serializeChip(chip));
 				}
 				return acc;
 			}, [] as ChipBlueprint[]);
@@ -114,11 +112,10 @@ export class BlueprintService extends BaseService {
 	}
 
 	private serializeChip(
-		chip: Pick<Chip, "spec" | "renderState">,
-		blueprintChipId: string,
+		chip: Pick<Chip, "spec" | "id" | "renderState">,
 	): ChipBlueprint {
 		return {
-			id: blueprintChipId,
+			id: chip.id,
 			spec: {
 				chipType: chip.spec.chipType,
 				name: chip.spec.name,

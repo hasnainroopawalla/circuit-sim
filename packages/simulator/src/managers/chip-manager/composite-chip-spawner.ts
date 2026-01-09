@@ -3,9 +3,9 @@ import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
 import {
-	Blueprint,
+	type Blueprint,
+	type CompositeDefinition,
 	BlueprintUtils,
-	CompositeDefinition,
 } from "../../services/blueprint-service";
 import type {
 	ChipDefinition,
@@ -132,7 +132,7 @@ export class CompositeChipSpawner {
 			name: ioChipType,
 		});
 
-		Object.entries(chipMappings).forEach(([externalPinLabel, mappings]) => {
+		Object.entries(chipMappings).forEach(([_externalPinLabel, mappings]) => {
 			const ioChip = this.chipManager.spawnChip(
 				ioChipFactory,
 				{
@@ -151,7 +151,9 @@ export class CompositeChipSpawner {
 				);
 
 				if (!internalChipPin) {
-					throw new Error("Internal Chip Pin does not exist");
+					throw new Error(
+						`Internal Chip Pin does not exist [chipId: ${mapping.internalChipId}][pinName: ${mapping.internalPinName}]`,
+					);
 				}
 
 				const wireConnection: WireConnection =
@@ -185,7 +187,7 @@ export class CompositeChipSpawner {
 	}
 
 	private spawnInternalWires(
-		compositeChip: Pick<CompositeChip, "id">, // TODO: not needed
+		compositeChip: Pick<CompositeChip, "id">, // TODO: full chip not needed
 		compositeDefinition: CompositeDefinition,
 		internalChipMap: InternalChipMap,
 	): void {
