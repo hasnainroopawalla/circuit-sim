@@ -21,17 +21,17 @@ type LayoutManagerArgs = BaseLayerArgs & {
 enum Layer {
 	Interaction,
 	Simulation,
-	Composite
-};
+	Composite,
+}
 enum State {
 	Active,
 	Suspended,
-	Deleted
-};
+	Deleted,
+}
 
-type LayerTransition ={
-	layerId : Layer,
-	transition: State
+type LayerTransition = {
+	layerId: Layer;
+	transition: State;
 };
 
 export class LayoutManager {
@@ -56,7 +56,10 @@ export class LayoutManager {
 				camera: args.camera,
 			}),
 		];
-		this.activeLayers = [this.layers[Layer.Interaction], this.layers[Layer.Simulation]];
+		this.activeLayers = [
+			this.layers[Layer.Interaction],
+			this.layers[Layer.Simulation],
+		];
 		this.pendingTransitions = [];
 		this.suspendedLayers = [];
 	}
@@ -98,15 +101,12 @@ export class LayoutManager {
 		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
 	}
 
-	public transitionLayer(transition: LayerTransition):void{
+	public transitionLayer(transition: LayerTransition): void {
 		this.pendingTransitions.push(transition);
 	}
 
-	private handleTransitions():void{
-		this.pendingTransitions.every((transition) => {
-
-		})
-
+	private handleTransitions(): void {
+		this.pendingTransitions.every((transition) => {});
 	}
 
 	// public get hoveredEntity(): Entity | null {

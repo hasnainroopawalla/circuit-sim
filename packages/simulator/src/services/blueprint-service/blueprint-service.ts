@@ -33,13 +33,13 @@ export class BlueprintService extends BaseService {
 		const definitions: Blueprint["definitions"] = {};
 		const visited = new Set<string>();
 
-		const rootDefinition = this.getBlueprintForBoard();
+		const rootDefinition = this.getCompositeDefinitionOfBoard();
 		definitions[blueprintName] = rootDefinition;
 		visited.add(blueprintName);
 
 		rootDefinition.chips.forEach((chip) => {
 			if (chip.spec.chipType === "composite") {
-				this.collectCompositeDependencies(chip.spec.name, definitions, visited);
+				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
 		});
 
@@ -54,7 +54,7 @@ export class BlueprintService extends BaseService {
 		console.log("Saved blueprint:", blueprint);
 	}
 
-	private collectCompositeDependencies(
+	private collectCompositeDefinitions(
 		compositeName: string,
 		definitions: Blueprint["definitions"],
 		visited: Set<string>,
@@ -72,12 +72,12 @@ export class BlueprintService extends BaseService {
 
 		for (const chip of compositeDefinition.chips) {
 			if (chip.spec.chipType === "composite") {
-				this.collectCompositeDependencies(chip.spec.name, definitions, visited);
+				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
 		}
 	}
 
-	private getBlueprintForBoard(): CompositeDefinition {
+	private getCompositeDefinitionOfBoard(): CompositeDefinition {
 		const internalChips = this.sim.chipManager
 			.getBoardChips()
 			.reduce((acc, chip) => {
