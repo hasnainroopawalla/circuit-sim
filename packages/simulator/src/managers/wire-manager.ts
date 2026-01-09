@@ -77,11 +77,13 @@ export class WireManager extends BaseManager {
 		return this.getBoardWires().filter((wire) => wire.endPin.id === pinId);
 	}
 
-	private normalizeWireDirection(wire: WireConnection): WireConnection {
-		const { startPin, endPin } = wire;
+	private normalizeWireDirection(
+		wireConnection: WireConnection,
+	): WireConnection {
+		const { startPin, endPin } = wireConnection;
 
 		if (startPin.pinType === "out" && endPin.pinType === "in") {
-			return wire;
+			return wireConnection;
 		}
 
 		if (startPin.pinType === "in" && endPin.pinType === "out") {
