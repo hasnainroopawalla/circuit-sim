@@ -1,8 +1,4 @@
-import type {
-	AtomicChipType,
-	CompositeChipSpec,
-	IOChipType,
-} from "../../entities/chips";
+import type { AtomicChipType, IOChipType } from "../../entities/chips";
 import type { Blueprint } from "../blueprint-service";
 import {
 	type AtomicChipFactory,
@@ -53,8 +49,8 @@ export class ChipLibraryService {
 		this.composite = new CompositeChipRegistry();
 	}
 
-	public register(chipName: string, blueprint: Blueprint): void {
-		this.composite.register(chipName, blueprint);
+	public register(blueprint: Blueprint): void {
+		this.composite.register(blueprint);
 	}
 
 	public getAllDefinitions(): ChipDefinition[] {

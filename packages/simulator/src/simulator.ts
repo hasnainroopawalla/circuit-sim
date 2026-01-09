@@ -6,7 +6,6 @@ import { PinManager } from "./managers/pin-manager";
 // services
 import { ChipLibraryService } from "./services/chip-library-service";
 import { BlueprintService } from "./services/blueprint-service";
-import { ResetService } from "./services/reset-service";
 import {
 	EventingService,
 	type IEvents,
@@ -22,7 +21,6 @@ export class Simulator {
 	public eventingService: EventingService;
 	public chipLibraryService: ChipLibraryService;
 	public blueprintService: BlueprintService;
-	public resetService: ResetService;
 
 	// managers
 	public chipManager: ChipManager;
@@ -34,7 +32,6 @@ export class Simulator {
 		this.eventingService = new EventingService();
 		this.chipLibraryService = new ChipLibraryService();
 		this.blueprintService = new BlueprintService(this);
-		this.resetService = new ResetService(this);
 
 		// managers
 		this.wireManager = new WireManager(this);

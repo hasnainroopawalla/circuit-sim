@@ -125,7 +125,7 @@ export class SpawnChipTool extends Tool {
 
 		switch (chipSpec.chipType) {
 			case "composite":
-				return BlueprintUtils.getIOPinCount(chipSpec.blueprint);
+				return BlueprintUtils.getRootIOPinCount(chipSpec.blueprint);
 			default:
 				return {
 					numInputPins: chipSpec.inputPins.length,

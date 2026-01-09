@@ -45,13 +45,16 @@ export const useOverlayLabels = () => {
 			},
 		);
 
-		const disposeSimResetSubscription = simulatorApp.sim.on("sim.reset", () => {
-			setLabels([]);
-		});
+		const disposeOverlayResetSubscription = simulatorApp.sim.on(
+			"overlay.reset",
+			() => {
+				setLabels([]);
+			},
+		);
 
 		return () => {
 			disposeSpawnChipSubscription();
-			disposeSimResetSubscription();
+			disposeOverlayResetSubscription();
 		};
 	}, [simulatorApp]);
 

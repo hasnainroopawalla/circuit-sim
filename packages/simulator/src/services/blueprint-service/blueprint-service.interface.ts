@@ -6,12 +6,12 @@ export type IOMapping = Record<
 	BlueprintPinMapping[]
 >;
 
-export type BlueprintSet = {
+export type Blueprint = {
 	root: string;
-	definitions: Record<string, Blueprint>;
+	definitions: Record<string, CompositeDefinition>;
 };
 
-export type Blueprint = {
+export type CompositeDefinition = {
 	chips: ChipBlueprint[];
 	wires: WireBlueprint[];
 

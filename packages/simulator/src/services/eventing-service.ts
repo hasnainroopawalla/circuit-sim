@@ -7,6 +7,8 @@ export type IEvents = {
 
 	"sim.reset": undefined;
 
+	"overlay.reset": undefined;
+
 	"wire.spawn.start": { startPin: Pin };
 	"chip.spawn.start": { chipDefinition: ChipDefinition };
 

@@ -68,6 +68,8 @@ export class OverlayManager extends BaseManager {
 	public reset(): void {
 		this.staticElements = new Map();
 		this.hoverElements = new Map();
+
+		this.sim.emit("overlay.reset", undefined);
 	}
 
 	private updateHoverElements(hoveredEntity: Entity): void {

@@ -1,11 +1,17 @@
 import type {
-	BlueprintSet,
+	Blueprint,
 	BlueprintPinMapping,
 	ChipBlueprint,
+	CompositeDefinition,
 	IOMapping,
 	WireBlueprint,
 } from "./blueprint-service.interface";
-import type { Chip, IOChip, IOChipType } from "../../entities/chips";
+import type {
+	Chip,
+	CompositeChip,
+	IOChip,
+	IOChipType,
+} from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
 import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
@@ -24,15 +30,56 @@ export class BlueprintService extends BaseService {
 		);
 	}
 
-	public loadBlueprint(blueprintSet: BlueprintSet): void {
-		Object.entries(blueprintSet.definitions).forEach(
-			([chipName, blueprint]) => {
-				this.sim.chipLibraryService.register(chipName, blueprint);
-			},
-		);
+	public loadBlueprint(blueprint: Blueprint): void {
+		this.sim.chipLibraryService.register(blueprint);
+		// Object.entries(blueprintSet.definitions).forEach(
+		// 	([chipName, blueprint]) => {
+		// 		this.sim.chipLibraryService.register(chipName, blueprint);
+		// 	},
+		// );
 	}
 
 	private saveBlueprint(blueprintName: string): void {
+		const definitions: Blueprint["definitions"] = {};
+		const visitedChips = new Set<string>();
+
+		for (const [idx, chip] of this.sim.chipManager.getBoardChips().entries()) {
+			if (EntityUtils.isCompositeChip(chip)) {
+				this.recursiveComposite(chip, definitions, visitedChips);
+			}
+		}
+
+		definitions[blueprintName] = this.getBlueprintForBoard();
+		const blueprint = {
+			root: blueprintName,
+			definitions,
+		};
+
+		this.sim.chipLibraryService.register(blueprint);
+
+		this.sim.emit("sim.save-chip.finish", undefined);
+	}
+
+	private recursiveComposite(
+		compositeChip: CompositeChip,
+		defintions: Blueprint["definitions"],
+		visitedChips: Set<string>,
+	) {
+		const blueprintId = compositeChip.spec.name;
+
+		if (visitedChips.has(blueprintId)) {
+			return;
+		}
+
+		visitedChips.add(blueprintId);
+
+		const blueprint = this.serializeCompositeChip();
+		defintions[blueprintId] = blueprint;
+	}
+
+	private serializeCompositeChip(): CompositeDefinition {}
+
+	private getBlueprintForBoard(): CompositeDefinition {
 		const internalChips = this.sim.chipManager
 			.getBoardChips()
 			.reduce((acc, chip, idx) => {
@@ -58,24 +105,18 @@ export class BlueprintService extends BaseService {
 
 		const { inputMappings, outputMappings } = this.createIOPinMappings();
 
-		this.sim.chipLibraryService.register(blueprintName, {
+		return {
 			chips: internalChips,
 			wires: internalWires,
 			inputMappings,
 			outputMappings,
-		});
-
-		this.sim.emit("sim.save-chip.finish", undefined);
-
-		console.log("blueprint", {
-			chips: internalChips,
-			wires: internalWires,
-			inputMappings,
-			outputMappings,
-		});
+		};
 	}
 
-	private serializeChip(chip: Chip, blueprintChipId: string): ChipBlueprint {
+	private serializeChip(
+		chip: Pick<Chip, "spec" | "renderState">,
+		blueprintChipId: string,
+	): ChipBlueprint {
 		return {
 			id: blueprintChipId,
 			spec: {

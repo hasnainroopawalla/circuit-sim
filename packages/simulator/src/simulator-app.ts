@@ -128,9 +128,7 @@ export class SimulatorApp {
 
 	private registerSubscriptions(): void {
 		this.sim.on("sim.reset", () => this.reset());
-
-		// TODO: `sim.save-chip.finish` overlay labels not deleted?
-		// this.sim.on("sim.save-chip.finish", () => this.reset());
+		this.sim.on("sim.save-chip.finish", () => this.reset());
 
 		// input manager subscriptions
 		this.inputManager.onMouseScrollEvent((event) => {
@@ -166,8 +164,9 @@ export class SimulatorApp {
 	}
 
 	private reset(): void {
+		this.sim.chipManager.reset();
+		this.sim.wireManager.reset();
 		this.overlayManager.reset();
-		this.sim.resetService.resetSimulator();
 	}
 
 	public setupNandGate(): void {
@@ -265,7 +264,7 @@ export class SimulatorApp {
 
 		spawnNand();
 
-		// this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
+		this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
 	}
 }
 const compositeAndBlueprint = {
@@ -277,7 +276,7 @@ const compositeAndBlueprint = {
 				{
 					id: "5",
 					spec: {
-						chipType: "composite",
+						chipType: "composite" as const,
 						name: "NAND",
 					},
 					renderState: {
@@ -288,7 +287,7 @@ const compositeAndBlueprint = {
 				{
 					id: "6",
 					spec: {
-						chipType: "atomic",
+						chipType: "atomic" as const,
 						name: "NOT",
 					},
 					renderState: {
@@ -300,15 +299,15 @@ const compositeAndBlueprint = {
 			wires: [
 				{
 					spec: {
-						start: { chipId: "5", pinName: "OUT" },
+						start: { chipId: "5", pinName: "NAND OUT" },
 						end: { chipId: "6", pinName: "in0" },
 					},
 					renderState: { color: { r: 0, g: 0, b: 0, a: 1 }, controlPoints: [] },
 				},
 			],
 			inputMappings: {
-				"C-AND A": [{ internalChipId: "5", internalPinName: "IN A" }],
-				"C-AND B": [{ internalChipId: "5", internalPinName: "IN B" }],
+				"C-AND A": [{ internalChipId: "5", internalPinName: "NAND IN A" }],
+				"C-AND B": [{ internalChipId: "5", internalPinName: "NAND IN B" }],
 			},
 			outputMappings: {
 				"C-AND OUT": [{ internalChipId: "6", internalPinName: "out0" }],
@@ -320,7 +319,7 @@ const compositeAndBlueprint = {
 				{
 					id: "2",
 					spec: {
-						chipType: "atomic",
+						chipType: "atomic" as const,
 						name: "AND",
 					},
 					renderState: {
@@ -331,7 +330,7 @@ const compositeAndBlueprint = {
 				{
 					id: "3",
 					spec: {
-						chipType: "atomic",
+						chipType: "atomic" as const,
 						name: "NOT",
 					},
 					renderState: {
@@ -350,11 +349,104 @@ const compositeAndBlueprint = {
 				},
 			],
 			inputMappings: {
-				"IN A": [{ internalChipId: "2", internalPinName: "in0" }],
-				"IN B": [{ internalChipId: "2", internalPinName: "in1" }],
+				"NAND IN A": [{ internalChipId: "2", internalPinName: "in0" }],
+				"NAND IN B": [{ internalChipId: "2", internalPinName: "in1" }],
 			},
 			outputMappings: {
-				OUT: [{ internalChipId: "3", internalPinName: "out0" }],
+				"NAND OUT": [{ internalChipId: "3", internalPinName: "out0" }],
+			},
+		},
+	},
+};
+
+const newNand = {
+	root: "NAND",
+	definitions: {
+		NAND: {
+			chips: [
+				{
+					id: "2",
+					spec: {
+						chipType: "atomic",
+						name: "AND",
+					},
+					renderState: {
+						color: {
+							r: 0,
+							g: 0,
+							b: 0,
+							a: 1,
+						},
+						position: {
+							x: 0.3,
+							y: 1,
+						},
+					},
+				},
+				{
+					id: "3",
+					spec: {
+						chipType: "atomic",
+						name: "NOT",
+					},
+					renderState: {
+						color: {
+							r: 0,
+							g: 0,
+							b: 0,
+							a: 1,
+						},
+						position: {
+							x: -1,
+							y: 1,
+						},
+					},
+				},
+			],
+			wires: [
+				{
+					spec: {
+						start: {
+							chipId: "2",
+							pinName: "out0",
+						},
+						end: {
+							chipId: "3",
+							pinName: "in0",
+						},
+					},
+					renderState: {
+						color: {
+							r: 0,
+							g: 0,
+							b: 0,
+							a: 1,
+						},
+						controlPoints: [],
+					},
+				},
+			],
+			inputMappings: {
+				"IN 1": [
+					{
+						internalChipId: "2",
+						internalPinName: "in0",
+					},
+				],
+				"IN 2": [
+					{
+						internalChipId: "2",
+						internalPinName: "in1",
+					},
+				],
+			},
+			outputMappings: {
+				"OUT 1": [
+					{
+						internalChipId: "3",
+						internalPinName: "out0",
+					},
+				],
 			},
 		},
 	},
