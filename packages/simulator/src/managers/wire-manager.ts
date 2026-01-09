@@ -51,7 +51,11 @@ export class WireManager extends BaseManager {
 		wireInitParams: WireInitParams,
 		opts?: EntitySpawnOptions,
 	): void {
-		const wire = new Wire({ wireConnection, wireInitParams, opts });
+		const wire = new Wire({
+			wireConnection: this.normalizeWireDirection(wireConnection),
+			wireInitParams,
+			opts,
+		});
 
 		const wireId = entityIdService.generateId();
 		wire.setId(wireId);
@@ -71,5 +75,24 @@ export class WireManager extends BaseManager {
 
 	public getIncomingWires(pinId: string): Wire[] {
 		return this.getBoardWires().filter((wire) => wire.endPin.id === pinId);
+	}
+
+	private normalizeWireDirection(wire: WireConnection): WireConnection {
+		const { startPin, endPin } = wire;
+
+		if (startPin.pinType === "out" && endPin.pinType === "in") {
+			return wire;
+		}
+
+		if (startPin.pinType === "in" && endPin.pinType === "out") {
+			return {
+				startPin: endPin,
+				endPin: startPin,
+			};
+		}
+
+		throw new Error(
+			`Invalid wire connection: ${startPin.pinType} → ${endPin.pinType}`,
+		);
 	}
 }
