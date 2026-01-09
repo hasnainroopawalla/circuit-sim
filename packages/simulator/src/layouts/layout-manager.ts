@@ -18,11 +18,28 @@ type LayoutManagerArgs = BaseLayerArgs & {
 	mousePositionService: MousePositionService;
 };
 
+enum Layer {
+	Interaction,
+	Simulation,
+	Composite
+};
+enum State {
+	Active,
+	Suspended,
+	Deleted
+};
+
+type LayerTransition ={
+	layerId : Layer,
+	transition: State
+};
+
 export class LayoutManager {
 	private readonly layers: BaseLayer[];
 	private hoveredEntity: Entity | null;
-	private activeLayers!: BaseLayer[];
-	private suspendedLayers!: BaseLayer[];
+	private activeLayers: BaseLayer[];
+	private suspendedLayers: BaseLayer[];
+	private pendingTransitions: LayerTransition[];
 
 	constructor(args: LayoutManagerArgs) {
 		this.hoveredEntity = null;
@@ -39,6 +56,9 @@ export class LayoutManager {
 				camera: args.camera,
 			}),
 		];
+		this.activeLayers = [this.layers[Layer.Interaction], this.layers[Layer.Simulation]];
+		this.pendingTransitions = [];
+		this.suspendedLayers = [];
 	}
 
 	public getRenderables(): Renderable[] {
@@ -76,6 +96,17 @@ export class LayoutManager {
 
 	public onKeyboardEvent(event: KeyboardButtonType, nature: ButtonEvent): void {
 		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
+	}
+
+	public transitionLayer(transition: LayerTransition):void{
+		this.pendingTransitions.push(transition);
+	}
+
+	private handleTransitions():void{
+		this.pendingTransitions.every((transition) => {
+
+		})
+
 	}
 
 	// public get hoveredEntity(): Entity | null {
