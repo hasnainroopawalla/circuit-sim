@@ -146,6 +146,7 @@ export class SimulationLayer extends BaseLayer {
 			alert(
 				`View chip clicked at: ${mousePosition.screen.x}, ${mousePosition.screen.y}`,
 			);
+			//Needs to signal layer manager to suspend interactive and simulation layer and add composite layer to active layers
 		}
 
 		return false;

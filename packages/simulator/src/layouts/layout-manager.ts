@@ -21,6 +21,8 @@ type LayoutManagerArgs = BaseLayerArgs & {
 export class LayoutManager {
 	private readonly layers: BaseLayer[];
 	private hoveredEntity: Entity | null;
+	private activeLayers!: BaseLayer[];
+	private suspendedLayers!: BaseLayer[];
 
 	constructor(args: LayoutManagerArgs) {
 		this.hoveredEntity = null;
