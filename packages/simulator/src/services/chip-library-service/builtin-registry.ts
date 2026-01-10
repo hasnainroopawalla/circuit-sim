@@ -13,6 +13,7 @@ import {
 	type IOChipSpec,
 	type AtomicChipSpec,
 } from "../../entities/chips";
+import { ChipNotFoundError } from "../../errors/chip-not-found-error";
 import type { ChipDefinition } from "./chip-library-service";
 
 type AtomicChipClass = (new (
@@ -63,13 +64,17 @@ export class BuiltinChipRegistry {
 		return [...ioChipDefinitions, ...atomicChipDefinitions];
 	}
 
-	public resolve(
+	public get(
 		kind: "atomic" | "io",
 		name: AtomicChipType | IOChipType,
 	): AtomicChipFactory | IOChipFactory {
 		switch (kind) {
 			case "atomic": {
 				const atomicChipClass = BUILTIN_ATOMIC_CHIPS[name as AtomicChipType];
+
+				if (!atomicChipClass) {
+					throw new ChipNotFoundError("atomic", name);
+				}
 
 				return {
 					kind: "atomic",
@@ -78,6 +83,10 @@ export class BuiltinChipRegistry {
 			}
 			case "io": {
 				const ioChipClass = BUILTIN_IO_CHIPS[name as IOChipType];
+
+				if (!ioChipClass) {
+					throw new ChipNotFoundError("io", name);
+				}
 
 				return {
 					kind: "io",

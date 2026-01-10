@@ -8,7 +8,7 @@ export type IOMapping = Record<
 
 export type Blueprint = {
 	root: string;
-	definitions: Record<string, CompositeDefinition>;
+	definitions: Record<string /* chipName */, CompositeDefinition>;
 };
 
 export type CompositeDefinition = {

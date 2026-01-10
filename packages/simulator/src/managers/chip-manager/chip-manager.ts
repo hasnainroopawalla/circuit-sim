@@ -81,7 +81,6 @@ export class ChipManager extends BaseManager {
 		this.chips.push(chip);
 
 		if (chip.chipType === "composite") {
-			this.sim.blueprintContext.update(chip.spec.blueprint); // TODO: improve, should not be necessary
 			this.compositeChipSpawner.spawn(chip);
 		}
 

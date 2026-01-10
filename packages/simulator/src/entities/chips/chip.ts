@@ -11,6 +11,7 @@ import type {
 } from "./chip.interface";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
 import type { Position } from "@digital-logic-sim/shared-types";
+import { PinLengthMismatchError } from "../../errors";
 
 type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
 
@@ -69,7 +70,7 @@ export abstract class BaseChip<
 	 */
 	public setOutputPins(values: boolean[]): boolean {
 		if (this.outputPins.length !== values.length) {
-			throw new Error("Pin lengths dont match.");
+			throw new PinLengthMismatchError(values.length, this.outputPins.length);
 		}
 
 		return didAnyChange(this.outputPins, (_, idx) => {

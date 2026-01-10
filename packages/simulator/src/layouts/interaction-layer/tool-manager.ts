@@ -98,7 +98,8 @@ export class ToolManager {
 
 	private registerSubscriptions(): void {
 		this.sim.on("chip.spawn.start", ({ chipDefinition }) => {
-			const chipFactory = this.sim.chipLibraryService.resolve(chipDefinition);
+			const chipFactory =
+				this.sim.chipLibraryService.getChipFactory(chipDefinition);
 			this.setActiveTool(SpawnChipTool, { chipFactory });
 		});
 

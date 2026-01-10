@@ -1,1 +1,1 @@
-export {CompositeLayer} from "./composite-layer"
+export { CompositeLayer } from "./composite-layer";

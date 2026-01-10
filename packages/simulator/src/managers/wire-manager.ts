@@ -5,6 +5,7 @@ import {
 	type WireConnection,
 } from "../entities/wire";
 import { entityIdService } from "../entity-id-service";
+import { InvalidWireConnectionError } from "../errors";
 import type { Simulator } from "../simulator";
 import { didAnyChange } from "../utils";
 import { BaseManager } from "./base-manager";
@@ -93,8 +94,6 @@ export class WireManager extends BaseManager {
 			};
 		}
 
-		throw new Error(
-			`Invalid wire connection: ${startPin.pinType} → ${endPin.pinType}`,
-		);
+		throw new InvalidWireConnectionError(startPin, endPin);
 	}
 }

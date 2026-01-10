@@ -1,4 +1,5 @@
 import type { CompositeChipSpec } from "../../entities/chips";
+import { ChipNotFoundError } from "../../errors/chip-not-found-error";
 import { type Blueprint, BlueprintUtils } from "../blueprint-service";
 import type { ChipDefinition } from "./chip-library-service";
 
@@ -10,19 +11,24 @@ export type CompositeChipFactory = {
 };
 
 export class CompositeChipRegistry {
-	private registry = new Map<CompositeChipName, CompositeChipSpec>();
+	private registry: Map<CompositeChipName, CompositeChipSpec>;
+
+	constructor() {
+		this.registry = new Map();
+	}
 
 	public register(blueprint: Blueprint): void {
-		const { inputPins, outputPins } = BlueprintUtils.getIOPinSpecs(
-			BlueprintUtils.getRootDefinition(blueprint),
-		);
+		Object.entries(blueprint.definitions).forEach(([name, definition]) => {
+			const { inputPins, outputPins } =
+				BlueprintUtils.getIOPinSpecs(definition);
 
-		this.registry.set(blueprint.root, {
-			chipType: "composite",
-			name: blueprint.root,
-			blueprint,
-			inputPins,
-			outputPins,
+			this.registry.set(name, {
+				chipType: "composite",
+				name,
+				definition,
+				inputPins,
+				outputPins,
+			});
 		});
 	}
 
@@ -33,16 +39,16 @@ export class CompositeChipRegistry {
 		}));
 	}
 
-	public resolve(name: CompositeChipName): CompositeChipFactory {
-		const spec = this.registry.get(name);
+	public get(name: CompositeChipName): CompositeChipFactory {
+		const compositeChipSpec = this.registry.get(name);
 
-		if (!spec) {
-			throw new Error(`Composite chip "${name}" not found`);
+		if (!compositeChipSpec) {
+			throw new ChipNotFoundError("composite", name);
 		}
 
 		return {
 			kind: "composite",
-			spec,
+			spec: compositeChipSpec,
 		};
 	}
 }

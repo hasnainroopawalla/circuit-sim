@@ -11,7 +11,6 @@ import {
 	type IEvents,
 	type Unsubscribe,
 } from "./services/eventing-service";
-import { BlueprintContext } from "./blueprint-context";
 
 const simulatorConfig = {
 	maxIterations: 1000,
@@ -27,7 +26,6 @@ export class Simulator {
 	public chipManager: ChipManager;
 	public pinManager: PinManager;
 	public wireManager: WireManager;
-	public blueprintContext: BlueprintContext;
 
 	constructor() {
 		// services
@@ -39,7 +37,6 @@ export class Simulator {
 		this.wireManager = new WireManager(this);
 		this.chipManager = new ChipManager(this);
 		this.pinManager = new PinManager(this);
-		this.blueprintContext = new BlueprintContext();
 	}
 
 	public on<K extends keyof IEvents>(

@@ -11,6 +11,7 @@ import { EntityUtils } from "../../entities/utils";
 import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
 import { BaseService } from "../base-service";
+import { InvalidWireConnectionError } from "../../errors";
 
 export class BlueprintService extends BaseService {
 	constructor(sim: Simulator) {
@@ -29,15 +30,16 @@ export class BlueprintService extends BaseService {
 		this.sim.chipLibraryService.register(blueprint);
 	}
 
-	private saveBlueprint(blueprintName: string): void {
+	private saveBlueprint(blueprintName: string): Blueprint {
 		const definitions: Blueprint["definitions"] = {};
 		const visited = new Set<string>();
 
-		const rootDefinition = this.getCompositeDefinitionOfBoard();
-		definitions[blueprintName] = rootDefinition;
+		const boardCompositeDefinition = this.getBoardCompositeDefinition();
+		definitions[blueprintName] = boardCompositeDefinition;
+
 		visited.add(blueprintName);
 
-		rootDefinition.chips.forEach((chip) => {
+		boardCompositeDefinition.chips.forEach((chip) => {
 			if (chip.spec.chipType === "composite") {
 				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
@@ -52,32 +54,36 @@ export class BlueprintService extends BaseService {
 
 		this.sim.emit("sim.save-chip.finish", undefined);
 		console.log("Saved blueprint:", blueprint);
+
+		return blueprint;
 	}
 
 	private collectCompositeDefinitions(
-		compositeName: string,
+		compositeChipName: string,
 		definitions: Blueprint["definitions"],
 		visited: Set<string>,
 	) {
-		if (visited.has(compositeName)) return;
-		visited.add(compositeName);
-
-		const compositeDefinition = this.sim.blueprintContext.get(compositeName);
-
-		if (!compositeDefinition) {
-			throw new Error("Composite definition does not exist");
+		if (visited.has(compositeChipName)) {
+			return;
 		}
 
-		definitions[compositeName] = compositeDefinition;
+		visited.add(compositeChipName);
 
-		for (const chip of compositeDefinition.chips) {
+		const compositeChipFactory = this.sim.chipLibraryService.getChipFactory({
+			kind: "composite",
+			name: compositeChipName,
+		});
+
+		definitions[compositeChipName] = compositeChipFactory.spec.definition;
+
+		compositeChipFactory.spec.definition.chips.forEach((chip) => {
 			if (chip.spec.chipType === "composite") {
 				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
-		}
+		});
 	}
 
-	private getCompositeDefinitionOfBoard(): CompositeDefinition {
+	private getBoardCompositeDefinition(): CompositeDefinition {
 		const internalChips = this.sim.chipManager
 			.getBoardChips()
 			.reduce((acc, chip) => {
@@ -179,25 +185,18 @@ export class BlueprintService extends BaseService {
 				? this.sim.wireManager.getOutgoingWires(ioPin.id)
 				: this.sim.wireManager.getIncomingWires(ioPin.id);
 
-		if (connectedWires.length <= 0) {
-			throw new Error("IO pin has no connected wires");
-		}
-
 		return connectedWires.map((wire) => {
-			const internalChip = (
-				ioChip.ioChipType === "input" ? wire.endPin : wire.startPin
-			).chip;
+			const internalPin =
+				ioChip.ioChipType === "input" ? wire.endPin : wire.startPin;
+			const internalChip = internalPin.chip;
 
-			if (!internalChip || EntityUtils.isIOChip(internalChip)) {
-				throw new Error("IO pin not connected to a non-IO chip");
+			if (EntityUtils.isIOChip(internalChip)) {
+				throw new InvalidWireConnectionError(wire.startPin, wire.endPin);
 			}
 
 			return {
 				internalChipId: internalChip.id,
-				internalPinName:
-					ioChip.ioChipType === "input"
-						? wire.endPin.spec.name
-						: wire.startPin.spec.name,
+				internalPinName: internalPin.spec.name,
 			};
 		});
 	}

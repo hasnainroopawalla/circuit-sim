@@ -123,14 +123,14 @@ export class SpawnChipTool extends Tool {
 	private getPinCount(chipFactory: ChipFactory): GhostChipSpec {
 		const chipSpec = ChipLibraryUtils.getChipSpec(chipFactory);
 
-		switch (chipSpec.chipType) {
-			case "composite":
-				return BlueprintUtils.getRootIOPinCount(chipSpec.blueprint);
-			default:
-				return {
-					numInputPins: chipSpec.inputPins.length,
-					numOutputPins: chipSpec.outputPins.length,
-				};
-		}
+		const { inputPins, outputPins } =
+			chipSpec.chipType === "composite"
+				? BlueprintUtils.getIOPinSpecs(chipSpec.definition)
+				: chipSpec;
+
+		return {
+			numInputPins: inputPins.length,
+			numOutputPins: outputPins.length,
+		};
 	}
 }

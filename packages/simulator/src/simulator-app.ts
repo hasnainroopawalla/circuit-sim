@@ -171,22 +171,22 @@ export class SimulatorApp {
 
 	public setupNandGate(): void {
 		const spawnNand = () => {
-			const andChipSpec = this.sim.chipLibraryService.resolve({
+			const andChipSpec = this.sim.chipLibraryService.getChipFactory({
 				kind: "atomic",
 				name: "AND",
 			});
 
-			const notChipSpec = this.sim.chipLibraryService.resolve({
+			const notChipSpec = this.sim.chipLibraryService.getChipFactory({
 				kind: "atomic",
 				name: "NOT",
 			});
 
-			const inputChipSpec = this.sim.chipLibraryService.resolve({
+			const inputChipSpec = this.sim.chipLibraryService.getChipFactory({
 				kind: "io",
 				name: "input",
 			});
 
-			const outputChipSpec = this.sim.chipLibraryService.resolve({
+			const outputChipSpec = this.sim.chipLibraryService.getChipFactory({
 				kind: "io",
 				name: "output",
 			});
@@ -263,22 +263,23 @@ export class SimulatorApp {
 		};
 
 		const spawnCompositeNand = () => {
-			const compositeAndChipFactory = this.sim.chipLibraryService.resolve({
-				kind: "composite",
-				name: "composite-AND",
-			});
+			const compositeAndChipFactory =
+				this.sim.chipLibraryService.getChipFactory({
+					kind: "composite",
+					name: "composite-AND",
+				});
 
-			const notChipFactory = this.sim.chipLibraryService.resolve({
+			const notChipFactory = this.sim.chipLibraryService.getChipFactory({
 				kind: "atomic",
 				name: "NOT",
 			});
 
-			const inputChipFactory = this.sim.chipLibraryService.resolve({
+			const inputChipFactory = this.sim.chipLibraryService.getChipFactory({
 				kind: "io",
 				name: "input",
 			});
 
-			const outputChipFactory = this.sim.chipLibraryService.resolve({
+			const outputChipFactory = this.sim.chipLibraryService.getChipFactory({
 				kind: "io",
 				name: "output",
 			});
@@ -357,143 +358,53 @@ export class SimulatorApp {
 			);
 		};
 
-		// this.sim.blueprintService.loadBlueprint(compositeAndBlueprint);
+		this.sim.blueprintService.loadBlueprint(srLatch);
 
+		// spawnNand();
 		// spawnCompositeNand();
 	}
 }
-const compositeAndBlueprint = {
-	root: "composite-AND",
 
+const srLatch = {
+	root: "SR-LATCH",
 	definitions: {
-		"composite-AND": {
+		"SR-LATCH": {
 			chips: [
 				{
-					id: "5",
-					spec: {
-						chipType: "composite" as const,
-						name: "NAND",
-					},
-					renderState: {
-						color: { r: 0, g: 0, b: 0, a: 1 },
-						position: { x: 0.3, y: 1 },
-					},
-				},
-				{
-					id: "6",
-					spec: {
-						chipType: "atomic" as const,
-						name: "NOT",
-					},
-					renderState: {
-						color: { r: 0, g: 0, b: 0, a: 1 },
-						position: { x: -1, y: 1 },
-					},
-				},
-			],
-			wires: [
-				{
-					spec: {
-						start: { chipId: "5", pinName: "NAND OUT" },
-						end: { chipId: "6", pinName: "in0" },
-					},
-					renderState: { color: { r: 0, g: 0, b: 0, a: 1 }, controlPoints: [] },
-				},
-			],
-			inputMappings: {
-				"C-AND A": [{ internalChipId: "5", internalPinName: "NAND IN A" }],
-				"C-AND B": [{ internalChipId: "5", internalPinName: "NAND IN B" }],
-			},
-			outputMappings: {
-				"C-AND OUT": [{ internalChipId: "6", internalPinName: "out0" }],
-			},
-		},
-
-		NAND: {
-			chips: [
-				{
-					id: "2",
-					spec: {
-						chipType: "atomic" as const,
-						name: "AND",
-					},
-					renderState: {
-						color: { r: 0, g: 0, b: 0, a: 1 },
-						position: { x: 0.3, y: 1 },
-					},
-				},
-				{
-					id: "3",
-					spec: {
-						chipType: "atomic" as const,
-						name: "NOT",
-					},
-					renderState: {
-						color: { r: 0, g: 0, b: 0, a: 1 },
-						position: { x: -1, y: 1 },
-					},
-				},
-			],
-			wires: [
-				{
-					spec: {
-						start: { chipId: "2", pinName: "out0" },
-						end: { chipId: "3", pinName: "in0" },
-					},
-					renderState: { color: { r: 0, g: 0, b: 0, a: 1 }, controlPoints: [] },
-				},
-			],
-			inputMappings: {
-				"NAND IN A": [{ internalChipId: "2", internalPinName: "in0" }],
-				"NAND IN B": [{ internalChipId: "2", internalPinName: "in1" }],
-			},
-			outputMappings: {
-				"NAND OUT": [{ internalChipId: "3", internalPinName: "out0" }],
-			},
-		},
-	},
-};
-
-const heheAnd = {
-	root: "HEHE",
-	definitions: {
-		HEHE: {
-			chips: [
-				{
-					id: "2",
+					id: "9",
 					spec: {
 						chipType: "composite",
-						name: "composite-AND",
+						name: "NOR",
 					},
 					renderState: {
 						color: {
 							r: 0,
 							g: 0,
-							b: 0,
+							b: 0.5,
 							a: 1,
 						},
 						position: {
-							x: 0.3,
-							y: 1,
+							x: 0.5126453472344743,
+							y: 1.0927384944102978,
 						},
 					},
 				},
 				{
-					id: "3",
+					id: "19",
 					spec: {
-						chipType: "atomic",
-						name: "NOT",
+						chipType: "composite",
+						name: "NOR",
 					},
 					renderState: {
 						color: {
 							r: 0,
 							g: 0,
-							b: 0,
+							b: 0.5,
 							a: 1,
 						},
 						position: {
-							x: -1,
-							y: 1,
+							x: 0.5373000625697372,
+							y: 0.00963969029563344,
 						},
 					},
 				},
@@ -502,153 +413,111 @@ const heheAnd = {
 				{
 					spec: {
 						start: {
-							chipId: "2",
-							pinName: "C-AND OUT",
+							chipId: "19",
+							pinName: "OUT 1",
 						},
 						end: {
-							chipId: "21",
-							pinName: "in0",
+							chipId: "9",
+							pinName: "IN 2",
 						},
 					},
 					renderState: {
 						color: {
 							r: 0,
-							g: 0,
+							g: 1,
 							b: 0,
 							a: 1,
 						},
-						controlPoints: [],
+						controlPoints: [
+							{
+								x: -0.30372529843931795,
+								y: 0.3958279068478323,
+							},
+							{
+								x: 1.504962738298461,
+								y: 0.6462196382548304,
+							},
+						],
+					},
+				},
+				{
+					spec: {
+						start: {
+							chipId: "9",
+							pinName: "OUT 1",
+						},
+						end: {
+							chipId: "19",
+							pinName: "IN 1",
+						},
+					},
+					renderState: {
+						color: {
+							r: 0,
+							g: 1,
+							b: 0,
+							a: 1,
+						},
+						controlPoints: [
+							{
+								x: -0.311172800544844,
+								y: 0.6914150602779474,
+							},
+							{
+								x: 1.6070954663091992,
+								y: 0.17108198883773176,
+							},
+						],
 					},
 				},
 			],
 			inputMappings: {
 				"IN 1": [
 					{
-						internalChipId: "2",
-						internalPinName: "C-AND A",
+						internalChipId: "9",
+						internalPinName: "IN 1",
 					},
 				],
 				"IN 2": [
 					{
-						internalChipId: "2",
-						internalPinName: "C-AND B",
+						internalChipId: "19",
+						internalPinName: "IN 2",
 					},
 				],
 			},
 			outputMappings: {
 				"OUT 1": [
 					{
-						internalChipId: "21",
-						internalPinName: "out0",
+						internalChipId: "9",
+						internalPinName: "OUT 1",
+					},
+				],
+				"OUT 2": [
+					{
+						internalChipId: "19",
+						internalPinName: "OUT 1",
 					},
 				],
 			},
 		},
-		"composite-AND": {
+		NOR: {
 			chips: [
 				{
-					id: "5",
-					spec: {
-						chipType: "composite",
-						name: "NAND",
-					},
-					renderState: {
-						color: {
-							r: 0,
-							g: 0,
-							b: 0,
-							a: 1,
-						},
-						position: {
-							x: 0.3,
-							y: 1,
-						},
-					},
-				},
-				{
-					id: "6",
+					id: "0",
 					spec: {
 						chipType: "atomic",
-						name: "NOT",
+						name: "OR",
 					},
 					renderState: {
 						color: {
 							r: 0,
 							g: 0,
-							b: 0,
+							b: 0.5,
 							a: 1,
 						},
 						position: {
-							x: -1,
-							y: 1,
-						},
-					},
-				},
-			],
-			wires: [
-				{
-					spec: {
-						start: {
-							chipId: "5",
-							pinName: "NAND OUT",
-						},
-						end: {
-							chipId: "6",
-							pinName: "in0",
-						},
-					},
-					renderState: {
-						color: {
-							r: 0,
-							g: 0,
-							b: 0,
-							a: 1,
-						},
-						controlPoints: [],
-					},
-				},
-			],
-			inputMappings: {
-				"C-AND A": [
-					{
-						internalChipId: "5",
-						internalPinName: "NAND IN A",
-					},
-				],
-				"C-AND B": [
-					{
-						internalChipId: "5",
-						internalPinName: "NAND IN B",
-					},
-				],
-			},
-			outputMappings: {
-				"C-AND OUT": [
-					{
-						internalChipId: "6",
-						internalPinName: "out0",
-					},
-				],
-			},
-		},
-		NAND: {
-			chips: [
-				{
-					id: "2",
-					spec: {
-						chipType: "atomic",
-						name: "AND",
-					},
-					renderState: {
-						color: {
-							r: 0,
-							g: 0,
-							b: 0,
-							a: 1,
-						},
-						position: {
-							x: 0.3,
-							y: 1,
+							x: 0.8179923049207023,
+							y: 0.8542386824622347,
 						},
 					},
 				},
@@ -662,12 +531,12 @@ const heheAnd = {
 						color: {
 							r: 0,
 							g: 0,
-							b: 0,
+							b: 0.5,
 							a: 1,
 						},
 						position: {
-							x: -1,
-							y: 1,
+							x: -0.43411638760871846,
+							y: 0.8025567165833795,
 						},
 					},
 				},
@@ -676,7 +545,7 @@ const heheAnd = {
 				{
 					spec: {
 						start: {
-							chipId: "2",
+							chipId: "0",
 							pinName: "out0",
 						},
 						end: {
@@ -687,7 +556,7 @@ const heheAnd = {
 					renderState: {
 						color: {
 							r: 0,
-							g: 0,
+							g: 1,
 							b: 0,
 							a: 1,
 						},
@@ -696,21 +565,21 @@ const heheAnd = {
 				},
 			],
 			inputMappings: {
-				"NAND IN A": [
+				"IN 1": [
 					{
-						internalChipId: "2",
+						internalChipId: "0",
 						internalPinName: "in0",
 					},
 				],
-				"NAND IN B": [
+				"IN 2": [
 					{
-						internalChipId: "2",
+						internalChipId: "0",
 						internalPinName: "in1",
 					},
 				],
 			},
 			outputMappings: {
-				"NAND OUT": [
+				"OUT 1": [
 					{
 						internalChipId: "3",
 						internalPinName: "out0",

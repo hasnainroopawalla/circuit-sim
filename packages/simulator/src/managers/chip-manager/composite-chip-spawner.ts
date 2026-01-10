@@ -2,14 +2,10 @@ import type { Chip, CompositeChip, IOChipType } from "../../entities/chips";
 import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
-import {
-	type Blueprint,
-	type CompositeDefinition,
-	BlueprintUtils,
-} from "../../services/blueprint-service";
+import { PinNotFoundError } from "../../errors";
+import type { CompositeDefinition } from "../../services/blueprint-service";
 import type {
 	ChipDefinition,
-	ChipFactory,
 	ChipLibraryService,
 } from "../../services/chip-library-service";
 import type { WireManager } from "../wire-manager";
@@ -33,10 +29,7 @@ export class CompositeChipSpawner {
 	}
 
 	public spawn(compositeChip: CompositeChip): void {
-		const compositeDefinition = BlueprintUtils.getCompositeChipDefinition(
-			compositeChip.spec.name,
-			compositeChip.spec.blueprint,
-		);
+		const compositeDefinition = compositeChip.spec.definition;
 
 		const internalChipMap: InternalChipMap = new Map();
 
@@ -69,38 +62,17 @@ export class CompositeChipSpawner {
 		compositeChip: CompositeChip,
 		internalChipMap: InternalChipMap,
 	): void {
-		const rootCompositeDefinition = BlueprintUtils.getCompositeChipDefinition(
-			compositeChip.spec.name,
-			compositeChip.spec.blueprint,
-		);
-
-		if (!rootCompositeDefinition) {
-			throw new Error("Root composite definition does not exist");
-		}
-
-		rootCompositeDefinition.chips.forEach((chipBlueprint) => {
-			let chipFactory: ChipFactory;
-			if (chipBlueprint.spec.chipType === "composite") {
-				const compositeDefinition = BlueprintUtils.getCompositeChipDefinition(
-					chipBlueprint.spec.name,
-					compositeChip.spec.blueprint,
-				);
-
-				if (!compositeDefinition) {
-					throw new Error("Internal composite definition does not exist");
-				}
-
-				chipFactory = this.createCompositeFactory(
-					chipBlueprint.spec.name,
-					compositeDefinition,
-					compositeChip.spec.blueprint,
-				);
-			} else {
-				chipFactory = this.chipLibraryService.resolve({
-					kind: chipBlueprint.spec.chipType,
-					name: chipBlueprint.spec.name,
-				} as ChipDefinition);
-			}
+		compositeChip.spec.definition.chips.forEach((chipBlueprint) => {
+			const chipFactory =
+				chipBlueprint.spec.chipType === "composite"
+					? this.chipLibraryService.getChipFactory({
+							kind: "composite",
+							name: chipBlueprint.spec.name,
+						})
+					: this.chipLibraryService.getChipFactory({
+							kind: chipBlueprint.spec.chipType,
+							name: chipBlueprint.spec.name,
+						} as ChipDefinition);
 
 			const internalChip = this.chipManager.spawnChip(
 				chipFactory,
@@ -127,7 +99,7 @@ export class CompositeChipSpawner {
 				? compositeDefinition.inputMappings
 				: compositeDefinition.outputMappings;
 
-		const ioChipFactory = this.chipLibraryService.resolve({
+		const ioChipFactory = this.chipLibraryService.getChipFactory({
 			kind: "io",
 			name: ioChipType,
 		});
@@ -151,8 +123,10 @@ export class CompositeChipSpawner {
 				);
 
 				if (!internalChipPin) {
-					throw new Error(
-						`Internal Chip Pin does not exist [chipId: ${mapping.internalChipId}][pinName: ${mapping.internalPinName}]`,
+					throw new PinNotFoundError(
+						mapping.internalChipId,
+						"",
+						mapping.internalPinName,
 					);
 				}
 
@@ -187,7 +161,7 @@ export class CompositeChipSpawner {
 	}
 
 	private spawnInternalWires(
-		compositeChip: Pick<CompositeChip, "id">, // TODO: full chip not needed
+		compositeChip: Pick<CompositeChip, "id">,
 		compositeDefinition: CompositeDefinition,
 		internalChipMap: InternalChipMap,
 	): void {
@@ -198,14 +172,26 @@ export class CompositeChipSpawner {
 				internalChipMap,
 			);
 
+			if (!startPin) {
+				throw new PinNotFoundError(
+					wire.spec.start.chipId,
+					"", // TODO: get the chip name
+					wire.spec.start.pinName,
+				);
+			}
+
 			const endPin = this.getInternalChipPin(
 				wire.spec.end.chipId,
 				wire.spec.end.pinName,
 				internalChipMap,
 			);
 
-			if (!startPin || !endPin) {
-				throw new Error(`Pin does not exist: ${JSON.stringify(wire.spec)}`);
+			if (!endPin) {
+				throw new PinNotFoundError(
+					wire.spec.end.chipId,
+					"",
+					wire.spec.end.pinName,
+				);
 			}
 
 			this.wireManager.spawnWire(
@@ -231,24 +217,5 @@ export class CompositeChipSpawner {
 		}
 
 		return internalChip.getPin(pinName);
-	}
-
-	private createCompositeFactory(
-		compositeName: string,
-		definition: CompositeDefinition,
-		blueprint: Blueprint,
-	): ChipFactory {
-		const { inputPins, outputPins } = BlueprintUtils.getIOPinSpecs(definition);
-
-		return {
-			kind: "composite",
-			spec: {
-				chipType: "composite",
-				name: compositeName,
-				blueprint,
-				inputPins,
-				outputPins,
-			},
-		};
 	}
 }

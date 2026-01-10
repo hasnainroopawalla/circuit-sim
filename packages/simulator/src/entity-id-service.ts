@@ -1,6 +1,5 @@
 import type { PinType } from "./entities/pin";
 
-const ENTITY_ID_SEPARATOR = ".";
 const ENTITY_ID_START_INDEX = -1;
 
 class EntityIdService {
@@ -32,10 +31,6 @@ class EntityIdService {
 	): [chipId: string, pinType: PinType, chipPinId: string] {
 		const [chipId, pinType, chipPinId] = pinId.split(".");
 		return [chipId, pinType as PinType, chipPinId];
-	}
-
-	private generate(args: string[]): string {
-		return [...args, this.generateId()].join(ENTITY_ID_SEPARATOR);
 	}
 }
 

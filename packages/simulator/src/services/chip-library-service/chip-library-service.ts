@@ -60,15 +60,15 @@ export class ChipLibraryService {
 		];
 	}
 
-	public resolve<TDef extends ChipDefinition>(
+	public getChipFactory<TDef extends ChipDefinition>(
 		definition: TDef,
 	): ChipRegistryMap[TDef["kind"]]["resolved"] {
 		switch (definition.kind) {
 			case "atomic":
 			case "io":
-				return this.builtin.resolve(definition.kind, definition.name);
+				return this.builtin.get(definition.kind, definition.name);
 			case "composite":
-				return this.composite.resolve(definition.name);
+				return this.composite.get(definition.name);
 		}
 	}
 }

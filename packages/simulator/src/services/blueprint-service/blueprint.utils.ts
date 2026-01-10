@@ -1,30 +1,7 @@
 import type { PinSpec, PinType } from "../../entities/pin";
-import type {
-	Blueprint,
-	CompositeDefinition,
-} from "./blueprint-service.interface";
+import type { CompositeDefinition } from "./blueprint-service.interface";
 
 export const BlueprintUtils = {
-	getRootDefinition: (blueprint: Blueprint): CompositeDefinition => {
-		return blueprint.definitions[blueprint.root];
-	},
-
-	getCompositeChipDefinition: (
-		chipName: string,
-		blueprint: Blueprint,
-	): CompositeDefinition => {
-		// TODO: should return CompositeDefinition | undefined
-		return blueprint.definitions[chipName];
-	},
-
-	getRootIOPinCount: (blueprint: Blueprint) => {
-		const definition = BlueprintUtils.getRootDefinition(blueprint);
-		return {
-			numInputPins: getIOPinSpecs(definition, "in").length,
-			numOutputPins: getIOPinSpecs(definition, "out").length,
-		};
-	},
-
 	getIOPinSpecs: (
 		definition: CompositeDefinition,
 	): {
@@ -32,13 +9,13 @@ export const BlueprintUtils = {
 		outputPins: PinSpec[];
 	} => {
 		return {
-			inputPins: getIOPinSpecs(definition, "in"),
-			outputPins: getIOPinSpecs(definition, "out"),
+			inputPins: getIOPinSpecsOf(definition, "in"),
+			outputPins: getIOPinSpecsOf(definition, "out"),
 		};
 	},
 };
 
-function getIOPinSpecs(
+function getIOPinSpecsOf(
 	definition: CompositeDefinition,
 	pinType: PinType,
 ): PinSpec[] {
