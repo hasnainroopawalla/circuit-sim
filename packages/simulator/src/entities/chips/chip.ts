@@ -10,7 +10,7 @@ import type {
 	EntitySpawnOptions,
 } from "./chip.interface";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
-import type { Position } from "@digital-logic-sim/shared-types";
+import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import { PinLengthMismatchError } from "../../errors";
 
 type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
@@ -19,7 +19,6 @@ export abstract class BaseChip<
 	TChipType extends ChipType,
 > extends BaseEntity<"chip"> {
 	public spec: ChipSpecOf<TChipType>;
-	public renderState: ChipRenderState;
 
 	public inputPins: Pin[];
 	public outputPins: Pin[];
@@ -29,6 +28,8 @@ export abstract class BaseChip<
 	public chipType: TChipType;
 
 	public layout: ChipLayout;
+
+	private renderState: ChipRenderState;
 
 	constructor(
 		chipSpec: ChipSpecOf<TChipType>,
@@ -104,6 +105,21 @@ export abstract class BaseChip<
 					chip: this as Chip,
 				}),
 		);
+	}
+
+	public getRenderState(): ChipRenderState {
+		return {
+			position: this.getPosition(),
+			color: this.getColor(),
+		};
+	}
+
+	protected getPosition(): Position {
+		return this.renderState.position;
+	}
+
+	protected getColor(): ColorRGBA {
+		return this.renderState.color;
 	}
 
 	/**

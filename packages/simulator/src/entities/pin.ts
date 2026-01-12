@@ -9,6 +9,7 @@ export type PinSpec = {
 };
 
 type PinRenderState = {
+	color: ColorRGBA;
 	label?: string;
 };
 
@@ -26,7 +27,7 @@ export class Pin extends BaseEntity<"pin"> {
 
 	constructor(args: {
 		spec: PinSpec;
-		renderState: PinRenderState;
+		renderState: Omit<PinRenderState, "color">;
 		chip: Chip;
 		pinType: PinType;
 		pinIdx: number;
@@ -36,7 +37,15 @@ export class Pin extends BaseEntity<"pin"> {
 		});
 
 		this.spec = args.spec;
-		this.renderState = args.renderState;
+		this.renderState = {
+			...args.renderState,
+			color: {
+				r: 0,
+				g: 0,
+				b: 0,
+				a: 1,
+			},
+		};
 
 		this.chip = args.chip;
 
@@ -57,14 +66,5 @@ export class Pin extends BaseEntity<"pin"> {
 
 	public getPosition(): Position {
 		return this.chip.layout.getPinPosition(this.pinIdx, this.pinType);
-	}
-
-	public getColor(): ColorRGBA {
-		return {
-			r: Number(!this.currentValue),
-			g: Number(this.currentValue),
-			b: 0.0,
-			a: 1.0,
-		};
 	}
 }

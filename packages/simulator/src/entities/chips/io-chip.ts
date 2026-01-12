@@ -1,3 +1,4 @@
+import { ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
@@ -7,7 +8,9 @@ import type {
 	IOChipType,
 	InputChipSpec,
 	OutputChipSpec,
+	ChipRenderState,
 } from "./chip.interface";
+import { ColorService } from "../../services/color-service";
 
 type IOChipSpecOf<TIOChipType> = Extract<
 	IOChipSpec,
@@ -31,6 +34,12 @@ export abstract class BaseIOChip<
 
 	public getPin(): Pin {
 		return this.ioChipType === "input" ? this.outputPins[0] : this.inputPins[0];
+	}
+
+	override getColor(): ColorRGBA {
+		return this.getPin().currentValue
+			? ColorService.getHighColor()
+			: ColorService.getLowColor();
 	}
 }
 

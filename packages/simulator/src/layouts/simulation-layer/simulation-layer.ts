@@ -32,8 +32,8 @@ export class SimulationLayer extends BaseLayer {
 			.map((wire) => {
 				return {
 					type: "wire",
-					color: wire.renderState.color,
 					path: wire.getPath(),
+					color: wire.getRenderState().color,
 				};
 			});
 
