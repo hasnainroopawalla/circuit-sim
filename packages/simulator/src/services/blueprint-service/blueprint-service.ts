@@ -207,7 +207,7 @@ export class BlueprintService extends BaseService {
 		ioChipType: IOChipType,
 	): string {
 		// prioritize using the pin label that was added by the user
-		const customPinLabel = ioChip.getPin().renderState.label;
+		const customPinLabel = ioChip.getPin().pinInitParams.label;
 		if (customPinLabel) {
 			return customPinLabel;
 		}

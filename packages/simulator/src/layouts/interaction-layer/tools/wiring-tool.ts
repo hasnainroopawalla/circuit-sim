@@ -9,6 +9,7 @@ import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";
 import type { Position } from "@digital-logic-sim/shared-types";
+import { COLORS } from "../../../services/color-service";
 
 type WiringToolArgs = ToolArgs & {
 	startPin: Pin;
@@ -33,7 +34,7 @@ export class WiringTool extends Tool {
 		return [
 			{
 				type: "wire",
-				color: { r: 1, g: 1, b: 0, a: 1 },
+				color: COLORS.Ghost,
 				path: [
 					this.startPin.getPosition(),
 					...this.controlPoints,
@@ -95,7 +96,6 @@ export class WiringTool extends Tool {
 				endPin: hoveredEntity,
 			} /* wire connection */,
 			{
-				color: { r: 0, g: 1, b: 0, a: 1 },
 				controlPoints: this.controlPoints,
 			} /* init params */,
 		);

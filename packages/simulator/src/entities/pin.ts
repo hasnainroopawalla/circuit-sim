@@ -8,10 +8,9 @@ export type PinSpec = {
 	name: string;
 };
 
-type PinRenderState = {
-	color: ColorRGBA;
-	label?: string;
-};
+export type PinInitParams = { label?: string };
+
+type PinRenderState = PinInitParams & { color: ColorRGBA };
 
 export class Pin extends BaseEntity<"pin"> {
 	public spec: PinSpec;
@@ -27,7 +26,7 @@ export class Pin extends BaseEntity<"pin"> {
 
 	constructor(args: {
 		spec: PinSpec;
-		renderState: Omit<PinRenderState, "color">;
+		pinInitParms: PinInitParams;
 		chip: Chip;
 		pinType: PinType;
 		pinIdx: number;
@@ -38,7 +37,7 @@ export class Pin extends BaseEntity<"pin"> {
 
 		this.spec = args.spec;
 		this.renderState = {
-			...args.renderState,
+			label: args.pinInitParms.label,
 			color: {
 				r: 0,
 				g: 0,

@@ -1,4 +1,4 @@
-import { ColorRGBA } from "@digital-logic-sim/shared-types";
+import type { ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
 import type {
@@ -8,9 +8,8 @@ import type {
 	IOChipType,
 	InputChipSpec,
 	OutputChipSpec,
-	ChipRenderState,
 } from "./chip.interface";
-import { ColorService } from "../../services/color-service";
+import { COLORS } from "../../services/color-service";
 
 type IOChipSpecOf<TIOChipType> = Extract<
 	IOChipSpec,
@@ -37,9 +36,7 @@ export abstract class BaseIOChip<
 	}
 
 	override getColor(): ColorRGBA {
-		return this.getPin().currentValue
-			? ColorService.getHighColor()
-			: ColorService.getLowColor();
+		return this.getPin().currentValue ? COLORS.HighSignal : COLORS.LowSignal;
 	}
 }
 

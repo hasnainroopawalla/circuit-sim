@@ -70,7 +70,12 @@ export class WireRenderer {
 					0,
 				);
 				const translateMat = mat4.translation(lineCenter);
-				const colour = vec4.create(wire.color.r, wire.color.g, wire.color.b, 1.0); //TODO: Read colour value from wireRenderable
+				const colour = vec4.create(
+					wire.color.r,
+					wire.color.g,
+					wire.color.b,
+					1.0,
+				);
 				let lineAngle = Math.PI / 2;
 				if (end.x !== start.x) {
 					lineAngle = Math.atan((end.y - start.y) / (end.x - start.x));

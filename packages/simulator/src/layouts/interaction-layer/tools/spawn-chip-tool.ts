@@ -18,6 +18,7 @@ import {
 	type ChipFactory,
 } from "../../../services/chip-library-service";
 import { BlueprintUtils } from "../../../services/blueprint-service";
+import { COLORS } from "../../../services/color-service";
 
 type SpawnChipToolArgs = ToolArgs & {
 	chipFactory: ChipFactory;
@@ -34,7 +35,7 @@ export class SpawnChipTool extends Tool {
 		this.chipFactory = args.chipFactory;
 
 		this.ghostChip = new GhostChip(this.getPinCount(args.chipFactory), {
-			color: { r: 0.71, g: 0.71, b: 0.71, a: 0.08 },
+			color: COLORS.Ghost,
 			position: args.mousePositionService.getMousePosition().world,
 		});
 	}
@@ -91,7 +92,7 @@ export class SpawnChipTool extends Tool {
 				type: "pin",
 				value: false,
 				position: this.ghostChip.layout.getPinPosition(pinIdx, pinType),
-				color: { r: 0.59, g: 0.59, b: 0.59, a: 0.7 },
+				color: COLORS.Ghost,
 			}));
 
 		return {
@@ -106,7 +107,8 @@ export class SpawnChipTool extends Tool {
 	}
 
 	private handleLeftMouseButtonClick(): void {
-		const chipColor = { r: 0, g: 0, b: 0.5, a: 1 };
+		// TODO: Generate color
+		const chipColor = { r: 0.27, g: 0.35, b: 0.7, a: 1.0 };
 		const chipPosition = this.ghostChip.renderState.position;
 
 		this.sim.chipManager.spawnChip(

@@ -99,7 +99,7 @@ export abstract class BaseChip<
 			(pinSpec, idx) =>
 				new Pin({
 					spec: pinSpec,
-					renderState: {},
+					pinInitParms: {},
 					pinType,
 					pinIdx: idx,
 					chip: this as Chip,

@@ -2,13 +2,13 @@ import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import { BaseEntity } from "./entity";
 import type { Pin } from "./pin";
 import type { EntitySpawnOptions } from "./chips";
-import { ColorService } from "../services/color-service";
+import { COLORS } from "../services/color-service";
 
 export type WireConnection = { startPin: Pin; endPin: Pin };
 
-export type WireInitParams = { color: ColorRGBA; controlPoints: Position[] };
+export type WireInitParams = { controlPoints: Position[] };
 
-export type WireRenderState = WireInitParams;
+export type WireRenderState = WireInitParams & { color: ColorRGBA };
 
 export class Wire extends BaseEntity<"wire"> {
 	public startPin: Pin;
@@ -33,7 +33,7 @@ export class Wire extends BaseEntity<"wire"> {
 		this.parentCompositeId = args.opts?.parentCompositeId || "";
 
 		this.renderState = {
-			color: args.wireInitParams.color,
+			color: COLORS.LowSignal,
 			controlPoints: args.wireInitParams.controlPoints,
 		};
 	}
@@ -48,9 +48,7 @@ export class Wire extends BaseEntity<"wire"> {
 
 	public getRenderState(): WireRenderState {
 		return {
-			color: this.startPin.currentValue
-				? ColorService.getHighColor()
-				: ColorService.getLowColor(),
+			color: this.startPin.currentValue ? COLORS.HighSignal : COLORS.LowSignal,
 			controlPoints: this.renderState.controlPoints,
 		};
 	}
