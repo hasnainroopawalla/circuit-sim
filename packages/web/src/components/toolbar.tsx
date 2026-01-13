@@ -29,7 +29,7 @@ const ToolbarItem: React.FC<ToolbarItemProps> = ({ text, onClick }) => {
 	return (
 		<button
 			onClick={onClick}
-			className="cursor-pointer rounded-md px-4 py-1.5 text-sm text-white/80 transition hover:bg-white/10 hover:text-white"
+			className="cursor-pointer rounded-md px-4 py-1.5 text-sm text-white/80 transition hover:bg-white/10 hover:text-white text-left"
 		>
 			{text}
 		</button>
@@ -68,6 +68,10 @@ const ProjectToolbarItem: React.FC = () => {
 				<div className="absolute flex flex-col py-2 mb-2 -translate-x-1/2 rounded-lg shadow-lg bottom-full left-1/2 min-w-max bg-neutral-900/70 backdrop-blur-xl ring-1 ring-white/10">
 					<ToolbarItem
 						text="Save Chip"
+						onClick={() => openDialog({ kind: "saveChip", onSave: saveChip })}
+					/>
+					<ToolbarItem
+						text="Import Chip"
 						onClick={() => openDialog({ kind: "saveChip", onSave: saveChip })}
 					/>
 					<ToolbarItem text="Reset" onClick={resetSimulator} />

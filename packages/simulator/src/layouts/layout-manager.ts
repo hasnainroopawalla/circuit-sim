@@ -19,14 +19,15 @@ type LayoutManagerArgs = BaseLayerArgs & {
 };
 
 enum Layer {
-	Interaction,
 	Simulation,
+	Interaction,
 	Composite,
 }
+
 enum State {
-	Active,
-	Suspended,
-	Deleted,
+	MainMenu,
+	Workbench,
+	Preview,
 }
 
 type LayerTransition = {
@@ -34,14 +35,31 @@ type LayerTransition = {
 	transition: State;
 };
 
+type StateArgs =
+	| {
+			state: State.Workbench;
+			args: { name: string };
+	  }
+	| {
+			state: State.Preview;
+			args: { age: number };
+	  };
+
 export class LayoutManager {
 	private readonly layers: BaseLayer[];
 	private hoveredEntity: Entity | null;
+	// private state: StateArgs;
 	private activeLayers: BaseLayer[];
 	private suspendedLayers: BaseLayer[];
+
 	private pendingTransitions: LayerTransition[];
 
 	constructor(args: LayoutManagerArgs) {
+		// this.state = {
+		// 	state: State.Workbench,
+		// 	args: { name: 3 },
+		// };
+
 		this.hoveredEntity = null;
 
 		this.layers = [
@@ -56,6 +74,7 @@ export class LayoutManager {
 				camera: args.camera,
 			}),
 		];
+
 		this.activeLayers = [
 			this.layers[Layer.Interaction],
 			this.layers[Layer.Simulation],
@@ -105,6 +124,8 @@ export class LayoutManager {
 		this.pendingTransitions.push(transition);
 	}
 
+	public notificationFromLayer(from: Layer, args: unknown) {}
+
 	private handleTransitions(): void {
 		this.pendingTransitions.every((transition) => {});
 	}
@@ -117,3 +138,22 @@ export class LayoutManager {
 	// 	this._hoveredEntity = value;
 	// }
 }
+
+// class HelloLayer {
+// 	public ff() {
+// 		this.layoutManager.notificationFromLayer(Layer.Hello);
+// 	}
+
+// 	public update(){
+// 		for(layer: layers){
+// 			switch(Layer.layerType){
+// 				case Layer.Simulation:
+// 					layer.isLoading // simulation layer
+// 					layer.update(inParams, customArgs)
+// 					if(customArgs.isLoading){
+// 						layerTransistions.push({layer: Layer.Composite, state: State.active})
+// 					}
+// 			}
+// 		}
+// 	}
+// }

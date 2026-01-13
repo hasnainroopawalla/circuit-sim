@@ -117,9 +117,7 @@ export class BlueprintService extends BaseService {
 		};
 	}
 
-	private serializeChip(
-		chip: Pick<Chip, "spec" | "id" | "renderState">,
-	): ChipBlueprint {
+	private serializeChip(chip: Chip): ChipBlueprint {
 		return {
 			id: chip.id,
 			spec: {
