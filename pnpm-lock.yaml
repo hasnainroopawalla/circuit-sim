@@ -44,6 +44,9 @@ importers:
       '@digital-logic-sim/shared-types':
         specifier: workspace:^1.0.0
         version: link:../shared-types
+      orderedmap:
+        specifier: ^2.1.1
+        version: 2.1.1
       wgpu-matrix:
         specifier: ^3.4.0
         version: 3.4.0
@@ -1975,6 +1978,9 @@ packages:
   onetime@5.1.2:
     resolution: {integrity: sha512-kbpaSSGJTWdAY5KPVeMOKXSrPtr8C8C7wodJbcsd51jRnmD+GZu8Y0VoU6Dm5Z4vWr0Ig/1NKuWRKf7j5aaYSg==}
     engines: {node: '>=6'}
+
+  orderedmap@2.1.1:
+    resolution: {integrity: sha512-TvAWxi0nDe1j/rtMcWcIj94+Ffe6n7zhow33h40SKxmsmozs6dz/e+EajymfoFcHd7sxNn8yHM8839uixMOV6g==}
 
   p-limit@2.3.0:
     resolution: {integrity: sha512-//88mFWSJx8lxCzwdAABTJL2MyWB12+eIY7MDL2SqLmAkeKU9qxRvWuSyTjm3FUmpBEMuFfckAIqEaVGUDxb6w==}
@@ -4534,6 +4540,8 @@ snapshots:
   onetime@5.1.2:
     dependencies:
       mimic-fn: 2.1.0
+
+  orderedmap@2.1.1: {}
 
   p-limit@2.3.0:
     dependencies:

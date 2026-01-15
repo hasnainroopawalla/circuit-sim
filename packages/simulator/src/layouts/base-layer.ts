@@ -15,6 +15,7 @@ export type BaseLayerArgs = {
 	camera: Camera;
 	layerType: Layer;
 };
+
 export enum Layer {
 	Overlay,
 	Simulation,
@@ -52,7 +53,7 @@ export abstract class BaseLayer {
 		nature: ButtonEvent,
 	): boolean;
 
-	public getLayerType(): Layer{
+	public getLayerType(): Layer {
 		return this.layerType;
 	}
 }

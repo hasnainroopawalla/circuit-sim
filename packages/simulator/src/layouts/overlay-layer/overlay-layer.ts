@@ -22,7 +22,7 @@ export class OverlayLayer extends BaseLayer {
 	}
 
 	public getRenderables(renderables: Renderable[]): Renderable[] {
-		console.log(renderables);
+		// console.log(renderables);
 		return [];
 	}
 
@@ -48,7 +48,6 @@ export class OverlayLayer extends BaseLayer {
 		nature: ButtonEvent,
 	): boolean {
 		return false;
-
 	}
 
 	private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
