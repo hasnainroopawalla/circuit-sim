@@ -24,10 +24,15 @@ export class BlueprintService extends BaseService {
 		this.sim.on("sim.save-chip.start", ({ chipName }) =>
 			this.saveBlueprint(chipName),
 		);
+
+		this.sim.on("sim.import-blueprint.start", ({ blueprintString }) =>
+			this.loadBlueprint(blueprintString),
+		);
 	}
 
-	public loadBlueprint(blueprint: Blueprint): void {
-		this.sim.chipLibraryService.register(blueprint);
+	public loadBlueprint(blueprintString: string): void {
+		// TODO: add validation
+		this.sim.chipLibraryService.register(JSON.parse(blueprintString));
 	}
 
 	private saveBlueprint(blueprintName: string): Blueprint {
@@ -124,7 +129,7 @@ export class BlueprintService extends BaseService {
 				chipType: chip.spec.chipType,
 				name: chip.spec.name,
 			},
-			renderState: chip.renderState,
+			renderState: chip.getRenderState(),
 		};
 	}
 
@@ -140,7 +145,7 @@ export class BlueprintService extends BaseService {
 					pinName: wire.endPin.spec.name,
 				},
 			},
-			renderState: wire.renderState,
+			renderState: wire.getRenderState(),
 		};
 	}
 
@@ -205,7 +210,7 @@ export class BlueprintService extends BaseService {
 		ioChipType: IOChipType,
 	): string {
 		// prioritize using the pin label that was added by the user
-		const customPinLabel = ioChip.getPin().pinInitParams.label;
+		const customPinLabel = ioChip.getPin().renderState.label;
 		if (customPinLabel) {
 			return customPinLabel;
 		}

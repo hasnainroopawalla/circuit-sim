@@ -55,6 +55,15 @@ const ProjectToolbarItem: React.FC = () => {
 		[simulatorApp, closeDialog],
 	);
 
+	const importBlueprint = React.useCallback(
+		(blueprintString: string) => {
+			simulatorApp.sim.emit("sim.import-blueprint.start", { blueprintString });
+			setIsPopoverOpen(false);
+			closeDialog();
+		},
+		[simulatorApp, closeDialog],
+	);
+
 	const resetSimulator = React.useCallback(() => {
 		simulatorApp.sim.emit("sim.reset", undefined);
 		setIsPopoverOpen(false);
@@ -67,12 +76,14 @@ const ProjectToolbarItem: React.FC = () => {
 			{isPopoverOpen && (
 				<div className="absolute flex flex-col py-2 mb-2 -translate-x-1/2 rounded-lg shadow-lg bottom-full left-1/2 min-w-max bg-neutral-900/70 backdrop-blur-xl ring-1 ring-white/10">
 					<ToolbarItem
-						text="Save Chip"
+						text="Save"
 						onClick={() => openDialog({ kind: "saveChip", onSave: saveChip })}
 					/>
 					<ToolbarItem
-						text="Import Chip"
-						onClick={() => openDialog({ kind: "saveChip", onSave: saveChip })}
+						text="Import"
+						onClick={() =>
+							openDialog({ kind: "importBlueprint", onImport: importBlueprint })
+						}
 					/>
 					<ToolbarItem text="Reset" onClick={resetSimulator} />
 				</div>

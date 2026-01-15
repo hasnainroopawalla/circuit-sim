@@ -5,6 +5,8 @@ export type IEvents = {
 	"sim.save-chip.start": { chipName: string };
 	"sim.save-chip.finish": undefined;
 
+	"sim.import-blueprint.start": { blueprintString: string };
+
 	"sim.reset": undefined;
 
 	"overlay.reset": undefined;
