@@ -11,8 +11,8 @@ export const Toolbar: React.FC = () => {
 			<div className="relative flex items-center gap-1 px-2 py-2 shadow-lg rounded-xl bg-black/40 backdrop-blur-md">
 				<ProjectToolbarItem />
 				<ToolbarItem
-					text="Actions"
-					onClick={() => openDialog({ kind: "commandPalette" })}
+					text="Chips"
+					onClick={() => openDialog({ kind: "chipLibrary" })}
 				/>
 				<ToolbarItem text="Settings" onClick={() => {}} />
 			</div>

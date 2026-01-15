@@ -1,5 +1,8 @@
 import type * as React from "react";
-import { CommandPalette } from "../command-palette";
+import {
+	ChipLibraryDialog,
+	type ChipLibraryDialogProps,
+} from "../chip-library-dialog";
 import { SaveChipDialog, type SaveChipDialogProps } from "../save-chip-dialog";
 import {
 	ImportBlueprintDialog,
@@ -8,8 +11,8 @@ import {
 
 export type PanelKindProps =
 	| ({
-			kind: "commandPalette";
-	  } & {})
+			kind: "chipLibrary";
+	  } & ChipLibraryDialogProps)
 	| ({
 			kind: "saveChip";
 	  } & SaveChipDialogProps)
@@ -23,9 +26,9 @@ export const getCurrentPanelProps = (
 	Component: React.ReactElement;
 } => {
 	switch (props?.kind) {
-		case "commandPalette":
+		case "chipLibrary":
 			return {
-				Component: <CommandPalette />,
+				Component: <ChipLibraryDialog />,
 			};
 		case "saveChip":
 			return {
