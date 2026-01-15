@@ -13,16 +13,24 @@ import type { Camera } from "../camera";
 export type BaseLayerArgs = {
 	sim: Simulator;
 	camera: Camera;
+	layerType: Layer;
 };
+export enum Layer {
+	Overlay,
+	Simulation,
+	Interaction,
+	Composite,
+}
 
 export abstract class BaseLayer {
 	protected readonly sim: Simulator;
-
+	protected layerType: Layer;
 	constructor(args: BaseLayerArgs) {
 		this.sim = args.sim;
+		this.layerType = args.layerType;
 	}
 
-	public abstract getRenderables(): Renderable[];
+	public abstract getRenderables(renderables: Renderable[]): Renderable[];
 
 	public abstract onMouseMoveEvent(
 		mousePosition: MousePosition,
@@ -43,4 +51,8 @@ export abstract class BaseLayer {
 		event: KeyboardButtonType,
 		nature: ButtonEvent,
 	): boolean;
+
+	public getLayerType(): Layer{
+		return this.layerType;
+	}
 }

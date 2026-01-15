@@ -97,6 +97,7 @@ export class SimulatorApp {
 		const deltaTime = this.clock.tick();
 
 		this.sim.update();
+		this.layoutManager.transitionState();
 
 		this.inputManager.update(deltaTime);
 

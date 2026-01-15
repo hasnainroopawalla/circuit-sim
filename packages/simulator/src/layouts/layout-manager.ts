@@ -1,5 +1,5 @@
 import { InteractionLayer } from "./interaction-layer";
-import type { BaseLayer, BaseLayerArgs } from "./base-layer";
+import { BaseLayer, Layer } from "./base-layer";
 import { SimulationLayer } from "./simulation-layer";
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import type {
@@ -10,19 +10,18 @@ import type {
 } from "../managers/input-manager";
 import type { MousePosition } from "../types";
 import type { Entity } from "../entities/entity";
-import type { Camera } from "../camera";
+import { Camera } from "../camera";
 import type { MousePositionService } from "../services/mouse-position-service";
+import { CompositeLayer } from "./composite-layer";
+import { Simulator } from "../simulator";
+import { Position } from "@digital-logic-sim/shared-types";
+import { OverlayLayer } from "./overlay-layer";
 
-type LayoutManagerArgs = BaseLayerArgs & {
+type LayoutManagerArgs = {
+	sim: Simulator
 	camera: Camera;
 	mousePositionService: MousePositionService;
 };
-
-enum Layer {
-	Simulation,
-	Interaction,
-	Composite,
-}
 
 enum State {
 	MainMenu,
@@ -37,28 +36,36 @@ type LayerTransition = {
 
 type StateArgs =
 	| {
-			state: State.Workbench;
-			args: { name: string };
+			kind: State.Workbench;
+			args: {compositeSelected: string}
 	  }
 	| {
-			state: State.Preview;
-			args: { age: number };
+			kind: State.Preview;
+			args: {exitPreview:boolean, cameraPosition: Position};
+	  }
+	  | {
+			kind: State.MainMenu;
+			args: {};
 	  };
 
 export class LayoutManager {
+	private sim: Simulator;
+	private camera: Camera;
 	private readonly layers: BaseLayer[];
 	private hoveredEntity: Entity | null;
-	// private state: StateArgs;
+	private state: StateArgs;
 	private activeLayers: BaseLayer[];
 	private suspendedLayers: BaseLayer[];
 
 	private pendingTransitions: LayerTransition[];
 
 	constructor(args: LayoutManagerArgs) {
-		// this.state = {
-		// 	state: State.Workbench,
-		// 	args: { name: 3 },
-		// };
+		 this.state = {
+		 	kind: State.Workbench,
+			args: {compositeSelected: ""}
+		 };
+		 this.sim = args.sim;
+		 this.camera = args.camera;
 
 		this.hoveredEntity = null;
 
@@ -66,29 +73,43 @@ export class LayoutManager {
 			// layer 1
 			new InteractionLayer({
 				...args,
+				layerType: Layer.Interaction,
 				mousePositionService: args.mousePositionService,
 			}),
 			// layer 0
 			new SimulationLayer({
 				...args,
+				layerType: Layer.Simulation,
+				camera: args.camera,
+			}),
+			new OverlayLayer({
+				...args,
+				layerType: Layer.Overlay,
 				camera: args.camera,
 			}),
 		];
 
 		this.activeLayers = [
-			this.layers[Layer.Interaction],
-			this.layers[Layer.Simulation],
+			this.layers[0],
+			this.layers[1],
+			this.layers[2]
 		];
 		this.pendingTransitions = [];
 		this.suspendedLayers = [];
 	}
 
 	public getRenderables(): Renderable[] {
-		return this.layers.flatMap((layer) => layer.getRenderables());
+		let renderables: Renderable[] = []
+		for(const layer of this.activeLayers) {			
+			renderables = [...renderables, ...layer.getRenderables(renderables)]
+		}
+		return renderables;
+		// return this.activeLayers.flatMap((layer) => layer.getRenderables());
 	}
 
 	public update(hoveredEntity: Entity | null): void {
 		this.hoveredEntity = hoveredEntity;
+		this.notificationFromLayers();
 	}
 
 	public onMouseButtonEvent(
@@ -96,7 +117,7 @@ export class LayoutManager {
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
 	): void {
-		this.layers.some((layer) =>
+		this.activeLayers.some((layer) =>
 			layer.onMouseButtonEvent(
 				event,
 				nature,
@@ -107,27 +128,77 @@ export class LayoutManager {
 	}
 
 	public onMouseMoveEvent(mousePosition: MousePosition): void {
-		this.layers.some((layer) =>
+		this.activeLayers.some((layer) =>
 			layer.onMouseMoveEvent(mousePosition, this.hoveredEntity),
 		);
 	}
 
 	public onMouseScrollEvent(event: MouseScrollType): void {
-		this.layers.some((layer) => layer.onMouseScrollEvent(event));
+		this.activeLayers.some((layer) => layer.onMouseScrollEvent(event));
 	}
 
 	public onKeyboardEvent(event: KeyboardButtonType, nature: ButtonEvent): void {
-		this.layers.some((layer) => layer.onKeyboardEvent(event, nature));
+		this.activeLayers.some((layer) => layer.onKeyboardEvent(event, nature));
 	}
 
-	public transitionLayer(transition: LayerTransition): void {
-		this.pendingTransitions.push(transition);
+	public transitionState(): void {
+		switch(this.state.kind){
+			case State.Workbench:
+				if(this.state.args.compositeSelected!==""){
+					const simulationLayer = this.activeLayers.pop();
+					if(simulationLayer!==undefined){
+						this.suspendedLayers.push(simulationLayer);
+					}
+					const interactionLayer = this.activeLayers.pop();
+					if(interactionLayer!==undefined){
+						this.suspendedLayers.push(interactionLayer);
+					}
+					const compositeArgs = {sim: this.sim, layerType: Layer.Composite, camera: this.camera, compositeId: this.state.args.compositeSelected};	
+					const compositeLayer = new CompositeLayer(compositeArgs);
+					this.layers.push(compositeLayer);
+					this.activeLayers.push(compositeLayer);
+					
+					this.state = {kind: State.Preview, args: {exitPreview: false, cameraPosition: this.camera.getCameraPosition()}};
+					this.camera.resetCamera();
+				}
+				break;
+			case State.Preview:
+				if(this.state.args.exitPreview){
+					this.layers.pop();
+					this.activeLayers.pop();
+					const interactionLayer = this.suspendedLayers.pop();
+					if(interactionLayer!==undefined){
+						this.activeLayers.push(interactionLayer);
+					}
+					const simulationLayer = this.suspendedLayers.pop();
+					if(simulationLayer!==undefined){
+						this.activeLayers.push(simulationLayer);
+					}
+					this.camera.resetCamera(this.state.args.cameraPosition);
+					this.state = {kind: State.Workbench, args: {compositeSelected: ""}};
+				}
+				break;
+		}
 	}
 
-	public notificationFromLayer(from: Layer, args: unknown) {}
-
-	private handleTransitions(): void {
-		this.pendingTransitions.every((transition) => {});
+	public notificationFromLayers() {
+		switch(this.state.kind){
+			case State.Workbench:
+				for(const layer of this.activeLayers){
+					 if(layer.getLayerType()===Layer.Simulation){
+						// TODO: strongly type layer here
+					 	this.state.args.compositeSelected = (layer as SimulationLayer).notifyManager();
+					 }	
+				}
+				break;
+			case State.Preview:
+				for(const layer of this.activeLayers){
+				 	if(layer.getLayerType()===Layer.Composite){
+				 		this.state.args.exitPreview = (layer as CompositeLayer).notifyManager();
+				 	}
+				}
+				break;
+		}
 	}
 
 	// public get hoveredEntity(): Entity | null {

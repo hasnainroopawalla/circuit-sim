@@ -20,12 +20,14 @@ export class CompositeLayer extends BaseLayer {
 	private camera: Camera;
 	private chipStack: string[];
 	private top: number;
+	private exitLayer: boolean;
 
 	constructor(args: CompositeLayerArgs) {
 		super(args);
 		this.camera = args.camera;
 		this.chipStack = [args.compositeId];
 		this.top = 0;
+		this.exitLayer=false;
 	}
 
 	public getRenderables(): Renderable[] {
@@ -38,7 +40,7 @@ export class CompositeLayer extends BaseLayer {
 			.map((wire) => {
 				return {
 					type: "wire",
-					color: wire.renderState.color,
+					color: wire.getRenderState().color,
 					path: wire.getPath(),
 				};
 			});
@@ -78,7 +80,7 @@ export class CompositeLayer extends BaseLayer {
 					this.chipStack.pop();
 					--this.top;
 				} else {
-					this.swtichLayer();
+					this.exitLayer=true;
 				}
 				return true;
 			default:
@@ -94,6 +96,10 @@ export class CompositeLayer extends BaseLayer {
 			default:
 				return false;
 		}
+	}
+
+	public notifyManager():boolean{
+		return this.exitLayer;
 	}
 
 	private handleRightMouseButtonClick(hoveredEntity: Entity | null): boolean {

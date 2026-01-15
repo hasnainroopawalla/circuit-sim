@@ -16,10 +16,12 @@ type SimulationLayerArgs = BaseLayerArgs;
 
 export class SimulationLayer extends BaseLayer {
 	private camera: Camera;
+	private selectedCompositeId: string;
 
 	constructor(args: SimulationLayerArgs) {
 		super(args);
 		this.camera = args.camera;
+		this.selectedCompositeId = "";
 	}
 
 	public getRenderables(): Renderable[] {
@@ -94,6 +96,12 @@ export class SimulationLayer extends BaseLayer {
 		return this.camera.onKeyboardEvent(event, nature);
 	}
 
+	public notifyManager(): string{
+		const compositeId = `${this.selectedCompositeId}`;
+		this.selectedCompositeId ="";
+		return compositeId; 
+	}
+
 	private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
 		if (!hoveredEntity) {
 			return false;
@@ -143,9 +151,10 @@ export class SimulationLayer extends BaseLayer {
 		}
 
 		if (EntityUtils.isCompositeChip(hoveredEntity)) {
-			alert(
-				`View chip clicked at: ${mousePosition.screen.x}, ${mousePosition.screen.y}`,
-			);
+			//alert(
+			//	`View chip clicked at: ${mousePosition.screen.x}, ${mousePosition.screen.y}`,
+			//);
+			this.selectedCompositeId = hoveredEntity.id;
 			//Needs to signal layer manager to suspend interactive and simulation layer and add composite layer to active layers
 		}
 

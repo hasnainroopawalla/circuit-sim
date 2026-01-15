@@ -102,7 +102,7 @@ export class OverlayManager extends BaseManager {
 			}
 
 			const screenSpacePosition = this.camera.toScreenSpacePosition(
-				chip.renderState.position,
+				chip.getRenderState().position,
 			);
 
 			const isVisible =
