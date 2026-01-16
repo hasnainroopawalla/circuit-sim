@@ -1,5 +1,5 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
-import { BaseLayer, type BaseLayerArgs } from "../base-layer";
+import { BaseLayer } from "../base-layer";
 import type {
 	ButtonEvent,
 	KeyboardButtonType,
@@ -8,16 +8,17 @@ import type {
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
-import { LayoutUtils } from "../layout.utils";
 import type { Camera } from "../../camera";
+import { LayerType, type LayerArgs } from "../layout.interface";
 
-type OverlayLayerArgs = BaseLayerArgs;
-
-export class OverlayLayer extends BaseLayer {
+export class OverlayLayer extends BaseLayer<LayerType.Overlay> {
 	private camera: Camera;
 
-	constructor(args: OverlayLayerArgs) {
-		super(args);
+	constructor(args: LayerArgs<LayerType.Overlay>) {
+		super({
+			...args,
+			layerType: LayerType.Overlay,
+		});
 		this.camera = args.camera;
 	}
 

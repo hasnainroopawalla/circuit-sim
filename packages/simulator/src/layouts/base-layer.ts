@@ -8,25 +8,21 @@ import type {
 } from "../managers/input-manager";
 import type { MousePosition } from "../types";
 import type { Entity } from "../entities/entity";
+import type { LayerType } from "./layout.interface";
 import type { Camera } from "../camera";
 
-export type BaseLayerArgs = {
+export type BaseLayerArgs<TLayerType extends LayerType> = {
 	sim: Simulator;
 	camera: Camera;
-	layerType: Layer;
+	layerType: TLayerType;
 };
 
-export enum Layer {
-	Overlay,
-	Simulation,
-	Interaction,
-	Composite,
-}
+export abstract class BaseLayer<TLayerType extends LayerType> {
+	public layerType: TLayerType;
 
-export abstract class BaseLayer {
 	protected readonly sim: Simulator;
-	protected layerType: Layer;
-	constructor(args: BaseLayerArgs) {
+
+	constructor(args: BaseLayerArgs<TLayerType>) {
 		this.sim = args.sim;
 		this.layerType = args.layerType;
 	}
@@ -47,13 +43,8 @@ export abstract class BaseLayer {
 
 	public abstract onMouseScrollEvent(event: MouseScrollType): boolean;
 
-	// keyboard
 	public abstract onKeyboardEvent(
 		event: KeyboardButtonType,
 		nature: ButtonEvent,
 	): boolean;
-
-	public getLayerType(): Layer {
-		return this.layerType;
-	}
 }

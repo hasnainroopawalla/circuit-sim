@@ -1,5 +1,5 @@
 import { ToolManager } from "./tool-manager";
-import { BaseLayer, type BaseLayerArgs } from "../base-layer";
+import { BaseLayer } from "../base-layer";
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import type {
 	MouseButtonType,
@@ -10,16 +10,20 @@ import type {
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
 import type { MousePositionService } from "../../services/mouse-position-service";
+import { type LayerArgs, LayerType } from "../layout.interface";
 
-type InteractionLayerArgs = BaseLayerArgs & {
+type InteractionLayerArgs = LayerArgs<LayerType.Interaction> & {
 	mousePositionService: MousePositionService;
 };
 
-export class InteractionLayer extends BaseLayer {
+export class InteractionLayer extends BaseLayer<LayerType.Interaction> {
 	private readonly toolManager: ToolManager;
 
 	constructor(args: InteractionLayerArgs) {
-		super(args);
+		super({
+			...args,
+			layerType: LayerType.Interaction,
+		});
 
 		this.toolManager = new ToolManager(args);
 	}

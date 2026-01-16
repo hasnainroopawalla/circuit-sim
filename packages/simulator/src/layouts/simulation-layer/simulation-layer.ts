@@ -1,5 +1,5 @@
 import type { Renderable } from "@digital-logic-sim/render-engine";
-import { BaseLayer, type BaseLayerArgs } from "../base-layer";
+import { BaseLayer } from "../base-layer";
 import type {
 	ButtonEvent,
 	KeyboardButtonType,
@@ -11,15 +11,17 @@ import type { Entity } from "../../entities/entity";
 import { LayoutUtils } from "../layout.utils";
 import type { Camera } from "../../camera";
 import { EntityUtils } from "../../entities/utils";
+import { LayerType, type LayerArgs } from "../layout.interface";
 
-type SimulationLayerArgs = BaseLayerArgs;
-
-export class SimulationLayer extends BaseLayer {
+export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 	private camera: Camera;
 	private selectedCompositeId: string;
 
-	constructor(args: SimulationLayerArgs) {
-		super(args);
+	constructor(args: LayerArgs<LayerType.Simulation>) {
+		super({
+			...args,
+			layerType: LayerType.Simulation,
+		});
 		this.camera = args.camera;
 		this.selectedCompositeId = "";
 	}

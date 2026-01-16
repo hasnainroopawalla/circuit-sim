@@ -1,4 +1,4 @@
-import { BaseLayer, type BaseLayerArgs } from "../base-layer";
+import { BaseLayer } from "../base-layer";
 import type { Camera } from "../../camera";
 import type { Renderable } from "@digital-logic-sim/render-engine";
 import { LayoutUtils } from "../layout.utils";
@@ -11,23 +11,27 @@ import type {
 	MouseScrollType,
 } from "../../managers/input-manager";
 import { EntityUtils } from "../../entities/utils";
+import { type LayerArgs, LayerType } from "../layout.interface";
 
-type CompositeLayerArgs = BaseLayerArgs & {
+type CompositeLayerArgs = LayerArgs<LayerType.Composite> & {
 	compositeId: string;
 };
 
-export class CompositeLayer extends BaseLayer {
+export class CompositeLayer extends BaseLayer<LayerType.Composite> {
 	private camera: Camera;
 	private chipStack: string[];
 	private top: number;
 	private exitLayer: boolean;
 
 	constructor(args: CompositeLayerArgs) {
-		super(args);
+		super({
+			...args,
+			layerType: LayerType.Composite,
+		});
 		this.camera = args.camera;
 		this.chipStack = [args.compositeId];
 		this.top = 0;
-		this.exitLayer=false;
+		this.exitLayer = false;
 	}
 
 	public getRenderables(): Renderable[] {
@@ -80,7 +84,7 @@ export class CompositeLayer extends BaseLayer {
 					this.chipStack.pop();
 					--this.top;
 				} else {
-					this.exitLayer=true;
+					this.exitLayer = true;
 				}
 				return true;
 			default:
@@ -98,7 +102,7 @@ export class CompositeLayer extends BaseLayer {
 		}
 	}
 
-	public notifyManager():boolean{
+	public notifyManager(): boolean {
 		return this.exitLayer;
 	}
 
@@ -111,9 +115,5 @@ export class CompositeLayer extends BaseLayer {
 			this.top++;
 		}
 		return true;
-	}
-
-	private swtichLayer(): void {
-		//Needs to signal layer manager to close this layer and add interactive and simulation layer to active.
 	}
 }
