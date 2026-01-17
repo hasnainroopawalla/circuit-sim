@@ -100,7 +100,7 @@ export class RenderEngine {
 		this.clearScreen(commandEncoder);
 
 		// renderers
-		this.gridRenderer.render(commandEncoder);
+		// this.gridRenderer.render(commandEncoder);
 		this.chipRenderer.render(commandEncoder, chips);
 		this.wireRenderer.render(commandEncoder, wires);
 

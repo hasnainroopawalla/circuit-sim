@@ -8,6 +8,7 @@ import {
 	ImportBlueprintDialog,
 	type ImportBlueprintDialogProps,
 } from "../simulator-canvas/import-blueprint-dialog/import-blueprint-dialog";
+import { SettingsDialog, type SettingsDialogProps } from "../settings-dialog";
 
 export type PanelKindProps =
 	| ({
@@ -18,11 +19,15 @@ export type PanelKindProps =
 	  } & SaveChipDialogProps)
 	| ({
 			kind: "importBlueprint";
-	  } & ImportBlueprintDialogProps);
+	  } & ImportBlueprintDialogProps)
+	| ({
+			kind: "settings";
+	  } & SettingsDialogProps);
 
 export const getCurrentPanelProps = (
 	props: PanelKindProps | null,
 ): {
+	title?: string;
 	Component: React.ReactElement;
 } => {
 	switch (props?.kind) {
@@ -32,11 +37,18 @@ export const getCurrentPanelProps = (
 			};
 		case "saveChip":
 			return {
+				title: "Save Chip",
 				Component: <SaveChipDialog {...props} />,
 			};
 		case "importBlueprint":
 			return {
+				title: "Import Blueprint",
 				Component: <ImportBlueprintDialog {...props} />,
+			};
+		case "settings":
+			return {
+				title: "Settings",
+				Component: <SettingsDialog {...props} />,
 			};
 		default:
 			return {

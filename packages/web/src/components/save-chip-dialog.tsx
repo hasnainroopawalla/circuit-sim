@@ -20,8 +20,7 @@ export const SaveChipDialog: React.FC<SaveChipDialogProps> = ({ onSave }) => {
 	}, [name, onSave]);
 
 	return (
-		<div className="p-3">
-			<h2 className="mb-3 text-lg font-semibold text-white">Save Chip</h2>
+		<div>
 			<input
 				autoFocus
 				type="text"

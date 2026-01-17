@@ -4,18 +4,25 @@ import { useEffectOnce } from "../utils";
 
 type StartSimulatorActionProps = {
 	canvas: HTMLCanvasElement;
-	onSimulatorAppStart: (simulatorApp: SimulatorApp) => void;
+	onSimulatorAppStartSuccess: (simulatorApp: SimulatorApp) => void;
+	onSimulatorAppStartFailure: (simulatorApp: SimulatorApp) => void;
 };
 
 export const StartSimulatorAction: React.FC<StartSimulatorActionProps> = ({
 	canvas,
-	onSimulatorAppStart,
+	onSimulatorAppStartSuccess,
+	onSimulatorAppStartFailure,
 }) => {
 	useEffectOnce(() => {
 		const simulatorApp = new SimulatorApp({ canvas });
-		simulatorApp.start();
-
-		onSimulatorAppStart(simulatorApp);
+		simulatorApp
+			.start()
+			.then(() => {
+				onSimulatorAppStartSuccess(simulatorApp);
+			})
+			.catch(() => {
+				onSimulatorAppStartFailure(simulatorApp);
+			});
 
 		// TODO: cleanup and stop simulator
 		return () => {};

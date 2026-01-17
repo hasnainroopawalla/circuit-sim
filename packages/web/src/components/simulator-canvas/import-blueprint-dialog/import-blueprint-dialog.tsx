@@ -38,20 +38,16 @@ export const ImportBlueprintDialog: React.FC<ImportBlueprintDialogProps> = ({
 	}, [onImport]);
 
 	return (
-		<div className="p-3">
-			<h2 className="mb-3 text-lg font-semibold text-white">
-				Import Blueprint
-			</h2>
-
+		<div>
 			<textarea
 				// value={text}
 				onChange={(e) => handlePreview(e.target.value)}
 				placeholder="Paste blueprint JSON here"
 				rows={6}
-				className="w-full rounded border border-gray-600 bg-neutral-800 px-3 py-2 text-sm text-white outline-none focus:border-blue-500"
+				className="w-full px-3 py-2 text-sm text-white border border-gray-600 rounded outline-none bg-neutral-800 focus:border-blue-500"
 			/>
 
-			<div className="mt-3 rounded border border-gray-700 bg-neutral-900 p-2">
+			<div className="p-2 mt-3 border border-gray-700 rounded bg-neutral-900">
 				{error && <div className="text-sm text-red-400">{error}</div>}
 
 				{!error && !preview && (
@@ -61,7 +57,7 @@ export const ImportBlueprintDialog: React.FC<ImportBlueprintDialogProps> = ({
 				{preview && <BlueprintPreviewTree node={preview} />}
 			</div>
 
-			<div className="mt-4 flex justify-end gap-2">
+			<div className="flex justify-end gap-2 mt-4">
 				<button
 					onClick={closeDialog}
 					className="cursor-pointer rounded px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700"

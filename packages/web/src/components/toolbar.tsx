@@ -14,7 +14,20 @@ export const Toolbar: React.FC = () => {
 					text="Chips"
 					onClick={() => openDialog({ kind: "chipLibrary" })}
 				/>
-				<ToolbarItem text="Settings" onClick={() => {}} />
+				<ToolbarItem
+					text="Settings"
+					onClick={() =>
+						openDialog({
+							kind: "settings",
+							setShowGrid: () => {},
+							setShowPinLabels: () => {},
+							setSnapToGrid: () => {},
+							showGrid: false,
+							showPinLabels: false,
+							snapToGrid: false,
+						})
+					}
+				/>
 			</div>
 		</div>
 	);
