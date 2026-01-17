@@ -99,6 +99,7 @@ export class WiringTool extends Tool {
 				controlPoints: this.controlPoints,
 			} /* init params */,
 		);
+
 		this.deactivate();
 	}
 }

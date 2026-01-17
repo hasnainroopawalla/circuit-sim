@@ -1,6 +1,7 @@
 import type { CompositeChipSpec } from "../../entities/chips";
 import { ChipNotFoundError } from "../../errors/chip-not-found-error";
 import { type Blueprint, BlueprintUtils } from "../blueprint-service";
+import { ColorService } from "../color-service";
 import type { ChipDefinition } from "./chip-library-service";
 
 export type CompositeChipName = string;
@@ -28,6 +29,7 @@ export class CompositeChipRegistry {
 				definition,
 				inputPins,
 				outputPins,
+				color: ColorService.generateChipColor(),
 			});
 		});
 	}

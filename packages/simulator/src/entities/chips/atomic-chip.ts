@@ -1,3 +1,4 @@
+import { COLORS } from "../../services/color-service";
 import { BaseChip } from "./chip";
 import type {
 	AtomicChipSpec,
@@ -22,6 +23,7 @@ export class AndChip extends AtomicChip {
 		chipType: "atomic",
 		inputPins: [{ name: "in0" }, { name: "in1" }],
 		outputPins: [{ name: "out0" }],
+		color: COLORS.AndGate,
 	};
 
 	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
@@ -42,6 +44,7 @@ export class OrChip extends AtomicChip {
 		chipType: "atomic",
 		inputPins: [{ name: "in0" }, { name: "in1" }],
 		outputPins: [{ name: "out0" }],
+		color: COLORS.OrGate,
 	};
 
 	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {
@@ -62,6 +65,7 @@ export class NotChip extends AtomicChip {
 		chipType: "atomic",
 		inputPins: [{ name: "in0" }],
 		outputPins: [{ name: "out0" }],
+		color: COLORS.NotGate,
 	};
 
 	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {

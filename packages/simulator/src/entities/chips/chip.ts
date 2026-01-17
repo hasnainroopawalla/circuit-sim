@@ -48,7 +48,7 @@ export abstract class BaseChip<
 		this.parentCompositeId = opts?.parentCompositeId || "";
 
 		this.renderState = {
-			color: chipInitParams.color,
+			color: chipSpec.color,
 			position: chipInitParams.position,
 		};
 

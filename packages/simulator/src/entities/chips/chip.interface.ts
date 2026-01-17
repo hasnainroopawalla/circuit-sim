@@ -13,14 +13,15 @@ export type Chip = IOChip | AtomicChip | CompositeChip;
 export type IOChipType = "input" | "output";
 export type IOChip = InputChip | OutputChip;
 
-export type ChipRenderState = ChipInitParams;
+export type ChipRenderState = ChipInitParams & {
+	color: ColorRGBA;
+};
 
 export type EntitySpawnOptions = {
 	parentCompositeId?: string;
 };
 
 export type ChipInitParams = {
-	color: ColorRGBA;
 	position: Position;
 };
 
@@ -28,6 +29,7 @@ type BaseChipSpec<TChipType extends ChipType> = {
 	chipType: TChipType;
 	inputPins: PinSpec[];
 	outputPins: PinSpec[];
+	color: ColorRGBA;
 };
 
 type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {

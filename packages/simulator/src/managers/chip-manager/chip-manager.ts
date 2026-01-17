@@ -68,7 +68,7 @@ export class ChipManager extends BaseManager {
 
 	public spawnChip<T extends ChipFactory>(
 		chipFactory: T,
-		chipInitParams: ChipInitParams,
+		chipInitParams: Pick<ChipInitParams, "position">,
 		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		const chip = this.createChip(chipFactory, chipInitParams, opts);

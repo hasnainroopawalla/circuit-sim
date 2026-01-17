@@ -35,7 +35,6 @@ export class SpawnChipTool extends Tool {
 		this.chipFactory = args.chipFactory;
 
 		this.ghostChip = new GhostChip(this.getPinCount(args.chipFactory), {
-			color: COLORS.Ghost,
 			position: args.mousePositionService.getMousePosition().world,
 		});
 	}
@@ -108,14 +107,14 @@ export class SpawnChipTool extends Tool {
 
 	private handleLeftMouseButtonClick(): void {
 		// TODO: Generate color
-		const chipColor = { r: 0.27, g: 0.35, b: 0.7, a: 1.0 };
-		const chipPosition = this.ghostChip.renderState.position;
+		// const chipColor = ColorService.generateChipColor();
+		// const chipColor = { r: 0.97, g: 0.35, b: 0.7, a: 1.0 };
 
 		this.sim.chipManager.spawnChip(
 			this.chipFactory,
 			{
-				color: chipColor,
-				position: chipPosition,
+				// color: chipColor,
+				position: this.ghostChip.renderState.position,
 			} /* init params */,
 		);
 
