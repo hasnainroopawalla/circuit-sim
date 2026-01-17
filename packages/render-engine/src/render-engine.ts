@@ -20,6 +20,10 @@ import { ChipRenderer } from "./render-engine.chip";
 import { WireRenderer } from "./render-engine.wire";
 import { GridRenderer } from "./render-engine.grid";
 
+import type { Settings } from "@digital-logic-sim/shared-types";
+
+export type SettingsContext = { get: () => Settings };
+
 export class RenderEngine {
 	private device!: GPUDevice;
 	private bindGroupManager!: BindGroupManager;
@@ -37,10 +41,14 @@ export class RenderEngine {
 	private wireRenderer: WireRenderer;
 	private gridRenderer: GridRenderer;
 
+	private settingsCtx: SettingsContext;
+
 	constructor(args: {
 		gpuCanvasContext: GPUCanvasContext;
+		settingsCtx: SettingsContext;
 	}) {
 		this.gpuCanvasContext = args.gpuCanvasContext;
+		this.settingsCtx = args.settingsCtx;
 
 		// renderers
 		this.chipRenderer = new ChipRenderer(this);
@@ -90,6 +98,8 @@ export class RenderEngine {
 		renderables: Renderable[],
 		cameraProjectionData: CameraProjectionData,
 	): void {
+		const settings = this.settingsCtx.get();
+
 		const { chips, wires } = this.partitionRenderables(renderables);
 		this.uploadCamera(cameraProjectionData);
 
@@ -100,14 +110,15 @@ export class RenderEngine {
 		this.clearScreen(commandEncoder);
 
 		// renderers
-		// this.gridRenderer.render(commandEncoder);
+
+		if (settings.showGrid) {
+			this.gridRenderer.render(commandEncoder);
+		}
+
 		this.chipRenderer.render(commandEncoder, chips);
 		this.wireRenderer.render(commandEncoder, wires);
 
 		this.device.queue.submit([commandEncoder.finish()]);
-		// const t0 = performance.now();
-		// await this.device.queue.onSubmittedWorkDone();
-		// console.log("GPU time:", performance.now() - t0);
 	}
 
 	public async onResize(width: number, height: number): Promise<void> {

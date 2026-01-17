@@ -1,40 +1,35 @@
-import type * as React from "react";
+import * as React from "react";
 import { useDialog } from "./dialog";
+import { useSettings } from "../contexts/settings-context";
+import type { Settings } from "@digital-logic-sim/shared-types";
+import { twMerge } from "tailwind-merge";
 
-type SettingsDialogProps = {
-	showGrid: boolean;
-	setShowGrid: (v: boolean) => void;
+export type SettingsDialogProps = {};
 
-	showPinLabels: boolean;
-	setShowPinLabels: (v: boolean) => void;
-
-	snapToGrid: boolean;
-	setSnapToGrid: (v: boolean) => void;
-};
-
-export const SettingsDialog: React.FC<SettingsDialogProps> = ({
-	showGrid,
-	setShowGrid,
-	showPinLabels,
-	setShowPinLabels,
-	snapToGrid,
-	setSnapToGrid,
-}) => {
+export const SettingsDialog: React.FC<SettingsDialogProps> = () => {
 	const { closeDialog } = useDialog();
+
+	const { getSettings, updateSettings } = useSettings();
+
+	const [settings, setSettings] = React.useState<Settings>(() => getSettings());
+
+	const toggleSetting = React.useCallback((key: keyof Settings) => {
+		setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
+	}, []);
+
+	const onSave = React.useCallback(() => {
+		updateSettings(settings);
+		closeDialog();
+	}, [settings, updateSettings, closeDialog]);
+
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="flex flex-col gap-4">
 			<div className="space-y-4">
 				<SettingsSection title="Visualization">
 					<SettingRow
 						label="Show grid"
-						value={showGrid}
-						onToggle={() => setShowGrid(!showGrid)}
-					/>
-
-					<SettingRow
-						label="Show pin labels"
-						value={showPinLabels}
-						onToggle={() => setShowPinLabels(!showPinLabels)}
+						value={settings.showGrid}
+						onToggle={() => toggleSetting("showGrid")}
 					/>
 				</SettingsSection>
 			</div>
@@ -44,7 +39,13 @@ export const SettingsDialog: React.FC<SettingsDialogProps> = ({
 					onClick={closeDialog}
 					className="cursor-pointer rounded px-3 py-1.5 text-sm text-gray-300 hover:bg-gray-700"
 				>
-					Confirm
+					Cancel
+				</button>
+				<button
+					onClick={onSave}
+					className="cursor-pointer rounded bg-blue-600 px-3 py-1.5 text-sm text-white hover:bg-blue-500"
+				>
+					Save
 				</button>
 			</div>
 		</div>
@@ -71,19 +72,21 @@ const SettingRow: React.FC<{
 	return (
 		<div
 			onClick={onToggle}
-			className="flex cursor-pointer items-center justify-between rounded px-2 py-1.5 hover:bg-white/5"
+			className="flex items-center justify-between rounded px-2 py-1.5 hover:bg-white/5"
 		>
 			<span className="text-sm text-gray-200">{label}</span>
 
 			<div
-				className={`h-5 w-9 rounded-full transition-colors ${
-					value ? "bg-blue-600" : "bg-gray-600"
-				}`}
+				className={twMerge(
+					"h-5 w-9 rounded-full transition-colors cursor-pointer",
+					value ? "bg-blue-600" : "bg-gray-600",
+				)}
 			>
 				<div
-					className={`h-5 w-5 rounded-full bg-white transition-transform ${
-						value ? "translate-x-4" : "translate-x-0"
-					}`}
+					className={twMerge(
+						"h-5 w-5 rounded-full bg-white transition-transform",
+						value ? "translate-x-4" : "translate-x-0",
+					)}
 				/>
 			</div>
 		</div>

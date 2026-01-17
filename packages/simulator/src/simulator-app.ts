@@ -12,12 +12,14 @@ import { InputManager } from "./managers/input-manager";
 
 // services
 import { MousePositionService } from "./services/mouse-position-service";
+import { SettingsService } from "./services/settings-service";
 
 type SimulatorAppArgs = { canvas: HTMLCanvasElement };
 
 export class SimulatorApp {
 	public sim: Simulator;
 	public overlayManager: OverlayManager;
+	public settingsService: SettingsService;
 
 	private clock: Clock;
 
@@ -42,11 +44,14 @@ export class SimulatorApp {
 
 		this.inputManager = new InputManager({ canvas: args.canvas });
 
+		this.sim = new Simulator();
+
+		this.settingsService = new SettingsService(this.sim);
+
 		this.renderEngine = new RenderEngine({
 			gpuCanvasContext: args.canvas.getContext("webgpu"),
+			settingsCtx: { get: () => this.settingsService.get() },
 		});
-
-		this.sim = new Simulator();
 
 		this.camera = new Camera({ canvas: args.canvas });
 

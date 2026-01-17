@@ -48,7 +48,7 @@ export const getCurrentPanelProps = (
 		case "settings":
 			return {
 				title: "Settings",
-				Component: <SettingsDialog {...props} />,
+				Component: <SettingsDialog />,
 			};
 		default:
 			return {

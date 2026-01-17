@@ -7,7 +7,8 @@ import { SimulatorAppProvider } from "../contexts/simulator-app-context";
 import { useStateRef } from "../utils";
 import { Dialog, DialogProvider } from "./dialog";
 import { WebGpuErrorBanner } from "./webgpu-error-banner";
-import { config } from "../config";
+import { Footer } from "./footer";
+import { SettingsProvider } from "../contexts/settings-context";
 
 const App: React.FC = () => {
 	const [simulatorApp, setSimulatorApp] = React.useState<SimulatorApp | null>(
@@ -36,9 +37,11 @@ const App: React.FC = () => {
 
 			{simulatorApp && (
 				<SimulatorAppProvider simulatorApp={simulatorApp}>
-					<Toolbar />
-					<SimulatorOverlayView />
-					<Dialog />
+					<SettingsProvider>
+						<Toolbar />
+						<SimulatorOverlayView />
+						<Dialog />
+					</SettingsProvider>
 				</SimulatorAppProvider>
 			)}
 		</>
@@ -49,18 +52,7 @@ export const ContextualApp: React.FC = () => {
 	return (
 		<DialogProvider>
 			<App />
-			<div className="pointer-events-none fixed bottom-0 right-0 flex justify-center p-1">
-				<div className="pointer-events-auto rounded bg-black/40 px-3 py-1 text-xs text-gray-300 backdrop-blur">
-					<a
-						href={config.githubRepoUrl}
-						target="_blank"
-						rel="noreferrer"
-						className="hover:text-white transition-colors"
-					>
-						GitHub
-					</a>
-				</div>
-			</div>
+			<Footer />
 		</DialogProvider>
 	);
 };
