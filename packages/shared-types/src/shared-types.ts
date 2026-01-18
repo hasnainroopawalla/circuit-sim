@@ -3,7 +3,7 @@ export type Position = {
 	y: number;
 };
 
-export type RectDimensions = {
+export type RectDimension = {
 	height: number;
 	width: number;
 };

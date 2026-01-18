@@ -150,16 +150,16 @@ export class Camera {
 		};
 	}
 
-	public resetCamera(position?: Position){
-		if(position){
+	public resetCamera(position?: Position) {
+		if (position) {
 			this.eye = new Float32Array([position.x, position.y, -5]);
 			return;
 		}
 		this.eye = new Float32Array([0, 0, -5]);
 	}
 
-	public getCameraPosition(): Position{
-		return	{x:this.eye[0],y:this.eye[1]}; 
+	public getCameraPosition(): Position {
+		return { x: this.eye[0], y: this.eye[1] };
 	}
 
 	public onResize(width: number, height: number): void {

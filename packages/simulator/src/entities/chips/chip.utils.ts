@@ -1,5 +1,5 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
-import type { Position, RectDimensions } from "@digital-logic-sim/shared-types";
+import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 
 export type ChipMetadata = {
 	numInputPins: number;
@@ -10,7 +10,7 @@ export const ChipUtils = {
 	getPinOffsets: (
 		chipMetadata: ChipMetadata,
 		position: Position,
-		dimensions: RectDimensions,
+		dimensions: RectDimension,
 	) => {
 		const [numInputPins, numOutputPins] = [
 			chipMetadata.numInputPins,

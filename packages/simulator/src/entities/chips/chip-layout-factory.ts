@@ -2,20 +2,20 @@ import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { PinType } from "../pin";
 import type { Chip } from "./chip.interface";
 import { type ChipMetadata, ChipUtils } from "./chip.utils";
-import type { RectDimensions, Position } from "@digital-logic-sim/shared-types";
+import type { RectDimension, Position } from "@digital-logic-sim/shared-types";
 
 const chipLayoutConfig = {
 	aspectRatio: 1.5,
 };
 
 export interface ChipLayout {
-	dimensions: RectDimensions;
+	dimensions: RectDimension;
 	getPinOffset(pinType: PinType): Position;
 	getPinPosition(pinIdx: number, pinType: PinType): Position;
 }
 
 export class ChipLayoutFactory implements ChipLayout {
-	public dimensions: RectDimensions;
+	public dimensions: RectDimension;
 
 	constructor(
 		private readonly chipRenderState: Chip["renderState"],
@@ -74,7 +74,7 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 }
 
-const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimensions => {
+const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
 	const [numInputPins, numOutputPins] = [
 		chipMetadata.numInputPins,
 		chipMetadata.numOutputPins,

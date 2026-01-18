@@ -1,8 +1,10 @@
-import type { Position } from "@digital-logic-sim/shared-types";
+import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 import type { Camera } from "../camera";
 import type { Entity } from "../entities/entity";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
+import { MeshUtils } from "../mesh-utils";
+import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 
 type OverlayManagerArgs = {
 	camera: Camera;
@@ -74,7 +76,8 @@ export class OverlayManager extends BaseManager {
 
 	private updateHoverElements(hoveredEntity: Entity): void {
 		if (hoveredEntity.entityType === "pin") {
-			const screenSpacePosition = this.camera.toScreenSpacePosition(
+			const pinWorldPosition = hoveredEntity.getPosition();
+			const pinScreenSpacePosition = this.camera.toScreenSpacePosition(
 				hoveredEntity.getPosition(),
 			);
 
@@ -84,12 +87,12 @@ export class OverlayManager extends BaseManager {
 				return;
 			}
 
-			screenSpacePosition.x =
-				hoveredEntity.pinType === "in"
-					? screenSpacePosition.x - 35
-					: screenSpacePosition.x + 32;
+			// pinScreenSpacePosition.x =
+			// 	hoveredEntity.pinType === "in"
+			// 		? pinScreenSpacePosition.x - 35
+			// 		: pinScreenSpacePosition.x + 32;
 
-			this.showElement(element, screenSpacePosition);
+			this.showPinLabel(pinWorldPosition, pinScreenSpacePosition, element);
 		}
 	}
 
@@ -101,18 +104,24 @@ export class OverlayManager extends BaseManager {
 				continue;
 			}
 
-			const screenSpacePosition = this.camera.toScreenSpacePosition(
-				chip.getRenderState().position,
-			);
+			const { position: chipWorldPosition } = chip.getRenderState();
+
+			const chipScreenSpacePosition =
+				this.camera.toScreenSpacePosition(chipWorldPosition);
 
 			const isVisible =
-				screenSpacePosition.x >= 0 &&
-				screenSpacePosition.x <= this.canvas.width &&
-				screenSpacePosition.y >= 0 &&
-				screenSpacePosition.y <= this.canvas.height;
+				chipScreenSpacePosition.x >= 0 &&
+				chipScreenSpacePosition.x <= this.canvas.width &&
+				chipScreenSpacePosition.y >= 0 &&
+				chipScreenSpacePosition.y <= this.canvas.height;
 
 			if (isVisible) {
-				this.showElement(element, screenSpacePosition);
+				this.showChipLabel(
+					chipWorldPosition,
+					chipScreenSpacePosition,
+					chip.layout.dimensions,
+					element,
+				);
 			} else {
 				this.hideElement(element);
 			}
@@ -125,16 +134,94 @@ export class OverlayManager extends BaseManager {
 		});
 	}
 
-	private showElement(
-		element: HTMLElement,
+	private showPinLabel(
+		worldPosition: Position,
 		screenSpacePosition: Position,
-	): void {
+		element: HTMLElement,
+	) {
+		const worldSpaceBoundingBox = MeshUtils.getWorldSpaceBoundingBox(
+			worldPosition,
+			{
+				width: renderEngineConfig.pinSize,
+				height: renderEngineConfig.pinSize,
+			},
+		);
+
+		const { width, height } = this.getDimensionsInScreenSpace(
+			worldSpaceBoundingBox.minPosition,
+			worldSpaceBoundingBox.maxPosition,
+		);
+
+		element.style.height = `${height}px`;
+
+		element.style.fontSize = `${height * 0.6}px`;
+
+		// TODO: add offset here
 		element.style.left = `${screenSpacePosition.x}px`;
 		element.style.top = `${screenSpacePosition.y}px`;
-		element.style.display = "block";
+		element.style.display = "flex";
+	}
+
+	private showChipLabel(
+		worldPosition: Position,
+		screenSpacePosition: Position,
+		entityDimension: RectDimension,
+		element: HTMLElement,
+	): void {
+		const worldSpaceBoundingBox = MeshUtils.getWorldSpaceBoundingBox(
+			worldPosition,
+			entityDimension,
+		);
+
+		const boundingBoxWithOffset = {
+			minPosition: {
+				x: worldSpaceBoundingBox.minPosition.x + renderEngineConfig.pinSize,
+				y: worldSpaceBoundingBox.minPosition.y + renderEngineConfig.pinSize,
+			},
+			maxPosition: {
+				x: worldSpaceBoundingBox.maxPosition.x - renderEngineConfig.pinSize,
+				y: worldSpaceBoundingBox.maxPosition.y - renderEngineConfig.pinSize,
+			},
+		};
+
+		const { width, height } = this.getDimensionsInScreenSpace(
+			boundingBoxWithOffset.minPosition,
+			boundingBoxWithOffset.maxPosition,
+		);
+
+		element.style.width = `${width}px`;
+		element.style.height = `${height}px`;
+
+		element.style.fontSize = `${height * 0.8}px`;
+
+		element.style.left = `${screenSpacePosition.x}px`;
+		element.style.top = `${screenSpacePosition.y}px`;
+		element.style.display = "flex";
 	}
 
 	private hideElement(element: HTMLElement): void {
 		element.style.display = "none";
+	}
+
+	private getDimensionsInScreenSpace(
+		minPosition: Position,
+		maxPosition: Position,
+	): RectDimension {
+		const { x: screenSpaceMinX, y: screenSpaceMinY } =
+			this.camera.toScreenSpacePosition({
+				x: minPosition.x,
+				y: minPosition.y,
+			});
+
+		const { x: screenSpaceMaxX, y: screenSpaceMaxY } =
+			this.camera.toScreenSpacePosition({
+				x: maxPosition.x,
+				y: maxPosition.y,
+			});
+
+		const width = Math.abs(screenSpaceMaxX - screenSpaceMinX);
+		const height = Math.abs(screenSpaceMaxY - screenSpaceMinY);
+
+		return { width, height };
 	}
 }

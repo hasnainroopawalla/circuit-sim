@@ -1,5 +1,5 @@
 export const COLORS = {
-	AndGate: { r: 0.18, g: 0.55, b: 0.38, a: 1.0 },
+	AndGate: { r: 0.38, g: 0.65, b: 0.18, a: 1.0 },
 	OrGate: { r: 0.72, g: 0.46, b: 0.18, a: 1.0 },
 	NotGate: { r: 0.85, g: 0.4, b: 0.4, a: 1.0 },
 	Ghost: { r: 0.59, g: 0.59, b: 0.59, a: 0.7 },

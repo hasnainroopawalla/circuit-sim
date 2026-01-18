@@ -2,7 +2,7 @@ import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { Entity } from "./entities/entity";
 import { ChipUtils, type Chip } from "./entities/chips";
 import type { Pin } from "./entities/pin";
-import type { Position } from "@digital-logic-sim/shared-types";
+import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 
 export const MeshUtils = {
 	getHoveredChipEntity: (
@@ -16,13 +16,15 @@ export const MeshUtils = {
 				chip.layout.dimensions.width,
 			];
 
+			const { position: chipPosition } = chip.getRenderState();
+
 			const isMouseOverChip =
 				mouseWorldPosition.x >
-					chip.renderState.position.x - width - renderEngineConfig.pinSize &&
+					chipPosition.x - width - renderEngineConfig.pinSize &&
 				mouseWorldPosition.x <
-					chip.renderState.position.x + width + renderEngineConfig.pinSize &&
-				mouseWorldPosition.y > chip.renderState.position.y - height &&
-				mouseWorldPosition.y < chip.renderState.position.y + height;
+					chipPosition.x + width + renderEngineConfig.pinSize &&
+				mouseWorldPosition.y > chipPosition.y - height &&
+				mouseWorldPosition.y < chipPosition.y + height;
 
 			if (!isMouseOverChip) {
 				continue;
@@ -38,24 +40,44 @@ export const MeshUtils = {
 		}
 		return null;
 	},
+
+	getWorldSpaceBoundingBox: (
+		entityPosition: Position,
+		entityDimension: RectDimension,
+	): {
+		minPosition: Position;
+		maxPosition: Position;
+	} => {
+		return {
+			minPosition: {
+				x: entityPosition.x - entityDimension.width,
+				y: entityPosition.y - entityDimension.height,
+			},
+			maxPosition: {
+				x: entityPosition.x + entityDimension.width,
+				y: entityPosition.y + entityDimension.height,
+			},
+		};
+	},
 };
 
 function getPinUnderMouse(
 	chip: Chip,
 	mouseWorldPosition: Position,
 ): Pin | null {
+	const { position: chipPosition } = chip.getRenderState();
 	const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
 		{
 			numInputPins: chip.spec.inputPins.length,
 			numOutputPins: chip.spec.outputPins.length,
 		},
-		chip.renderState.position,
+		chipPosition,
 		chip.layout.dimensions,
 	);
 
 	const boundingRadiusSq = 2 * renderEngineConfig.pinSize ** 2;
 
-	const isInputSide = mouseWorldPosition.x > chip.renderState.position.x;
+	const isInputSide = mouseWorldPosition.x > chipPosition.x;
 
 	const pins = isInputSide ? chip.inputPins : chip.outputPins;
 	const offset = isInputSide ? inputPinOffset : outputPinOffset;

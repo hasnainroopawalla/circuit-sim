@@ -1,7 +1,7 @@
 import type {
 	ColorRGBA,
 	Position,
-	RectDimensions,
+	RectDimension,
 } from "@digital-logic-sim/shared-types";
 
 type RenderableType = "chip" | "wire" | "pin";
@@ -19,7 +19,7 @@ export type PinRenderable = BaseRenderable<"pin"> & {
 export type ChipRenderable = BaseRenderable<"chip"> & {
 	label: string;
 	position: Position;
-	dimensions: RectDimensions;
+	dimensions: RectDimension;
 	inputPins: PinRenderable[];
 	outputPins: PinRenderable[];
 };

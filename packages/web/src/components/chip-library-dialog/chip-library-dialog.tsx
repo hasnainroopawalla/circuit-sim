@@ -59,7 +59,7 @@ export const ChipLibraryDialog: React.FC<ChipLibraryDialogProps> = () => {
 				className="w-full px-4 py-3 text-sm text-white border-b outline-none rounded-t-xl border-white/10bg-transparent placeholder:text-white/40"
 			/>
 
-			<ul className="py-2 overflow-y-auto max-h-60">
+			<ul className="py-2 overflow-y-auto max-h-60 select-none">
 				{filteredChips.length === 0 && (
 					<li className="px-4 py-2 text-sm text-white/40">No results found</li>
 				)}
@@ -101,10 +101,11 @@ const ChipLibraryItem: React.FC<ChipLibraryItemProps> = ({
 	);
 
 	return (
-		<li className="flex items-center justify-between px-4 py-2 text-sm cursor-pointer text-white/90 hover:bg-white/10">
-			<span onClick={onSelect} className="flex-1">
-				{defintion.name}
-			</span>
+		<li
+			className="flex items-center justify-between px-4 py-2 text-sm cursor-pointer text-white/90 hover:bg-white/10"
+			onClick={onSelect}
+		>
+			<span className="flex-1">{defintion.name}</span>
 
 			<div className="flex gap-2">
 				<button
