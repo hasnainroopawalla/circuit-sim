@@ -89,23 +89,6 @@ export class LayoutManager {
 			}),
 			0,
 		);
-
-		// this.activeLayers = OrderedMap.from({
-		// 	Interaction: new InteractionLayer({
-		// 		...args,
-		// 		mousePositionService: args.mousePositionService,
-		// 	}),
-		// 	Simulation: new SimulationLayer({
-		// 		...args,
-		// 		camera: args.camera,
-		// 	}),
-		// 	Overlay: new OverlayLayer({
-		// 		...args,
-		// 		camera: args.camera,
-		// 	}),
-		// });
-
-		// this.suspendedLayers = OrderedMap.from({});
 	}
 
 	public getRenderables(): Renderable[] {
