@@ -24,18 +24,6 @@ export function ObjectKeys<T extends object>(obj: T) {
 	return Object.keys(obj) as Array<keyof T>;
 }
 
-export function orderedMapSome<T>(
-	orderedmap: OrderedMap<T>,
-	fn: (value: T) => boolean,
-) {
-	orderedmap.forEach((_key, value) => {
-		const handled = fn(value);
-		if (handled) {
-			return;
-		}
-	});
-}
-
 export function randomInRange(min: number, max: number): number {
 	return Math.random() * (max - min) + min;
 }

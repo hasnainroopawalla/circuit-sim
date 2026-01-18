@@ -15,11 +15,9 @@ import { CompositeLayer } from "./composite-layer";
 import type { Simulator } from "../simulator";
 import type { Position } from "@digital-logic-sim/shared-types";
 import { OverlayLayer } from "./overlay-layer";
-import OrderedMap from "orderedmap";
-import { orderedMapSome } from "../utils";
 import { LayerType } from "./layout.interface";
-import type { BaseLayer } from "./base-layer";
 import { LayerUtils } from "./layer.utils";
+import { LayerStack } from "./layer-stack";
 
 type LayoutManagerArgs = {
 	sim: Simulator;
@@ -50,8 +48,10 @@ export class LayoutManager {
 	private hoveredEntity: Entity | null;
 	private state: StateArgs;
 
-	private activeLayers: OrderedMap<BaseLayer<LayerType>>;
-	private suspendedLayers: OrderedMap<BaseLayer<LayerType>>;
+	private layerStack: LayerStack;
+
+	// private activeLayers: OrderedMap<BaseLayer<LayerType>>;
+	// private suspendedLayers: OrderedMap<BaseLayer<LayerType>>;
 
 	constructor(args: LayoutManagerArgs) {
 		this.state = {
@@ -63,28 +63,55 @@ export class LayoutManager {
 
 		this.hoveredEntity = null;
 
-		this.activeLayers = OrderedMap.from({
-			Interaction: new InteractionLayer({
+		this.layerStack = new LayerStack();
+
+		this.layerStack.register(
+			LayerType.Interaction,
+			new InteractionLayer({
 				...args,
 				mousePositionService: args.mousePositionService,
 			}),
-			Simulation: new SimulationLayer({
+			2,
+		);
+		this.layerStack.register(
+			LayerType.Simulation,
+			new SimulationLayer({
 				...args,
 				camera: args.camera,
 			}),
-			Overlay: new OverlayLayer({
+			1,
+		);
+		this.layerStack.register(
+			LayerType.Overlay,
+			new OverlayLayer({
 				...args,
 				camera: args.camera,
 			}),
-		});
+			0,
+		);
 
-		this.suspendedLayers = OrderedMap.from({});
+		// this.activeLayers = OrderedMap.from({
+		// 	Interaction: new InteractionLayer({
+		// 		...args,
+		// 		mousePositionService: args.mousePositionService,
+		// 	}),
+		// 	Simulation: new SimulationLayer({
+		// 		...args,
+		// 		camera: args.camera,
+		// 	}),
+		// 	Overlay: new OverlayLayer({
+		// 		...args,
+		// 		camera: args.camera,
+		// 	}),
+		// });
+
+		// this.suspendedLayers = OrderedMap.from({});
 	}
 
 	public getRenderables(): Renderable[] {
 		let renderables: Renderable[] = [];
 
-		this.activeLayers.forEach((_layerName, layer) => {
+		this.layerStack.getActiveLayers().forEach((layer) => {
 			renderables = [...renderables, ...layer.getRenderables(renderables)];
 		});
 
@@ -101,32 +128,36 @@ export class LayoutManager {
 		nature: ButtonEvent,
 		mousePosition: MousePosition,
 	): void {
-		orderedMapSome(this.activeLayers, (layer) =>
-			layer.onMouseButtonEvent(
-				event,
-				nature,
-				mousePosition,
-				this.hoveredEntity,
-			),
-		);
+		this.layerStack
+			.getActiveLayers()
+			.some((layer) =>
+				layer.onMouseButtonEvent(
+					event,
+					nature,
+					mousePosition,
+					this.hoveredEntity,
+				),
+			);
 	}
 
 	public onMouseMoveEvent(mousePosition: MousePosition): void {
-		orderedMapSome(this.activeLayers, (layer) =>
-			layer.onMouseMoveEvent(mousePosition, this.hoveredEntity),
-		);
+		this.layerStack
+			.getActiveLayers()
+			.some((layer) =>
+				layer.onMouseMoveEvent(mousePosition, this.hoveredEntity),
+			);
 	}
 
 	public onMouseScrollEvent(event: MouseScrollType): void {
-		orderedMapSome(this.activeLayers, (layer) =>
-			layer.onMouseScrollEvent(event),
-		);
+		this.layerStack
+			.getActiveLayers()
+			.some((layer) => layer.onMouseScrollEvent(event));
 	}
 
 	public onKeyboardEvent(event: KeyboardButtonType, nature: ButtonEvent): void {
-		orderedMapSome(this.activeLayers, (layer) =>
-			layer.onKeyboardEvent(event, nature),
-		);
+		this.layerStack
+			.getActiveLayers()
+			.some((layer) => layer.onKeyboardEvent(event, nature));
 	}
 
 	public transitionState(): void {
@@ -147,7 +178,7 @@ export class LayoutManager {
 	}
 
 	public notificationFromLayers() {
-		this.activeLayers.forEach((_layerName, layer) => {
+		this.layerStack.getActiveLayers().forEach((layer) => {
 			switch (this.state.kind) {
 				case State.Workbench:
 					{
@@ -168,22 +199,13 @@ export class LayoutManager {
 	}
 
 	private transitionToWorkbenchState(cameraPosition: Position): void {
-		this.activeLayers = this.activeLayers.remove("Composite");
-		const simulationLayer = this.suspendedLayers.get("Simulation");
-		this.suspendedLayers = this.suspendedLayers.remove("Simulation");
-		if (simulationLayer !== undefined) {
-			this.activeLayers = this.activeLayers.prepend({
-				Simulation: simulationLayer,
-			});
-		}
-		const interactionLayer = this.suspendedLayers.get("Interaction");
-		this.suspendedLayers = this.suspendedLayers.remove("Interaction");
-		if (interactionLayer) {
-			this.activeLayers = this.activeLayers.prepend({
-				Interaction: interactionLayer,
-			});
-		}
+		this.layerStack.deactivate(LayerType.Composite);
+
+		this.layerStack.activate(LayerType.Simulation);
+		this.layerStack.activate(LayerType.Interaction);
+
 		this.camera.resetCamera(cameraPosition);
+
 		this.state = {
 			kind: State.Workbench,
 			args: { compositeSelected: "" },
@@ -191,28 +213,18 @@ export class LayoutManager {
 	}
 
 	private transitionToPreviewState(compositeId: string): void {
-		const simulationLayer = this.activeLayers.get("Simulation");
-		this.activeLayers = this.activeLayers.remove("Simulation");
-		if (simulationLayer) {
-			this.suspendedLayers = this.suspendedLayers.append({
-				Simulation: simulationLayer,
-			});
-		}
-		const interactionLayer = this.activeLayers.get("Interaction");
-		this.activeLayers = this.activeLayers.remove("Interaction");
-		if (interactionLayer) {
-			this.suspendedLayers.append({ Interaction: interactionLayer });
-		}
-		const compositeArgs = {
-			sim: this.sim,
-			layerType: LayerType.Composite,
-			camera: this.camera,
-			compositeId,
-		};
-		const compositeLayer = new CompositeLayer(compositeArgs);
-		this.activeLayers = this.activeLayers.prepend({
-			Composite: compositeLayer,
-		});
+		this.layerStack.deactivate(LayerType.Simulation);
+		this.layerStack.deactivate(LayerType.Interaction);
+
+		this.layerStack.register(
+			LayerType.Composite,
+			new CompositeLayer({
+				sim: this.sim,
+				camera: this.camera,
+				compositeId,
+			}),
+			4, // TODO: dont hardcode for multiple composite layers
+		);
 
 		this.state = {
 			kind: State.Preview,
@@ -221,6 +233,7 @@ export class LayoutManager {
 				cameraPosition: this.camera.getCameraPosition(),
 			},
 		};
+
 		this.camera.resetCamera();
 	}
 }
