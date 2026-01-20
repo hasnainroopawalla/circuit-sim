@@ -26,10 +26,13 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 		this.selectedCompositeId = "";
 	}
 
-	public getRenderables(): Renderable[] {
+	public getRenderables(
+		_renderables: Renderable[],
+		hoveredEntityId?: string,
+	): Renderable[] {
 		const chipRenderables = this.sim.chipManager
 			.getBoardChips()
-			.map((chip) => LayoutUtils.chipToRenderable(chip));
+			.map((chip) => LayoutUtils.chipToRenderable(chip, hoveredEntityId));
 
 		const wireRenderables: Renderable[] = this.sim.wireManager
 			.getBoardWires()

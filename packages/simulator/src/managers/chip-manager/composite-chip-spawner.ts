@@ -108,9 +108,7 @@ export class CompositeChipSpawner {
 			const ioChip = this.chipManager.spawnChip(
 				ioChipFactory,
 				{
-					color: { r: 1, g: 1, b: 1, a: 1 },
 					position: { x: 10, y: 10 },
-					// externalPinLabel,
 				},
 				{ parentCompositeId: compositeChip.id },
 			);
@@ -144,7 +142,6 @@ export class CompositeChipSpawner {
 				this.wireManager.spawnWire(
 					wireConnection,
 					{
-						color: { r: 1, g: 1, b: 1, a: 1 },
 						controlPoints: [],
 					},
 					{ parentCompositeId: compositeChip.id },

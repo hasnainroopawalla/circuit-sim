@@ -95,7 +95,10 @@ export class LayoutManager {
 		let renderables: Renderable[] = [];
 
 		this.layerStack.getActiveLayers().forEach((layer) => {
-			renderables = [...renderables, ...layer.getRenderables(renderables)];
+			renderables = [
+				...renderables,
+				...layer.getRenderables(renderables, this.hoveredEntity?.id),
+			];
 		});
 
 		return renderables;

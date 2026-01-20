@@ -27,7 +27,10 @@ export abstract class BaseLayer<TLayerType extends LayerType> {
 		this.layerType = args.layerType;
 	}
 
-	public abstract getRenderables(renderables: Renderable[]): Renderable[];
+	public abstract getRenderables(
+		renderables: Renderable[],
+		hoveredEntityId?: string,
+	): Renderable[];
 
 	public abstract onMouseMoveEvent(
 		mousePosition: MousePosition,

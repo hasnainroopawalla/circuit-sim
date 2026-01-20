@@ -4,6 +4,7 @@ import { Clock } from "./clock";
 import { Camera } from "./camera";
 import { MeshUtils } from "./mesh-utils";
 import { ScenarioLoader } from "./scenarios";
+import type { Entity } from "./entities/entity";
 
 // managers
 import { LayoutManager } from "./layouts/layout-manager";
@@ -117,6 +118,8 @@ export class SimulatorApp {
 
 		this.layoutManager.update(hoveredEntity);
 
+		this.updateCursor(hoveredEntity);
+
 		this.renderEngine.render(
 			this.layoutManager.getRenderables(),
 			this.camera.getProjectionData(),
@@ -177,5 +180,13 @@ export class SimulatorApp {
 		this.sim.chipManager.reset();
 		this.sim.wireManager.reset();
 		this.overlayManager.reset();
+	}
+
+	private updateCursor(hoveredEntity: Entity | null): void {
+		if (hoveredEntity) {
+			document.body.style.cursor = "pointer";
+		} else {
+			document.body.style.cursor = "default";
+		}
 	}
 }
