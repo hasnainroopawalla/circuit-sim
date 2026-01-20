@@ -20,13 +20,13 @@ export const PinName: React.FC<PinNameProps> = ({
 			id={`label-${id}`}
 			ref={labelRef}
 			className={twMerge(
-				"text-white text-sm absolute pointer-events-none whitespace-nowrap -translate-y-1/2",
+				"text-white text-sm absolute pointer-events-none whitespace-nowrap -translate-y-1/2 justify-center items-center ",
 				pinType === "in"
 					? "-translate-x-[80%] text-left"
 					: "-translate-x-[20%] ml-1.5 text-left",
 			)}
 		>
-			<span className="bg-black/80 py-1 px-2 backdrop-blur-md shadow-lg">
+			<span className="bg-black/80 px-1 backdrop-blur-md shadow-lg">
 				{name}
 			</span>
 		</div>

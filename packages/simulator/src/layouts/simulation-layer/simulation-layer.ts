@@ -87,7 +87,10 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 		}
 	}
 
-	public onMouseMoveEvent(_mousePosition: MousePosition): boolean {
+	public onMouseMoveEvent(
+		_mousePosition: MousePosition,
+		_hoveredEntity: Entity | null,
+	): boolean {
 		return false;
 	}
 
@@ -146,7 +149,7 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 
 	private handleRightMouseButtonClick(
 		hoveredEntity: Entity | null,
-		mousePosition: MousePosition,
+		_mousePosition: MousePosition,
 	): boolean {
 		if (!hoveredEntity) {
 			return false;

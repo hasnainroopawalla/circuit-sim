@@ -77,20 +77,21 @@ export class OverlayManager extends BaseManager {
 	private updateHoverElements(hoveredEntity: Entity): void {
 		if (hoveredEntity.entityType === "pin") {
 			const pinWorldPosition = hoveredEntity.getPosition();
-			const pinScreenSpacePosition = this.camera.toScreenSpacePosition(
-				hoveredEntity.getPosition(),
-			);
+
+			// add an extra offset between label and pin
+			pinWorldPosition.x =
+				hoveredEntity.pinType === "in"
+					? pinWorldPosition.x + renderEngineConfig.pinSize + 0.1
+					: pinWorldPosition.x - renderEngineConfig.pinSize - 0.08;
+
+			const pinScreenSpacePosition =
+				this.camera.toScreenSpacePosition(pinWorldPosition);
 
 			const element = this.hoverElements.get(hoveredEntity.id);
 
 			if (!element) {
 				return;
 			}
-
-			// pinScreenSpacePosition.x =
-			// 	hoveredEntity.pinType === "in"
-			// 		? pinScreenSpacePosition.x - 35
-			// 		: pinScreenSpacePosition.x + 32;
 
 			this.showPinLabel(pinWorldPosition, pinScreenSpacePosition, element);
 		}
@@ -147,19 +148,15 @@ export class OverlayManager extends BaseManager {
 			},
 		);
 
-		const { width, height } = this.getDimensionsInScreenSpace(
+		const { height } = this.getDimensionsInScreenSpace(
 			worldSpaceBoundingBox.minPosition,
 			worldSpaceBoundingBox.maxPosition,
 		);
 
-		element.style.height = `${height}px`;
-
-		element.style.fontSize = `${height * 0.6}px`;
-
-		// TODO: add offset here
-		element.style.left = `${screenSpacePosition.x}px`;
-		element.style.top = `${screenSpacePosition.y}px`;
-		element.style.display = "flex";
+		this.showElement(element, {
+			height,
+			position: screenSpacePosition,
+		});
 	}
 
 	private showChipLabel(
@@ -189,18 +186,38 @@ export class OverlayManager extends BaseManager {
 			boundingBoxWithOffset.maxPosition,
 		);
 
-		element.style.width = `${width}px`;
-		element.style.height = `${height}px`;
-
-		element.style.fontSize = `${height * 0.8}px`;
-
-		element.style.left = `${screenSpacePosition.x}px`;
-		element.style.top = `${screenSpacePosition.y}px`;
-		element.style.display = "flex";
+		this.showElement(element, {
+			width,
+			height,
+			position: screenSpacePosition,
+		});
 	}
 
 	private hideElement(element: HTMLElement): void {
 		element.style.display = "none";
+	}
+
+	private showElement(
+		element: HTMLElement,
+		props: {
+			position: Position;
+			width?: number;
+			height?: number;
+		},
+	): void {
+		element.style.display = "flex";
+
+		element.style.left = `${props.position.x}px`;
+		element.style.top = `${props.position.y}px`;
+
+		if (props.width) {
+			element.style.width = `${props.width}px`;
+		}
+
+		if (props.height) {
+			element.style.height = `${props.width}px`;
+			element.style.fontSize = `${props.height * 0.7}px`;
+		}
 	}
 
 	private getDimensionsInScreenSpace(
