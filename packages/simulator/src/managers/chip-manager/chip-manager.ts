@@ -84,7 +84,7 @@ export class ChipManager extends BaseManager {
 			this.compositeChipSpawner.spawn(chip);
 		}
 
-		// for inner chips that are within a composite chip,ƒ
+		// for inner chips that are within a composite chip,
 		// we dont need to trigger an overlay update to render labels.
 		if (!opts?.parentCompositeId) {
 			this.sim.emit("chip.spawn.finish", {

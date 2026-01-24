@@ -34,7 +34,7 @@ export class SpawnChipTool extends Tool {
 
 		this.chipFactory = args.chipFactory;
 
-		this.ghostChip = new GhostChip(this.getPinCount(args.chipFactory), {
+		this.ghostChip = new GhostChip(this.getGhostChipSpec(args.chipFactory), {
 			position: args.mousePositionService.getMousePosition().world,
 		});
 	}
@@ -121,7 +121,7 @@ export class SpawnChipTool extends Tool {
 		this.deactivate();
 	}
 
-	private getPinCount(chipFactory: ChipFactory): GhostChipSpec {
+	private getGhostChipSpec(chipFactory: ChipFactory): GhostChipSpec {
 		const chipSpec = ChipLibraryUtils.getChipSpec(chipFactory);
 
 		const { inputPins, outputPins } =
@@ -130,6 +130,7 @@ export class SpawnChipTool extends Tool {
 				: chipSpec;
 
 		return {
+			name: chipSpec.name,
 			numInputPins: inputPins.length,
 			numOutputPins: outputPins.length,
 		};

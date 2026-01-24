@@ -11,9 +11,11 @@ export const ChipName: React.FC<ChipNameProps> = ({ id, labelRef, name }) => {
 		<div
 			id={`label-${id}`}
 			ref={labelRef}
-			className="absolute -translate-x-1/2 -translate-y-1/2 text-white select-none justify-center items-center p-1"
+			className="absolute -translate-x-1/2 -translate-y-1/2 text-white select-none flex items-center justify-center p-1"
 		>
-			<span className="font-mono tracking-wide">{name}</span>
+			<span className="font-mono tracking-wide text-center overflow-hidden text-ellipsis whitespace-nowrap">
+				{name}
+			</span>
 		</div>
 	);
 };

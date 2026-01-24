@@ -2,6 +2,7 @@ import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 
 export type ChipMetadata = {
+	name: string;
 	numInputPins: number;
 	numOutputPins: number;
 };

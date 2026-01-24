@@ -25,27 +25,22 @@ export const SCENARIOS = {
 
 		// INPUT 0
 		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 1.6, y: 1.3 },
 		});
 		// INPUT 1
 		const inputChip1 = sim.chipManager.spawnChip(inputChipFactory, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 1.6, y: 0.8 },
 		});
 		// AND
 		const andChip = sim.chipManager.spawnChip(andChipFactory, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: 0.3, y: 1 },
 		});
 		// NOT
 		const notChip = sim.chipManager.spawnChip(notChipFactory, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: -1, y: 1 },
 		});
 		// OUTPUT 0
 		const outputChip = sim.chipManager.spawnChip(outputChipFactory, {
-			color: { r: 0, g: 0, b: 0, a: 1 },
 			position: { x: -2, y: 1 },
 		});
 		// input 0 to AND in 0

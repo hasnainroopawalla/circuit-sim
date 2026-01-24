@@ -55,6 +55,7 @@ export abstract class BaseChip<
 		this.spec = chipSpec;
 
 		this.layout = new ChipLayoutFactory(this.renderState, {
+			name: this.spec.name,
 			numInputPins: this.spec.inputPins.length,
 			numOutputPins: this.spec.outputPins.length,
 		});

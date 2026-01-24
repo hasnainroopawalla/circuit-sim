@@ -5,6 +5,7 @@ import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
+import { EntityUtils } from "../entities/utils";
 
 type OverlayManagerArgs = {
 	camera: Camera;
@@ -215,7 +216,7 @@ export class OverlayManager extends BaseManager {
 		}
 
 		if (props.height) {
-			element.style.height = `${props.width}px`;
+			element.style.height = `${props.height}px`;
 			element.style.fontSize = `${props.height * 0.7}px`;
 		}
 	}

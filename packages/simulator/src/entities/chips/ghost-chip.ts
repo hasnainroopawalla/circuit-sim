@@ -2,11 +2,9 @@ import { COLORS } from "../../services/color-service";
 import { type ChipLayout, ChipLayoutFactory } from "./chip-layout-factory";
 import type { ChipInitParams, ChipRenderState } from "./chip.interface";
 import type { Position } from "@digital-logic-sim/shared-types";
+import type { ChipMetadata } from "./chip.utils";
 
-export type GhostChipSpec = {
-	numInputPins: number;
-	numOutputPins: number;
-};
+export type GhostChipSpec = ChipMetadata;
 
 export class GhostChip {
 	public spec: GhostChipSpec;

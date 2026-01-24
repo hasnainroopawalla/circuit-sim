@@ -84,7 +84,11 @@ const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
 
 	const height =
 		(maxPins * chipLayoutConfig.aspectRatio + 0.5) * renderEngineConfig.pinSize;
-	const width = chipLayoutConfig.aspectRatio * height;
+
+	// TODO: improve
+	const width =
+		chipMetadata.name.length * 0.1 +
+		chipLayoutConfig.aspectRatio * height * 0.6;
 
 	return {
 		height,
