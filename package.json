@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter @digital-logic-sim/web start",
+    "preview": "pnpm --filter @digital-logic-sim/web preview",
     "build": "pnpm --filter @digital-logic-sim/web build",
     "test:unit": "pnpm -r run test",
     "test": "pnpm -r test",

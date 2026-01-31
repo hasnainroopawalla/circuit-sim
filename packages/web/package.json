@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "tsc -b && vite build",
+    "preview": "pnpm build && vite preview",
+    "build": "vite build",
     "test": "vitest --passWithNoTests"
   },
   "dependencies": {

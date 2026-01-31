@@ -3,7 +3,7 @@
   "compilerOptions": {
     "moduleResolution": "bundler",
     "noEmit": true,
-    "types": ["@webgpu/types", "vite/client", "vitest/globals"]
+    "types": ["vite/client", "vitest/globals"]
   },
   "include": ["src"],
   "exclude": ["dist", "vite.config.ts", "vitest.config.ts"]
