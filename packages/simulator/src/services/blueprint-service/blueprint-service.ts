@@ -218,7 +218,7 @@ export class BlueprintService extends BaseService {
 		});
 
 		return {
-			position: ioChip.getRenderState().position,
+			position: this.normalizePosition(ioChip.getRenderState().position),
 			mappings,
 		};
 	}

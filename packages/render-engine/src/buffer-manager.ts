@@ -1,5 +1,4 @@
 import { renderEngineConfig } from "./render-engine.config";
-import type { Renderable } from "./render-engine.interface";
 
 type BufferManagerProps = { device: GPUDevice };
 
@@ -65,7 +64,7 @@ export class BufferManager {
 		const modelSBO = this.device.createBuffer({
 			label: `models-${this.modelSBOs.length}`,
 			size:
-				(renderEngineConfig.modelFloatSize+auxilaryDataFloatSize) *
+				(renderEngineConfig.modelFloatSize + auxilaryDataFloatSize) *
 				Float32Array.BYTES_PER_ELEMENT *
 				renderEngineConfig.chunkSize,
 			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,

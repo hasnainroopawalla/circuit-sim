@@ -80,9 +80,10 @@ export class SimulatorApp {
 
 		this.scenarioLoader = new ScenarioLoader(this.sim);
 
-		this.scenarioLoader.load("NAND");
-
 		this.registerSubscriptions();
+
+		// TODO: why doesnt this work without a timeout?
+		setTimeout(() => this.scenarioLoader.load("NAND"), 1000);
 	}
 
 	public async start(): Promise<void> {

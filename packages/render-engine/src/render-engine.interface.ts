@@ -5,14 +5,14 @@ import type {
 } from "@digital-logic-sim/shared-types";
 
 export enum ChipRenderableType {
-	Rect,
-	Circle,
+	Rect = "Rect",
+	Circle = "Circle",
 }
 
 export enum RenderableType {
-	Chip,
-	Wire,
-	Pin,
+	Chip = "Chip",
+	Wire = "Wire",
+	Pin = "Pin",
 }
 
 type BaseRenderable<TRenderable extends RenderableType> = {

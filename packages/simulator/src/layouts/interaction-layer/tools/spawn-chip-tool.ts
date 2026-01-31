@@ -3,7 +3,6 @@ import {
 	type Renderable,
 	type PinRenderable,
 	RenderableType,
-	ChipRenderableType,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import { GhostChip, type GhostChipSpec } from "../../../entities/chips";

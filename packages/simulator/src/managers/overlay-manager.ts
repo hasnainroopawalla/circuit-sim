@@ -5,6 +5,7 @@ import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
+import { EntityUtils } from "../entities/utils";
 
 type OverlayManagerArgs = {
 	camera: Camera;
@@ -75,7 +76,7 @@ export class OverlayManager extends BaseManager {
 	}
 
 	private updateHoverElements(hoveredEntity: Entity): void {
-		if (hoveredEntity.entityType === "pin") {
+		if (EntityUtils.isPin(hoveredEntity)) {
 			const pinWorldPosition = hoveredEntity.getPosition();
 
 			// add an extra offset between label and pin

@@ -51,7 +51,7 @@ export class WireRenderer {
 
 	private uploadWireRenderData(wireData: WireRenderable[]): number {
 		const lineModelData = new Float32Array(
-			renderEngineConfig.chunkSize * (renderEngineConfig.modelFloatSize-4),
+			renderEngineConfig.chunkSize * (renderEngineConfig.modelFloatSize - 4),
 		);
 
 		const offset = wireData.reduce((offset, wire) => {

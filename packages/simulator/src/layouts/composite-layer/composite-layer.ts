@@ -1,6 +1,9 @@
 import { BaseLayer } from "../base-layer";
 import type { Camera } from "../../camera";
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import {
+	RenderableType,
+	type Renderable,
+} from "@digital-logic-sim/render-engine";
 import { LayoutUtils } from "../layout.utils";
 import type { Entity } from "../../entities/entity";
 import type { MousePosition } from "../../types";
@@ -43,7 +46,7 @@ export class CompositeLayer extends BaseLayer<LayerType.Composite> {
 			.getInternalWires(this.chipStack[this.top])
 			.map((wire) => {
 				return {
-					type: "wire",
+					type: RenderableType.Wire,
 					color: wire.getRenderState().color,
 					path: wire.getPath(),
 				};

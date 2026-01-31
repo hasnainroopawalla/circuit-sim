@@ -47,7 +47,10 @@ export class BindGroupManager {
 		});
 	}
 
-	public createModelBindGroup(modelSBO: GPUBuffer, auxilaryDataFloatSize: number): void {
+	public createModelBindGroup(
+		modelSBO: GPUBuffer,
+		auxilaryDataFloatSize: number,
+	): void {
 		this.modelBindGroups.push(
 			this.device.createBindGroup({
 				label: "chip", // TODO: dont hardcode chip
