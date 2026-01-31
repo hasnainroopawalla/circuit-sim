@@ -2,15 +2,23 @@
   "compilerOptions": {
     "target": "ES2023",
     "module": "ESNext",
+    "lib": ["ES2023", "DOM"],
     "strict": true,
-    "strictNullChecks": true,
     "esModuleInterop": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "noUnusedLocals": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "jsx": "react-jsx",
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
-  }
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "exclude": [
+    "node_modules",
+    "**/vite.config.ts",
+    "**/vitest.config.ts"
+  ]
 }

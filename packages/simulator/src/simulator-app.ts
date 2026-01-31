@@ -50,8 +50,13 @@ export class SimulatorApp {
 
 		this.settingsService = new SettingsService(this.sim);
 
+		const gpuContext = args.canvas.getContext("webgpu");
+		if (!gpuContext) {
+			throw new Error("Failed to get WebGPU context");
+		}
+
 		this.renderEngine = new RenderEngine({
-			gpuCanvasContext: args.canvas.getContext("webgpu"),
+			gpuCanvasContext: gpuContext,
 			settingsCtx: { get: () => this.settingsService.get() },
 		});
 
