@@ -68,6 +68,8 @@ function getPinUnderMouse(
 	const { position: chipPosition } = chip.getRenderState();
 	const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
 		{
+			name: chip.spec.name,
+			chipType: chip.chipType,
 			numInputPins: chip.spec.inputPins.length,
 			numOutputPins: chip.spec.outputPins.length,
 		},

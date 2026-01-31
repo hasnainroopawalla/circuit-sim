@@ -40,4 +40,16 @@ export const ChipUtils = {
 			},
 		};
 	},
+	getIOPinOffsets: (position: Position, dimensions: RectDimension) => {
+		return {
+			inputPinOffset: {
+				x: position.x + dimensions.width,
+				y: position.y,
+			},
+			outputPinOffset: {
+				x: position.x - dimensions.width,
+				y: position.y,
+			},
+		};
+	},
 };

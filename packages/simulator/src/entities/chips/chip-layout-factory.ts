@@ -21,10 +21,16 @@ export interface ChipLayout {
 export class ChipLayoutFactory implements ChipLayout {
 	public dimensions: RectDimension;
 
+	private chipRenderState: Chip["renderState"];
+	private chipMetadata: ChipMetadata;
+
 	constructor(
-		private readonly chipRenderState: Chip["renderState"],
-		private readonly chipMetadata: ChipMetadata,
+		chipRenderState: Chip["renderState"],
+		chipMetadata: ChipMetadata,
 	) {
+		this.chipRenderState = chipRenderState;
+		this.chipMetadata = chipMetadata;
+
 		switch (chipMetadata.chipType) {
 			case "io":
 				this.dimensions = chipLayoutConfig.ioChipDimensions;
@@ -71,11 +77,17 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 
 	public getPinPosition(pinIdx: number, pinType: PinType): Position {
-		const { inputPinOffset, outputPinOffset } = ChipUtils.getPinOffsets(
-			this.chipMetadata,
-			this.chipRenderState.position,
-			this.dimensions,
-		);
+		const { inputPinOffset, outputPinOffset } =
+			this.chipMetadata.chipType === "io"
+				? ChipUtils.getIOPinOffsets(
+						this.chipRenderState.position,
+						this.dimensions,
+					)
+				: ChipUtils.getPinOffsets(
+						this.chipMetadata,
+						this.chipRenderState.position,
+						this.dimensions,
+					);
 
 		const pinOffset = pinType === "in" ? inputPinOffset : outputPinOffset;
 
