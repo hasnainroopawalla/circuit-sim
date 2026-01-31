@@ -1,7 +1,12 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { PinType } from "../pin";
 import type { Chip } from "./chip.interface";
-import { type ChipMetadata, ChipUtils } from "./chip.utils";
+import {
+	CHIP_LABEL_CONFIG,
+	ChipLabelUtils,
+	type ChipMetadata,
+	ChipUtils,
+} from "./chip.utils";
 import type { RectDimension, Position } from "@digital-logic-sim/shared-types";
 
 const chipLayoutConfig = {
@@ -98,25 +103,27 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 }
 
-// TODO: improve this function and move to a central location
-// that can be shared by the UI and simulator.
 function computeChipDimensions(chipMetadata: ChipMetadata): RectDimension {
-	const [numInputPins, numOutputPins] = [
+	const maxPins = Math.max(
 		chipMetadata.numInputPins,
 		chipMetadata.numOutputPins,
-	];
+	);
 
-	const maxPins = Math.max(numInputPins, numOutputPins);
+	const lines = ChipLabelUtils.splitChipName(chipMetadata.name);
+	const numLines = Math.min(lines.length, CHIP_LABEL_CONFIG.maxLines);
 
 	const height =
-		(maxPins * chipLayoutConfig.aspectRatio + 0.5) * renderEngineConfig.pinSize;
+		(maxPins * chipLayoutConfig.aspectRatio + 0.5) *
+			renderEngineConfig.pinSize +
+		numLines * CHIP_LABEL_CONFIG.lineHeight +
+		CHIP_LABEL_CONFIG.paddingY;
 
-	const width =
-		chipMetadata.name.length * 0.1 +
-		chipLayoutConfig.aspectRatio * height * 0.6;
+	const longestLine = Math.max(...lines.map((l) => l.length));
 
-	return {
-		height,
-		width,
-	};
+	const width = Math.max(
+		CHIP_LABEL_CONFIG.minWidth,
+		longestLine * 0.12 + CHIP_LABEL_CONFIG.paddingX,
+	);
+
+	return { width, height };
 }

@@ -53,3 +53,23 @@ export const ChipUtils = {
 		};
 	},
 };
+
+export const CHIP_LABEL_CONFIG = {
+	maxCharsPerLine: 8,
+	maxLines: 2,
+	lineHeight: 0.03, // world units
+	paddingX: 0.2,
+	paddingY: 0,
+	minWidth: 0.4,
+};
+
+export const ChipLabelUtils = {
+	splitChipName(name: string): string[] {
+		if (name.length <= CHIP_LABEL_CONFIG.maxCharsPerLine) {
+			return [name];
+		}
+
+		const midpoint = Math.ceil(name.length / 2);
+		return [name.slice(0, midpoint), name.slice(midpoint)];
+	},
+};

@@ -6,6 +6,7 @@ import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import { EntityUtils } from "../entities/utils";
+import { ChipLabelUtils } from "../entities/chips";
 
 type OverlayManagerArgs = {
 	camera: Camera;
@@ -119,6 +120,7 @@ export class OverlayManager extends BaseManager {
 
 			if (isVisible) {
 				this.showChipLabel(
+					chip.spec.name,
 					chipWorldPosition,
 					chipScreenSpacePosition,
 					chip.layout.dimensions,
@@ -161,6 +163,7 @@ export class OverlayManager extends BaseManager {
 	}
 
 	private showChipLabel(
+		name: string,
 		worldPosition: Position,
 		screenSpacePosition: Position,
 		entityDimension: RectDimension,
@@ -188,6 +191,7 @@ export class OverlayManager extends BaseManager {
 		);
 
 		this.showElement(element, {
+			numLines: ChipLabelUtils.splitChipName(name).length,
 			width,
 			height,
 			position: screenSpacePosition,
@@ -202,8 +206,9 @@ export class OverlayManager extends BaseManager {
 		element: HTMLElement,
 		props: {
 			position: Position;
+			height: number;
+			numLines?: number;
 			width?: number;
-			height?: number;
 		},
 	): void {
 		element.style.display = "flex";
@@ -215,10 +220,10 @@ export class OverlayManager extends BaseManager {
 			element.style.width = `${props.width}px`;
 		}
 
-		if (props.height) {
-			element.style.height = `${props.height}px`;
-			element.style.fontSize = `${props.height * 0.7}px`;
-		}
+		element.style.height = `${props.height}px`;
+
+		const fontScale = props.numLines && props.numLines > 1 ? 0.5 : 0.7;
+		element.style.fontSize = `${props.height * fontScale}px`;
 	}
 
 	private getDimensionsInScreenSpace(
