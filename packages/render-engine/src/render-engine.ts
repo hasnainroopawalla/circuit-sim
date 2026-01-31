@@ -32,6 +32,7 @@ export class RenderEngine {
 	private pipelineManager!: PipelineManager;
 	private depthTexture!: GPUTexture;
 	private depthView!: GPUTextureView;
+	private colorFormat!: GPUTextureFormat;
 
 	private renderTargetView!: GPUTextureView;
 
@@ -63,13 +64,12 @@ export class RenderEngine {
 		}
 
 		try {
+			this.colorFormat = navigator.gpu.getPreferredCanvasFormat()
 			this.device = await initWebGpu();
-
 			console.log("Device created!");
-
 			this.gpuCanvasContext.configure({
 				device: this.device,
-				format: "bgra8unorm",
+				format: this.colorFormat,
 				alphaMode: "premultiplied",
 			});
 
@@ -130,7 +130,7 @@ export class RenderEngine {
 		this.gpuCanvasContext.unconfigure();
 		this.gpuCanvasContext.configure({
 			device: this.device,
-			format: "bgra8unorm",
+			format: this.colorFormat,
 			alphaMode: "premultiplied",
 		});
 		this.gpuCanvasContext.canvas.width = width;
