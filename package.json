@@ -1,7 +1,7 @@
 {
   "name": "digital-logic-sim",
   "version": "1.0.0",
-  "description": "",
+  "description": "Digital logic gate simulator using React, TypeScript and WebGPU",
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter @digital-logic-sim/web start",
