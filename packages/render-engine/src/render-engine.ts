@@ -191,11 +191,11 @@ export class RenderEngine {
 		};
 
 		this.bufferManager.createVertexBuffer();
-		this.bufferManager.createModelSBO();
-		this.bufferManager.createModelSBO();
+		this.bufferManager.createModelSBO(renderEngineConfig.radiusFloatSize);
+		this.bufferManager.createModelSBO(0);
 
-		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[0]); // TODO: hardcoded to 0?
-		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[1]); // TODO: hardcoded to 1?
+		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[0], renderEngineConfig.radiusFloatSize); // TODO: hardcoded to 0?
+		this.bindGroupManager.createModelBindGroup(this.bufferManager.modelSBOs[1], 0); // TODO: hardcoded to 1?
 
 		this.pipelineManager.addPipeline({
 			pipelineType: PipelineType.GenericShader,

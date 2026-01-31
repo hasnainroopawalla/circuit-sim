@@ -25,7 +25,7 @@ export class ChipRenderer {
 
 	private uploadChipRenderData(chipData: ChipRenderable[]): number {
 		const modelMatrixData = new Float32Array(
-			renderEngineConfig.chunkSize * renderEngineConfig.modelFloatSize,
+			renderEngineConfig.chunkSize * (renderEngineConfig.modelFloatSize+3),
 		);
 
 		const offset = chipData.reduce(
@@ -108,12 +108,12 @@ export class ChipRenderer {
 			offset,
 		);
 		offset += renderEngineConfig.colorFloatSize;
-		let radius = 0.0;
+		let radius =0.0;
 		if (chip.chipRenderableType === ChipRenderableType.Circle) {
-			radius = chip.dimensions.width / 2.0; //Verify scaling is correct
+			radius = 1.0;
 		}
-		modelMatrixData.set([radius], offset);
-		offset += 1;
+		modelMatrixData.set(vec4.create(radius,0.0,0.0,0.0), offset);
+		offset += 4;
 
 		const setModelMatrixDataForPins = (pins: PinRenderable[]) => {
 			pins.forEach((pin) => {
@@ -136,6 +136,8 @@ export class ChipRenderer {
 					offset,
 				);
 				offset += renderEngineConfig.colorFloatSize;
+				modelMatrixData.set(vec4.create(0.0,0.0,0.0,0.0), offset);
+				offset += 4;
 			});
 		};
 

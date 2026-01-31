@@ -61,12 +61,11 @@ export class BufferManager {
 		this.vertexBuffers.push(vertexBuffer);
 	}
 
-	public createModelSBO(): GPUBuffer {
+	public createModelSBO(auxilaryDataFloatSize: number): GPUBuffer {
 		const modelSBO = this.device.createBuffer({
 			label: `models-${this.modelSBOs.length}`,
 			size:
-				(renderEngineConfig.matrixFloatSize +
-					renderEngineConfig.colorFloatSize) *
+				(renderEngineConfig.modelFloatSize+auxilaryDataFloatSize) *
 				Float32Array.BYTES_PER_ELEMENT *
 				renderEngineConfig.chunkSize,
 			usage: GPUBufferUsage.STORAGE | GPUBufferUsage.COPY_DST,

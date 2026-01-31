@@ -2,7 +2,13 @@ struct Fragment {
     @builtin(position) Position : vec4 < f32>,
     @location(0) Color : vec4 < f32>,
     @location(1) Uv : vec2 <f32>,
-    @location(2) @interpolation(flat) Circle : u32
+    @location(2) @interpolate(flat) Circle : u32
+};
+
+struct FSInput {
+    @location(0) Color : vec4 < f32>,
+    @location(1) Uv : vec2 <f32>,
+    @location(2) @interpolate(flat) Circle : u32
 };
 
 struct VSInput{
@@ -14,7 +20,7 @@ struct UBO{
     model : mat4x4f,
     color : vec3f,
     alpha : f32,
-    radius : f32
+    radius : vec4f,
 };
 
 @binding(0) @group(0) var<uniform> viewProj : array<mat4x4f, 2>;
@@ -36,16 +42,37 @@ fn vs_main(input : VSInput) -> Fragment {
     output.Position = viewProj[0]*uniforms[input.instanceID].model * vec4 < f32 > (vertPos, 0.0, 1.0);
     output.Color = vec4 < f32 > (uniforms[input.instanceID].color, uniforms[input.instanceID].alpha);
     output.Uv = vertPos;
+    output.Circle=0;
+    if(uniforms[input.instanceID].radius.x>0.0){
+        output.Circle =1;
+    }
 
     return output;
 }
 
-@fragment
-fn fs_main(fragInput : Fragment) -> @location(0) vec4 < f32> {
-    var color = vec4(0.0, 0.0, 0.0, 0.0);
-    if(fragInput.radius > 0.0)
-    {
-
+fn fragmentAA(uvPos: vec2f,dist: f32, radius: f32) -> f32{
+    var normVec = (fwidth(uvPos));
+    var norm = max(normVec.x, normVec.y); 
+    var circle = smoothstep(radius-norm,radius+norm,dist);
+    var alpha = clamp(circle, 0.0, 1.0);
+    alpha = 1-alpha;
+    if(alpha<0.001){
+        alpha=0.0;
     }
-    return Color;
+    return alpha;
+}
+
+@fragment
+fn fs_main(fragInput : FSInput) -> @location(0) vec4 < f32> {
+    var color = fragInput.Color;
+    var dist = pow(fragInput.Uv.x,2)+pow(fragInput.Uv.y,2);
+    var radius=1.0;
+    if(fragInput.Circle!=1){
+        radius=1.6;
+    }
+    var alpha = fragmentAA(fragInput.Uv,dist,radius);
+    if(alpha<0.01){
+        discard;
+    }
+    return vec4f(color.r*alpha, color.g*alpha, color.b*alpha, alpha); 
 }
