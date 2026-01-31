@@ -1,17 +1,58 @@
 import * as React from "react";
-import { Sketch } from "./sketch-renderer";
+import { SimulatorCanvas, SimulatorOverlayView } from "./simulator-canvas";
 import { Toolbar } from "./toolbar";
-import { NotificationBanner, useNotification } from "./notification";
-import styles from "./app.module.css";
+import { StartSimulatorAction } from "./start-simulator-action";
+import type { SimulatorApp } from "@digital-logic-sim/simulator";
+import { SimulatorAppProvider } from "../contexts/simulator-app-context";
+import { useStateRef } from "../utils";
+import { Dialog, DialogProvider } from "./dialog";
+import { WebGpuErrorBanner } from "./webgpu-error-banner";
+import { Footer } from "./footer";
+import { SettingsProvider } from "../contexts/settings-context";
 
-export const App = () => {
-  const notificationText = useNotification();
+const App: React.FC = () => {
+	const [simulatorApp, setSimulatorApp] = React.useState<SimulatorApp | null>(
+		null,
+	);
 
-  return (
-    <div className={styles.app}>
-      <Sketch />
-      <Toolbar />
-      <NotificationBanner getText={() => notificationText} />
-    </div>
-  );
+	const [canvas, setCanvas, canvasRef] = useStateRef<HTMLCanvasElement | null>(
+		null,
+	);
+
+	const [startSimError, setStartSimError] = React.useState<boolean>(false);
+
+	return startSimError ? (
+		<WebGpuErrorBanner />
+	) : (
+		<>
+			<SimulatorCanvas canvasRef={canvasRef} onCanvasReady={setCanvas} />
+
+			{canvas && !simulatorApp && (
+				<StartSimulatorAction
+					canvas={canvas}
+					onSimulatorAppStartSuccess={setSimulatorApp}
+					onSimulatorAppStartFailure={() => setStartSimError(true)}
+				/>
+			)}
+
+			{simulatorApp && (
+				<SimulatorAppProvider simulatorApp={simulatorApp}>
+					<SettingsProvider>
+						<Toolbar />
+						<SimulatorOverlayView />
+						<Dialog />
+					</SettingsProvider>
+				</SimulatorAppProvider>
+			)}
+		</>
+	);
+};
+
+export const ContextualApp: React.FC = () => {
+	return (
+		<DialogProvider>
+			<App />
+			<Footer />
+		</DialogProvider>
+	);
 };

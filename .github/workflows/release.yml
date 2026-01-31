@@ -14,16 +14,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: "20.x"
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
 
       - name: Install dependencies
-        run: yarn install
+        run: pnpm install
 
       - name: Build package
-        run: yarn build
+        run: pnpm build
 
       - name: Release
         uses: crazy-max/ghaction-github-pages@v3

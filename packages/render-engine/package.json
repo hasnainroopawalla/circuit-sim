@@ -1,0 +1,20 @@
+{
+  "name": "@digital-logic-sim/render-engine",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest run"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.20.0",
+  "devDependencies": {
+    "@webgpu/types": "^0.1.66"
+  },
+  "dependencies": {
+    "@digital-logic-sim/shared-types": "workspace:^1.0.0",
+    "wgpu-matrix": "^3.4.0"
+  }
+}

@@ -1,0 +1,45 @@
+import type { IEvents } from "./events";
+
+export type Unsubscribe = () => void;
+
+type Subscriptions<Data> = {
+	[K in keyof Data]: ((data: Data[K]) => void)[];
+};
+
+export class EventingService {
+	private readonly subscriptions: Partial<Subscriptions<IEvents>>;
+
+	constructor() {
+		this.subscriptions = {};
+	}
+
+	public subscribe<K extends keyof IEvents>(
+		event: K,
+		handler: (data: IEvents[K]) => void,
+	): Unsubscribe {
+		if (!this.subscriptions[event]) {
+			this.subscriptions[event] = [];
+		}
+
+		this.subscriptions[event].push(handler);
+
+		return () => {
+			// unsubscribe
+			const handlers = this.subscriptions[event];
+			if (!handlers) {
+				return;
+			}
+
+			const index = handlers.indexOf(handler);
+			if (index !== -1) {
+				handlers.splice(index, 1);
+			}
+		};
+	}
+
+	public publish<K extends keyof IEvents>(event: K, data: IEvents[K]): void {
+		this.subscriptions[event]?.forEach((handler) => {
+			handler(data);
+		});
+	}
+}

@@ -1,0 +1,34 @@
+/**
+ * Iterates through *all* elements of the array and
+ * returns true if `fn` returns true for any element.
+ */
+export function didAnyChange<T>(
+	array: T[],
+	fn: (element: T, idx: number) => boolean,
+) {
+	let changed = false;
+
+	array.forEach((element, idx) => {
+		changed ||= fn(element, idx);
+	});
+
+	return changed;
+}
+
+/**
+ * Strongly type the keys of an object while iterating through them.
+ */
+export function ObjectKeys<T extends object>(obj: T) {
+	return Object.keys(obj) as Array<keyof T>;
+}
+
+export function randomInRange(min: number, max: number): number {
+	return Math.random() * (max - min) + min;
+}
+
+/**
+ * Rounds off the number to 2 decimal places.
+ */
+export function round2(num: number): number {
+	return Math.round(num * 100) / 100;
+}

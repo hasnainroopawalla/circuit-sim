@@ -1,7 +1,10 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react"
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "types": ["vite/client", "vitest/globals"]
   },
-  "include": ["src/**/*"]
+  "include": ["src"],
+  "exclude": ["dist", "vite.config.ts", "vitest.config.ts"]
 }

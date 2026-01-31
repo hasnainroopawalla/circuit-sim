@@ -1,0 +1,78 @@
+import { ToolManager } from "./tool-manager";
+import { BaseLayer } from "../base-layer";
+import type { Renderable } from "@digital-logic-sim/render-engine";
+import type {
+	MouseButtonType,
+	ButtonEvent,
+	MouseScrollType,
+	KeyboardButtonType,
+} from "../../managers/input-manager";
+import type { MousePosition } from "../../types";
+import type { Entity } from "../../entities/entity";
+import type { MousePositionService } from "../../services/mouse-position-service";
+import { type LayerArgs, LayerType } from "../layout.interface";
+
+type InteractionLayerArgs = LayerArgs<LayerType.Interaction> & {
+	mousePositionService: MousePositionService;
+};
+
+export class InteractionLayer extends BaseLayer<LayerType.Interaction> {
+	private readonly toolManager: ToolManager;
+
+	constructor(args: InteractionLayerArgs) {
+		super({
+			...args,
+			layerType: LayerType.Interaction,
+		});
+
+		this.toolManager = new ToolManager(args);
+	}
+
+	public getRenderables(): Renderable[] {
+		const tool = this.toolManager.getActiveTool();
+		if (!tool) {
+			return [];
+		}
+
+		return tool.getRenderables();
+	}
+
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean {
+		// return false if a tool is not active
+		if (!this.toolManager.getActiveTool()) {
+			return false;
+		}
+
+		this.toolManager.onMouseButtonEvent(
+			event,
+			nature,
+			mousePosition,
+			hoveredEntity,
+		);
+
+		return true;
+	}
+
+	public onMouseMoveEvent(
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean {
+		return this.toolManager.onMouseMoveEvent(mousePosition, hoveredEntity);
+	}
+
+	public onMouseScrollEvent(_event: MouseScrollType): boolean {
+		return false;
+	}
+
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean {
+		return this.toolManager.onKeyboardEvent(event, nature);
+	}
+}

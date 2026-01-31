@@ -1,4 +1,8 @@
-export * from "./base-chip";
-export * from "./circuit-chip";
-export * from "./core-chip";
-export * from "./io-chip";
+export { BaseChip } from "./chip";
+export { CompositeChip } from "./composite-chip";
+export { AndChip, OrChip, NotChip, AtomicChip } from "./atomic-chip";
+export { InputChip, OutputChip } from "./io-chip";
+export { GhostChip, type GhostChipSpec } from "./ghost-chip";
+export { ChipUtils, ChipLabelUtils } from "./chip.utils";
+
+export * from "./chip.interface";

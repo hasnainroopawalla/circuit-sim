@@ -1,0 +1,66 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.2.5/schema.json",
+	"vcs": { "enabled": false },
+	"files": {
+		"includes": [
+			"src/**/*.ts*",
+			"example/**/*.ts*",
+			"tests/**/*.ts*",
+			"!**/vite.config.ts"
+		]
+	},
+	"formatter": { "enabled": true },
+	"linter": {
+		"enabled": true,
+		"includes": ["**", "!test/**"],
+		"rules": {
+			"complexity": {
+				"noUselessTypeConstraint": "error",
+				"noUselessConstructor": "off"
+			},
+			"correctness": {
+				"noUnusedVariables": "error",
+				"noConstAssign": "error",
+				"noEmptyPattern": "error",
+				"useIsNan": "error",
+				"useValidTypeof": "error",
+				"useYield": "error",
+				"useExhaustiveDependencies": "warn",
+				"useHookAtTopLevel": "error",
+				"useUniqueElementIds": "off"
+			},
+			"style": {
+				"useConst": "error",
+				"useArrayLiterals": "error",
+				"useAsConstAssertion": "error",
+				"noCommonJs": "error",
+				"noNamespace": "error",
+				"noNonNullAssertion": "warn"
+			},
+			"suspicious": {
+				"noExplicitAny": "error",
+				"noExtraNonNullAssertion": "error",
+				"noDuplicateJsxProps": "error",
+				"noDoubleEquals": "error",
+				"noAlert": "warn",
+				"noConsole": "warn"
+			},
+			"security": {
+				"noDangerouslySetInnerHtmlWithChildren": "error"
+			},
+			"a11y": {
+				"noStaticElementInteractions": "off",
+				"useKeyWithClickEvents": "off",
+				"useButtonType": "off",
+				"noAutofocus": "off"
+			}
+		}
+	},
+	"html": {
+		"formatter": { "selfCloseVoidElements": "always" }
+	},
+	"assist": {
+		"enabled": true,
+		"actions": { "source": { "organizeImports": "off" } }
+	}
+}
