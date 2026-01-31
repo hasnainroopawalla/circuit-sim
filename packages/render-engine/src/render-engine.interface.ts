@@ -4,27 +4,35 @@ import type {
 	RectDimension,
 } from "@digital-logic-sim/shared-types";
 
-type RenderableType = "chip" | "wire" | "pin";
+export enum ChipRenderableType {
+	Rect,
+	Circle,
+}
+
+export enum RenderableType {
+	Chip,
+	Wire,
+	Pin,
+}
 
 type BaseRenderable<TRenderable extends RenderableType> = {
 	type: TRenderable;
 	color: ColorRGBA;
 };
 
-export type PinRenderable = BaseRenderable<"pin"> & {
-	value: boolean;
+export type PinRenderable = BaseRenderable<RenderableType.Pin> & {
 	position: Position;
 };
 
-export type ChipRenderable = BaseRenderable<"chip"> & {
-	label: string;
+export type ChipRenderable = BaseRenderable<RenderableType.Chip> & {
+	chipRenderableType: ChipRenderableType;
 	position: Position;
 	dimensions: RectDimension;
 	inputPins: PinRenderable[];
 	outputPins: PinRenderable[];
 };
 
-export type WireRenderable = BaseRenderable<"wire"> & {
+export type WireRenderable = BaseRenderable<RenderableType.Wire> & {
 	path: Position[];
 };
 

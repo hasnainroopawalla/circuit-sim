@@ -1,11 +1,12 @@
 import { BindGroupManager } from "./bind-group-manager";
 import { BufferManager } from "./buffer-manager";
 import { PipelineManager, PipelineType } from "./pipeline-manager";
-import type {
-	Renderable,
-	ChipRenderable,
-	WireRenderable,
-	CameraProjectionData,
+import {
+	type Renderable,
+	type ChipRenderable,
+	type WireRenderable,
+	type CameraProjectionData,
+	RenderableType,
 } from "./render-engine.interface";
 import { renderEngineConfig } from "./render-engine.config";
 import { initWebGpu } from "./webgpu";
@@ -242,9 +243,15 @@ export class RenderEngine {
 	} {
 		return renderables.reduce(
 			(acc, renderable) => {
-				renderable.type === "chip"
-					? acc.chips.push(renderable)
-					: acc.wires.push(renderable);
+				switch (renderable.type) {
+					case RenderableType.Chip:
+						acc.chips.push(renderable);
+						break;
+					case RenderableType.Wire:
+						acc.wires.push(renderable);
+						break;
+				}
+
 				return acc;
 			},
 			{ chips: [] as ChipRenderable[], wires: [] as WireRenderable[] },

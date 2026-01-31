@@ -5,7 +5,8 @@ export const renderEngineConfig = {
 	chunkSize: 500,
 	matrixFloatSize: MATRIX_FLOAT_SIZE,
 	colorFloatSize: COLOR_FLOAT_SIZE,
-	modelFloatSize: MATRIX_FLOAT_SIZE + COLOR_FLOAT_SIZE,
+	radiusFloatSize: 1,
+	modelFloatSize: MATRIX_FLOAT_SIZE + COLOR_FLOAT_SIZE + 1,
 
 	lineDataFloatSize: 4,
 	lineThickness: 0.02,

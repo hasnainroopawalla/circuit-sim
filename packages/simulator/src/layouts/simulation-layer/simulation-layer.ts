@@ -1,4 +1,7 @@
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import {
+	RenderableType,
+	type Renderable,
+} from "@digital-logic-sim/render-engine";
 import { BaseLayer } from "../base-layer";
 import type {
 	ButtonEvent,
@@ -36,13 +39,11 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 
 		const wireRenderables: Renderable[] = this.sim.wireManager
 			.getBoardWires()
-			.map((wire) => {
-				return {
-					type: "wire",
-					path: wire.getPath(),
-					color: wire.getRenderState().color,
-				};
-			});
+			.map((wire) => ({
+				type: RenderableType.Wire,
+				path: wire.getPath(),
+				color: wire.getRenderState().color,
+			}));
 
 		// TODO: [optimize] new object created each frame
 		return [...chipRenderables, ...wireRenderables];

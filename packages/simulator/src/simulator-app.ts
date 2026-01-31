@@ -80,6 +80,8 @@ export class SimulatorApp {
 
 		this.scenarioLoader = new ScenarioLoader(this.sim);
 
+		this.scenarioLoader.load("NAND");
+
 		this.registerSubscriptions();
 	}
 

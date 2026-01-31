@@ -1,7 +1,6 @@
 export enum PipelineType {
 	GenericShader,
 	GridShader,
-	BackgroundShader,
 	LineShader,
 }
 

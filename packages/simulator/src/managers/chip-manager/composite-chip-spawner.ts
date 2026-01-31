@@ -104,55 +104,57 @@ export class CompositeChipSpawner {
 			name: ioChipType,
 		});
 
-		Object.entries(chipMappings).forEach(([_externalPinLabel, mappings]) => {
-			const ioChip = this.chipManager.spawnChip(
-				ioChipFactory,
-				{
-					position: { x: 10, y: 10 },
-				},
-				{ parentCompositeId: compositeChip.id },
-			);
-
-			mappings.forEach((mapping) => {
-				const internalChipPin = this.getInternalChipPin(
-					mapping.internalChipId,
-					mapping.internalPinName,
-					internalChipMap,
-				);
-
-				if (!internalChipPin) {
-					throw new PinNotFoundError(
-						mapping.internalChipId,
-						"",
-						mapping.internalPinName,
-					);
-				}
-
-				const wireConnection: WireConnection =
-					ioChipType === "input"
-						? {
-								startPin: ioChip.getPin(),
-								endPin: internalChipPin,
-							}
-						: {
-								startPin: internalChipPin,
-								endPin: ioChip.getPin(),
-							};
-
-				this.wireManager.spawnWire(
-					wireConnection,
+		Object.entries(chipMappings).forEach(
+			([_externalPinLabel, externalIOPort]) => {
+				const ioChip = this.chipManager.spawnChip(
+					ioChipFactory,
 					{
-						controlPoints: [],
+						position: externalIOPort.position,
 					},
 					{ parentCompositeId: compositeChip.id },
 				);
 
-				runtimeMappings.push({
-					internalChip: ioChip,
-					internalPin: internalChipPin,
-				} as RuntimePinMapping<TIOChipType>);
-			});
-		});
+				externalIOPort.mappings.forEach((mapping) => {
+					const internalChipPin = this.getInternalChipPin(
+						mapping.internalChipId,
+						mapping.internalPinName,
+						internalChipMap,
+					);
+
+					if (!internalChipPin) {
+						throw new PinNotFoundError(
+							mapping.internalChipId,
+							"",
+							mapping.internalPinName,
+						);
+					}
+
+					const wireConnection: WireConnection =
+						ioChipType === "input"
+							? {
+									startPin: ioChip.getPin(),
+									endPin: internalChipPin,
+								}
+							: {
+									startPin: internalChipPin,
+									endPin: ioChip.getPin(),
+								};
+
+					this.wireManager.spawnWire(
+						wireConnection,
+						{
+							controlPoints: [],
+						},
+						{ parentCompositeId: compositeChip.id },
+					);
+
+					runtimeMappings.push({
+						internalChip: ioChip,
+						internalPin: internalChipPin,
+					} as RuntimePinMapping<TIOChipType>);
+				});
+			},
+		);
 
 		return runtimeMappings;
 	}

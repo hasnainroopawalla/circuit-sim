@@ -1,5 +1,9 @@
 import { PipelineType } from "./pipeline-manager";
-import type { ChipRenderable, PinRenderable } from "./render-engine.interface";
+import {
+	ChipRenderableType,
+	type ChipRenderable,
+	type PinRenderable,
+} from "./render-engine.interface";
 import { mat4, vec3, vec4 } from "wgpu-matrix";
 import { renderEngineConfig } from "./render-engine.config";
 import type { RenderEngine } from "./render-engine";
@@ -21,9 +25,7 @@ export class ChipRenderer {
 
 	private uploadChipRenderData(chipData: ChipRenderable[]): number {
 		const modelMatrixData = new Float32Array(
-			renderEngineConfig.chunkSize *
-				(renderEngineConfig.matrixFloatSize +
-					renderEngineConfig.colorFloatSize),
+			renderEngineConfig.chunkSize * renderEngineConfig.modelFloatSize,
 		);
 
 		const offset = chipData.reduce(
@@ -106,6 +108,12 @@ export class ChipRenderer {
 			offset,
 		);
 		offset += renderEngineConfig.colorFloatSize;
+		let radius = 0.0;
+		if (chip.chipRenderableType === ChipRenderableType.Circle) {
+			radius = chip.dimensions.width / 2.0; //Verify scaling is correct
+		}
+		modelMatrixData.set([radius], offset);
+		offset += 1;
 
 		const setModelMatrixDataForPins = (pins: PinRenderable[]) => {
 			pins.forEach((pin) => {

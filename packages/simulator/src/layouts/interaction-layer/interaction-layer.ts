@@ -65,7 +65,7 @@ export class InteractionLayer extends BaseLayer<LayerType.Interaction> {
 		return this.toolManager.onMouseMoveEvent(mousePosition, hoveredEntity);
 	}
 
-	public onMouseScrollEvent(event: MouseScrollType): boolean {
+	public onMouseScrollEvent(_event: MouseScrollType): boolean {
 		return false;
 	}
 

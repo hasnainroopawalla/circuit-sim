@@ -1,10 +1,8 @@
+import type { Position } from "@digital-logic-sim/shared-types";
 import type { ChipRenderState, ChipSpec } from "../../entities/chips";
 import type { WireRenderState } from "../../entities/wire";
 
-export type IOMapping = Record<
-	string /* externalPinLabel */,
-	BlueprintPinMapping[]
->;
+export type IOMapping = Record<string /* externalPinLabel */, ExternalIOPort>;
 
 export type Blueprint = {
 	root: string;
@@ -22,6 +20,11 @@ export type CompositeDefinition = {
 export type BlueprintPinMapping = {
 	internalChipId: string;
 	internalPinName: string;
+};
+
+export type ExternalIOPort = {
+	position: Position;
+	mappings: BlueprintPinMapping[];
 };
 
 export type ChipBlueprint = {

@@ -1,8 +1,8 @@
 import type {
 	Blueprint,
-	BlueprintPinMapping,
 	ChipBlueprint,
 	CompositeDefinition,
+	ExternalIOPort,
 	IOMapping,
 	WireBlueprint,
 } from "./blueprint-service.interface";
@@ -12,6 +12,8 @@ import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
 import { BaseService } from "../base-service";
 import { InvalidWireConnectionError } from "../../errors";
+import type { Position } from "@digital-logic-sim/shared-types";
+import { round2 } from "../../utils";
 
 export class BlueprintService extends BaseService {
 	constructor(sim: Simulator) {
@@ -123,17 +125,24 @@ export class BlueprintService extends BaseService {
 	}
 
 	private serializeChip(chip: Chip): ChipBlueprint {
+		const renderState = chip.getRenderState();
+
 		return {
 			id: chip.id,
 			spec: {
 				chipType: chip.spec.chipType,
 				name: chip.spec.name,
 			},
-			renderState: chip.getRenderState(),
+			renderState: {
+				color: renderState.color,
+				position: this.normalizePosition(renderState.position),
+			},
 		};
 	}
 
 	private serializeWire(wire: Wire): WireBlueprint {
+		const renderState = wire.getRenderState();
+
 		return {
 			spec: {
 				start: {
@@ -145,7 +154,12 @@ export class BlueprintService extends BaseService {
 					pinName: wire.endPin.spec.name,
 				},
 			},
-			renderState: wire.getRenderState(),
+			renderState: {
+				color: renderState.color,
+				controlPoints: renderState.controlPoints.map((controlPoint) =>
+					this.normalizePosition(controlPoint),
+				),
+			},
 		};
 	}
 
@@ -174,13 +188,13 @@ export class BlueprintService extends BaseService {
 				chip.ioChipType,
 			);
 
-			mappings[externalPinLabel] = this.getPinMappingsForIOChip(chip);
+			mappings[externalPinLabel] = this.getExternalIOPort(chip);
 		}
 
 		return { inputMappings, outputMappings };
 	}
 
-	private getPinMappingsForIOChip(ioChip: IOChip): BlueprintPinMapping[] {
+	private getExternalIOPort(ioChip: IOChip): ExternalIOPort {
 		const ioPin = ioChip.getPin();
 
 		const connectedWires =
@@ -188,7 +202,7 @@ export class BlueprintService extends BaseService {
 				? this.sim.wireManager.getOutgoingWires(ioPin.id)
 				: this.sim.wireManager.getIncomingWires(ioPin.id);
 
-		return connectedWires.map((wire) => {
+		const mappings = connectedWires.map((wire) => {
 			const internalPin =
 				ioChip.ioChipType === "input" ? wire.endPin : wire.startPin;
 			const internalChip = internalPin.chip;
@@ -202,6 +216,11 @@ export class BlueprintService extends BaseService {
 				internalPinName: internalPin.spec.name,
 			};
 		});
+
+		return {
+			position: ioChip.getRenderState().position,
+			mappings,
+		};
 	}
 
 	private getExternalPinLabel(
@@ -216,5 +235,12 @@ export class BlueprintService extends BaseService {
 		}
 
 		return `${ioChipType === "input" ? "IN" : "OUT"} ${Object.keys(pinMappings).length + 1}`;
+	}
+
+	private normalizePosition(position: Position): Position {
+		return {
+			x: round2(position.x),
+			y: round2(position.y),
+		};
 	}
 }

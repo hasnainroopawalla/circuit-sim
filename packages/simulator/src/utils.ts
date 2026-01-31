@@ -27,3 +27,10 @@ export function ObjectKeys<T extends object>(obj: T) {
 export function randomInRange(min: number, max: number): number {
 	return Math.random() * (max - min) + min;
 }
+
+/**
+ * Rounds off the number to 2 decimal places.
+ */
+export function round2(num: number): number {
+	return Math.round(num * 100) / 100;
+}

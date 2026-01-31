@@ -74,6 +74,8 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 }
 
+// TODO: improve this function and move to a central location
+// that can be shared by the UI and simulator.
 const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
 	const [numInputPins, numOutputPins] = [
 		chipMetadata.numInputPins,
@@ -85,7 +87,6 @@ const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
 	const height =
 		(maxPins * chipLayoutConfig.aspectRatio + 0.5) * renderEngineConfig.pinSize;
 
-	// TODO: improve
 	const width =
 		chipMetadata.name.length * 0.1 +
 		chipLayoutConfig.aspectRatio * height * 0.6;
