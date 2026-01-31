@@ -5,7 +5,6 @@ import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
-import { EntityUtils } from "../entities/utils";
 
 type OverlayManagerArgs = {
 	camera: Camera;

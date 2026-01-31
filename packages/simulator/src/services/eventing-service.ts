@@ -1,3 +1,4 @@
+import type { ChipType } from "../entities/chips";
 import type { Pin, PinType } from "../entities/pin";
 import type { ChipDefinition } from "./chip-library-service";
 
@@ -17,6 +18,7 @@ export type IEvents = {
 	"chip.spawn.finish": {
 		chipId: string;
 		chipName: string;
+		chipType: ChipType;
 		pins: { id: string; name: string; pinType: PinType }[];
 	};
 };

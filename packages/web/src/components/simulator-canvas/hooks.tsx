@@ -1,6 +1,9 @@
 import * as React from "react";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
-import type { OverlayElementKind } from "@digital-logic-sim/simulator";
+import type {
+	ChipType,
+	OverlayElementKind,
+} from "@digital-logic-sim/simulator";
 import type { PinType } from "@digital-logic-sim/simulator";
 
 export type Label = {
@@ -22,15 +25,20 @@ export const useOverlayLabels = () => {
 	React.useEffect(() => {
 		const disposeSpawnChipSubscription = simulatorApp.sim.on(
 			"chip.spawn.finish",
-			({ chipId, chipName, pins }) => {
+			({ chipId, chipName, chipType, pins }) => {
 				setLabels((prev) => {
-					const newLabels: Label[] = [
-						{
+					const newLabels: Label[] = [];
+
+					if (shouldRegisterChipLabel(chipType)) {
+						newLabels.push({
 							id: chipId,
 							entityType: "chip" as const,
 							kind: "static" as const,
 							text: chipName,
-						},
+						});
+					}
+
+					newLabels.push(
 						...pins.map((pin) => ({
 							id: pin.id,
 							entityType: "pin" as const,
@@ -38,7 +46,7 @@ export const useOverlayLabels = () => {
 							text: pin.name,
 							pinType: pin.pinType,
 						})),
-					];
+					);
 
 					return [...prev, ...newLabels];
 				});
@@ -60,3 +68,7 @@ export const useOverlayLabels = () => {
 
 	return labels;
 };
+
+function shouldRegisterChipLabel(chipType: ChipType): boolean {
+	return chipType !== "io";
+}

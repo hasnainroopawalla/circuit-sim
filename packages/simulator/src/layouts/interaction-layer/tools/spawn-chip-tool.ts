@@ -1,7 +1,9 @@
-import type {
-	ChipRenderable,
-	Renderable,
-	PinRenderable,
+import {
+	type ChipRenderable,
+	type Renderable,
+	type PinRenderable,
+	RenderableType,
+	ChipRenderableType,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import { GhostChip, type GhostChipSpec } from "../../../entities/chips";
@@ -19,6 +21,7 @@ import {
 } from "../../../services/chip-library-service";
 import { BlueprintUtils } from "../../../services/blueprint-service";
 import { COLORS } from "../../../services/color-service";
+import { LayoutUtils } from "../../layout.utils";
 
 type SpawnChipToolArgs = ToolArgs & {
 	chipFactory: ChipFactory;
@@ -88,32 +91,29 @@ export class SpawnChipTool extends Tool {
 			pinType: PinType,
 		): PinRenderable[] =>
 			Array.from({ length: numPins }, (_, pinIdx) => ({
-				type: "pin",
+				type: RenderableType.Pin,
 				value: false,
 				position: this.ghostChip.layout.getPinPosition(pinIdx, pinType),
 				color: COLORS.Ghost,
 			}));
 
 		return {
-			type: "chip",
+			type: RenderableType.Chip,
+			chipRenderableType: LayoutUtils.getChipRenderableType(
+				this.chipFactory.kind,
+			),
 			color: this.ghostChip.renderState.color,
 			position: this.ghostChip.renderState.position,
 			dimensions: this.ghostChip.layout.dimensions,
-			label: "",
 			inputPins: createPinRenderable(this.ghostChip.spec.numInputPins, "in"),
 			outputPins: createPinRenderable(this.ghostChip.spec.numOutputPins, "out"),
 		};
 	}
 
 	private handleLeftMouseButtonClick(): void {
-		// TODO: Generate color
-		// const chipColor = ColorService.generateChipColor();
-		// const chipColor = { r: 0.97, g: 0.35, b: 0.7, a: 1.0 };
-
 		this.sim.chipManager.spawnChip(
 			this.chipFactory,
 			{
-				// color: chipColor,
 				position: this.ghostChip.renderState.position,
 			} /* init params */,
 		);
@@ -131,6 +131,7 @@ export class SpawnChipTool extends Tool {
 
 		return {
 			name: chipSpec.name,
+			chipType: chipSpec.chipType,
 			numInputPins: inputPins.length,
 			numOutputPins: outputPins.length,
 		};

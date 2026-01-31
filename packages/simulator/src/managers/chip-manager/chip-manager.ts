@@ -20,6 +20,7 @@ import type { Simulator } from "../../simulator";
 import { didAnyChange } from "../../utils";
 import { BaseManager } from "../base-manager";
 import { CompositeChipSpawner } from "./composite-chip-spawner";
+import { EntityUtils } from "../../entities/utils";
 
 export class ChipManager extends BaseManager {
 	private chips: Chip[];
@@ -80,7 +81,7 @@ export class ChipManager extends BaseManager {
 
 		this.chips.push(chip);
 
-		if (chip.chipType === "composite") {
+		if (EntityUtils.isCompositeChip(chip)) {
 			this.compositeChipSpawner.spawn(chip);
 		}
 
@@ -90,6 +91,7 @@ export class ChipManager extends BaseManager {
 			this.sim.emit("chip.spawn.finish", {
 				chipId: chip.id,
 				chipName: chip.spec.name,
+				chipType: chip.chipType,
 				pins: [...chip.inputPins, ...chip.outputPins].map((pin) => ({
 					id: pin.id,
 					name: pin.spec.name,

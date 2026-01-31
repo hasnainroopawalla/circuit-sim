@@ -4,28 +4,29 @@ import {
 	type ChipRenderable,
 	type PinRenderable,
 } from "@digital-logic-sim/render-engine";
-import type { Chip } from "../entities/chips";
+import type { Chip, ChipType } from "../entities/chips";
 import type { Pin } from "../entities/pin";
 import { COLORS } from "../services/color-service";
-import { EntityUtils } from "../entities/utils";
 
 export const LayoutUtils = {
 	chipToRenderable: (chip: Chip, hoveredEntityId?: string): ChipRenderable => {
-		const chipRenderableType = EntityUtils.isIOChip(chip)
-			? ChipRenderableType.Circle
-			: ChipRenderableType.Rect;
-
 		const chipRenderState = chip.getRenderState();
 
 		return {
 			type: RenderableType.Chip,
-			chipRenderableType,
+			chipRenderableType: LayoutUtils.getChipRenderableType(chip.chipType),
 			dimensions: chip.layout.dimensions,
 			inputPins: getPinRenderables(chip.inputPins, hoveredEntityId),
 			outputPins: getPinRenderables(chip.outputPins, hoveredEntityId),
 			color: chipRenderState.color,
 			position: chipRenderState.position,
 		};
+	},
+
+	getChipRenderableType: (chipType: ChipType): ChipRenderableType => {
+		return chipType === "io"
+			? ChipRenderableType.Circle
+			: ChipRenderableType.Rect;
 	},
 };
 

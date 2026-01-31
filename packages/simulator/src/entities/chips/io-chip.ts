@@ -47,7 +47,7 @@ export class InputChip extends BaseIOChip<"input"> {
 		ioChipType: "input" as const,
 		inputPins: [],
 		outputPins: [{ name: "in" }],
-		color: { r: 0.97, g: 0.35, b: 0.7, a: 1.0 },
+		color: COLORS.Ghost /* unused */,
 	};
 
 	private nextValue = false;
@@ -83,7 +83,7 @@ export class OutputChip extends BaseIOChip<"output"> {
 		ioChipType: "output" as const,
 		inputPins: [{ name: "out" }],
 		outputPins: [],
-		color: { r: 0.97, g: 0.35, b: 0.7, a: 1.0 },
+		color: COLORS.Ghost /* unused */,
 	};
 
 	constructor(chipInitParams: ChipInitParams, opts?: EntitySpawnOptions) {

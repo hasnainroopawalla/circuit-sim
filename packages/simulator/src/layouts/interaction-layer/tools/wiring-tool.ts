@@ -1,4 +1,7 @@
-import type { Renderable } from "@digital-logic-sim/render-engine";
+import {
+	RenderableType,
+	type Renderable,
+} from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
 import type {
 	ButtonEvent,
@@ -33,7 +36,7 @@ export class WiringTool extends Tool {
 	public getRenderables(): Renderable[] {
 		return [
 			{
-				type: "wire",
+				type: RenderableType.Wire,
 				color: COLORS.Ghost,
 				path: [
 					this.startPin.getPosition(),

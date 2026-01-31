@@ -6,6 +6,10 @@ import type { RectDimension, Position } from "@digital-logic-sim/shared-types";
 
 const chipLayoutConfig = {
 	aspectRatio: 1.5,
+	ioChipDimensions: {
+		height: 0.25,
+		width: 0.25,
+	},
 };
 
 export interface ChipLayout {
@@ -21,7 +25,15 @@ export class ChipLayoutFactory implements ChipLayout {
 		private readonly chipRenderState: Chip["renderState"],
 		private readonly chipMetadata: ChipMetadata,
 	) {
-		this.dimensions = computeChipDimensions(chipMetadata);
+		switch (chipMetadata.chipType) {
+			case "io":
+				this.dimensions = chipLayoutConfig.ioChipDimensions;
+				break;
+			case "atomic":
+			case "composite":
+				this.dimensions = computeChipDimensions(chipMetadata);
+				break;
+		}
 	}
 
 	public getPinOffset(pinType: PinType) {
@@ -76,7 +88,7 @@ export class ChipLayoutFactory implements ChipLayout {
 
 // TODO: improve this function and move to a central location
 // that can be shared by the UI and simulator.
-const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
+function computeChipDimensions(chipMetadata: ChipMetadata): RectDimension {
 	const [numInputPins, numOutputPins] = [
 		chipMetadata.numInputPins,
 		chipMetadata.numOutputPins,
@@ -95,4 +107,4 @@ const computeChipDimensions = (chipMetadata: ChipMetadata): RectDimension => {
 		height,
 		width,
 	};
-};
+}

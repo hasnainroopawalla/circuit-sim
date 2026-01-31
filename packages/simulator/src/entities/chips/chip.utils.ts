@@ -1,8 +1,10 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
+import type { ChipType } from "./chip.interface";
 
 export type ChipMetadata = {
 	name: string;
+	chipType: ChipType;
 	numInputPins: number;
 	numOutputPins: number;
 };
