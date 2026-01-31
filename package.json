@@ -1,6 +1,6 @@
 {
   "name": "digital-logic-sim",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Digital logic gate simulator using React, TypeScript and WebGPU",
   "main": "index.js",
   "scripts": {
