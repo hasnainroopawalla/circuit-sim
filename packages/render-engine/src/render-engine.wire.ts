@@ -149,14 +149,14 @@ export class WireRenderer {
 		passEncoder.end();
 	}
 
-	private getWireControlPoints(wireData: WireRenderable[]): Float32Array[] {
-		return wireData.map((wire) => {
-			const path = new Float32Array(2 * wire.path.length);
-			for (let i = 0; i < wire.path.length; ++i) {
-				path.set([wire.path[i].x, wire.path[i].y], i * 2);
-			}
+	// private getWireControlPoints(wireData: WireRenderable[]): Float32Array[] {
+	// 	return wireData.map((wire) => {
+	// 		const path = new Float32Array(2 * wire.path.length);
+	// 		for (let i = 0; i < wire.path.length; ++i) {
+	// 			path.set([wire.path[i].x, wire.path[i].y], i * 2);
+	// 		}
 
-			return path;
-		});
-	}
+	// 		return path;
+	// 	});
+	// }
 }

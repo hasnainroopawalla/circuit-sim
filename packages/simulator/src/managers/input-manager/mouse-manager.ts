@@ -16,7 +16,7 @@ export class MouseManager {
 
 	private mousePosition: Position;
 
-	private timeoutId: number | undefined;
+	private timeoutId: NodeJS.Timeout | undefined;
 
 	private mouseButtonState: InputManagerState<MouseButtonType> =
 		MouseButton.reduce<InputManagerState<MouseButtonType>>(

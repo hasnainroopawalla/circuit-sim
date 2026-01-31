@@ -57,15 +57,15 @@ export class CompositeLayer extends BaseLayer<LayerType.Composite> {
 	}
 
 	public onMouseMoveEvent(
-		mousePosition: MousePosition,
-		hoveredEntity: Entity | null,
+		_mousePosition: MousePosition,
+		_hoveredEntity: Entity | null,
 	): boolean {
 		return false;
 	}
 	public onMouseButtonEvent(
 		event: MouseButtonType,
 		nature: ButtonEvent,
-		mousePosition: MousePosition,
+		_mousePosition: MousePosition,
 		hoveredEntity: Entity | null,
 	): boolean {
 		switch (event) {

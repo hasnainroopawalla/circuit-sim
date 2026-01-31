@@ -1,45 +1,51 @@
 # Circuit Sim
 
-## Instructions
+A fast, playful digital-circuit sandbox.
 
-- Install dependencies
-    1. Install `pnpm` globally on your machine
-    2. In the root of the repo, run `pnpm install`
 
-- Run the app
-    1. `pnpm start`
+Visually build logic circuits, compose custom chips, and experiment freely in real time. Save your designs as blueprints, share them with friends, or grow your own library of reusable components.
 
-[Live Demo](http://hasnainroopawalla.github.io/circuit-sim)
+Built for tinkering, learning, and rapid iteration.
 
-A digital circuit simulator build using React, TypeScript and P5.js.
-
-#### Data-latch circuit
 <p align="center">
-    <img src="assets/d-latch.png" alt="Data-latch circuit"/>
+    <img src="assets/sr-latch.png" alt="SR LATCH"/>
 </p>
 
-#### Save circuit
-<p align="center">
-    <img src="assets/save_circuit.png" alt="Save Circuit"/>
-</p>
 
-#### Import chip
-<p align="center">
-    <img src="assets/import_chip.gif" alt="import Chip"/>
-</p>
+## 🚀 Live demo
+http://hasnainroopawalla.github.io/circuit-sim
 
-## Features
-- Sandbox environment for digital chips
-- Save the current circuit as a custom chip
-- Import chips using blueprint strings. Example:
-    - blueprint string for the `NAND` custom chip
-      ```
-      {"main":{"inputs":[{"id":"chip.input.0"},{"id":"chip.input.1"}],"outputs":[{"id":"chip.output.2"}],"chips":[{"id":"chip.AND.3","name":"AND"},{"id":"chip.NOT.4","name":"NOT"}],"wires":[["chip.input.0/output.0","chip.AND.3/input.0"],["chip.input.1/output.0","chip.AND.3/input.1"],["chip.AND.3/output.0","chip.NOT.4/input.0"],["chip.NOT.4/output.0","chip.output.2/input.0"]]}}
-      ```
+## 🛠️ Quick Start
 
-## Contributing
-- Post any issues or suggestions on the GitHub [issues](https://github.com/hasnainroopawalla/circuit-sim/issues) page.
-- To contribute, fork the project and then create a pull request back to `master`.
+### Tech Stack
+- TypeScript
+- React + Vite + Tailwind CSS
+- WebGPU (custom render engine)
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/hasnainroopawalla/circuit-sim/blob/4e430c15e967846c1117ecc3e1cb5b74095e870a/LICENSE) file for details.
+### Instructions
+
+1. Install dependencies (requires `pnpm`):
+
+```bash
+pnpm install
+```
+
+2. Run the app:
+
+```bash
+pnpm start
+```
+
+## 📦 Blueprints
+
+Looking for inspiration?
+Check out the [/blueprints](https://github.com/hasnainroopawalla/circuit-sim/tree/biome/packages/simulator/src/blueprints) directory to explore a growing collection of prebuilt circuits—from simple logic gates to more complex compositions. 
+
+You can load these blueprints directly into the simulator, modify them, or use them as a starting point for your own designs.
+
+## 🧩 Contributing
+- Found a bug or have a feature idea? Open an issue on GitHub: https://github.com/hasnainroopawalla/circuit-sim/issues
+- To contribute: fork, make changes on a branch, and open a pull request against `master`.
+
+## 📄 License
+- This project is licensed under the MIT License — see the LICENSE file for details.

@@ -19,12 +19,6 @@ export const Toolbar: React.FC = () => {
 					onClick={() =>
 						openDialog({
 							kind: "settings",
-							setShowGrid: () => {},
-							setShowPinLabels: () => {},
-							setSnapToGrid: () => {},
-							showGrid: false,
-							showPinLabels: false,
-							snapToGrid: false,
 						})
 					}
 				/>

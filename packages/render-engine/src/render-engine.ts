@@ -66,7 +66,6 @@ export class RenderEngine {
 		try {
 			this.colorFormat = navigator.gpu.getPreferredCanvasFormat();
 			this.device = await initWebGpu();
-			console.log("Device created!");
 			this.gpuCanvasContext.configure({
 				device: this.device,
 				format: this.colorFormat,
@@ -79,6 +78,7 @@ export class RenderEngine {
 
 			this.setupPipelines();
 		} catch (err) {
+			// biome-ignore lint/suspicious/noConsole: <Core error>
 			console.log("RenderEngine init failed:", err);
 		}
 	}

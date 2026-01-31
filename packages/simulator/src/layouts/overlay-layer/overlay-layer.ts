@@ -22,21 +22,20 @@ export class OverlayLayer extends BaseLayer<LayerType.Overlay> {
 		this.camera = args.camera;
 	}
 
-	public getRenderables(renderables: Renderable[]): Renderable[] {
-		// console.log(renderables);
+	public getRenderables(_renderables: Renderable[]): Renderable[] {
 		return [];
 	}
 
 	public onMouseButtonEvent(
-		event: MouseButtonType,
-		nature: ButtonEvent,
-		mousePosition: MousePosition,
-		hoveredEntity: Entity | null,
+		_event: MouseButtonType,
+		_nature: ButtonEvent,
+		_mousePosition: MousePosition,
+		_hoveredEntity: Entity | null,
 	): boolean {
 		return false;
 	}
 
-	public onMouseScrollEvent(event: MouseScrollType): boolean {
+	public onMouseScrollEvent(_event: MouseScrollType): boolean {
 		return false;
 	}
 
@@ -45,27 +44,27 @@ export class OverlayLayer extends BaseLayer<LayerType.Overlay> {
 	}
 
 	public onKeyboardEvent(
-		event: KeyboardButtonType,
-		nature: ButtonEvent,
+		_event: KeyboardButtonType,
+		_nature: ButtonEvent,
 	): boolean {
 		return false;
 	}
 
-	private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
-		return false;
-	}
+	// private handleLeftMouseButtonClick(_hoveredEntity: Entity | null): boolean {
+	// 	return false;
+	// }
 
-	private handleLeftMouseButtonPress(
-		hoveredEntity: Entity | null,
-		mousePosition: MousePosition,
-	): boolean {
-		return false;
-	}
+	// private handleLeftMouseButtonPress(
+	// 	_hoveredEntity: Entity | null,
+	// 	_mousePosition: MousePosition,
+	// ): boolean {
+	// 	return false;
+	// }
 
-	private handleRightMouseButtonClick(
-		hoveredEntity: Entity | null,
-		mousePosition: MousePosition,
-	): boolean {
-		return false;
-	}
+	// 	private handleRightMouseButtonClick(
+	// 		hoveredEntity: Entity | null,
+	// 		mousePosition: MousePosition,
+	// 	): boolean {
+	// 		return false;
+	// 	}
 }

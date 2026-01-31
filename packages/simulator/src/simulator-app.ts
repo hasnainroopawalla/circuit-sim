@@ -36,6 +36,7 @@ export class SimulatorApp {
 
 	private animationId: number | null = null;
 
+	// biome-ignore lint/correctness/noUnusedPrivateClassMembers: <temporary>
 	private scenarioLoader: ScenarioLoader;
 
 	constructor(args: SimulatorAppArgs) {
@@ -83,7 +84,7 @@ export class SimulatorApp {
 		this.registerSubscriptions();
 
 		// TODO: why doesnt this work without a timeout?
-		setTimeout(() => this.scenarioLoader.load("NAND"), 1000);
+		// setTimeout(() => this.scenarioLoader.load("NAND"), 1000);
 	}
 
 	public async start(): Promise<void> {

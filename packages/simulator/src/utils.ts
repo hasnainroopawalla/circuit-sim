@@ -1,5 +1,3 @@
-import type OrderedMap from "orderedmap";
-
 /**
  * Iterates through *all* elements of the array and
  * returns true if `fn` returns true for any element.

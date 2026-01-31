@@ -3,7 +3,7 @@ import { useDialog } from "../dialog";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import type { ChipDefinition } from "@digital-logic-sim/simulator";
 
-export type ChipLibraryDialogProps = {};
+export type ChipLibraryDialogProps = object;
 
 export const ChipLibraryDialog: React.FC<ChipLibraryDialogProps> = () => {
 	const simulatorApp = useSimulatorApp();
@@ -43,7 +43,7 @@ export const ChipLibraryDialog: React.FC<ChipLibraryDialogProps> = () => {
 	);
 
 	const onItemView = React.useCallback(
-		(chipDefinition: ChipDefinition) => {
+		(_chipDefinition: ChipDefinition) => {
 			closeDialog();
 		},
 		[closeDialog],

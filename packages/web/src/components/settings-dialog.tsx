@@ -4,7 +4,7 @@ import { useSettings } from "../contexts/settings-context";
 import type { Settings } from "@digital-logic-sim/shared-types";
 import { twMerge } from "tailwind-merge";
 
-export type SettingsDialogProps = {};
+export type SettingsDialogProps = object;
 
 export const SettingsDialog: React.FC<SettingsDialogProps> = () => {
 	const { closeDialog } = useDialog();
