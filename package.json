@@ -1,6 +1,7 @@
 {
   "name": "digital-logic-sim",
   "version": "1.0.3",
+  "homepage": "http://hasnainroopawalla.github.io/circuit-sim",
   "description": "Digital logic gate simulator using React, TypeScript and WebGPU",
   "main": "index.js",
   "scripts": {
