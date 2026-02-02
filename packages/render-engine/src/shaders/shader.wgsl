@@ -2,13 +2,15 @@ struct Fragment {
     @builtin(position) Position : vec4 < f32>,
     @location(0) Color : vec4 < f32>,
     @location(1) Uv : vec2 <f32>,
-    @location(2) @interpolate(flat) Circle : u32
+    @location(2) @interpolate(flat) Circle : u32,
+    @location(3) @interpolate(flat) Aspect :f32
 };
 
 struct FSInput {
     @location(0) Color : vec4 < f32>,
     @location(1) Uv : vec2 <f32>,
-    @location(2) @interpolate(flat) Circle : u32
+    @location(2) @interpolate(flat) Circle : u32,
+    @location(3) @interpolate(flat) Aspect :f32
 };
 
 struct VSInput{
@@ -43,6 +45,9 @@ fn vs_main(input : VSInput) -> Fragment {
     output.Color = vec4 < f32 > (uniforms[input.instanceID].color, uniforms[input.instanceID].alpha);
     output.Uv = vertPos;
     output.Circle=0;
+    var scaleX = length(uniforms[input.instanceID].model[0].xyz);
+    var scaleY = length(uniforms[input.instanceID].model[1].xyz);
+    output.Aspect = scaleX/scaleY;
     if(uniforms[input.instanceID].radius.x>0.0){
         output.Circle =1;
     }
@@ -51,8 +56,7 @@ fn vs_main(input : VSInput) -> Fragment {
 }
 
 fn fragmentAA(uvPos: vec2f,dist: f32, radius: f32) -> f32{
-    var normVec = (fwidth(uvPos));
-    var norm = max(normVec.x, normVec.y); 
+    var norm = fwidth(dist);
     var circle = smoothstep(radius-norm,radius+norm,dist);
     var alpha = clamp(circle, 0.0, 1.0);
     alpha = 1-alpha;
@@ -61,18 +65,37 @@ fn fragmentAA(uvPos: vec2f,dist: f32, radius: f32) -> f32{
     }
     return alpha;
 }
+const maxDarkness = 0.6;
+
+fn darkFactorRect(uvPos: vec2f,aspect: f32, thickness: f32)->f32{
+    var anisotrpicThickness = vec2f(thickness/aspect, thickness);
+    if(((1.0-abs(uvPos.x))<anisotrpicThickness.x)||((1.0-abs(uvPos.y))<anisotrpicThickness.y)){
+        return maxDarkness;
+    }
+    return 1.0;
+}
+
+fn darkFactorCirc(uvPos: vec2f, aspect: f32, dist: f32, thickness: f32)->f32{
+    var norm = fwidth(dist);
+    var anisotrpicThickness = mix(thickness/aspect, thickness, abs(uvPos.y));
+    var blend = smoothstep(anisotrpicThickness +norm, anisotrpicThickness - norm, 1.0-dist);
+    return (mix(1.0, maxDarkness, blend));
+}
 
 @fragment
 fn fs_main(fragInput : FSInput) -> @location(0) vec4 < f32> {
+    const edgeThickness = 0.08;
     var color = fragInput.Color;
     var dist = pow(fragInput.Uv.x,2)+pow(fragInput.Uv.y,2);
     var radius=1.0;
+    var darkFactor = darkFactorCirc(fragInput.Uv, fragInput.Aspect,dist, 3*edgeThickness);
     if(fragInput.Circle!=1){
-        radius=1.6;
+        radius=2.0;
+        darkFactor = darkFactorRect(fragInput.Uv, fragInput.Aspect, edgeThickness);
     }
     var alpha = fragmentAA(fragInput.Uv,dist,radius);
     if(alpha<0.01){
         discard;
     }
-    return vec4f(color.r*alpha, color.g*alpha, color.b*alpha, alpha); 
+    return vec4f(color.r*alpha*darkFactor, color.g*alpha*darkFactor, color.b*alpha*darkFactor, alpha); 
 }
