@@ -6,7 +6,7 @@ import type { SimulatorApp } from "@digital-logic-sim/simulator";
 import { SimulatorAppProvider } from "../contexts/simulator-app-context";
 import { useStateRef } from "../utils";
 import { Dialog, DialogProvider } from "./dialog";
-import { Popover, PopoverProvider } from "./popover";
+import { Popover } from "./popover";
 import { WebGpuErrorBanner } from "./webgpu-error-banner";
 import { Footer } from "./footer";
 import { SettingsProvider } from "../contexts/settings-context";
@@ -53,10 +53,8 @@ const App: React.FC = () => {
 export const ContextualApp: React.FC = () => {
 	return (
 		<DialogProvider>
-			<PopoverProvider>
-				<App />
-				<Footer />
-			</PopoverProvider>
+			<App />
+			<Footer />
 		</DialogProvider>
 	);
 };

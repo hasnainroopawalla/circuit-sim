@@ -106,7 +106,7 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 	}
 
 	public notifyManager(): string {
-		const compositeId = `${this.selectedCompositeId}`;
+		const compositeId = this.selectedCompositeId;
 		this.selectedCompositeId = "";
 		return compositeId;
 	}
@@ -153,7 +153,7 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 
 	private handleRightMouseButtonClick(
 		hoveredEntity: Entity | null,
-		_mousePosition: MousePosition,
+		mousePosition: MousePosition,
 	): boolean {
 		if (!hoveredEntity) {
 			return false;
@@ -161,7 +161,11 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 
 		if (EntityUtils.isCompositeChip(hoveredEntity)) {
 			this.selectedCompositeId = hoveredEntity.id;
-			// Needs to signal layer manager to suspend interactive and simulation layer and add composite layer to active layers
+			this.sim.emit("entity.secondaryAction", {
+				entityType: hoveredEntity.entityType,
+				mousePosition: mousePosition.screen,
+			});
+			return true;
 		}
 
 		return false;

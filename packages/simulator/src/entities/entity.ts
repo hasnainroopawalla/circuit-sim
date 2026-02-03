@@ -2,7 +2,7 @@ import type { Chip } from "./chips";
 import type { Pin } from "./pin";
 import type { Wire } from "./wire";
 
-type EntityType = "chip" | "pin" | "wire";
+export type EntityType = "chip" | "pin" | "wire";
 
 export type Entity = Chip | Wire | Pin;
 
