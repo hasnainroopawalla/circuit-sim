@@ -36,7 +36,7 @@ export class SimulatorApp {
 
 	private animationId: number | null = null;
 
-	// biome-ignore lint/correctness/noUnusedPrivateClassMembers: <temporary>
+	// biome-ignore lint/correctness/noUnusedPrivateClassMembers: <temporary component>
 	private scenarioLoader: ScenarioLoader;
 
 	constructor(args: SimulatorAppArgs) {
