@@ -67,7 +67,7 @@ export class WireRenderer {
 				const lineCenter = vec3.create(
 					(end.x + start.x) / 2,
 					(end.y + start.y) / 2,
-					0,
+					0.002,
 				);
 				const translateMat = mat4.translation(lineCenter);
 				const colour = vec4.create(
