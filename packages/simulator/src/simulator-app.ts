@@ -52,7 +52,7 @@ export class SimulatorApp {
 
 		const gpuContext = args.canvas.getContext("webgpu");
 		if (!gpuContext) {
-			throw new Error("Failed to get WebGPU context.");
+			throw new Error("Failed to get WebGPU context");
 		}
 
 		this.renderEngine = new RenderEngine({
