@@ -1,18 +1,15 @@
 name: CI
 on:
-  push:
-    branches:
-      - master
-
-permissions:
-  contents: write
+  pull_request:
+    branches: [master]
 
 jobs:
-  build-test-bump-version:
+  CI:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -20,18 +17,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Build package
-        run: pnpm build
+      - name: Lint
+        run: pnpm lint
 
       - name: Run tests
         run: pnpm test:unit
 
-      - name: Version bump
-        uses: "phips28/gh-action-bump-version@master"
-        env:
-          GITHUB_TOKEN: ${{ secrets.DEPLOY_TOKEN }}
-        with:
-          major-wording: "major,Major"
-          minor-wording: "minor,Minor"
-          patch-wording: "patch,bug,Patch,Bug"
-          commit-message: "CI: bump version to {{version}}"
+      - name: Build package
+        run: pnpm build
