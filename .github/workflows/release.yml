@@ -18,5 +18,5 @@ jobs:
       - name: Prepare Release
         uses: googleapis/release-please-action@v4
         with:
-          release-type: simple
+          release-type: node
           token: ${{ secrets.GITHUB_TOKEN }}
