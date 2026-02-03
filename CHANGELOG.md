@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.5](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.1.4...v1.1.5) (2026-02-03)
+
+
+### Bug Fixes
+
+* Test update ([5c72b10](https://github.com/hasnainroopawalla/circuit-sim/commit/5c72b1085898613eabcdbfe106f3afe847ccd890))
+
 ## [1.1.4](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.1.3...v1.1.4) (2026-02-03)
 
 
