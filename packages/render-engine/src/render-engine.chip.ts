@@ -119,7 +119,7 @@ export class ChipRenderer {
 			pins.forEach((pin) => {
 				const translate = mat4.translate(
 					mat4.identity(),
-					vec3.create(pin.position.x, pin.position.y, -0.001),
+					vec3.create(pin.position.x, pin.position.y, 0.001),
 				);
 				const scale = mat4.scale(
 					mat4.identity(),
