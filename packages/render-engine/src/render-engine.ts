@@ -214,6 +214,10 @@ export class RenderEngine {
 			vertexLayout: undefined,
 			blend: blendState,
 			topology: "triangle-list",
+			constants: {
+				maxDarkness: 1.0 - renderEngineConfig.borderDarkness,
+				edgeThickness: renderEngineConfig.borderThickness,
+			},
 		});
 
 		this.pipelineManager.addPipeline({

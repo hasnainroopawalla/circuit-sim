@@ -8,6 +8,9 @@ export const renderEngineConfig = {
 	radiusFloatSize: 4,
 	modelFloatSize: MATRIX_FLOAT_SIZE + COLOR_FLOAT_SIZE,
 
+	borderThickness: 0.08,
+	borderDarkness: 0.4 /*1.0 is darkest*/,
+
 	lineDataFloatSize: 4,
 	lineThickness: 0.02,
 	pinSize: 0.1,
