@@ -214,9 +214,9 @@ export class RenderEngine {
 			vertexLayout: undefined,
 			blend: blendState,
 			topology: "triangle-list",
-			constants : {
+			constants: {
 				maxDarkness: 1.0 - renderEngineConfig.borderDarkness,
-				edgeThickness: renderEngineConfig.borderThickness
+				edgeThickness: renderEngineConfig.borderThickness,
 			},
 		});
 

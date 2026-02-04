@@ -50,7 +50,7 @@ export class PipelineManager {
 		vertexLayout?: GPUVertexBufferLayout[];
 		blend?: GPUBlendState;
 		topology: GPUPrimitiveTopology;
-		constants?: Record<string, number>; 
+		constants?: Record<string, number>;
 	}): void {
 		const {
 			pipelineType,
@@ -60,7 +60,7 @@ export class PipelineManager {
 			vertexLayout,
 			blend,
 			topology,
-			constants
+			constants,
 		} = args;
 		const pipelineLayout = this.createPipelineLayout(
 			this.device,
