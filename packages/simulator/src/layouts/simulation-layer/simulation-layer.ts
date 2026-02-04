@@ -159,7 +159,8 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 			return false;
 		}
 
-		if (EntityUtils.isCompositeChip(hoveredEntity)) {
+		// TODO: revert to isCompositeChip
+		if (EntityUtils.isChip(hoveredEntity)) {
 			this.selectedCompositeId = hoveredEntity.id;
 			this.sim.emit("entity.secondaryAction", {
 				entityType: hoveredEntity.entityType,

@@ -2,6 +2,7 @@ import * as React from "react";
 import { useOnClickOutside } from "../../utils";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import type { IEntitySecondaryActionEvent } from "@digital-logic-sim/simulator";
+import { ActionMenu } from "./action-menu";
 
 export const Popover: React.FC = () => {
 	const simulatorApp = useSimulatorApp();
@@ -38,7 +39,16 @@ export const Popover: React.FC = () => {
 				}}
 			>
 				<div className="overflow-hidden">
-					{renderActionComponent(popoverData)}
+					<ActionMenu
+						onView={() => {
+							console.log("view", popoverData);
+							setPopoverData(null);
+						}}
+						onDelete={() => {
+							console.log("delete", popoverData);
+							setPopoverData(null);
+						}}
+					/>
 				</div>
 			</div>
 		)
