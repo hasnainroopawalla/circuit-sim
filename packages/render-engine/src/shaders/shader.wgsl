@@ -28,6 +28,8 @@ struct UBO{
 @binding(0) @group(0) var<uniform> viewProj : array<mat4x4f, 2>;
 @binding(0) @group(1) var<storage, read> uniforms : array<UBO>;
 
+override maxDarkness = 0.6;
+override edgeThickness = 0.08;
 @vertex
 fn vs_main(input : VSInput) -> Fragment {
     const pos = array(
@@ -65,7 +67,6 @@ fn fragmentAA(uvPos: vec2f,dist: f32, radius: f32) -> f32{
     }
     return alpha;
 }
-const maxDarkness = 0.6;
 
 fn darkFactorRect(uvPos: vec2f,aspect: f32, thickness: f32)->f32{
     var anisotrpicThickness = vec2f(thickness/aspect, thickness);
@@ -84,7 +85,6 @@ fn darkFactorCirc(uvPos: vec2f, aspect: f32, dist: f32, thickness: f32)->f32{
 
 @fragment
 fn fs_main(fragInput : FSInput) -> @location(0) vec4 < f32> {
-    const edgeThickness = 0.08;
     var color = fragInput.Color;
     var dist = pow(fragInput.Uv.x,2)+pow(fragInput.Uv.y,2);
     var radius=1.0;
