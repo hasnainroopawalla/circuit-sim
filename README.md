@@ -8,7 +8,7 @@ Visually build logic circuits, compose custom chips, and experiment freely in re
 Built for tinkering, learning, and rapid iteration.
 
 <p align="center">
-    <img src="assets/sr-latch.png" alt="SR LATCH"/>
+    <img src="assets/latch.png" alt="SR LATCH"/>
 </p>
 
 
