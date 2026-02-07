@@ -5,33 +5,33 @@ import type { ChipDefinition } from "../chip-library-service";
 import type { EntityType } from "../../entities/entity";
 
 export type IEntitySecondaryActionEvent = {
-  entityType: EntityType;
-  mousePosition: Position;
+	entityType: EntityType;
+	mousePosition: Position;
 };
 
 export type IEvents = {
-  "sim.save-chip.start": { chipName: string };
-  "sim.save-chip.finish": undefined;
+	"sim.save-chip.start": { chipName: string };
+	"sim.save-chip.finish": undefined;
 
-  "sim.import-blueprint.start": { blueprintString: string };
+	"sim.import-blueprint.start": { blueprintString: string };
 
-  "sim.reset": undefined;
+	"sim.reset": undefined;
 
-  "overlay.reset": undefined;
+	"overlay.reset": undefined;
 
-  "wire.spawn.start": { startPin: Pin };
-  "chip.spawn.start": { chipDefinition: ChipDefinition };
+	"wire.spawn.start": { startPin: Pin };
+	"chip.spawn.start": { chipDefinition: ChipDefinition };
 
-  "chip.spawn.finish": {
-    chipId: string;
-    chipName: string;
-    chipType: ChipType;
-    pins: { id: string; name: string; pinType: PinType }[];
-  };
+	"chip.spawn.finish": {
+		chipId: string;
+		chipName: string;
+		chipType: ChipType;
+		pins: { id: string; name: string; pinType: PinType }[];
+	};
 
-  "entity.secondaryAction": IEntitySecondaryActionEvent;
+	"entity.secondaryAction": IEntitySecondaryActionEvent;
 
-  "view.composite-chip": {
-    compositeChipId: string;
-  };
+	"view.composite-chip": {
+		compositeChipId: string;
+	};
 };

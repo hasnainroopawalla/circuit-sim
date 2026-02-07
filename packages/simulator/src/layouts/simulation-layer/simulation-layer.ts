@@ -1,13 +1,13 @@
 import {
-  RenderableType,
-  type Renderable,
+	RenderableType,
+	type Renderable,
 } from "@digital-logic-sim/render-engine";
 import { BaseLayer } from "../base-layer";
 import type {
-  ButtonEvent,
-  KeyboardButtonType,
-  MouseButtonType,
-  MouseScrollType,
+	ButtonEvent,
+	KeyboardButtonType,
+	MouseButtonType,
+	MouseScrollType,
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
@@ -17,165 +17,165 @@ import { EntityUtils } from "../../entities/utils";
 import { LayerType, type LayerArgs } from "../layout.interface";
 
 export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
-  private camera: Camera;
-  private selectedCompositeId: string;
+	private camera: Camera;
+	private selectedCompositeId: string;
 
-  constructor(args: LayerArgs<LayerType.Simulation>) {
-    super({
-      ...args,
-      layerType: LayerType.Simulation,
-    });
-    this.camera = args.camera;
-    this.selectedCompositeId = "";
+	constructor(args: LayerArgs<LayerType.Simulation>) {
+		super({
+			...args,
+			layerType: LayerType.Simulation,
+		});
+		this.camera = args.camera;
+		this.selectedCompositeId = "";
 
-    this.registerSubscriptions();
-  }
+		this.registerSubscriptions();
+	}
 
-  public getRenderables(
-    _renderables: Renderable[],
-    hoveredEntityId?: string,
-  ): Renderable[] {
-    const chipRenderables = this.sim.chipManager
-      .getBoardChips()
-      .map((chip) => LayoutUtils.chipToRenderable(chip, hoveredEntityId));
+	public getRenderables(
+		_renderables: Renderable[],
+		hoveredEntityId?: string,
+	): Renderable[] {
+		const chipRenderables = this.sim.chipManager
+			.getBoardChips()
+			.map((chip) => LayoutUtils.chipToRenderable(chip, hoveredEntityId));
 
-    const wireRenderables: Renderable[] = this.sim.wireManager
-      .getBoardWires()
-      .map((wire) => ({
-        type: RenderableType.Wire,
-        path: wire.getPath(),
-        color: wire.getRenderState().color,
-      }));
+		const wireRenderables: Renderable[] = this.sim.wireManager
+			.getBoardWires()
+			.map((wire) => ({
+				type: RenderableType.Wire,
+				path: wire.getPath(),
+				color: wire.getRenderState().color,
+			}));
 
-    // TODO: [optimize] new object created each frame
-    return [...chipRenderables, ...wireRenderables];
-  }
+		// TODO: [optimize] new object created each frame
+		return [...chipRenderables, ...wireRenderables];
+	}
 
-  public onMouseButtonEvent(
-    event: MouseButtonType,
-    nature: ButtonEvent,
-    mousePosition: MousePosition,
-    hoveredEntity: Entity | null,
-  ): boolean {
-    switch (event) {
-      case "leftMouseButton":
-        switch (nature) {
-          case "click":
-            return this.handleLeftMouseButtonClick(hoveredEntity);
-          case "press":
-            return this.handleLeftMouseButtonPress(
-              hoveredEntity,
-              mousePosition,
-            );
-        }
-        break;
-      case "rightMouseButton":
-        switch (nature) {
-          case "click":
-            return this.handleRightMouseButtonClick(
-              hoveredEntity,
-              mousePosition,
-            );
-        }
-    }
+	public onMouseButtonEvent(
+		event: MouseButtonType,
+		nature: ButtonEvent,
+		mousePosition: MousePosition,
+		hoveredEntity: Entity | null,
+	): boolean {
+		switch (event) {
+			case "leftMouseButton":
+				switch (nature) {
+					case "click":
+						return this.handleLeftMouseButtonClick(hoveredEntity);
+					case "press":
+						return this.handleLeftMouseButtonPress(
+							hoveredEntity,
+							mousePosition,
+						);
+				}
+				break;
+			case "rightMouseButton":
+				switch (nature) {
+					case "click":
+						return this.handleRightMouseButtonClick(
+							hoveredEntity,
+							mousePosition,
+						);
+				}
+		}
 
-    return false;
-  }
+		return false;
+	}
 
-  public onMouseScrollEvent(event: MouseScrollType): boolean {
-    switch (event) {
-      case "scrollDown":
-        return this.camera.onMouseInputEvent("scrollDown");
-      case "scrollUp":
-        return this.camera.onMouseInputEvent("scrollUp");
-      default:
-        return false;
-    }
-  }
+	public onMouseScrollEvent(event: MouseScrollType): boolean {
+		switch (event) {
+			case "scrollDown":
+				return this.camera.onMouseInputEvent("scrollDown");
+			case "scrollUp":
+				return this.camera.onMouseInputEvent("scrollUp");
+			default:
+				return false;
+		}
+	}
 
-  public onMouseMoveEvent(
-    _mousePosition: MousePosition,
-    _hoveredEntity: Entity | null,
-  ): boolean {
-    return false;
-  }
+	public onMouseMoveEvent(
+		_mousePosition: MousePosition,
+		_hoveredEntity: Entity | null,
+	): boolean {
+		return false;
+	}
 
-  public onKeyboardEvent(
-    event: KeyboardButtonType,
-    nature: ButtonEvent,
-  ): boolean {
-    return this.camera.onKeyboardEvent(event, nature);
-  }
+	public onKeyboardEvent(
+		event: KeyboardButtonType,
+		nature: ButtonEvent,
+	): boolean {
+		return this.camera.onKeyboardEvent(event, nature);
+	}
 
-  public notifyManager(): string {
-    const compositeId = this.selectedCompositeId;
-    this.selectedCompositeId = "";
-    return compositeId;
-  }
+	public notifyManager(): string {
+		const compositeId = this.selectedCompositeId;
+		this.selectedCompositeId = "";
+		return compositeId;
+	}
 
-  private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
-    if (!hoveredEntity) {
-      return false;
-    }
+	private handleLeftMouseButtonClick(hoveredEntity: Entity | null): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
 
-    if (EntityUtils.isPin(hoveredEntity)) {
-      this.sim.emit("wire.spawn.start", {
-        startPin: hoveredEntity,
-      });
-      return true;
-    }
+		if (EntityUtils.isPin(hoveredEntity)) {
+			this.sim.emit("wire.spawn.start", {
+				startPin: hoveredEntity,
+			});
+			return true;
+		}
 
-    if (EntityUtils.isInputChip(hoveredEntity)) {
-      hoveredEntity.toggle();
-      return true;
-    }
+		if (EntityUtils.isInputChip(hoveredEntity)) {
+			hoveredEntity.toggle();
+			return true;
+		}
 
-    return false;
-  }
+		return false;
+	}
 
-  private handleLeftMouseButtonPress(
-    hoveredEntity: Entity | null,
-    mousePosition: MousePosition,
-  ): boolean {
-    if (!hoveredEntity) {
-      return false;
-    }
+	private handleLeftMouseButtonPress(
+		hoveredEntity: Entity | null,
+		mousePosition: MousePosition,
+	): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
 
-    if (
-      EntityUtils.isChip(hoveredEntity) &&
-      !EntityUtils.isIOChip(hoveredEntity)
-    ) {
-      // TODO: consider moving to a dedicated tool to render ghost
-      hoveredEntity.setPosition(mousePosition.world);
-      return true;
-    }
+		if (
+			EntityUtils.isChip(hoveredEntity) &&
+			!EntityUtils.isIOChip(hoveredEntity)
+		) {
+			// TODO: consider moving to a dedicated tool to render ghost
+			hoveredEntity.setPosition(mousePosition.world);
+			return true;
+		}
 
-    return false;
-  }
+		return false;
+	}
 
-  private handleRightMouseButtonClick(
-    hoveredEntity: Entity | null,
-    mousePosition: MousePosition,
-  ): boolean {
-    if (!hoveredEntity) {
-      return false;
-    }
+	private handleRightMouseButtonClick(
+		hoveredEntity: Entity | null,
+		mousePosition: MousePosition,
+	): boolean {
+		if (!hoveredEntity) {
+			return false;
+		}
 
-    // TODO: revert to isCompositeChip
-    if (EntityUtils.isChip(hoveredEntity)) {
-      this.sim.emit("entity.secondaryAction", {
-        entityType: hoveredEntity.entityType,
-        mousePosition: mousePosition.screen,
-      });
-      return true;
-    }
+		// TODO: revert to isCompositeChip
+		if (EntityUtils.isChip(hoveredEntity)) {
+			this.sim.emit("entity.secondaryAction", {
+				entityType: hoveredEntity.entityType,
+				mousePosition: mousePosition.screen,
+			});
+			return true;
+		}
 
-    return false;
-  }
+		return false;
+	}
 
-  private registerSubscriptions(): void {
-    this.sim.on("view.composite-chip", ({ compositeChipId }) => {
-      this.selectedCompositeId = compositeChipId;
-    });
-  }
+	private registerSubscriptions(): void {
+		this.sim.on("view.composite-chip", ({ compositeChipId }) => {
+			this.selectedCompositeId = compositeChipId;
+		});
+	}
 }
