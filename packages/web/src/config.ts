@@ -1,3 +1,3 @@
 export const config = {
-	githubRepoUrl: "https://github.com/hasnainroopawalla/circuit-sim",
+  githubRepoUrl: "https://github.com/hasnainroopawalla/flux",
 };
