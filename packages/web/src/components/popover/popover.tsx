@@ -74,7 +74,7 @@ function getActionsForEntity(
 					label: "View",
 					handler: () => {
 						simulatorApp.sim.emit("view.composite-chip", {
-							compositeChipId: data.entityType,
+							compositeChipId: data.entityId,
 						});
 					},
 				},
