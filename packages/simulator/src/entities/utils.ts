@@ -8,16 +8,16 @@ import {
 	type IOChip,
 	type OutputChip,
 } from "./chips";
-import type { Entity } from "./entity";
+import { EntityType, type Entity } from "./entity";
 import type { Pin } from "./pin";
 
 export const EntityUtils = {
 	isPin: (entity: Entity): entity is Pin => {
-		return entity.entityType === "pin";
+		return entity.entityType === EntityType.Pin;
 	},
 
 	isChip: (entity: Entity): entity is Chip => {
-		return entity.entityType === "chip";
+		return entity.entityType === EntityType.Chip;
 	},
 
 	isIOChip: (entity: Entity): entity is IOChip => {

@@ -1,5 +1,5 @@
 import { didAnyChange } from "../../utils";
-import { BaseEntity } from "../entity";
+import { BaseEntity, EntityType } from "../entity";
 import { Pin, PinType, type PinSpec } from "../pin";
 import type {
 	ChipSpec,
@@ -17,7 +17,7 @@ type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
 
 export abstract class BaseChip<
 	TChipType extends ChipType,
-> extends BaseEntity<"chip"> {
+> extends BaseEntity<EntityType.Chip> {
 	public spec: ChipSpecOf<TChipType>;
 
 	public inputPins: Pin[];
@@ -37,7 +37,7 @@ export abstract class BaseChip<
 		opts?: EntitySpawnOptions,
 	) {
 		super({
-			entityType: "chip",
+			entityType: EntityType.Chip,
 		});
 
 		this.chipType = chipSpec.chipType;

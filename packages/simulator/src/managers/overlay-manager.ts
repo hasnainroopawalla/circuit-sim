@@ -1,6 +1,6 @@
 import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 import type { Camera } from "../camera";
-import type { Entity } from "../entities/entity";
+import { Entity, EntityType } from "../entities/entity";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
@@ -16,7 +16,10 @@ type OverlayManagerArgs = {
 	canvas: HTMLCanvasElement;
 };
 
-export type OverlayElementKind = "static" | "hover";
+enum OverlayElementKind {
+	Static = "Static",
+	Hover = "Hover",
+}
 
 export type OverlayLabelData = {
 	id: string;
@@ -25,9 +28,9 @@ export type OverlayLabelData = {
 	element?: HTMLElement; // attached after mount
 } & (
 	| {
-			entityType: "chip";
+			entityType: EntityType.Chip;
 	  }
-	| { entityType: "pin"; pinType: PinType }
+	| { entityType: EntityType.Pin; pinType: PinType }
 );
 
 export class OverlayManager extends BaseManager {
@@ -147,7 +150,7 @@ export class OverlayManager extends BaseManager {
 
 	private clearHoverElements(): void {
 		this.labels.forEach((label) => {
-			if (label.element && label.kind === "hover") {
+			if (label.element && label.kind === OverlayElementKind.Hover) {
 				this.hideElement(label.element);
 			}
 		});
@@ -263,8 +266,8 @@ export class OverlayManager extends BaseManager {
 	}: IChipSpawnFinishEvent): void {
 		if (this.shouldRegisterChipLabel(chipType)) {
 			this.labels.set(chipId, {
-				entityType: "chip" as const,
-				kind: "static" as const,
+				entityType: EntityType.Chip,
+				kind: OverlayElementKind.Static,
 				id: chipId,
 				text: chipName,
 			});
@@ -272,8 +275,8 @@ export class OverlayManager extends BaseManager {
 
 		pins.map((pin) =>
 			this.labels.set(pin.id, {
-				entityType: "pin" as const,
-				kind: "hover" as const,
+				entityType: EntityType.Pin,
+				kind: OverlayElementKind.Hover,
 				id: pin.id,
 				text: pin.name,
 				pinType: pin.pinType,

@@ -9,7 +9,7 @@ import {
 	type MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
-import type { Entity } from "../../../entities/entity";
+import { EntityType, type Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";
 import type { Position } from "@digital-logic-sim/shared-types";
 import { COLORS } from "../../../services/color-service";
@@ -89,7 +89,7 @@ export class WiringTool extends Tool {
 		}
 
 		// wiring tool only deactivates if an end pin is clicked
-		if (hoveredEntity.entityType !== "pin") {
+		if (hoveredEntity.entityType !== EntityType.Pin) {
 			return;
 		}
 

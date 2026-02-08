@@ -3,6 +3,7 @@ import { useOnClickOutside } from "../../utils";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
 import {
 	ChipType,
+	EntityType,
 	type IEntitySecondaryActionEvent,
 } from "@digital-logic-sim/simulator";
 import { ActionMenu, type ActionMenuItem } from "./action-menu";
@@ -70,7 +71,7 @@ function getActionsForEntity(ctx: ActionContext): ActionMenuItem[] {
 	const { data } = ctx;
 
 	switch (data.entityType) {
-		case "chip": {
+		case EntityType.Chip: {
 			switch (data.chipType) {
 				case ChipType.Composite:
 					return ENTITY_ACTIONS.compositeChip(ctx);

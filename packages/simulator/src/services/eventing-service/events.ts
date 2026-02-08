@@ -2,12 +2,13 @@ import type { Position } from "@digital-logic-sim/shared-types";
 import type { ChipType } from "../../entities/chips";
 import type { Pin, PinType } from "../../entities/pin";
 import type { ChipDefinition } from "../chip-library-service";
+import type { EntityType } from "../../entities/entity";
 
 export type IEntitySecondaryActionEvent = {
 	entityId: string;
 	mousePosition: Position;
 } & {
-	entityType: "chip";
+	entityType: EntityType.Chip;
 	chipType: ChipType;
 };
 
