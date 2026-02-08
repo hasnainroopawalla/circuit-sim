@@ -59,7 +59,7 @@ export const CHIP_LABEL_CONFIG = {
 	maxLines: 2,
 	lineHeight: 0.1, // world units
 	paddingX: 0.0,
-	paddingY: 0.05,
+	paddingY: 0.0,
 	charWidth: 0.1,
 };
 

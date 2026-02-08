@@ -88,8 +88,7 @@ export class SimulatorApp {
 
 		this.registerSubscriptions();
 
-		// TODO: why doesnt this work without a timeout?
-		setTimeout(() => this.scenarioLoader.load("Showcase"), 1000);
+		// setTimeout(() => this.scenarioLoader.load("Showcase"), 1000);
 	}
 
 	public async start(): Promise<void> {
