@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.4.0](https://github.com/hasnainroopawalla/flux/compare/v1.3.1...v1.4.0) (2026-02-08)
+
+
+### Features
+
+* Delete chip ([#67](https://github.com/hasnainroopawalla/flux/issues/67)) ([c9aa6b0](https://github.com/hasnainroopawalla/flux/commit/c9aa6b0d5cb30dd2297ac88978d55756fee75c8a))
+* String to enum ([#70](https://github.com/hasnainroopawalla/flux/issues/70)) ([688cb30](https://github.com/hasnainroopawalla/flux/commit/688cb301206ac4c2bc1fc80ffb4201f0417807b8))
+
 ## [1.3.1](https://github.com/hasnainroopawalla/flux/compare/v1.3.0...v1.3.1) (2026-02-08)
 
 
