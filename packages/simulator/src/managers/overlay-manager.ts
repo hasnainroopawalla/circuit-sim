@@ -211,8 +211,10 @@ export class OverlayManager extends BaseManager {
 
 		element.style.height = `${props.height}px`;
 
-		const fontScale =
-			props.numLines && props.numLines > 1 ? 1.0 / props.numLines : 1.0;
+		const fontScale = !props.numLines
+			? 0.7 // for pin labels
+			: 1 / Math.max(1, props.numLines);
+
 		element.style.fontSize = `${props.height * fontScale}px`;
 	}
 

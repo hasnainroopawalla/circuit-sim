@@ -52,6 +52,10 @@ export class WireManager extends BaseManager {
 		wireInitParams: WireInitParams,
 		opts?: EntitySpawnOptions,
 	): void {
+		if (!wireConnection.startPin || !wireConnection.endPin) {
+			throw new InvalidWireConnectionError(undefined, undefined);
+		}
+
 		const wire = new Wire({
 			wireConnection: this.normalizeWireDirection(wireConnection),
 			wireInitParams,

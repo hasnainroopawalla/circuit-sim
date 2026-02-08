@@ -1,0 +1,110 @@
+{
+    "root": "NAND",
+    "definitions": {
+        "NAND": {
+            "chips": [
+                {
+                    "id": "2",
+                    "spec": {
+                        "chipType": "atomic",
+                        "name": "AND"
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.38,
+                            "g": 0.65,
+                            "b": 0.18,
+                            "a": 1
+                        },
+                        "position": {
+                            "x": 0.3,
+                            "y": 1
+                        }
+                    }
+                },
+                {
+                    "id": "3",
+                    "spec": {
+                        "chipType": "atomic",
+                        "name": "NOT"
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.85,
+                            "g": 0.4,
+                            "b": 0.4,
+                            "a": 1
+                        },
+                        "position": {
+                            "x": -1,
+                            "y": 1
+                        }
+                    }
+                }
+            ],
+            "wires": [
+                {
+                    "spec": {
+                        "start": {
+                            "chipId": "2",
+                            "pinName": "out0"
+                        },
+                        "end": {
+                            "chipId": "3",
+                            "pinName": "in0"
+                        }
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.1,
+                            "g": 0.2,
+                            "b": 0.35,
+                            "a": 1
+                        },
+                        "controlPoints": []
+                    }
+                }
+            ],
+            "inputMappings": {
+                "IN 1": {
+                    "position": {
+                        "x": 1.6,
+                        "y": 1.3
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "2",
+                            "internalPinName": "in0"
+                        }
+                    ]
+                },
+                "IN 2": {
+                    "position": {
+                        "x": 1.6,
+                        "y": 0.8
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "2",
+                            "internalPinName": "in1"
+                        }
+                    ]
+                }
+            },
+            "outputMappings": {
+                "OUT 1": {
+                    "position": {
+                        "x": -2,
+                        "y": 1
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "3",
+                            "internalPinName": "out0"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}
