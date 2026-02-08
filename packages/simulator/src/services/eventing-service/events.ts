@@ -1,6 +1,14 @@
+import type { Position } from "@digital-logic-sim/shared-types";
 import type { ChipType } from "../../entities/chips";
 import type { Pin, PinType } from "../../entities/pin";
 import type { ChipDefinition } from "../chip-library-service";
+import type { EntityType } from "../../entities/entity";
+
+export type IEntitySecondaryActionEvent = {
+	entityId: string;
+	entityType: EntityType;
+	mousePosition: Position;
+};
 
 export type IEvents = {
 	"sim.save-chip.start": { chipName: string };
@@ -20,5 +28,11 @@ export type IEvents = {
 		chipName: string;
 		chipType: ChipType;
 		pins: { id: string; name: string; pinType: PinType }[];
+	};
+
+	"entity.secondaryAction": IEntitySecondaryActionEvent;
+
+	"view.composite-chip": {
+		compositeChipId: string;
 	};
 };

@@ -39,15 +39,33 @@ export const useOnClickOutside = (
 ) => {
 	React.useEffect(() => {
 		function handleClick(e: MouseEvent) {
-			if (!divRef.current) return;
+			if (!divRef.current) {
+				return;
+			}
+
 			if (!divRef.current.contains(e.target as Node)) {
 				onClickOutside();
 			}
 		}
 		document.addEventListener("mousedown", handleClick);
 
-		return () => document.removeEventListener("mousedown", handleClick);
+		return () => {
+			document.removeEventListener("mousedown", handleClick);
+		};
 	}, [divRef, onClickOutside]);
+
+	React.useEffect(() => {
+		function handleClick(e: KeyboardEvent) {
+			if (e.key === "Escape") {
+				onClickOutside();
+			}
+		}
+		document.addEventListener("keydown", handleClick);
+
+		return () => {
+			document.removeEventListener("keydown", handleClick);
+		};
+	}, [onClickOutside]);
 };
 
 /**

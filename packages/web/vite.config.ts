@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  base: '/circuit-sim/',
+  base: process.env.BASE_PATH,
   define: {
     APP_VERSION: JSON.stringify(rootPkg.version || process.env.npm_package_version || 'dev'),
   },

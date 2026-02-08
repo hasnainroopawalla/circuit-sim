@@ -1,15 +1,12 @@
 import * as React from "react";
 import { useDialog } from "./dialog-context";
 import { getCurrentPanelProps } from "./dialog-panel";
-import { useCloseDialogShortcut } from "./hooks";
 import { useOnClickOutside } from "../../utils";
 
 // TODO: Fix height overflow scroll
 // TODO: Define headers here
 export const Dialog: React.FC = () => {
 	const { currentPanel, closeDialog } = useDialog();
-
-	useCloseDialogShortcut(closeDialog);
 
 	const divRef = React.useRef<HTMLDivElement>(null);
 	useOnClickOutside(divRef, closeDialog);

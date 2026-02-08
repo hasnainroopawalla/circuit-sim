@@ -88,7 +88,7 @@ export const SCENARIOS = {
 		);
 	},
 
-	Showcase: (sim: Simulator) => {
+	ChipGallery: (sim: Simulator) => {
 		sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
 				kind: "atomic",

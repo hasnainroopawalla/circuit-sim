@@ -50,9 +50,6 @@ export class LayoutManager {
 
 	private layerStack: LayerStack;
 
-	// private activeLayers: OrderedMap<BaseLayer<LayerType>>;
-	// private suspendedLayers: OrderedMap<BaseLayer<LayerType>>;
-
 	constructor(args: LayoutManagerArgs) {
 		this.state = {
 			kind: State.Workbench,

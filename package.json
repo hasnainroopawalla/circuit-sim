@@ -1,8 +1,8 @@
 {
   "name": "digital-logic-sim",
   "version": "1.2.0",
-  "homepage": "http://hasnainroopawalla.github.io/circuit-sim",
-  "description": "Digital logic gate simulator using React, TypeScript and WebGPU",
+  "homepage": "http://hasnainroopawalla.github.io/flux",
+  "description": "Digital logic gate simulator using React and WebGPU",
   "main": "index.js",
   "scripts": {
     "start": "pnpm --filter @digital-logic-sim/web start",

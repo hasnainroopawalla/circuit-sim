@@ -12,6 +12,6 @@ export const renderEngineConfig = {
 	borderDarkness: 0.4 /*1.0 is darkest*/,
 
 	lineDataFloatSize: 4,
-	lineThickness: 0.02,
+	lineThickness: 0.04,
 	pinSize: 0.1,
 };
