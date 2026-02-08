@@ -1,0 +1,122 @@
+{
+    "root": "3-AND",
+    "definitions": {
+        "3-AND": {
+            "chips": [
+                {
+                    "id": "3",
+                    "spec": {
+                        "chipType": "atomic",
+                        "name": "AND"
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.38,
+                            "g": 0.65,
+                            "b": 0.18,
+                            "a": 1
+                        },
+                        "position": {
+                            "x": 0.57,
+                            "y": 1.17
+                        }
+                    }
+                },
+                {
+                    "id": "4",
+                    "spec": {
+                        "chipType": "atomic",
+                        "name": "AND"
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.38,
+                            "g": 0.65,
+                            "b": 0.18,
+                            "a": 1
+                        },
+                        "position": {
+                            "x": -0.86,
+                            "y": -0.05
+                        }
+                    }
+                }
+            ],
+            "wires": [
+                {
+                    "spec": {
+                        "start": {
+                            "chipId": "3",
+                            "pinName": "out0"
+                        },
+                        "end": {
+                            "chipId": "4",
+                            "pinName": "in0"
+                        }
+                    },
+                    "renderState": {
+                        "color": {
+                            "r": 0.2,
+                            "g": 0.6,
+                            "b": 1,
+                            "a": 1
+                        },
+                        "controlPoints": []
+                    }
+                }
+            ],
+            "inputMappings": {
+                "IN 1": {
+                    "position": {
+                        "x": 2.07,
+                        "y": 1.54
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "3",
+                            "internalPinName": "in0"
+                        }
+                    ]
+                },
+                "IN 2": {
+                    "position": {
+                        "x": 2.09,
+                        "y": 0.8
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "3",
+                            "internalPinName": "in1"
+                        }
+                    ]
+                },
+                "IN 3": {
+                    "position": {
+                        "x": 2.09,
+                        "y": -0.04
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "4",
+                            "internalPinName": "in1"
+                        }
+                    ]
+                }
+            },
+            "outputMappings": {
+                "OUT 1": {
+                    "position": {
+                        "x": -2.58,
+                        "y": -0.07
+                    },
+                    "mappings": [
+                        {
+                            "internalChipId": "4",
+                            "internalPinName": "out0"
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

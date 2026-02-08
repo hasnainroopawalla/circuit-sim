@@ -57,10 +57,10 @@ export const ChipUtils = {
 export const CHIP_LABEL_CONFIG = {
 	maxCharsPerLine: 8,
 	maxLines: 2,
-	lineHeight: 0.03, // world units
-	paddingX: 0.2,
-	paddingY: 0,
-	minWidth: 0.4,
+	lineHeight: 0.1, // world units
+	paddingX: 0.0,
+	paddingY: 0.0,
+	charWidth: 0.1,
 };
 
 export const ChipLabelUtils = {

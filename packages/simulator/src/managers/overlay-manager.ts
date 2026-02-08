@@ -123,7 +123,7 @@ export class OverlayManager extends BaseManager {
 					chip.spec.name,
 					chipWorldPosition,
 					chipScreenSpacePosition,
-					chip.layout.dimensions,
+					chip.layout.labelDimensions,
 					element,
 				);
 			} else {
@@ -174,20 +174,9 @@ export class OverlayManager extends BaseManager {
 			entityDimension,
 		);
 
-		const boundingBoxWithOffset = {
-			minPosition: {
-				x: worldSpaceBoundingBox.minPosition.x + renderEngineConfig.pinSize,
-				y: worldSpaceBoundingBox.minPosition.y + renderEngineConfig.pinSize,
-			},
-			maxPosition: {
-				x: worldSpaceBoundingBox.maxPosition.x - renderEngineConfig.pinSize,
-				y: worldSpaceBoundingBox.maxPosition.y - renderEngineConfig.pinSize,
-			},
-		};
-
 		const { width, height } = this.getDimensionsInScreenSpace(
-			boundingBoxWithOffset.minPosition,
-			boundingBoxWithOffset.maxPosition,
+			worldSpaceBoundingBox.minPosition,
+			worldSpaceBoundingBox.maxPosition,
 		);
 
 		this.showElement(element, {
@@ -222,7 +211,8 @@ export class OverlayManager extends BaseManager {
 
 		element.style.height = `${props.height}px`;
 
-		const fontScale = props.numLines && props.numLines > 1 ? 0.5 : 0.7;
+		const fontScale =
+			props.numLines && props.numLines > 1 ? 1.0 / props.numLines : 1.0;
 		element.style.fontSize = `${props.height * fontScale}px`;
 	}
 
