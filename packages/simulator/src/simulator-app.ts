@@ -88,7 +88,7 @@ export class SimulatorApp {
 
 		this.init();
 
-		setTimeout(() => this.scenarioLoader.load("OrUsingNand"), 1000);
+		// setTimeout(() => this.scenarioLoader.load("OrUsingNand"), 1000);
 	}
 
 	public async start(): Promise<void> {
