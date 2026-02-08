@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.3.0](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.2.0...v1.3.0) (2026-02-08)
+
+
+### Features
+
+* Popovers ([#60](https://github.com/hasnainroopawalla/circuit-sim/issues/60)) ([6b7a26f](https://github.com/hasnainroopawalla/circuit-sim/commit/6b7a26f49919154495ebfa741af060715c5c13fc))
+
+
+### Bug Fixes
+
+* Chip sizing with labels ([#62](https://github.com/hasnainroopawalla/circuit-sim/issues/62)) ([a489567](https://github.com/hasnainroopawalla/circuit-sim/commit/a4895675d26cee7f191e4a714cfdecc53781ce1f))
+
 ## [1.2.0](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.1.8...v1.2.0) (2026-02-04)
 
 
