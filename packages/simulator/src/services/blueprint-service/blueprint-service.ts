@@ -37,6 +37,13 @@ export class BlueprintService extends BaseService {
 		this.sim.chipLibraryService.register(JSON.parse(blueprintString));
 	}
 
+	public renameBlueprint(blueprint: Blueprint, newName: string): void {
+		const originalName = blueprint.root;
+		blueprint.definitions[newName] = blueprint.definitions[originalName];
+		blueprint.root = newName;
+		delete blueprint.definitions[originalName];
+	}
+
 	private saveBlueprint(blueprintName: string): Blueprint {
 		const definitions: Blueprint["definitions"] = {};
 		const visited = new Set<string>();
@@ -60,6 +67,8 @@ export class BlueprintService extends BaseService {
 		this.sim.chipLibraryService.register(blueprint);
 
 		this.sim.emit("sim.save-chip.finish", undefined);
+
+		console.log("Blueprint", blueprint);
 
 		return blueprint;
 	}
