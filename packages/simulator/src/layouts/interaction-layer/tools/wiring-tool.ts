@@ -3,10 +3,10 @@ import {
 	type Renderable,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import type {
+import {
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseButtonType,
+	type KeyboardButtonType,
+	type MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
@@ -56,7 +56,7 @@ export class WiringTool extends Tool {
 		switch (event) {
 			case "leftMouseButton":
 				switch (nature) {
-					case "click":
+					case ButtonEvent.Click:
 						this.handleLeftMouseButtonClick(hoveredEntity, mousePosition);
 						break;
 				}

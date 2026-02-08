@@ -10,10 +10,10 @@ import {
 	GhostChip,
 	type GhostChipSpec,
 } from "../../../entities/chips";
-import type {
+import {
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseButtonType,
+	type KeyboardButtonType,
+	type MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
@@ -61,7 +61,7 @@ export class SpawnChipTool extends Tool {
 		switch (event) {
 			case "leftMouseButton": {
 				switch (nature) {
-					case "click": {
+					case ButtonEvent.Click: {
 						this.handleLeftMouseButtonClick();
 						break;
 					}

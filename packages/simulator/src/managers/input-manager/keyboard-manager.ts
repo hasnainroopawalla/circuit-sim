@@ -1,9 +1,9 @@
 import { ObjectKeys } from "../../utils";
 import {
-	type ButtonEvent,
 	type InputEventTopic,
 	type InputManagerState,
 	type KeyboardButtonType,
+	ButtonEvent,
 	KeyboardButton,
 } from "./input-manager.interface";
 
@@ -64,15 +64,15 @@ export class KeyboardManager {
 		topic: InputEventTopic<KeyboardButtonType>,
 	): void {
 		switch (topic.nature) {
-			case "click":
+			case ButtonEvent.Click:
 				this.keyboardButtonState[keyboardButton].pollCount === 1 &&
 					topic.callback(keyboardButton, topic.nature);
 				break;
-			case "press":
+			case ButtonEvent.Press:
 				this.keyboardButtonState[keyboardButton].pollCount > 1 &&
 					topic.callback(keyboardButton, topic.nature);
 				break;
-			case "release":
+			case ButtonEvent.Release:
 				this.keyboardButtonState[keyboardButton].pollCount === -1 &&
 					topic.callback(keyboardButton, topic.nature);
 		}

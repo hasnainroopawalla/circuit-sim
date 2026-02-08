@@ -3,11 +3,11 @@ import {
 	type Renderable,
 } from "@digital-logic-sim/render-engine";
 import { BaseLayer } from "../base-layer";
-import type {
+import {
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseButtonType,
-	MouseScrollType,
+	type KeyboardButtonType,
+	type MouseButtonType,
+	type MouseScrollType,
 } from "../../managers/input-manager";
 import type { MousePosition } from "../../types";
 import type { Entity } from "../../entities/entity";
@@ -60,9 +60,9 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 		switch (event) {
 			case "leftMouseButton":
 				switch (nature) {
-					case "click":
+					case ButtonEvent.Click:
 						return this.handleLeftMouseButtonClick(hoveredEntity);
-					case "press":
+					case ButtonEvent.Press:
 						return this.handleLeftMouseButtonPress(
 							hoveredEntity,
 							mousePosition,
@@ -71,7 +71,7 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 				break;
 			case "rightMouseButton":
 				switch (nature) {
-					case "click":
+					case ButtonEvent.Click:
 						return this.handleRightMouseButtonClick(
 							hoveredEntity,
 							mousePosition,
