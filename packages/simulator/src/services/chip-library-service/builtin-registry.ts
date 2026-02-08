@@ -1,5 +1,7 @@
 import {
 	AndChip,
+	AtomicChipType,
+	IOChipType,
 	OrChip,
 	NotChip,
 	InputChip,
@@ -7,11 +9,10 @@ import {
 	type IOChip,
 	type AtomicChip,
 	type EntitySpawnOptions,
-	type IOChipType,
-	type AtomicChipType,
 	type ChipInitParams,
 	type IOChipSpec,
 	type AtomicChipSpec,
+	ChipType,
 } from "../../entities/chips";
 import { ChipNotFoundError } from "../../errors/chip-not-found-error";
 import type { ChipDefinition } from "./chip-library-service";
@@ -27,36 +28,36 @@ type IOChipClass = (new (
 ) => IOChip) & { spec: IOChipSpec };
 
 const BUILTIN_ATOMIC_CHIPS: Record<AtomicChipType, AtomicChipClass> = {
-	AND: AndChip,
-	OR: OrChip,
-	NOT: NotChip,
+	[AtomicChipType.And]: AndChip,
+	[AtomicChipType.Or]: OrChip,
+	[AtomicChipType.Not]: NotChip,
 };
 
 const BUILTIN_IO_CHIPS: Record<IOChipType, IOChipClass> = {
-	input: InputChip,
-	output: OutputChip,
+	[IOChipType.Input]: InputChip,
+	[IOChipType.Output]: OutputChip,
 };
 
 export type AtomicChipFactory = {
-	kind: "atomic";
+	kind: ChipType.Atomic;
 	ChipClass: AtomicChipClass;
 };
 
 export type IOChipFactory = {
-	kind: "io";
+	kind: ChipType.IO;
 	ChipClass: IOChipClass;
 };
 
 export class BuiltinChipRegistry {
 	public getDefinitions(): ChipDefinition[] {
 		const ioChipDefinitions = Object.values(BUILTIN_IO_CHIPS).map((chip) => ({
-			kind: "io" as const,
+			kind: ChipType.IO as const,
 			name: chip.spec.name as IOChipType,
 		}));
 
 		const atomicChipDefinitions = Object.values(BUILTIN_ATOMIC_CHIPS).map(
 			(chip) => ({
-				kind: "atomic" as const,
+				kind: ChipType.Atomic as const,
 				name: chip.spec.name as AtomicChipType,
 			}),
 		);
@@ -65,31 +66,31 @@ export class BuiltinChipRegistry {
 	}
 
 	public get(
-		kind: "atomic" | "io",
+		kind: ChipType.Atomic | ChipType.IO,
 		name: AtomicChipType | IOChipType,
 	): AtomicChipFactory | IOChipFactory {
 		switch (kind) {
-			case "atomic": {
+			case ChipType.Atomic: {
 				const atomicChipClass = BUILTIN_ATOMIC_CHIPS[name as AtomicChipType];
 
 				if (!atomicChipClass) {
-					throw new ChipNotFoundError("atomic", name);
+					throw new ChipNotFoundError(ChipType.Atomic, name);
 				}
 
 				return {
-					kind: "atomic",
+					kind: ChipType.Atomic,
 					ChipClass: atomicChipClass,
 				};
 			}
-			case "io": {
+			case ChipType.IO: {
 				const ioChipClass = BUILTIN_IO_CHIPS[name as IOChipType];
 
 				if (!ioChipClass) {
-					throw new ChipNotFoundError("io", name);
+					throw new ChipNotFoundError(ChipType.IO, name);
 				}
 
 				return {
-					kind: "io",
+					kind: ChipType.IO,
 					ChipClass: ioChipClass,
 				};
 			}

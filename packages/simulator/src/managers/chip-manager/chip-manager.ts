@@ -5,6 +5,7 @@ import {
 	type AtomicChip,
 	type EntitySpawnOptions,
 	CompositeChip,
+	ChipType,
 } from "../../entities/chips";
 import { entityIdService } from "../../entity-id-service";
 import type {
@@ -115,19 +116,19 @@ export class ChipManager extends BaseManager {
 		opts?: EntitySpawnOptions,
 	): ChipFromFactory<T> {
 		switch (chipFactory.kind) {
-			case "io":
+			case ChipType.IO:
 				return this.createIOChip(
 					chipFactory,
 					chipInitParams,
 					opts,
 				) as ChipFromFactory<T>;
-			case "atomic":
+			case ChipType.Atomic:
 				return this.createAtomicChip(
 					chipFactory,
 					chipInitParams,
 					opts,
 				) as ChipFromFactory<T>;
-			case "composite":
+			case ChipType.Composite:
 				return this.createCompositeChip(
 					chipFactory,
 					chipInitParams,

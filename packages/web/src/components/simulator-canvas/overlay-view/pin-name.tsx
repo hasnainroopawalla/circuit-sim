@@ -1,4 +1,4 @@
-import type { PinType } from "@digital-logic-sim/simulator";
+import { PinType } from "@digital-logic-sim/simulator";
 import type * as React from "react";
 import { twMerge } from "tailwind-merge";
 
@@ -21,12 +21,12 @@ export const PinName: React.FC<PinNameProps> = ({
 			ref={labelRef}
 			className={twMerge(
 				"text-white text-sm absolute pointer-events-none whitespace-nowrap -translate-y-1/2 justify-center items-center ",
-				pinType === "in"
+				pinType === PinType.In
 					? "-translate-x-[80%] text-left"
 					: "-translate-x-[20%] ml-1.5 text-left",
 			)}
 		>
-			<span className="bg-black/80 px-1 backdrop-blur-md shadow-lg">
+			<span className="px-1 shadow-lg bg-black/80 backdrop-blur-md">
 				{name}
 			</span>
 		</div>

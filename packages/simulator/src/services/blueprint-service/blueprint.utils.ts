@@ -1,4 +1,4 @@
-import type { PinSpec, PinType } from "../../entities/pin";
+import { type PinSpec, PinType } from "../../entities/pin";
 import type { CompositeDefinition } from "./blueprint-service.interface";
 
 export const BlueprintUtils = {
@@ -9,8 +9,8 @@ export const BlueprintUtils = {
 		outputPins: PinSpec[];
 	} => {
 		return {
-			inputPins: getIOPinSpecsOf(definition, "in"),
-			outputPins: getIOPinSpecsOf(definition, "out"),
+			inputPins: getIOPinSpecsOf(definition, PinType.In),
+			outputPins: getIOPinSpecsOf(definition, PinType.Out),
 		};
 	},
 };
@@ -20,6 +20,8 @@ function getIOPinSpecsOf(
 	pinType: PinType,
 ): PinSpec[] {
 	return Object.keys(
-		pinType === "in" ? definition.inputMappings : definition.outputMappings,
+		pinType === PinType.In
+			? definition.inputMappings
+			: definition.outputMappings,
 	).map((pinName) => ({ name: pinName }));
 }

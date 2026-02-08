@@ -1,12 +1,14 @@
 import { COLORS } from "../../services/color-service";
 import { BaseChip } from "./chip";
-import type {
-	AtomicChipSpec,
-	ChipInitParams,
-	EntitySpawnOptions,
+import {
+	AtomicChipType,
+	ChipType,
+	type AtomicChipSpec,
+	type ChipInitParams,
+	type EntitySpawnOptions,
 } from "./chip.interface";
 
-export abstract class AtomicChip extends BaseChip<"atomic"> {
+export abstract class AtomicChip extends BaseChip<ChipType.Atomic> {
 	constructor(
 		chipSpec: AtomicChipSpec,
 		chipInitParams: ChipInitParams,
@@ -18,9 +20,9 @@ export abstract class AtomicChip extends BaseChip<"atomic"> {
 
 export class AndChip extends AtomicChip {
 	static readonly spec: AtomicChipSpec = {
-		name: "AND",
-		atomicChipType: "AND",
-		chipType: "atomic",
+		name: AtomicChipType.And,
+		atomicChipType: AtomicChipType.And,
+		chipType: ChipType.Atomic,
 		inputPins: [{ name: "in0" }, { name: "in1" }],
 		outputPins: [{ name: "out0" }],
 		color: COLORS.AndGate,
@@ -39,9 +41,9 @@ export class AndChip extends AtomicChip {
 
 export class OrChip extends AtomicChip {
 	static readonly spec: AtomicChipSpec = {
-		name: "OR",
-		atomicChipType: "OR",
-		chipType: "atomic",
+		name: AtomicChipType.Or,
+		atomicChipType: AtomicChipType.Or,
+		chipType: ChipType.Atomic,
 		inputPins: [{ name: "in0" }, { name: "in1" }],
 		outputPins: [{ name: "out0" }],
 		color: COLORS.OrGate,
@@ -60,9 +62,9 @@ export class OrChip extends AtomicChip {
 
 export class NotChip extends AtomicChip {
 	static readonly spec: AtomicChipSpec = {
-		name: "NOT",
-		atomicChipType: "NOT",
-		chipType: "atomic",
+		name: AtomicChipType.Not,
+		atomicChipType: AtomicChipType.Not,
+		chipType: ChipType.Atomic,
 		inputPins: [{ name: "in0" }],
 		outputPins: [{ name: "out0" }],
 		color: COLORS.NotGate,

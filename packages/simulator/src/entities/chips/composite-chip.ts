@@ -5,17 +5,18 @@ import type {
 	EntitySpawnOptions,
 	CompositeChipSpec,
 	IOChipType,
+	ChipType,
 } from "./chip.interface";
 import type { OutputChip, InputChip } from "./io-chip";
 
 export type RuntimePinMapping<T extends IOChipType> = {
-	internalChip: T extends "input" ? InputChip : OutputChip;
+	internalChip: T extends IOChipType.Input ? InputChip : OutputChip;
 	internalPin: Pin;
 };
 
-export class CompositeChip extends BaseChip<"composite"> {
-	private inputMappings!: RuntimePinMapping<"input">[];
-	private outputMappings!: RuntimePinMapping<"output">[];
+export class CompositeChip extends BaseChip<ChipType.Composite> {
+	private inputMappings!: RuntimePinMapping<IOChipType.Input>[];
+	private outputMappings!: RuntimePinMapping<IOChipType.Output>[];
 
 	constructor(
 		chipSpec: CompositeChipSpec,
@@ -26,8 +27,8 @@ export class CompositeChip extends BaseChip<"composite"> {
 	}
 
 	public setMappings(
-		inputMappings: RuntimePinMapping<"input">[],
-		outputMappings: RuntimePinMapping<"output">[],
+		inputMappings: RuntimePinMapping<IOChipType.Input>[],
+		outputMappings: RuntimePinMapping<IOChipType.Output>[],
 	): void {
 		this.inputMappings = inputMappings;
 		this.outputMappings = outputMappings;

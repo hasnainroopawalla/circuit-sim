@@ -6,7 +6,12 @@ import type {
 	IOMapping,
 	WireBlueprint,
 } from "./blueprint-service.interface";
-import type { Chip, IOChip, IOChipType } from "../../entities/chips";
+import {
+	type Chip,
+	type IOChip,
+	ChipType,
+	IOChipType,
+} from "../../entities/chips";
 import { EntityUtils } from "../../entities/utils";
 import type { Wire } from "../../entities/wire";
 import type { Simulator } from "../../simulator";
@@ -60,7 +65,7 @@ export class BlueprintService extends BaseService {
 		visited.add(blueprintName);
 
 		boardCompositeDefinition.chips.forEach((chip) => {
-			if (chip.spec.chipType === "composite") {
+			if (chip.spec.chipType === ChipType.Composite) {
 				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
 		});
@@ -89,14 +94,14 @@ export class BlueprintService extends BaseService {
 		visited.add(compositeChipName);
 
 		const compositeChipFactory = this.sim.chipLibraryService.getChipFactory({
-			kind: "composite",
+			kind: ChipType.Composite,
 			name: compositeChipName,
 		});
 
 		definitions[compositeChipName] = compositeChipFactory.spec.definition;
 
 		compositeChipFactory.spec.definition.chips.forEach((chip) => {
-			if (chip.spec.chipType === "composite") {
+			if (chip.spec.chipType === ChipType.Composite) {
 				this.collectCompositeDefinitions(chip.spec.name, definitions, visited);
 			}
 		});
@@ -192,7 +197,7 @@ export class BlueprintService extends BaseService {
 			}
 
 			const mappings =
-				chip.ioChipType === "input" ? inputMappings : outputMappings;
+				chip.ioChipType === IOChipType.Input ? inputMappings : outputMappings;
 
 			const externalPinLabel = this.getExternalPinLabel(
 				chip,
@@ -210,13 +215,13 @@ export class BlueprintService extends BaseService {
 		const ioPin = ioChip.getPin();
 
 		const connectedWires =
-			ioChip.ioChipType === "input"
+			ioChip.ioChipType === IOChipType.Input
 				? this.sim.wireManager.getOutgoingWires(ioPin.id)
 				: this.sim.wireManager.getIncomingWires(ioPin.id);
 
 		const mappings = connectedWires.map((wire) => {
 			const internalPin =
-				ioChip.ioChipType === "input" ? wire.endPin : wire.startPin;
+				ioChip.ioChipType === IOChipType.Input ? wire.endPin : wire.startPin;
 			const internalChip = internalPin.chip;
 
 			if (EntityUtils.isIOChip(internalChip)) {
@@ -246,7 +251,7 @@ export class BlueprintService extends BaseService {
 			return customPinLabel;
 		}
 
-		return `${ioChipType === "input" ? "IN" : "OUT"} ${Object.keys(pinMappings).length + 1}`;
+		return `${ioChipType === IOChipType.Input ? "IN" : "OUT"} ${Object.keys(pinMappings).length + 1}`;
 	}
 
 	private normalizePosition(position: Position): Position {

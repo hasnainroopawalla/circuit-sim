@@ -1,6 +1,6 @@
 import { didAnyChange } from "../../utils";
 import { BaseEntity } from "../entity";
-import { Pin, type PinSpec, type PinType } from "../pin";
+import { Pin, PinType, type PinSpec } from "../pin";
 import type {
 	ChipSpec,
 	ChipInitParams,
@@ -42,8 +42,8 @@ export abstract class BaseChip<
 
 		this.chipType = chipSpec.chipType;
 
-		this.inputPins = this.createPins(chipSpec.inputPins, "in");
-		this.outputPins = this.createPins(chipSpec.outputPins, "out");
+		this.inputPins = this.createPins(chipSpec.inputPins, PinType.In);
+		this.outputPins = this.createPins(chipSpec.outputPins, PinType.Out);
 
 		this.parentCompositeId = opts?.parentCompositeId || "";
 

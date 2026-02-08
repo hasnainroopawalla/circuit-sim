@@ -1,4 +1,8 @@
-import type { AtomicChipType, IOChipType } from "../../entities/chips";
+import {
+	type AtomicChipType,
+	type IOChipType,
+	ChipType,
+} from "../../entities/chips";
 import type { Blueprint } from "../blueprint-service";
 import {
 	type AtomicChipFactory,
@@ -12,17 +16,17 @@ import {
 } from "./composite-registry";
 
 type ChipRegistryMap = {
-	atomic: {
+	[ChipType.Atomic]: {
 		name: AtomicChipType;
 		resolved: AtomicChipFactory;
 	};
 
-	io: {
+	[ChipType.IO]: {
 		name: IOChipType;
 		resolved: IOChipFactory;
 	};
 
-	composite: {
+	[ChipType.Composite]: {
 		name: CompositeChipName;
 		resolved: CompositeChipFactory;
 	};
@@ -64,10 +68,10 @@ export class ChipLibraryService {
 		definition: TDef,
 	): ChipRegistryMap[TDef["kind"]]["resolved"] {
 		switch (definition.kind) {
-			case "atomic":
-			case "io":
+			case ChipType.Atomic:
+			case ChipType.IO:
 				return this.builtin.get(definition.kind, definition.name);
-			case "composite":
+			case ChipType.Composite:
 				return this.composite.get(definition.name);
 		}
 	}

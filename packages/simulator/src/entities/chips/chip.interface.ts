@@ -5,12 +5,23 @@ import type { CompositeChip } from "./composite-chip";
 import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import type { CompositeDefinition } from "../../services/blueprint-service";
 
-export type AtomicChipType = "AND" | "OR" | "NOT";
+export enum AtomicChipType {
+	And = "And",
+	Or = "Or",
+	Not = "Not",
+}
 
-export type ChipType = "io" | "atomic" | "composite";
+export enum ChipType {
+	IO = "IO",
+	Atomic = "Atomic",
+	Composite = "Composite",
+}
 export type Chip = IOChip | AtomicChip | CompositeChip;
 
-export type IOChipType = "input" | "output";
+export enum IOChipType {
+	Input = "Input",
+	Output = "Output",
+}
 export type IOChip = InputChip | OutputChip;
 
 export type ChipRenderState = ChipInitParams & {
@@ -32,21 +43,22 @@ type BaseChipSpec<TChipType extends ChipType> = {
 	color: ColorRGBA;
 };
 
-type BaseIOChipSpec<TIOChipType extends IOChipType> = BaseChipSpec<"io"> & {
-	ioChipType: TIOChipType;
-	name: IOChipType;
-};
+type BaseIOChipSpec<TIOChipType extends IOChipType> =
+	BaseChipSpec<ChipType.IO> & {
+		ioChipType: TIOChipType;
+		name: IOChipType;
+	};
 
-export type InputChipSpec = BaseIOChipSpec<"input">;
-export type OutputChipSpec = BaseIOChipSpec<"output">;
+export type InputChipSpec = BaseIOChipSpec<IOChipType.Input>;
+export type OutputChipSpec = BaseIOChipSpec<IOChipType.Output>;
 export type IOChipSpec = InputChipSpec | OutputChipSpec;
 
-export type AtomicChipSpec = BaseChipSpec<"atomic"> & {
+export type AtomicChipSpec = BaseChipSpec<ChipType.Atomic> & {
 	atomicChipType: AtomicChipType;
 	name: AtomicChipType;
 };
 
-export type CompositeChipSpec = BaseChipSpec<"composite"> & {
+export type CompositeChipSpec = BaseChipSpec<ChipType.Composite> & {
 	name: string;
 	definition: CompositeDefinition;
 };

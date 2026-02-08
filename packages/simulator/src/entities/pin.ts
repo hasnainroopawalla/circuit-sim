@@ -2,7 +2,10 @@ import type { Position, ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Chip } from "./chips";
 import { BaseEntity } from "./entity";
 
-export type PinType = "in" | "out";
+export enum PinType {
+	In = "In",
+	Out = "Out",
+}
 
 export type PinSpec = {
 	name: string;

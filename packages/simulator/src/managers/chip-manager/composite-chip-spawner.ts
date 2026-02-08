@@ -1,4 +1,9 @@
-import type { Chip, CompositeChip, IOChipType } from "../../entities/chips";
+import {
+	type Chip,
+	type CompositeChip,
+	ChipType,
+	IOChipType,
+} from "../../entities/chips";
 import type { RuntimePinMapping } from "../../entities/chips/composite-chip";
 import type { Pin } from "../../entities/pin";
 import type { WireConnection } from "../../entities/wire";
@@ -36,14 +41,14 @@ export class CompositeChipSpawner {
 		this.spawnInternalChips(compositeChip, internalChipMap);
 
 		const runtimeInputMappings = this.setupIOPinConnections(
-			"input",
+			IOChipType.Input,
 			compositeChip,
 			compositeDefinition,
 			internalChipMap,
 		);
 
 		const runtimeOutputMappings = this.setupIOPinConnections(
-			"output",
+			IOChipType.Output,
 			compositeChip,
 			compositeDefinition,
 			internalChipMap,
@@ -64,9 +69,9 @@ export class CompositeChipSpawner {
 	): void {
 		compositeChip.spec.definition.chips.forEach((chipBlueprint) => {
 			const chipFactory =
-				chipBlueprint.spec.chipType === "composite"
+				chipBlueprint.spec.chipType === ChipType.Composite
 					? this.chipLibraryService.getChipFactory({
-							kind: "composite",
+							kind: ChipType.Composite,
 							name: chipBlueprint.spec.name,
 						})
 					: this.chipLibraryService.getChipFactory({
@@ -95,12 +100,12 @@ export class CompositeChipSpawner {
 		const runtimeMappings: RuntimePinMapping<TIOChipType>[] = [];
 
 		const chipMappings =
-			ioChipType === "input"
+			ioChipType === IOChipType.Input
 				? compositeDefinition.inputMappings
 				: compositeDefinition.outputMappings;
 
 		const ioChipFactory = this.chipLibraryService.getChipFactory({
-			kind: "io",
+			kind: ChipType.IO,
 			name: ioChipType,
 		});
 
@@ -130,7 +135,7 @@ export class CompositeChipSpawner {
 					}
 
 					const wireConnection: WireConnection =
-						ioChipType === "input"
+						ioChipType === IOChipType.Input
 							? {
 									startPin: ioChip.getPin(),
 									endPin: internalChipPin,

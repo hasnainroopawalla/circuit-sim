@@ -1,4 +1,4 @@
-import type { CompositeChipSpec } from "../../entities/chips";
+import { ChipType, type CompositeChipSpec } from "../../entities/chips";
 import { ChipNotFoundError } from "../../errors/chip-not-found-error";
 import { type Blueprint, BlueprintUtils } from "../blueprint-service";
 import { ColorService } from "../color-service";
@@ -7,7 +7,7 @@ import type { ChipDefinition } from "./chip-library-service";
 export type CompositeChipName = string;
 
 export type CompositeChipFactory = {
-	kind: "composite";
+	kind: ChipType.Composite;
 	spec: CompositeChipSpec;
 };
 
@@ -24,7 +24,7 @@ export class CompositeChipRegistry {
 				BlueprintUtils.getIOPinSpecs(definition);
 
 			this.registry.set(name, {
-				chipType: "composite",
+				chipType: ChipType.Composite,
 				name,
 				definition,
 				inputPins,
@@ -36,7 +36,7 @@ export class CompositeChipRegistry {
 
 	public getDefinitions(): ChipDefinition[] {
 		return Array.from(this.registry.keys()).map((name) => ({
-			kind: "composite",
+			kind: ChipType.Composite,
 			name,
 		}));
 	}
@@ -45,11 +45,11 @@ export class CompositeChipRegistry {
 		const compositeChipSpec = this.registry.get(name);
 
 		if (!compositeChipSpec) {
-			throw new ChipNotFoundError("composite", name);
+			throw new ChipNotFoundError(ChipType.Composite, name);
 		}
 
 		return {
-			kind: "composite",
+			kind: ChipType.Composite,
 			spec: compositeChipSpec,
 		};
 	}

@@ -6,8 +6,8 @@ import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import { EntityUtils } from "../entities/utils";
-import { ChipLabelUtils, type ChipType } from "../entities/chips";
-import type { PinType } from "../entities/pin";
+import { ChipLabelUtils, ChipType } from "../entities/chips";
+import { PinType } from "../entities/pin";
 import type { IChipSpawnFinishEvent } from "../services/eventing-service";
 
 type OverlayManagerArgs = {
@@ -91,7 +91,7 @@ export class OverlayManager extends BaseManager {
 
 			// add an extra offset between label and pin
 			pinWorldPosition.x =
-				hoveredEntity.pinType === "in"
+				hoveredEntity.pinType === PinType.In
 					? pinWorldPosition.x + renderEngineConfig.pinSize + 0.1
 					: pinWorldPosition.x - renderEngineConfig.pinSize - 0.08;
 
@@ -284,6 +284,6 @@ export class OverlayManager extends BaseManager {
 	}
 
 	private shouldRegisterChipLabel(chipType: ChipType): boolean {
-		return chipType !== "io";
+		return chipType !== ChipType.IO;
 	}
 }

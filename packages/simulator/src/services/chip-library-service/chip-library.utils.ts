@@ -1,10 +1,11 @@
-import type {
-	AtomicChip,
-	IOChip,
-	CompositeChip,
-	AtomicChipSpec,
-	IOChipSpec,
-	CompositeChipSpec,
+import {
+	type AtomicChip,
+	type IOChip,
+	type CompositeChip,
+	type AtomicChipSpec,
+	type IOChipSpec,
+	type CompositeChipSpec,
+	ChipType,
 } from "../../entities/chips";
 import type { AtomicChipFactory, IOChipFactory } from "./builtin-registry";
 import type { ChipFactory } from "./chip-library-service";
@@ -32,10 +33,10 @@ export const ChipLibraryUtils = {
 		chipFactory: T,
 	): ChipSpecFromFactory<T> => {
 		switch (chipFactory.kind) {
-			case "atomic":
-			case "io":
+			case ChipType.Atomic:
+			case ChipType.IO:
 				return chipFactory.ChipClass.spec as ChipSpecFromFactory<T>;
-			case "composite":
+			case ChipType.Composite:
 				return chipFactory.spec as ChipSpecFromFactory<T>;
 		}
 	},

@@ -1,10 +1,12 @@
-import type {
-	AtomicChip,
-	Chip,
-	CompositeChip,
-	InputChip,
-	IOChip,
-	OutputChip,
+import {
+	ChipType,
+	IOChipType,
+	type AtomicChip,
+	type Chip,
+	type CompositeChip,
+	type InputChip,
+	type IOChip,
+	type OutputChip,
 } from "./chips";
 import type { Entity } from "./entity";
 import type { Pin } from "./pin";
@@ -19,22 +21,26 @@ export const EntityUtils = {
 	},
 
 	isIOChip: (entity: Entity): entity is IOChip => {
-		return EntityUtils.isChip(entity) && entity.chipType === "io";
+		return EntityUtils.isChip(entity) && entity.chipType === ChipType.IO;
 	},
 
 	isInputChip: (entity: Entity): entity is InputChip => {
-		return EntityUtils.isIOChip(entity) && entity.ioChipType === "input";
+		return (
+			EntityUtils.isIOChip(entity) && entity.ioChipType === IOChipType.Input
+		);
 	},
 
 	isOutputChip: (entity: Entity): entity is OutputChip => {
-		return EntityUtils.isIOChip(entity) && entity.ioChipType === "output";
+		return (
+			EntityUtils.isIOChip(entity) && entity.ioChipType === IOChipType.Output
+		);
 	},
 
 	isAtomicChip: (entity: Entity): entity is AtomicChip => {
-		return EntityUtils.isChip(entity) && entity.chipType === "atomic";
+		return EntityUtils.isChip(entity) && entity.chipType === ChipType.Atomic;
 	},
 
 	isCompositeChip: (entity: Entity): entity is CompositeChip => {
-		return EntityUtils.isChip(entity) && entity.chipType === "composite";
+		return EntityUtils.isChip(entity) && entity.chipType === ChipType.Composite;
 	},
 };

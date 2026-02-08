@@ -1,13 +1,14 @@
 import type { ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Pin } from "../pin";
 import { BaseChip } from "./chip";
-import type {
-	EntitySpawnOptions,
-	ChipInitParams,
-	IOChipSpec,
+import {
+	type EntitySpawnOptions,
+	type ChipInitParams,
+	type IOChipSpec,
+	type InputChipSpec,
+	type OutputChipSpec,
 	IOChipType,
-	InputChipSpec,
-	OutputChipSpec,
+	ChipType,
 } from "./chip.interface";
 import { COLORS } from "../../services/color-service";
 
@@ -18,7 +19,7 @@ type IOChipSpecOf<TIOChipType> = Extract<
 
 export abstract class BaseIOChip<
 	TIOChipType extends IOChipType,
-> extends BaseChip<"io"> {
+> extends BaseChip<ChipType.IO> {
 	public ioChipType: TIOChipType;
 
 	constructor(
@@ -32,7 +33,9 @@ export abstract class BaseIOChip<
 	}
 
 	public getPin(): Pin {
-		return this.ioChipType === "input" ? this.outputPins[0] : this.inputPins[0];
+		return this.ioChipType === IOChipType.Input
+			? this.outputPins[0]
+			: this.inputPins[0];
 	}
 
 	override getColor(): ColorRGBA {
@@ -40,11 +43,11 @@ export abstract class BaseIOChip<
 	}
 }
 
-export class InputChip extends BaseIOChip<"input"> {
+export class InputChip extends BaseIOChip<IOChipType.Input> {
 	static readonly spec: InputChipSpec = {
-		name: "input",
-		chipType: "io" as const,
-		ioChipType: "input" as const,
+		name: IOChipType.Input,
+		chipType: ChipType.IO,
+		ioChipType: IOChipType.Input,
 		inputPins: [],
 		outputPins: [{ name: "in" }],
 		color: COLORS.Ghost /* unused */,
@@ -76,11 +79,11 @@ export class InputChip extends BaseIOChip<"input"> {
 	}
 }
 
-export class OutputChip extends BaseIOChip<"output"> {
+export class OutputChip extends BaseIOChip<IOChipType.Output> {
 	static readonly spec: OutputChipSpec = {
-		name: "output",
-		chipType: "io" as const,
-		ioChipType: "output" as const,
+		name: IOChipType.Output,
+		chipType: ChipType.IO,
+		ioChipType: IOChipType.Output,
 		inputPins: [{ name: "out" }],
 		outputPins: [],
 		color: COLORS.Ghost /* unused */,
