@@ -88,7 +88,7 @@ export class SimulatorApp {
 
 		this.registerSubscriptions();
 
-		setTimeout(() => this.scenarioLoader.load("NAND"), 1000);
+		// setTimeout(() => this.scenarioLoader.load("ChipGallery"), 1000);
 	}
 
 	public async start(): Promise<void> {

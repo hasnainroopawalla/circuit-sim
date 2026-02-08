@@ -78,23 +78,7 @@ function getActionsForEntity(
 						});
 					},
 				},
-				{
-					label: "Delete",
-					handler: () => {},
-				},
 			];
-
-		case "wire":
-			return [
-				{
-					label: "Delete",
-					handler: () => {},
-				},
-			];
-
-		case "pin":
-			return [];
-
 		default:
 			return [];
 	}
