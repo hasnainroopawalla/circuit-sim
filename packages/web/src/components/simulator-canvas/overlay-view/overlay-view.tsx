@@ -28,7 +28,10 @@ export const OverlayLabel: React.FC<OverlayLabelData> = (label) => {
 
 	useEffectOnce(() => {
 		if (labelRef.current) {
-			simulatorApp.overlayManager.attachRef(label.id, labelRef.current);
+			simulatorApp.overlayManager.registerDomElement(
+				label.id,
+				labelRef.current,
+			);
 		}
 
 		return () => {

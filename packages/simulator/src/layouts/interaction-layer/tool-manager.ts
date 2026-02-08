@@ -29,7 +29,7 @@ export class ToolManager {
 		this.camera = args.camera;
 		this.mousePositionService = args.mousePositionService;
 
-		this.registerSubscriptions();
+		this.init();
 	}
 
 	public getActiveTool(): Tool | null {
@@ -96,7 +96,7 @@ export class ToolManager {
 		} as Args);
 	}
 
-	private registerSubscriptions(): void {
+	private init(): void {
 		this.sim.on("chip.spawn.start", ({ chipDefinition }) => {
 			const chipFactory =
 				this.sim.chipLibraryService.getChipFactory(chipDefinition);

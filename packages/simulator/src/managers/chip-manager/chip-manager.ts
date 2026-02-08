@@ -184,11 +184,11 @@ export class ChipManager extends BaseManager {
 		);
 
 		this.sim.emit("chip.delete.finish", {
-			// TODO: not working
 			chipId,
 		});
 	}
 
+	// note: recursive
 	private getChipIdsToDelete(
 		chipId: string,
 		chipIdsToDelete: string[] = [],

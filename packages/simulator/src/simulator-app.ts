@@ -86,7 +86,7 @@ export class SimulatorApp {
 
 		this.scenarioLoader = new ScenarioLoader(this.sim);
 
-		this.registerSubscriptions();
+		this.init();
 
 		setTimeout(() => this.scenarioLoader.load("OrUsingNand"), 1000);
 	}
@@ -147,12 +147,12 @@ export class SimulatorApp {
 		observer.observe(canvas);
 	}
 
-	private registerSubscriptions(): void {
+	private init(): void {
 		this.sim.on("sim.reset", () => this.reset());
 		this.sim.on("sim.save-chip.finish", () => this.reset());
 
 		this.sim.on("chip.delete.finish", ({ chipId }) =>
-			this.overlayManager.unregisterLabel(chipId),
+			this.overlayManager.deleteLabel(chipId),
 		);
 
 		// input manager subscriptions

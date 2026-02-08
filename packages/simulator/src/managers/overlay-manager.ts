@@ -47,16 +47,12 @@ export class OverlayManager extends BaseManager {
 		this.init();
 	}
 
-	public attachRef(entityId: string, element: HTMLElement): void {
+	public registerDomElement(entityId: string, element: HTMLElement): void {
 		const label = this.labels.get(entityId);
 
 		if (label) {
 			label.element = element;
 		}
-	}
-
-	public unregisterLabel(labelId: string): void {
-		this.labels.delete(labelId);
 	}
 
 	public update(hoveredEntity: Entity | null): void {
@@ -78,9 +74,14 @@ export class OverlayManager extends BaseManager {
 		return Array.from(this.labels, ([_chipId, value]) => value);
 	}
 
+	public deleteLabel(chipId: string): void {
+		this.labels.delete(chipId);
+		this.sim.emit("overlay.changed", undefined);
+	}
+
 	private init(): void {
 		this.sim.on("chip.spawn.finish", (data) => {
-			this.onChipSpawnFinish(data);
+			this.onChipSpawned(data);
 		});
 	}
 
@@ -254,22 +255,20 @@ export class OverlayManager extends BaseManager {
 		return { width, height };
 	}
 
-	private onChipSpawnFinish({
+	private onChipSpawned({
 		chipId,
 		chipName,
 		chipType,
 		pins,
 	}: IChipSpawnFinishEvent): void {
-		if (!this.shouldRegisterChipLabel(chipType)) {
-			return;
+		if (this.shouldRegisterChipLabel(chipType)) {
+			this.labels.set(chipId, {
+				entityType: "chip" as const,
+				kind: "static" as const,
+				id: chipId,
+				text: chipName,
+			});
 		}
-
-		this.labels.set(chipId, {
-			entityType: "chip" as const,
-			kind: "static" as const,
-			id: chipId,
-			text: chipName,
-		});
 
 		pins.map((pin) =>
 			this.labels.set(pin.id, {
