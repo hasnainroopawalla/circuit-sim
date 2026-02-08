@@ -1,6 +1,6 @@
 import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 import type { Camera } from "../camera";
-import { Entity, EntityType } from "../entities/entity";
+import { type Entity, EntityType } from "../entities/entity";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
