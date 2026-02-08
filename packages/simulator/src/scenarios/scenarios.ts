@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: <explicit chip spawns> */
 import type { Simulator } from "../simulator";
 import threeAndBp from "../blueprints/3-and.json";
 import type { Blueprint } from "../services/blueprint-service";
