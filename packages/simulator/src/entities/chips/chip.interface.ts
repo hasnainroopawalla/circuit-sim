@@ -6,9 +6,9 @@ import type { ColorRGBA, Position } from "@digital-logic-sim/shared-types";
 import type { CompositeDefinition } from "../../services/blueprint-service";
 
 export enum AtomicChipType {
-	And = "And",
-	Or = "Or",
-	Not = "Not",
+	And = "AND",
+	Or = "OR",
+	Not = "NOT",
 }
 
 export enum ChipType {
