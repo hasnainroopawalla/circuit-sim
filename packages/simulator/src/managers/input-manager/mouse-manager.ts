@@ -49,7 +49,7 @@ export class MouseManager {
 
 		this.abortController = new AbortController();
 
-		this.registerSubscriptions(canvas);
+		this.init(canvas);
 	}
 
 	public destroy(): void {
@@ -178,7 +178,7 @@ export class MouseManager {
 		return mouseButtonMap[event.button] in this.mouseButtonState;
 	}
 
-	private registerSubscriptions(canvas: HTMLCanvasElement): void {
+	private init(canvas: HTMLCanvasElement): void {
 		const signal = this.abortController.signal;
 
 		canvas.addEventListener("wheel", (e) => this.setScrolling(e), { signal });

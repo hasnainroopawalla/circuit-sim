@@ -52,6 +52,10 @@ export class WireManager extends BaseManager {
 		wireInitParams: WireInitParams,
 		opts?: EntitySpawnOptions,
 	): void {
+		if (!wireConnection.startPin || !wireConnection.endPin) {
+			throw new InvalidWireConnectionError(undefined, undefined);
+		}
+
 		const wire = new Wire({
 			wireConnection: this.normalizeWireDirection(wireConnection),
 			wireInitParams,
@@ -76,6 +80,13 @@ export class WireManager extends BaseManager {
 
 	public getIncomingWires(pinId: string): Wire[] {
 		return this.getBoardWires().filter((wire) => wire.endPin.id === pinId);
+	}
+
+	public deleteWiresForChip(chipId: string): void {
+		this.wires = this.wires.filter(
+			(wire) =>
+				wire.startPin.chip.id !== chipId && wire.endPin.chip.id !== chipId,
+		);
 	}
 
 	private normalizeWireDirection(

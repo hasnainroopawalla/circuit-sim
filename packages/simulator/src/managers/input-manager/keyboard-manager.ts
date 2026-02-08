@@ -26,7 +26,7 @@ export class KeyboardManager {
 	constructor(canvas: HTMLCanvasElement) {
 		this.abortController = new AbortController();
 
-		this.registerSubscriptions(canvas);
+		this.init(canvas);
 	}
 
 	public destroy(): void {
@@ -100,7 +100,7 @@ export class KeyboardManager {
 		return event.key in this.keyboardButtonState;
 	}
 
-	private registerSubscriptions(canvas: HTMLCanvasElement): void {
+	private init(canvas: HTMLCanvasElement): void {
 		const signal = this.abortController.signal;
 
 		canvas.addEventListener("keydown", (e) => this.keyDownEventHandler(e), {

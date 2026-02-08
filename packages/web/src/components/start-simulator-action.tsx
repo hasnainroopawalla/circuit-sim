@@ -25,8 +25,9 @@ export const StartSimulatorAction: React.FC<StartSimulatorActionProps> = ({
 			});
 
 		// TODO: cleanup and stop simulator
-		return () => {};
-		// return () => simulatorApp.stop();
+		return () => {
+			//simulatorApp.stop()
+		};
 	});
 
 	return null;

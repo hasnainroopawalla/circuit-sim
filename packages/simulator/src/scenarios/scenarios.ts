@@ -1,11 +1,12 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explicit chip spawns> */
 import type { Simulator } from "../simulator";
 import threeAndBp from "../blueprints/3-and.json";
+import orUsingNandBp from "../blueprints/nand.json";
 import type { Blueprint } from "../services/blueprint-service";
 import type { Position } from "@digital-logic-sim/shared-types";
 
 export const SCENARIOS = {
-	NAND: (sim: Simulator) => {
+	Nand: (sim: Simulator) => {
 		const andChipFactory = sim.chipLibraryService.getChipFactory({
 			kind: "atomic",
 			name: "AND",
@@ -26,27 +27,26 @@ export const SCENARIOS = {
 			name: "output",
 		});
 
-		// INPUT 0
 		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
 			position: { x: 1.6, y: 1.3 },
 		});
-		// INPUT 1
+
 		const inputChip1 = sim.chipManager.spawnChip(inputChipFactory, {
 			position: { x: 1.6, y: 0.8 },
 		});
-		// AND
+
 		const andChip = sim.chipManager.spawnChip(andChipFactory, {
 			position: { x: 0.3, y: 1 },
 		});
-		// NOT
+
 		const notChip = sim.chipManager.spawnChip(notChipFactory, {
 			position: { x: -1, y: 1 },
 		});
-		// OUTPUT 0
+
 		const outputChip = sim.chipManager.spawnChip(outputChipFactory, {
 			position: { x: -2, y: 1 },
 		});
-		// input 0 to AND in 0
+
 		sim.wireManager.spawnWire(
 			{
 				startPin: inputChip0.getPin(),
@@ -56,7 +56,7 @@ export const SCENARIOS = {
 				controlPoints: [],
 			},
 		);
-		// input 1 to AND in 1
+
 		sim.wireManager.spawnWire(
 			{
 				startPin: inputChip1.getPin(),
@@ -66,7 +66,7 @@ export const SCENARIOS = {
 				controlPoints: [],
 			},
 		);
-		// AND out to NOT in
+
 		sim.wireManager.spawnWire(
 			{
 				startPin: andChip.getPin("out0")!,
@@ -76,7 +76,7 @@ export const SCENARIOS = {
 				controlPoints: [],
 			},
 		);
-		// NOT out to output
+
 		sim.wireManager.spawnWire(
 			{
 				startPin: notChip.getPin("out0")!,
@@ -140,6 +140,134 @@ export const SCENARIOS = {
 				"a very very very very very very very very long name",
 			),
 			{ x: 2, y: -0.5 },
+		);
+	},
+
+	OrUsingNand: (sim: Simulator) => {
+		const inputChipFactory = sim.chipLibraryService.getChipFactory({
+			kind: "io",
+			name: "input",
+		});
+
+		const outputChipFactory = sim.chipLibraryService.getChipFactory({
+			kind: "io",
+			name: "output",
+		});
+
+		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
+			position: { x: 2.5, y: 1 },
+		});
+
+		const inputChip1 = sim.chipManager.spawnChip(inputChipFactory, {
+			position: { x: 2.5, y: 0 },
+		});
+
+		const outputChip1 = sim.chipManager.spawnChip(outputChipFactory, {
+			position: { x: -2, y: 0.5 },
+		});
+
+		sim.blueprintService.loadBlueprint(
+			JSON.stringify(orUsingNandBp as Blueprint),
+		);
+
+		const nand1 = sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "composite",
+				name: "NAND",
+			}),
+			{
+				position: { x: 1, y: 1 },
+			},
+		);
+
+		const nand2 = sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "composite",
+				name: "NAND",
+			}),
+			{
+				position: { x: 1, y: 0 },
+			},
+		);
+
+		const nand3 = sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "composite",
+				name: "NAND",
+			}),
+			{
+				position: { x: -0.5, y: 0.5 },
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: inputChip0.getPin(),
+				endPin: nand1.getPin("IN 1")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: inputChip0.getPin(),
+				endPin: nand1.getPin("IN 2")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: inputChip1.getPin(),
+				endPin: nand2.getPin("IN 1")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: inputChip1.getPin(),
+				endPin: nand2.getPin("IN 2")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: nand1.getPin("OUT 1")!,
+				endPin: nand3.getPin("IN 1")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: nand2.getPin("OUT 1")!,
+				endPin: nand3.getPin("IN 2")!,
+			},
+			{
+				controlPoints: [],
+			},
+		);
+
+		sim.wireManager.spawnWire(
+			{
+				startPin: nand3.getPin("OUT 1")!,
+				endPin: outputChip1.getPin(),
+			},
+			{
+				controlPoints: [],
+			},
 		);
 	},
 };

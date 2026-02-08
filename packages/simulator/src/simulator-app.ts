@@ -86,9 +86,9 @@ export class SimulatorApp {
 
 		this.scenarioLoader = new ScenarioLoader(this.sim);
 
-		this.registerSubscriptions();
+		this.init();
 
-		// setTimeout(() => this.scenarioLoader.load("ChipGallery"), 1000);
+		// setTimeout(() => this.scenarioLoader.load("OrUsingNand"), 1000);
 	}
 
 	public async start(): Promise<void> {
@@ -147,9 +147,13 @@ export class SimulatorApp {
 		observer.observe(canvas);
 	}
 
-	private registerSubscriptions(): void {
+	private init(): void {
 		this.sim.on("sim.reset", () => this.reset());
 		this.sim.on("sim.save-chip.finish", () => this.reset());
+
+		this.sim.on("chip.delete.finish", ({ chipId }) =>
+			this.overlayManager.deleteLabel(chipId),
+		);
 
 		// input manager subscriptions
 		this.inputManager.onMouseScrollEvent((event) => {

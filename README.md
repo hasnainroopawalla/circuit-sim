@@ -39,7 +39,7 @@ pnpm start
 ## 📦 Blueprints
 
 Looking for inspiration?
-Check out the [/blueprints](https://github.com/hasnainroopawalla/flux/tree/biome/packages/simulator/src/blueprints) directory to explore a growing collection of prebuilt circuits—from simple logic gates to more complex compositions.
+Check out the [/blueprints](https://github.com/hasnainroopawalla/flux/tree/master/packages/simulator/src/blueprints) directory to explore a growing collection of prebuilt circuits—from simple logic gates to more complex compositions.
 
 You can load these blueprints directly into the simulator, modify them, or use them as a starting point for your own designs.
 

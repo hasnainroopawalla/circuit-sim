@@ -36,6 +36,8 @@ export class ChipManager extends BaseManager {
 			this.sim.chipLibraryService,
 		);
 		this.chips = [];
+
+		this.init();
 	}
 
 	public executeChips(): boolean {
@@ -103,6 +105,10 @@ export class ChipManager extends BaseManager {
 		return chip;
 	}
 
+	private init(): void {
+		this.sim.on("chip.delete.start", ({ chipId }) => this.deleteChip(chipId));
+	}
+
 	private createChip<T extends ChipFactory>(
 		chipFactory: T,
 		chipInitParams: ChipInitParams,
@@ -158,5 +164,46 @@ export class ChipManager extends BaseManager {
 		[...chip.inputPins, ...chip.outputPins].forEach((pin) => {
 			this.sim.pinManager.spawnPin(pin, chip.id);
 		});
+	}
+
+	private deleteChip(chipId: string): void {
+		const chipIdsToDelete = [
+			...this.getChipIdsToDelete(chipId),
+			// add the self chipId since it needs to be deleted too
+			chipId,
+		];
+
+		// delete wires including nested wires
+		chipIdsToDelete.forEach((chipId) => {
+			this.sim.wireManager.deleteWiresForChip(chipId);
+		});
+
+		// remove the chips from the list including self
+		this.chips = this.chips.filter(
+			(chip) => !chipIdsToDelete.includes(chip.id),
+		);
+
+		this.sim.emit("chip.delete.finish", {
+			chipId,
+		});
+	}
+
+	// note: recursive
+	private getChipIdsToDelete(
+		chipId: string,
+		chipIdsToDelete: string[] = [],
+	): string[] {
+		if (!chipId) {
+			return chipIdsToDelete;
+		}
+
+		this.getInternalChips(chipId).forEach((chip) => {
+			if (chip.parentCompositeId === chipId) {
+				chipIdsToDelete.push(chip.id);
+				this.getChipIdsToDelete(chip.id, chipIdsToDelete);
+			}
+		});
+
+		return chipIdsToDelete;
 	}
 }

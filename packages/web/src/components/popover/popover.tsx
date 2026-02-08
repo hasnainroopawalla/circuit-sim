@@ -1,11 +1,9 @@
 import * as React from "react";
 import { useOnClickOutside } from "../../utils";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
-import type {
-	IEntitySecondaryActionEvent,
-	SimulatorApp,
-} from "@digital-logic-sim/simulator";
+import type { IEntitySecondaryActionEvent } from "@digital-logic-sim/simulator";
 import { ActionMenu, type ActionMenuItem } from "./action-menu";
+import { type ActionContext, ENTITY_ACTIONS } from "./actions";
 
 export const Popover: React.FC = () => {
 	const simulatorApp = useSimulatorApp();
@@ -36,13 +34,15 @@ export const Popover: React.FC = () => {
 			return [];
 		}
 
-		return getActionsForEntity(popoverData, simulatorApp).map((action) => ({
-			...action,
-			handler: () => {
-				action.handler();
-				setPopoverData(null);
-			},
-		}));
+		return getActionsForEntity({ data: popoverData, simulatorApp }).map(
+			(action) => ({
+				...action,
+				handler: () => {
+					action.handler();
+					setPopoverData(null);
+				},
+			}),
+		);
 	}, [popoverData, simulatorApp]);
 
 	return (
@@ -63,22 +63,18 @@ export const Popover: React.FC = () => {
 	);
 };
 
-function getActionsForEntity(
-	data: IEntitySecondaryActionEvent,
-	simulatorApp: SimulatorApp,
-): ActionMenuItem[] {
+function getActionsForEntity(ctx: ActionContext): ActionMenuItem[] {
+	const { data } = ctx;
+
 	switch (data.entityType) {
-		case "chip":
-			return [
-				{
-					label: "View",
-					handler: () => {
-						simulatorApp.sim.emit("view.composite-chip", {
-							compositeChipId: data.entityId,
-						});
-					},
-				},
-			];
+		case "chip": {
+			switch (data.chipType) {
+				case "composite":
+					return ENTITY_ACTIONS.compositeChip(ctx);
+				default:
+					return ENTITY_ACTIONS.defaultChip(ctx);
+			}
+		}
 		default:
 			return [];
 	}

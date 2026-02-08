@@ -1,9 +1,10 @@
 import * as React from "react";
 import { useSimulatorApp } from "../../../contexts/simulator-app-context";
 import { useEffectOnce } from "../../../utils";
-import { useOverlayLabels, type Label } from "../hooks";
+import { useOverlayLabels } from "../hooks";
 import { ChipName } from "./chip-name";
 import { PinName } from "./pin-name";
+import type { OverlayLabelData } from "@digital-logic-sim/simulator";
 
 export const SimulatorOverlayView: React.FC = () => {
 	const labels = useOverlayLabels();
@@ -20,21 +21,18 @@ export const SimulatorOverlayView: React.FC = () => {
 	);
 };
 
-export const OverlayLabel: React.FC<Label> = (label) => {
+export const OverlayLabel: React.FC<OverlayLabelData> = (label) => {
 	const simulatorApp = useSimulatorApp();
 
 	const labelRef = React.useRef<HTMLDivElement>(null);
 
 	useEffectOnce(() => {
-		if (!labelRef.current) {
-			return () => {};
+		if (labelRef.current) {
+			simulatorApp.overlayManager.registerDomElement(
+				label.id,
+				labelRef.current,
+			);
 		}
-
-		simulatorApp.overlayManager.registerLabel(
-			label.id,
-			labelRef.current,
-			label.kind,
-		);
 
 		return () => {
 			// simulatorApp.overlayManager.unregisterLabel(id, kind);
