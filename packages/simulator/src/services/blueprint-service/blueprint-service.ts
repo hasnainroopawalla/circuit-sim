@@ -37,6 +37,19 @@ export class BlueprintService extends BaseService {
 		this.sim.chipLibraryService.register(JSON.parse(blueprintString));
 	}
 
+	/**
+	 * Creates a copy of the blueprint and updates the name.
+	 * Returns a new blueprint object.
+	 */
+	public renameBlueprint(blueprint: Blueprint, newName: string): Blueprint {
+		const blueprintCopy = structuredClone(blueprint);
+		const originalName = blueprintCopy.root;
+		blueprintCopy.definitions[newName] =
+			blueprintCopy.definitions[originalName];
+		blueprintCopy.root = newName;
+		return blueprintCopy;
+	}
+
 	private saveBlueprint(blueprintName: string): Blueprint {
 		const definitions: Blueprint["definitions"] = {};
 		const visited = new Set<string>();

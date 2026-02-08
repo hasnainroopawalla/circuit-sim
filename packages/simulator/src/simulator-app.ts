@@ -88,7 +88,6 @@ export class SimulatorApp {
 
 		this.registerSubscriptions();
 
-		// TODO: why doesnt this work without a timeout?
 		setTimeout(() => this.scenarioLoader.load("NAND"), 1000);
 	}
 

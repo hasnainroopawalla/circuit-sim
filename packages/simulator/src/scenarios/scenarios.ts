@@ -1,5 +1,8 @@
 /** biome-ignore-all lint/style/noNonNullAssertion: <explicit chip spawns> */
 import type { Simulator } from "../simulator";
+import threeAndBp from "../blueprints/3-and.json";
+import type { Blueprint } from "../services/blueprint-service";
+import type { Position } from "@digital-logic-sim/shared-types";
 
 export const SCENARIOS = {
 	NAND: (sim: Simulator) => {
@@ -84,4 +87,77 @@ export const SCENARIOS = {
 			},
 		);
 	},
+
+	Showcase: (sim: Simulator) => {
+		sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "atomic",
+				name: "AND",
+			}),
+			{
+				position: { x: 4, y: 2 },
+			},
+		);
+
+		sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "atomic",
+				name: "OR",
+			}),
+			{
+				position: { x: 3, y: 2 },
+			},
+		);
+
+		sim.chipManager.spawnChip(
+			sim.chipLibraryService.getChipFactory({
+				kind: "atomic",
+				name: "NOT",
+			}),
+			{
+				position: { x: 2, y: 2 },
+			},
+		);
+
+		loadAndSpawnCompositeChip(sim, threeAndBp as Blueprint, { x: 4, y: 1 });
+		loadAndSpawnCompositeChip(
+			sim,
+			sim.blueprintService.renameBlueprint(
+				threeAndBp as Blueprint,
+				"this a very long name",
+			),
+			{ x: 2, y: 1 },
+		);
+		loadAndSpawnCompositeChip(
+			sim,
+			sim.blueprintService.renameBlueprint(threeAndBp as Blueprint, "hi"),
+			{ x: 0, y: 1 },
+		);
+		loadAndSpawnCompositeChip(
+			sim,
+			sim.blueprintService.renameBlueprint(
+				threeAndBp as Blueprint,
+				"a very very very very very very very long name",
+			),
+			{ x: 2, y: -0.5 },
+		);
+	},
 };
+
+function loadAndSpawnCompositeChip(
+	sim: Simulator,
+	blueprint: Blueprint,
+	position: Position,
+) {
+	sim.blueprintService.loadBlueprint(JSON.stringify(blueprint));
+
+	sim.chipManager.spawnChip(
+		sim.chipLibraryService.getChipFactory({
+			kind: "composite",
+			name: blueprint.root,
+		}),
+		{
+			position,
+		},
+	);
+}

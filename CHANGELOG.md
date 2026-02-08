@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.0](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.1.8...v1.2.0) (2026-02-04)
+
+
+### Features
+
+* Chip shading ([#43](https://github.com/hasnainroopawalla/circuit-sim/issues/43)) ([18f2de1](https://github.com/hasnainroopawalla/circuit-sim/commit/18f2de151f8c3fd76fe4556adcb1e33689788db9))
+
 ## [1.1.8](https://github.com/hasnainroopawalla/circuit-sim/compare/v1.1.7...v1.1.8) (2026-02-03)
 
 

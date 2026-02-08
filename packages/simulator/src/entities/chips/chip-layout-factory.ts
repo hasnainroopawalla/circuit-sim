@@ -19,12 +19,14 @@ const chipLayoutConfig = {
 
 export interface ChipLayout {
 	dimensions: RectDimension;
+	labelDimensions: RectDimension;
 	getPinOffset(pinType: PinType): Position;
 	getPinPosition(pinIdx: number, pinType: PinType): Position;
 }
 
 export class ChipLayoutFactory implements ChipLayout {
 	public dimensions: RectDimension;
+	public labelDimensions: RectDimension;
 
 	private chipRenderState: Chip["renderState"];
 	private chipMetadata: ChipMetadata;
@@ -39,10 +41,12 @@ export class ChipLayoutFactory implements ChipLayout {
 		switch (chipMetadata.chipType) {
 			case "io":
 				this.dimensions = chipLayoutConfig.ioChipDimensions;
+				this.labelDimensions = chipLayoutConfig.ioChipDimensions;
 				break;
 			case "atomic":
 			case "composite":
-				this.dimensions = computeChipDimensions(chipMetadata);
+				[this.dimensions, this.labelDimensions] =
+					computeChipDimensions(chipMetadata);
 				break;
 		}
 	}
@@ -103,7 +107,7 @@ export class ChipLayoutFactory implements ChipLayout {
 	}
 }
 
-function computeChipDimensions(chipMetadata: ChipMetadata): RectDimension {
+function computeChipDimensions(chipMetadata: ChipMetadata): RectDimension[] {
 	const maxPins = Math.max(
 		chipMetadata.numInputPins,
 		chipMetadata.numOutputPins,
@@ -112,18 +116,25 @@ function computeChipDimensions(chipMetadata: ChipMetadata): RectDimension {
 	const lines = ChipLabelUtils.splitChipName(chipMetadata.name);
 	const numLines = Math.min(lines.length, CHIP_LABEL_CONFIG.maxLines);
 
-	const height =
-		(maxPins * chipLayoutConfig.aspectRatio + 0.5) *
-			renderEngineConfig.pinSize +
-		numLines * CHIP_LABEL_CONFIG.lineHeight +
-		CHIP_LABEL_CONFIG.paddingY;
+	const minChipWidth = (maxPins + 0.5) * renderEngineConfig.pinSize;
+
+	const labelHeight = numLines * CHIP_LABEL_CONFIG.lineHeight;
 
 	const longestLine = Math.max(...lines.map((l) => l.length));
 
-	const width = Math.max(
-		CHIP_LABEL_CONFIG.minWidth,
-		longestLine * 0.12 + CHIP_LABEL_CONFIG.paddingX,
+	const labelWidth = longestLine * CHIP_LABEL_CONFIG.charWidth;
+
+	const chipHeight = Math.max(
+		chipLayoutConfig.aspectRatio * minChipWidth,
+		labelHeight + CHIP_LABEL_CONFIG.paddingY * numLines,
+	);
+	const chipWidth = Math.max(
+		minChipWidth,
+		labelWidth + CHIP_LABEL_CONFIG.paddingX,
 	);
 
-	return { width, height };
+	return [
+		{ width: chipWidth, height: chipHeight },
+		{ width: labelWidth, height: labelHeight },
+	];
 }
