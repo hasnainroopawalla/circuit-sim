@@ -74,8 +74,6 @@ export class BlueprintService extends BaseService {
 
 		this.sim.emit("sim.save-chip.finish", undefined);
 
-		console.log("Blueprint", blueprint);
-
 		return blueprint;
 	}
 
