@@ -3,13 +3,13 @@ import {
 	type Renderable,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import type {
+import {
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseButtonType,
+	type KeyboardButtonType,
+	type MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
-import type { Entity } from "../../../entities/entity";
+import { EntityType, type Entity } from "../../../entities/entity";
 import type { Pin } from "../../../entities/pin";
 import type { Position } from "@digital-logic-sim/shared-types";
 import { COLORS } from "../../../services/color-service";
@@ -56,7 +56,7 @@ export class WiringTool extends Tool {
 		switch (event) {
 			case "leftMouseButton":
 				switch (nature) {
-					case "click":
+					case ButtonEvent.Click:
 						this.handleLeftMouseButtonClick(hoveredEntity, mousePosition);
 						break;
 				}
@@ -89,7 +89,7 @@ export class WiringTool extends Tool {
 		}
 
 		// wiring tool only deactivates if an end pin is clicked
-		if (hoveredEntity.entityType !== "pin") {
+		if (hoveredEntity.entityType !== EntityType.Pin) {
 			return;
 		}
 

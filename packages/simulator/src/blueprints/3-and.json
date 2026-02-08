@@ -6,8 +6,8 @@
                 {
                     "id": "3",
                     "spec": {
-                        "chipType": "atomic",
-                        "name": "AND"
+                        "chipType": "Atomic",
+                        "name": "And"
                     },
                     "renderState": {
                         "color": {
@@ -25,8 +25,8 @@
                 {
                     "id": "4",
                     "spec": {
-                        "chipType": "atomic",
-                        "name": "AND"
+                        "chipType": "Atomic",
+                        "name": "And"
                     },
                     "renderState": {
                         "color": {

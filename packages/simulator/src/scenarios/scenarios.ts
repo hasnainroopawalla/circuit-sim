@@ -4,27 +4,28 @@ import threeAndBp from "../blueprints/3-and.json";
 import orUsingNandBp from "../blueprints/nand.json";
 import type { Blueprint } from "../services/blueprint-service";
 import type { Position } from "@digital-logic-sim/shared-types";
+import { AtomicChipType, ChipType, IOChipType } from "../entities/chips";
 
 export const SCENARIOS = {
 	Nand: (sim: Simulator) => {
 		const andChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "atomic",
-			name: "AND",
+			kind: ChipType.Atomic,
+			name: AtomicChipType.And,
 		});
 
 		const notChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "atomic",
-			name: "NOT",
+			kind: ChipType.Atomic,
+			name: AtomicChipType.Not,
 		});
 
 		const inputChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "io",
-			name: "input",
+			kind: ChipType.IO,
+			name: IOChipType.Input,
 		});
 
 		const outputChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "io",
-			name: "output",
+			kind: ChipType.IO,
+			name: IOChipType.Output,
 		});
 
 		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
@@ -91,8 +92,8 @@ export const SCENARIOS = {
 	ChipGallery: (sim: Simulator) => {
 		sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "atomic",
-				name: "AND",
+				kind: ChipType.Atomic,
+				name: AtomicChipType.And,
 			}),
 			{
 				position: { x: 4, y: 2 },
@@ -101,8 +102,8 @@ export const SCENARIOS = {
 
 		sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "atomic",
-				name: "OR",
+				kind: ChipType.Atomic,
+				name: AtomicChipType.Or,
 			}),
 			{
 				position: { x: 3, y: 2 },
@@ -111,8 +112,8 @@ export const SCENARIOS = {
 
 		sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "atomic",
-				name: "NOT",
+				kind: ChipType.Atomic,
+				name: AtomicChipType.Not,
 			}),
 			{
 				position: { x: 2, y: 2 },
@@ -145,13 +146,13 @@ export const SCENARIOS = {
 
 	OrUsingNand: (sim: Simulator) => {
 		const inputChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "io",
-			name: "input",
+			kind: ChipType.IO,
+			name: IOChipType.Input,
 		});
 
 		const outputChipFactory = sim.chipLibraryService.getChipFactory({
-			kind: "io",
-			name: "output",
+			kind: ChipType.IO,
+			name: IOChipType.Output,
 		});
 
 		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
@@ -172,7 +173,7 @@ export const SCENARIOS = {
 
 		const nand1 = sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "composite",
+				kind: ChipType.Composite,
 				name: "NAND",
 			}),
 			{
@@ -182,7 +183,7 @@ export const SCENARIOS = {
 
 		const nand2 = sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "composite",
+				kind: ChipType.Composite,
 				name: "NAND",
 			}),
 			{
@@ -192,7 +193,7 @@ export const SCENARIOS = {
 
 		const nand3 = sim.chipManager.spawnChip(
 			sim.chipLibraryService.getChipFactory({
-				kind: "composite",
+				kind: ChipType.Composite,
 				name: "NAND",
 			}),
 			{
@@ -281,7 +282,7 @@ function loadAndSpawnCompositeChip(
 
 	sim.chipManager.spawnChip(
 		sim.chipLibraryService.getChipFactory({
-			kind: "composite",
+			kind: ChipType.Composite,
 			name: blueprint.root,
 		}),
 		{

@@ -1,10 +1,11 @@
 import type { Position } from "@digital-logic-sim/shared-types";
-import type {
-	MouseButtonType,
-	MouseScrollType,
-	KeyboardButtonType,
-	InputEventTopic,
-	MouseMoveEventCallback,
+import {
+	type MouseButtonType,
+	type MouseScrollType,
+	type KeyboardButtonType,
+	type InputEventTopic,
+	type MouseMoveEventCallback,
+	ButtonEvent,
 } from "./input-manager.interface";
 import { KeyboardManager } from "./keyboard-manager";
 import { MouseManager } from "./mouse-manager";
@@ -41,9 +42,9 @@ export class InputManager {
 	): void {
 		(
 			[
-				{ event: "leftMouseButton", nature: "click" },
-				{ event: "leftMouseButton", nature: "press" },
-				{ event: "rightMouseButton", nature: "click" },
+				{ event: "leftMouseButton", nature: ButtonEvent.Click },
+				{ event: "leftMouseButton", nature: ButtonEvent.Press },
+				{ event: "rightMouseButton", nature: ButtonEvent.Click },
 			] as const
 		).forEach(({ event, nature }) => {
 			this.mouseManager.onButtonHandler(event, nature, callback);
@@ -69,11 +70,11 @@ export class InputManager {
 	): void {
 		(
 			[
-				{ event: "w", nature: "press" },
-				{ event: "a", nature: "press" },
-				{ event: "s", nature: "press" },
-				{ event: "d", nature: "press" },
-				{ event: "Escape", nature: "press" },
+				{ event: "w", nature: ButtonEvent.Press },
+				{ event: "a", nature: ButtonEvent.Press },
+				{ event: "s", nature: ButtonEvent.Press },
+				{ event: "d", nature: ButtonEvent.Press },
+				{ event: "Escape", nature: ButtonEvent.Press },
 			] as const
 		).forEach(({ event, nature }) => {
 			this.keyboardManager.onButtonHandler(event, nature, callback);

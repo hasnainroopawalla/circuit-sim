@@ -5,15 +5,19 @@ import {
 	RenderableType,
 } from "@digital-logic-sim/render-engine";
 import { Tool, type ToolArgs } from "./tool";
-import { GhostChip, type GhostChipSpec } from "../../../entities/chips";
-import type {
+import {
+	ChipType,
+	GhostChip,
+	type GhostChipSpec,
+} from "../../../entities/chips";
+import {
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseButtonType,
+	type KeyboardButtonType,
+	type MouseButtonType,
 } from "../../../managers/input-manager";
 import type { MousePosition } from "../../../types";
 import type { Entity } from "../../../entities/entity";
-import type { PinType } from "../../../entities/pin";
+import { PinType } from "../../../entities/pin";
 import {
 	ChipLibraryUtils,
 	type ChipFactory,
@@ -57,7 +61,7 @@ export class SpawnChipTool extends Tool {
 		switch (event) {
 			case "leftMouseButton": {
 				switch (nature) {
-					case "click": {
+					case ButtonEvent.Click: {
 						this.handleLeftMouseButtonClick();
 						break;
 					}
@@ -104,8 +108,14 @@ export class SpawnChipTool extends Tool {
 			color: this.ghostChip.renderState.color,
 			position: this.ghostChip.renderState.position,
 			dimensions: this.ghostChip.layout.dimensions,
-			inputPins: createPinRenderable(this.ghostChip.spec.numInputPins, "in"),
-			outputPins: createPinRenderable(this.ghostChip.spec.numOutputPins, "out"),
+			inputPins: createPinRenderable(
+				this.ghostChip.spec.numInputPins,
+				PinType.In,
+			),
+			outputPins: createPinRenderable(
+				this.ghostChip.spec.numOutputPins,
+				PinType.Out,
+			),
 		};
 	}
 
@@ -124,7 +134,7 @@ export class SpawnChipTool extends Tool {
 		const chipSpec = ChipLibraryUtils.getChipSpec(chipFactory);
 
 		const { inputPins, outputPins } =
-			chipSpec.chipType === "composite"
+			chipSpec.chipType === ChipType.Composite
 				? BlueprintUtils.getIOPinSpecs(chipSpec.definition)
 				: chipSpec;
 

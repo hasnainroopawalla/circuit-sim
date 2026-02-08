@@ -1,13 +1,13 @@
 import type { Position, RectDimension } from "@digital-logic-sim/shared-types";
 import type { Camera } from "../camera";
-import type { Entity } from "../entities/entity";
+import { type Entity, EntityType } from "../entities/entity";
 import type { Simulator } from "../simulator";
 import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import { EntityUtils } from "../entities/utils";
-import { ChipLabelUtils, type ChipType } from "../entities/chips";
-import type { PinType } from "../entities/pin";
+import { ChipLabelUtils, ChipType } from "../entities/chips";
+import { PinType } from "../entities/pin";
 import type { IChipSpawnFinishEvent } from "../services/eventing-service";
 
 type OverlayManagerArgs = {
@@ -16,7 +16,10 @@ type OverlayManagerArgs = {
 	canvas: HTMLCanvasElement;
 };
 
-export type OverlayElementKind = "static" | "hover";
+enum OverlayElementKind {
+	Static = "Static",
+	Hover = "Hover",
+}
 
 export type OverlayLabelData = {
 	id: string;
@@ -25,9 +28,9 @@ export type OverlayLabelData = {
 	element?: HTMLElement; // attached after mount
 } & (
 	| {
-			entityType: "chip";
+			entityType: EntityType.Chip;
 	  }
-	| { entityType: "pin"; pinType: PinType }
+	| { entityType: EntityType.Pin; pinType: PinType }
 );
 
 export class OverlayManager extends BaseManager {
@@ -91,7 +94,7 @@ export class OverlayManager extends BaseManager {
 
 			// add an extra offset between label and pin
 			pinWorldPosition.x =
-				hoveredEntity.pinType === "in"
+				hoveredEntity.pinType === PinType.In
 					? pinWorldPosition.x + renderEngineConfig.pinSize + 0.1
 					: pinWorldPosition.x - renderEngineConfig.pinSize - 0.08;
 
@@ -147,7 +150,7 @@ export class OverlayManager extends BaseManager {
 
 	private clearHoverElements(): void {
 		this.labels.forEach((label) => {
-			if (label.element && label.kind === "hover") {
+			if (label.element && label.kind === OverlayElementKind.Hover) {
 				this.hideElement(label.element);
 			}
 		});
@@ -263,8 +266,8 @@ export class OverlayManager extends BaseManager {
 	}: IChipSpawnFinishEvent): void {
 		if (this.shouldRegisterChipLabel(chipType)) {
 			this.labels.set(chipId, {
-				entityType: "chip" as const,
-				kind: "static" as const,
+				entityType: EntityType.Chip,
+				kind: OverlayElementKind.Static,
 				id: chipId,
 				text: chipName,
 			});
@@ -272,8 +275,8 @@ export class OverlayManager extends BaseManager {
 
 		pins.map((pin) =>
 			this.labels.set(pin.id, {
-				entityType: "pin" as const,
-				kind: "hover" as const,
+				entityType: EntityType.Pin,
+				kind: OverlayElementKind.Hover,
 				id: pin.id,
 				text: pin.name,
 				pinType: pin.pinType,
@@ -284,6 +287,6 @@ export class OverlayManager extends BaseManager {
 	}
 
 	private shouldRegisterChipLabel(chipType: ChipType): boolean {
-		return chipType !== "io";
+		return chipType !== ChipType.IO;
 	}
 }

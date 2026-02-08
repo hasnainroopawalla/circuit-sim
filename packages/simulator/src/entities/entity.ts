@@ -2,7 +2,11 @@ import type { Chip } from "./chips";
 import type { Pin } from "./pin";
 import type { Wire } from "./wire";
 
-export type EntityType = "chip" | "pin" | "wire";
+export enum EntityType {
+	Chip = "Chip",
+	Pin = "Pin",
+	Wire = "Wire",
+}
 
 export type Entity = Chip | Wire | Pin;
 

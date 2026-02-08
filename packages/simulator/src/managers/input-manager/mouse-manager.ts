@@ -1,8 +1,8 @@
 import type { Position } from "@digital-logic-sim/shared-types";
 import {
+	ButtonEvent,
 	type MouseButtonType,
 	type MouseScrollType,
-	type ButtonEvent,
 	type InputManagerState,
 	type InputEventTopic,
 	type MouseMoveEventCallback,
@@ -103,11 +103,11 @@ export class MouseManager {
 	private mouseScrollUpdate(): void {
 		this.scrollDirection === "up" &&
 			this.scrollSubscriberMap.scrollUp.forEach((callback) => {
-				callback("scrollUp", "click");
+				callback("scrollUp", ButtonEvent.Click);
 			});
 		this.scrollDirection === "down" &&
 			this.scrollSubscriberMap.scrollDown.forEach((callback) => {
-				callback("scrollDown", "click");
+				callback("scrollDown", ButtonEvent.Click);
 			});
 	}
 
@@ -130,12 +130,12 @@ export class MouseManager {
 		topic: InputEventTopic<MouseButtonType>,
 	) {
 		switch (topic.nature) {
-			case "click":
+			case ButtonEvent.Click:
 				this.mouseButtonState[mouseButton].pollCount === 1 &&
 					topic.callback(mouseButton, topic.nature);
 				break;
 
-			case "press":
+			case ButtonEvent.Press:
 				this.mouseButtonState[mouseButton].pollCount > 2 &&
 					topic.callback(mouseButton, topic.nature);
 				break;

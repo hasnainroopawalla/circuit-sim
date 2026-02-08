@@ -4,7 +4,7 @@ import {
 	type ChipRenderable,
 	type PinRenderable,
 } from "@digital-logic-sim/render-engine";
-import type { Chip, ChipType } from "../entities/chips";
+import { type Chip, ChipType } from "../entities/chips";
 import type { Pin } from "../entities/pin";
 import { COLORS } from "../services/color-service";
 
@@ -24,7 +24,7 @@ export const LayoutUtils = {
 	},
 
 	getChipRenderableType: (chipType: ChipType): ChipRenderableType => {
-		return chipType === "io"
+		return chipType === ChipType.IO
 			? ChipRenderableType.Circle
 			: ChipRenderableType.Rect;
 	},

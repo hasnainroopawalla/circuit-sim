@@ -1,6 +1,10 @@
 import type { Position } from "@digital-logic-sim/shared-types";
 
-export type ButtonEvent = "click" | "press" | "release";
+export enum ButtonEvent {
+	Click = "Click",
+	Press = "Press",
+	Release = "Release",
+}
 
 type InputType = MouseButtonType | MouseScrollType | KeyboardButtonType;
 

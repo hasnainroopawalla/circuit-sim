@@ -1,7 +1,11 @@
 import * as React from "react";
 import { useOnClickOutside } from "../../utils";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
-import type { IEntitySecondaryActionEvent } from "@digital-logic-sim/simulator";
+import {
+	ChipType,
+	EntityType,
+	type IEntitySecondaryActionEvent,
+} from "@digital-logic-sim/simulator";
 import { ActionMenu, type ActionMenuItem } from "./action-menu";
 import { type ActionContext, ENTITY_ACTIONS } from "./actions";
 
@@ -67,9 +71,9 @@ function getActionsForEntity(ctx: ActionContext): ActionMenuItem[] {
 	const { data } = ctx;
 
 	switch (data.entityType) {
-		case "chip": {
+		case EntityType.Chip: {
 			switch (data.chipType) {
-				case "composite":
+				case ChipType.Composite:
 					return ENTITY_ACTIONS.compositeChip(ctx);
 				default:
 					return ENTITY_ACTIONS.defaultChip(ctx);

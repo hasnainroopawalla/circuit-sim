@@ -7,11 +7,11 @@ import {
 import { LayoutUtils } from "../layout.utils";
 import type { Entity } from "../../entities/entity";
 import type { MousePosition } from "../../types";
-import type {
-	MouseButtonType,
+import {
+	type MouseButtonType,
+	type KeyboardButtonType,
+	type MouseScrollType,
 	ButtonEvent,
-	KeyboardButtonType,
-	MouseScrollType,
 } from "../../managers/input-manager";
 import { EntityUtils } from "../../entities/utils";
 import { type LayerArgs, LayerType } from "../layout.interface";
@@ -71,7 +71,7 @@ export class CompositeLayer extends BaseLayer<LayerType.Composite> {
 		switch (event) {
 			case "rightMouseButton":
 				switch (nature) {
-					case "click":
+					case ButtonEvent.Click:
 						return this.handleRightMouseButtonClick(hoveredEntity);
 				}
 		}

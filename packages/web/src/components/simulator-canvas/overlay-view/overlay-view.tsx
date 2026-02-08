@@ -4,7 +4,10 @@ import { useEffectOnce } from "../../../utils";
 import { useOverlayLabels } from "../hooks";
 import { ChipName } from "./chip-name";
 import { PinName } from "./pin-name";
-import type { OverlayLabelData } from "@digital-logic-sim/simulator";
+import {
+	EntityType,
+	type OverlayLabelData,
+} from "@digital-logic-sim/simulator";
 
 export const SimulatorOverlayView: React.FC = () => {
 	const labels = useOverlayLabels();
@@ -40,7 +43,7 @@ export const OverlayLabel: React.FC<OverlayLabelData> = (label) => {
 	}, !!labelRef /* register the ref only after it has mounted */);
 
 	switch (label.entityType) {
-		case "pin":
+		case EntityType.Pin:
 			return (
 				<PinName
 					labelRef={labelRef}
@@ -49,7 +52,7 @@ export const OverlayLabel: React.FC<OverlayLabelData> = (label) => {
 					pinType={label.pinType}
 				/>
 			);
-		case "chip":
+		case EntityType.Chip:
 			return <ChipName labelRef={labelRef} id={label.id} name={label.text} />;
 	}
 };

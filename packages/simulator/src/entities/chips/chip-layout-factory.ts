@@ -1,6 +1,6 @@
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
-import type { PinType } from "../pin";
-import type { Chip } from "./chip.interface";
+import { PinType } from "../pin";
+import { ChipType, type Chip } from "./chip.interface";
 import {
 	CHIP_LABEL_CONFIG,
 	ChipLabelUtils,
@@ -39,12 +39,12 @@ export class ChipLayoutFactory implements ChipLayout {
 		this.chipMetadata = chipMetadata;
 
 		switch (chipMetadata.chipType) {
-			case "io":
+			case ChipType.IO:
 				this.dimensions = chipLayoutConfig.ioChipDimensions;
 				this.labelDimensions = chipLayoutConfig.ioChipDimensions;
 				break;
-			case "atomic":
-			case "composite":
+			case ChipType.Atomic:
+			case ChipType.Composite:
 				[this.dimensions, this.labelDimensions] =
 					computeChipDimensions(chipMetadata);
 				break;
@@ -64,7 +64,7 @@ export class ChipLayoutFactory implements ChipLayout {
 		const maxPins = Math.max(numInputPins, numOutputPins);
 
 		switch (pinType) {
-			case "in":
+			case PinType.In:
 				return {
 					x: chipX + width,
 					y:
@@ -73,7 +73,7 @@ export class ChipLayoutFactory implements ChipLayout {
 						renderEngineConfig.pinSize *
 							(2 + (3 * (maxPins - numInputPins)) / 2),
 				};
-			case "out":
+			case PinType.Out:
 				return {
 					x: chipX - width,
 					y:
@@ -87,7 +87,7 @@ export class ChipLayoutFactory implements ChipLayout {
 
 	public getPinPosition(pinIdx: number, pinType: PinType): Position {
 		const { inputPinOffset, outputPinOffset } =
-			this.chipMetadata.chipType === "io"
+			this.chipMetadata.chipType === ChipType.IO
 				? ChipUtils.getIOPinOffsets(
 						this.chipRenderState.position,
 						this.dimensions,
@@ -98,7 +98,7 @@ export class ChipLayoutFactory implements ChipLayout {
 						this.dimensions,
 					);
 
-		const pinOffset = pinType === "in" ? inputPinOffset : outputPinOffset;
+		const pinOffset = pinType === PinType.In ? inputPinOffset : outputPinOffset;
 
 		return {
 			x: pinOffset.x,

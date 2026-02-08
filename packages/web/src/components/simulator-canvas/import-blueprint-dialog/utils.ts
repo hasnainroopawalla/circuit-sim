@@ -1,4 +1,4 @@
-import type { Blueprint } from "@digital-logic-sim/simulator";
+import { ChipType, type Blueprint } from "@digital-logic-sim/simulator";
 import type { PreviewNode } from "./blueprint-preview-tree";
 
 export function blueprintStringToPreviewNode(
@@ -27,7 +27,7 @@ export function blueprintStringToPreviewNode(
 		const children: PreviewNode[] = [];
 
 		for (const chip of def.chips) {
-			if (chip.spec.chipType === "composite") {
+			if (chip.spec.chipType === ChipType.Composite) {
 				children.push(buildNode(chip.spec.name));
 			}
 		}

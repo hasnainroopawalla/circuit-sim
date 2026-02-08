@@ -1,6 +1,6 @@
 import { didAnyChange } from "../../utils";
-import { BaseEntity } from "../entity";
-import { Pin, type PinSpec, type PinType } from "../pin";
+import { BaseEntity, EntityType } from "../entity";
+import { Pin, PinType, type PinSpec } from "../pin";
 import type {
 	ChipSpec,
 	ChipInitParams,
@@ -17,7 +17,7 @@ type ChipSpecOf<TChipType> = Extract<ChipSpec, { chipType: TChipType }>;
 
 export abstract class BaseChip<
 	TChipType extends ChipType,
-> extends BaseEntity<"chip"> {
+> extends BaseEntity<EntityType.Chip> {
 	public spec: ChipSpecOf<TChipType>;
 
 	public inputPins: Pin[];
@@ -37,13 +37,13 @@ export abstract class BaseChip<
 		opts?: EntitySpawnOptions,
 	) {
 		super({
-			entityType: "chip",
+			entityType: EntityType.Chip,
 		});
 
 		this.chipType = chipSpec.chipType;
 
-		this.inputPins = this.createPins(chipSpec.inputPins, "in");
-		this.outputPins = this.createPins(chipSpec.outputPins, "out");
+		this.inputPins = this.createPins(chipSpec.inputPins, PinType.In);
+		this.outputPins = this.createPins(chipSpec.outputPins, PinType.Out);
 
 		this.parentCompositeId = opts?.parentCompositeId || "";
 

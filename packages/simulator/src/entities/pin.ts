@@ -1,8 +1,11 @@
 import type { Position, ColorRGBA } from "@digital-logic-sim/shared-types";
 import type { Chip } from "./chips";
-import { BaseEntity } from "./entity";
+import { BaseEntity, EntityType } from "./entity";
 
-export type PinType = "in" | "out";
+export enum PinType {
+	In = "In",
+	Out = "Out",
+}
 
 export type PinSpec = {
 	name: string;
@@ -12,7 +15,7 @@ export type PinInitParams = { label?: string };
 
 type PinRenderState = PinInitParams & { color: ColorRGBA };
 
-export class Pin extends BaseEntity<"pin"> {
+export class Pin extends BaseEntity<EntityType.Pin> {
 	public spec: PinSpec;
 	public renderState: PinRenderState;
 
@@ -32,7 +35,7 @@ export class Pin extends BaseEntity<"pin"> {
 		pinIdx: number;
 	}) {
 		super({
-			entityType: "pin",
+			entityType: EntityType.Pin,
 		});
 
 		this.spec = args.spec;

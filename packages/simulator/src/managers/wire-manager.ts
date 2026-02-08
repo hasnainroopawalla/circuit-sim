@@ -1,4 +1,5 @@
 import type { EntitySpawnOptions } from "../entities/chips";
+import { PinType } from "../entities/pin";
 import {
 	Wire,
 	type WireInitParams,
@@ -94,11 +95,11 @@ export class WireManager extends BaseManager {
 	): WireConnection {
 		const { startPin, endPin } = wireConnection;
 
-		if (startPin.pinType === "out" && endPin.pinType === "in") {
+		if (startPin.pinType === PinType.Out && endPin.pinType === PinType.In) {
 			return wireConnection;
 		}
 
-		if (startPin.pinType === "in" && endPin.pinType === "out") {
+		if (startPin.pinType === PinType.In && endPin.pinType === PinType.Out) {
 			return {
 				startPin: endPin,
 				endPin: startPin,
