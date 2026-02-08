@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.4.1](https://github.com/hasnainroopawalla/flux/compare/v1.4.0...v1.4.1) (2026-02-08)
+
+
+### Bug Fixes
+
+* Chip uppercase name ([#71](https://github.com/hasnainroopawalla/flux/issues/71)) ([9f12aac](https://github.com/hasnainroopawalla/flux/commit/9f12aac034fb6fc9ccff7ebf96263071b6fda194))
+
 ## [1.4.0](https://github.com/hasnainroopawalla/flux/compare/v1.3.1...v1.4.0) (2026-02-08)
 
 
