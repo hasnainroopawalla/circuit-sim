@@ -155,15 +155,15 @@ export const SCENARIOS = {
 		});
 
 		const inputChip0 = sim.chipManager.spawnChip(inputChipFactory, {
-			position: { x: 2.5, y: 2 },
-		});
-
-		const inputChip1 = sim.chipManager.spawnChip(inputChipFactory, {
 			position: { x: 2.5, y: 1 },
 		});
 
+		const inputChip1 = sim.chipManager.spawnChip(inputChipFactory, {
+			position: { x: 2.5, y: 0 },
+		});
+
 		const outputChip1 = sim.chipManager.spawnChip(outputChipFactory, {
-			position: { x: -2, y: 1.5 },
+			position: { x: -2, y: 0.5 },
 		});
 
 		sim.blueprintService.loadBlueprint(
@@ -176,7 +176,7 @@ export const SCENARIOS = {
 				name: "NAND",
 			}),
 			{
-				position: { x: 1, y: 2 },
+				position: { x: 1, y: 1 },
 			},
 		);
 
@@ -186,7 +186,7 @@ export const SCENARIOS = {
 				name: "NAND",
 			}),
 			{
-				position: { x: 1, y: 1 },
+				position: { x: 1, y: 0 },
 			},
 		);
 
@@ -196,7 +196,7 @@ export const SCENARIOS = {
 				name: "NAND",
 			}),
 			{
-				position: { x: -0.5, y: 1.5 },
+				position: { x: -0.5, y: 0.5 },
 			},
 		);
 

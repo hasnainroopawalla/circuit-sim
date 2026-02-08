@@ -151,6 +151,10 @@ export class SimulatorApp {
 		this.sim.on("sim.reset", () => this.reset());
 		this.sim.on("sim.save-chip.finish", () => this.reset());
 
+		this.sim.on("chip.delete.finish", ({ chipId }) =>
+			this.overlayManager.unregisterLabel(chipId),
+		);
+
 		// input manager subscriptions
 		this.inputManager.onMouseScrollEvent((event) => {
 			this.layoutManager.onMouseScrollEvent(event);

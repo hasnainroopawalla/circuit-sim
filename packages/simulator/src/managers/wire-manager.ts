@@ -82,6 +82,13 @@ export class WireManager extends BaseManager {
 		return this.getBoardWires().filter((wire) => wire.endPin.id === pinId);
 	}
 
+	public deleteWiresForChip(chipId: string): void {
+		this.wires = this.wires.filter(
+			(wire) =>
+				wire.startPin.chip.id !== chipId && wire.endPin.chip.id !== chipId,
+		);
+	}
+
 	private normalizeWireDirection(
 		wireConnection: WireConnection,
 	): WireConnection {

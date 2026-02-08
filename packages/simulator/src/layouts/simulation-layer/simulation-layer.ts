@@ -174,8 +174,7 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 	}
 
 	private registerSubscriptions(): void {
-		this.sim.on("view.composite-chip", ({ compositeChipId }) => {
-			console.log(compositeChipId);
+		this.sim.on("composite-chip.view", ({ compositeChipId }) => {
 			this.selectedCompositeId = compositeChipId;
 		});
 	}

@@ -10,6 +10,13 @@ export type IEntitySecondaryActionEvent = {
 	mousePosition: Position;
 };
 
+export type IChipSpawnFinishEvent = {
+	chipId: string;
+	chipName: string;
+	chipType: ChipType;
+	pins: { id: string; name: string; pinType: PinType }[];
+};
+
 export type IEvents = {
 	"sim.save-chip.start": { chipName: string };
 	"sim.save-chip.finish": undefined;
@@ -18,21 +25,23 @@ export type IEvents = {
 
 	"sim.reset": undefined;
 
-	"overlay.reset": undefined;
+	"overlay.changed": undefined;
 
 	"wire.spawn.start": { startPin: Pin };
-	"chip.spawn.start": { chipDefinition: ChipDefinition };
 
-	"chip.spawn.finish": {
-		chipId: string;
-		chipName: string;
-		chipType: ChipType;
-		pins: { id: string; name: string; pinType: PinType }[];
-	};
+	"chip.spawn.start": { chipDefinition: ChipDefinition };
+	"chip.spawn.finish": IChipSpawnFinishEvent;
 
 	"entity.secondaryAction": IEntitySecondaryActionEvent;
 
-	"view.composite-chip": {
+	"composite-chip.view": {
 		compositeChipId: string;
+	};
+
+	"chip.delete.start": {
+		chipId: string;
+	};
+	"chip.delete.finish": {
+		chipId: string;
 	};
 };

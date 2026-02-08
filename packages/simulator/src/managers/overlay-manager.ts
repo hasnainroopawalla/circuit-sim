@@ -6,7 +6,9 @@ import { BaseManager } from "./base-manager";
 import { MeshUtils } from "../mesh-utils";
 import { renderEngineConfig } from "@digital-logic-sim/render-engine";
 import { EntityUtils } from "../entities/utils";
-import { ChipLabelUtils } from "../entities/chips";
+import { ChipLabelUtils, type ChipType } from "../entities/chips";
+import type { PinType } from "../entities/pin";
+import type { IChipSpawnFinishEvent } from "../services/eventing-service";
 
 type OverlayManagerArgs = {
 	camera: Camera;
@@ -16,9 +18,20 @@ type OverlayManagerArgs = {
 
 export type OverlayElementKind = "static" | "hover";
 
+export type OverlayLabelData = {
+	id: string;
+	text: string;
+	kind: OverlayElementKind;
+	element?: HTMLElement; // attached after mount
+} & (
+	| {
+			entityType: "chip";
+	  }
+	| { entityType: "pin"; pinType: PinType }
+);
+
 export class OverlayManager extends BaseManager {
-	private staticElements: Map<string, HTMLElement>;
-	private hoverElements: Map<string, HTMLElement>;
+	private labels: Map<string, OverlayLabelData>;
 
 	private canvas: HTMLCanvasElement;
 	private camera: Camera;
@@ -26,57 +39,52 @@ export class OverlayManager extends BaseManager {
 	constructor(args: OverlayManagerArgs) {
 		super(args.sim);
 
-		this.staticElements = new Map();
-		this.hoverElements = new Map();
+		this.labels = new Map();
 
 		this.camera = args.camera;
 		this.canvas = args.canvas;
+
+		this.init();
 	}
 
-	public registerLabel(
-		entityId: string,
-		element: HTMLElement,
-		kind: OverlayElementKind,
-	): void {
-		switch (kind) {
-			case "static":
-				this.staticElements.set(entityId, element);
-				break;
-			case "hover":
-				this.hoverElements.set(entityId, element);
-				break;
+	public attachRef(entityId: string, element: HTMLElement): void {
+		const label = this.labels.get(entityId);
+
+		if (label) {
+			label.element = element;
 		}
 	}
 
-	public unregisterLabel(entityId: string, kind: OverlayElementKind): void {
-		switch (kind) {
-			case "static":
-				this.staticElements.delete(entityId);
-				break;
-			case "hover":
-				this.hoverElements.delete(entityId);
-				break;
-		}
+	public unregisterLabel(labelId: string): void {
+		this.labels.delete(labelId);
 	}
 
 	public update(hoveredEntity: Entity | null): void {
-		this.updateStaticElements();
+		this.updateStaticLabels();
 
 		this.clearHoverElements();
 
 		if (hoveredEntity) {
-			this.updateHoverElements(hoveredEntity);
+			this.updateHoverLabels(hoveredEntity);
 		}
 	}
 
 	public reset(): void {
-		this.staticElements = new Map();
-		this.hoverElements = new Map();
-
-		this.sim.emit("overlay.reset", undefined);
+		this.labels = new Map();
+		this.sim.emit("overlay.changed", undefined);
 	}
 
-	private updateHoverElements(hoveredEntity: Entity): void {
+	public getLabels(): OverlayLabelData[] {
+		return Array.from(this.labels, ([_chipId, value]) => value);
+	}
+
+	private init(): void {
+		this.sim.on("chip.spawn.finish", (data) => {
+			this.onChipSpawnFinish(data);
+		});
+	}
+
+	private updateHoverLabels(hoveredEntity: Entity): void {
 		if (EntityUtils.isPin(hoveredEntity)) {
 			const pinWorldPosition = hoveredEntity.getPosition();
 
@@ -89,21 +97,25 @@ export class OverlayManager extends BaseManager {
 			const pinScreenSpacePosition =
 				this.camera.toScreenSpacePosition(pinWorldPosition);
 
-			const element = this.hoverElements.get(hoveredEntity.id);
+			const label = this.labels.get(hoveredEntity.id);
 
-			if (!element) {
+			if (!label || !label.element) {
 				return;
 			}
 
-			this.showPinLabel(pinWorldPosition, pinScreenSpacePosition, element);
+			this.showPinLabel(
+				pinWorldPosition,
+				pinScreenSpacePosition,
+				label.element,
+			);
 		}
 	}
 
-	private updateStaticElements(): void {
+	private updateStaticLabels(): void {
 		for (const chip of this.sim.chipManager.getBoardChips()) {
-			const element = this.staticElements.get(chip.id);
+			const label = this.labels.get(chip.id);
 
-			if (!element) {
+			if (!label || !label.element) {
 				continue;
 			}
 
@@ -124,17 +136,19 @@ export class OverlayManager extends BaseManager {
 					chipWorldPosition,
 					chipScreenSpacePosition,
 					chip.layout.labelDimensions,
-					element,
+					label.element,
 				);
 			} else {
-				this.hideElement(element);
+				this.hideElement(label.element);
 			}
 		}
 	}
 
 	private clearHoverElements(): void {
-		this.hoverElements.forEach((element) => {
-			this.hideElement(element);
+		this.labels.forEach((label) => {
+			if (label.element && label.kind === "hover") {
+				this.hideElement(label.element);
+			}
 		});
 	}
 
@@ -238,5 +252,39 @@ export class OverlayManager extends BaseManager {
 		const height = Math.abs(screenSpaceMaxY - screenSpaceMinY);
 
 		return { width, height };
+	}
+
+	private onChipSpawnFinish({
+		chipId,
+		chipName,
+		chipType,
+		pins,
+	}: IChipSpawnFinishEvent): void {
+		if (!this.shouldRegisterChipLabel(chipType)) {
+			return;
+		}
+
+		this.labels.set(chipId, {
+			entityType: "chip" as const,
+			kind: "static" as const,
+			id: chipId,
+			text: chipName,
+		});
+
+		pins.map((pin) =>
+			this.labels.set(pin.id, {
+				entityType: "pin" as const,
+				kind: "hover" as const,
+				id: pin.id,
+				text: pin.name,
+				pinType: pin.pinType,
+			}),
+		);
+
+		this.sim.emit("overlay.changed", undefined);
+	}
+
+	private shouldRegisterChipLabel(chipType: ChipType): boolean {
+		return chipType !== "io";
 	}
 }

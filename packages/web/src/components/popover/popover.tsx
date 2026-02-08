@@ -73,8 +73,16 @@ function getActionsForEntity(
 				{
 					label: "View",
 					handler: () => {
-						simulatorApp.sim.emit("view.composite-chip", {
+						simulatorApp.sim.emit("composite-chip.view", {
 							compositeChipId: data.entityId,
+						});
+					},
+				},
+				{
+					label: "Delete",
+					handler: () => {
+						simulatorApp.sim.emit("chip.delete.start", {
+							chipId: data.entityId,
 						});
 					},
 				},
