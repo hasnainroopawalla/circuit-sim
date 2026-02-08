@@ -27,6 +27,8 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 		});
 		this.camera = args.camera;
 		this.selectedCompositeId = "";
+
+		this.registerSubscriptions();
 	}
 
 	public getRenderables(
@@ -159,10 +161,9 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 			return false;
 		}
 
-		// TODO: revert to isCompositeChip
-		if (EntityUtils.isChip(hoveredEntity)) {
-			this.selectedCompositeId = hoveredEntity.id;
+		if (EntityUtils.isCompositeChip(hoveredEntity)) {
 			this.sim.emit("entity.secondaryAction", {
+				entityId: hoveredEntity.id,
 				entityType: hoveredEntity.entityType,
 				mousePosition: mousePosition.screen,
 			});
@@ -170,5 +171,12 @@ export class SimulationLayer extends BaseLayer<LayerType.Simulation> {
 		}
 
 		return false;
+	}
+
+	private registerSubscriptions(): void {
+		this.sim.on("view.composite-chip", ({ compositeChipId }) => {
+			console.log(compositeChipId);
+			this.selectedCompositeId = compositeChipId;
+		});
 	}
 }

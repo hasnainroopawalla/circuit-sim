@@ -5,6 +5,7 @@ import type { ChipDefinition } from "../chip-library-service";
 import type { EntityType } from "../../entities/entity";
 
 export type IEntitySecondaryActionEvent = {
+	entityId: string;
 	entityType: EntityType;
 	mousePosition: Position;
 };
@@ -30,4 +31,8 @@ export type IEvents = {
 	};
 
 	"entity.secondaryAction": IEntitySecondaryActionEvent;
+
+	"view.composite-chip": {
+		compositeChipId: string;
+	};
 };

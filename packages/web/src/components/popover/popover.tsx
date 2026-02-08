@@ -1,8 +1,11 @@
 import * as React from "react";
 import { useOnClickOutside } from "../../utils";
 import { useSimulatorApp } from "../../contexts/simulator-app-context";
-import type { IEntitySecondaryActionEvent } from "@digital-logic-sim/simulator";
-import { ActionMenu } from "./action-menu";
+import type {
+	IEntitySecondaryActionEvent,
+	SimulatorApp,
+} from "@digital-logic-sim/simulator";
+import { ActionMenu, type ActionMenuItem } from "./action-menu";
 
 export const Popover: React.FC = () => {
 	const simulatorApp = useSimulatorApp();
@@ -28,6 +31,20 @@ export const Popover: React.FC = () => {
 		};
 	}, [simulatorApp]);
 
+	const items = React.useMemo(() => {
+		if (!popoverData) {
+			return [];
+		}
+
+		return getActionsForEntity(popoverData, simulatorApp).map((action) => ({
+			...action,
+			handler: () => {
+				action.handler();
+				setPopoverData(null);
+			},
+		}));
+	}, [popoverData, simulatorApp]);
+
 	return (
 		popoverData && (
 			<div
@@ -39,22 +56,46 @@ export const Popover: React.FC = () => {
 				}}
 			>
 				<div className="overflow-hidden">
-					<ActionMenu
-						onView={() => {
-							console.log("view", popoverData);
-							setPopoverData(null);
-						}}
-						onDelete={() => {
-							console.log("delete", popoverData);
-							setPopoverData(null);
-						}}
-					/>
+					<ActionMenu items={items} />
 				</div>
 			</div>
 		)
 	);
 };
 
-function renderActionComponent(action: unknown): React.ReactNode {
-	return <div>{JSON.stringify(action)}</div>;
+function getActionsForEntity(
+	data: IEntitySecondaryActionEvent,
+	simulatorApp: SimulatorApp,
+): ActionMenuItem[] {
+	switch (data.entityType) {
+		case "chip":
+			return [
+				{
+					label: "View",
+					handler: () => {
+						simulatorApp.sim.emit("view.composite-chip", {
+							compositeChipId: data.entityId,
+						});
+					},
+				},
+				{
+					label: "Delete",
+					handler: () => {},
+				},
+			];
+
+		case "wire":
+			return [
+				{
+					label: "Delete",
+					handler: () => {},
+				},
+			];
+
+		case "pin":
+			return [];
+
+		default:
+			return [];
+	}
 }
