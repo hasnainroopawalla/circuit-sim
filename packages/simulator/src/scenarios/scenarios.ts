@@ -137,7 +137,7 @@ export const SCENARIOS = {
 			sim,
 			sim.blueprintService.renameBlueprint(
 				threeAndBp as Blueprint,
-				"a very very very very very very very long name",
+				"a very very very very very very very very long name",
 			),
 			{ x: 2, y: -0.5 },
 		);
